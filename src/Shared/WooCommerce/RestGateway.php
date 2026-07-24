@@ -32,6 +32,7 @@ final readonly class RestGateway {
 		if ( $response->is_error() ) {
 			$error = $response->as_error();
 
+			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw new ToolCallException(
 				sprintf(
 					'WooCommerce rejected the request (%s): %s',
@@ -39,6 +40,7 @@ final readonly class RestGateway {
 					$error->get_error_message()
 				)
 			);
+			// phpcs:enable
 		}
 
 		$data = rest_get_server()->response_to_data( $response, false );

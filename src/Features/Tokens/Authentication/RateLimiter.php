@@ -34,7 +34,7 @@ final readonly class RateLimiter {
 		$current_count = (int) get_transient( $transient_key );
 
 		if ( $current_count >= $limit ) {
-			throw new RateLimitExceededException( self::WINDOW_SECONDS );
+			throw new RateLimitExceededException( self::WINDOW_SECONDS ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}
 
 		if ( 0 === $current_count ) {

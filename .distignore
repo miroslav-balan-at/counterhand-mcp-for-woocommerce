@@ -1,0 +1,15 @@
+.git
+.gitignore
+.distignore
+.DS_Store
+.phpunit.cache
+vendor
+node_modules
+tests
+composer.json
+composer.lock
+phpcs.xml.dist
+phpstan.neon.dist
+phpunit.xml.dist
+build
+dist

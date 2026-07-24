@@ -61,6 +61,7 @@ final readonly class UpdateOrderStatusTool extends AbstractWcTool {
 		);
 
 		if ( ! in_array( $status, $valid_statuses, true ) ) {
+			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw new ToolCallException(
 				sprintf(
 					'Unknown order status "%s". Valid statuses for this store: %s.',
@@ -68,6 +69,7 @@ final readonly class UpdateOrderStatusTool extends AbstractWcTool {
 					implode( ', ', $valid_statuses )
 				)
 			);
+			// phpcs:enable
 		}
 
 		$order_id = (int) $arguments['id'];

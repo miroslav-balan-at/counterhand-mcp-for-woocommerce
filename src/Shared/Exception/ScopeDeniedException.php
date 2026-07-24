@@ -15,11 +15,13 @@ defined( 'ABSPATH' ) || exit;
 final class ScopeDeniedException extends \RuntimeException {
 
 	public function __construct( public readonly ApiScope $required_scope ) {
+		// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		parent::__construct(
 			sprintf(
 				'This action requires the "%s" scope. Ask the store administrator for a token that grants it.',
 				$required_scope->value
 			)
 		);
+		// phpcs:enable
 	}
 }

@@ -1,7 +1,7 @@
 === AgentGate MCP for WooCommerce ===
 Contributors: miroslavbalan
 Tags: woocommerce, mcp, ai, claude, chatgpt
-Requires at least: 6.4
+Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 8.1
 Stable tag: 0.1.0

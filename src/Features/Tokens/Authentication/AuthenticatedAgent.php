@@ -28,7 +28,7 @@ final readonly class AuthenticatedAgent {
 	 */
 	public function require_scope( ApiScope $scope ): void {
 		if ( ! $this->token->scopes->contains( $scope ) ) {
-			throw new ScopeDeniedException( $scope );
+			throw new ScopeDeniedException( $scope ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}
 	}
 }

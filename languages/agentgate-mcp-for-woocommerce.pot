@@ -1,0 +1,362 @@
+# Copyright (C) 2026 Miroslav Balan
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: AgentGate MCP for WooCommerce 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/agentgate-mcp-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-24T19:25:15+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: agentgate-mcp-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: agentgate-mcp-for-woocommerce.php
+#: src/Features/Settings/views/page.php:20
+msgid "AgentGate MCP for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: agentgate-mcp-for-woocommerce.php
+msgid "https://github.com/miroslavbalan/agentgate-mcp-for-woocommerce"
+msgstr ""
+
+#. Description of the plugin
+#: agentgate-mcp-for-woocommerce.php
+msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
+msgstr ""
+
+#. Author of the plugin
+#: agentgate-mcp-for-woocommerce.php
+msgid "Miroslav Balan"
+msgstr ""
+
+#: agentgate-mcp-for-woocommerce.php:52
+msgid "AgentGate MCP for WooCommerce requires WooCommerce to be installed and active."
+msgstr ""
+
+#: src/Features/ActionLog/ActionLogFeature.php:58
+msgid "You are not allowed to clear the log."
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:16
+msgid "The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage."
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:21
+msgid "Log cleared."
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:27
+msgid "Clear log"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:33
+msgid "Time (UTC)"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:34
+msgid "Tool"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:35
+#: src/Features/Tokens/Admin/TokensListTable.php:33
+msgid "Token"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:36
+msgid "Outcome"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:37
+msgid "Arguments (PII masked)"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:42
+msgid "No entries yet."
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:38
+#: src/Features/Settings/SettingsFeature.php:39
+msgid "AgentGate MCP"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:129
+msgid "Not allowed."
+msgstr ""
+
+#. translators: %s: error message
+#: src/Features/Settings/SettingsFeature.php:170
+#, php-format
+msgid "Endpoint not reachable: %s"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:181
+msgid "Endpoint is reachable and authentication is enforced (401 without token). Paste a token for a full check."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: src/Features/Settings/SettingsFeature.php:186
+#, php-format
+msgid "Unexpected status %d — check permalinks or the master switch."
+msgstr ""
+
+#. translators: %s: negotiated MCP protocol version
+#: src/Features/Settings/SettingsFeature.php:200
+#, php-format
+msgid "Connected! MCP handshake succeeded (protocol %s)."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: src/Features/Settings/SettingsFeature.php:211
+#, php-format
+msgid "Handshake failed with status %d — is the token valid and active?"
+msgstr ""
+
+#: src/Features/Settings/views/page.php:13
+msgid "Settings"
+msgstr ""
+
+#: src/Features/Settings/views/page.php:14
+msgid "API Tokens"
+msgstr ""
+
+#: src/Features/Settings/views/page.php:15
+msgid "Connect"
+msgstr ""
+
+#: src/Features/Settings/views/page.php:16
+msgid "Action Log"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:38
+msgid "Your MCP endpoint"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:42
+#: src/Features/Settings/views/tab-connect.php:73
+#: src/Features/Settings/views/tab-connect.php:80
+#: src/Features/Settings/views/tab-connect.php:87
+#: src/Features/Tokens/Admin/views/tab-tokens.php:22
+msgid "Copied!"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:43
+#: src/Features/Settings/views/tab-connect.php:73
+#: src/Features/Settings/views/tab-connect.php:80
+#: src/Features/Settings/views/tab-connect.php:87
+#: src/Features/Tokens/Admin/views/tab-tokens.php:23
+msgid "Copy"
+msgstr ""
+
+#. translators: %s: fallback REST URL
+#: src/Features/Settings/views/tab-connect.php:50
+#, php-format
+msgid "If your host breaks pretty permalinks, the same endpoint is available at %s."
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:56
+msgid "Verify connection"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:57
+msgid "Checks that the endpoint is reachable. Paste a token (optional) for a full MCP handshake test."
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:60
+msgid "agmcp_… (optional)"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:64
+msgid "Verify"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:69
+msgid "Claude Code"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:76
+msgid "Claude Desktop / Cursor (mcp.json)"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:83
+msgid "Test with curl"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:91
+msgid "Replace YOUR_TOKEN with a token from the API Tokens tab. Tokens are shown exactly once at creation."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:22
+msgid "Connector"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:23
+msgid "When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:27
+msgid "Enable the MCP connector"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:30
+msgid "Tool groups"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:31
+msgid "Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A token additionally needs the matching scope."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:36
+msgid "Group"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:37
+msgid "Read"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:38
+msgid "Write"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:64
+msgid "Limits"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:66
+msgid "Requests per minute per token"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:72
+msgid "Action log"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:76
+msgid "Record every tool call (PII is masked before storage)"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:79
+msgid "Keep log entries for (days)"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensAdmin.php:104
+msgid "You are not allowed to manage API tokens."
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:32
+#: src/Features/Tokens/Admin/views/tab-tokens.php:47
+msgid "Label"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:34
+#: src/Features/Tokens/Admin/views/tab-tokens.php:53
+msgid "Scopes"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:35
+msgid "Status"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:36
+msgid "Created"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:37
+msgid "Last used"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:38
+msgid "Actions"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:56
+msgid "ago"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:57
+msgid "never"
+msgstr ""
+
+#: src/Features/Tokens/Admin/TokensListTable.php:93
+msgid "Revoke"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:18
+msgid "API token created"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:19
+msgid "Copy it now — it will never be shown again."
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:33
+msgid "Select at least one valid scope."
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:34
+msgid "A label is required."
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:41
+msgid "Create token"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:49
+msgid "e.g. Claude Desktop — Anna"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:63
+msgid "Expires"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:65
+msgid "Never"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:66
+msgid "30 days"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:67
+msgid "90 days"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:68
+msgid "1 year"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:72
+msgid "Create API token"
+msgstr ""
+
+#: src/Features/Tokens/Admin/views/tab-tokens.php:77
+msgid "Existing tokens"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:31
+msgid "Products — read"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:32
+msgid "Products — write (create, update, delete)"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:33
+msgid "Orders — read"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:34
+msgid "Orders — write (status, notes)"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:35
+msgid "Customers — read"
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:36
+msgid "Reports — read"
+msgstr ""

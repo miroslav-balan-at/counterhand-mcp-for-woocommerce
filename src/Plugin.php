@@ -4,14 +4,20 @@ declare( strict_types=1 );
 
 namespace AgentGateMcp;
 
+use AgentGateMcp\Features\CustomerTools\CustomerToolsFeature;
 use AgentGateMcp\Features\McpServer\McpServerFeature;
 use AgentGateMcp\Features\McpServer\ToolRegistry;
+use AgentGateMcp\Features\OrderTools\OrderToolsFeature;
+use AgentGateMcp\Features\ProductTools\ProductToolsFeature;
+use AgentGateMcp\Features\ReportTools\ReportToolsFeature;
 use AgentGateMcp\Features\Settings\PluginSettings;
 use AgentGateMcp\Features\Tokens\Authentication\RateLimiter;
 use AgentGateMcp\Features\Tokens\Authentication\TokenAuthenticator;
 use AgentGateMcp\Features\Tokens\Persistence\Schema;
 use AgentGateMcp\Features\Tokens\Persistence\WpdbTokenRepository;
 use AgentGateMcp\Features\Tokens\TokensFeature;
+use AgentGateMcp\Shared\WooCommerce\ResponseShaper;
+use AgentGateMcp\Shared\WooCommerce\RestGateway;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -54,12 +60,18 @@ final class Plugin {
 		$settings      = new PluginSettings();
 		$repository    = new WpdbTokenRepository();
 		$authenticator = new TokenAuthenticator( $repository, new RateLimiter( $settings ) );
+		$gateway       = new RestGateway();
+		$shaper        = new ResponseShaper();
 
 		$this->tool_registry = new ToolRegistry( $settings );
 
 		$this->features = [
 			new TokensFeature( $repository ),
 			new McpServerFeature( $settings, $authenticator, $this->tool_registry ),
+			new ProductToolsFeature( $this->tool_registry, $gateway, $shaper ),
+			new OrderToolsFeature( $this->tool_registry, $gateway, $shaper ),
+			new CustomerToolsFeature( $this->tool_registry, $gateway, $shaper ),
+			new ReportToolsFeature( $this->tool_registry, $gateway, $shaper ),
 		];
 
 		foreach ( $this->features as $feature ) {

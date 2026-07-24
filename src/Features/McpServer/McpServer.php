@@ -134,6 +134,11 @@ final readonly class McpServer {
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {
 		$schema = $tool->input_schema();
 
+		// rest_sanitize/validate_value_from_schema do NOT apply defaults —
+		// without this, absent args fall through to WooCommerce's own defaults
+		// (e.g. create_product would publish instead of draft).
+		$arguments = $this->apply_schema_defaults( $schema, $arguments );
+
 		$sanitized = rest_sanitize_value_from_schema( $arguments, $schema, 'arguments' );
 		if ( is_wp_error( $sanitized ) ) {
 			return $sanitized;
@@ -145,5 +150,20 @@ final readonly class McpServer {
 		}
 
 		return (array) $sanitized;
+	}
+
+	private function apply_schema_defaults( array $schema, array $arguments ): array {
+		$properties = $schema['properties'] ?? [];
+		if ( ! is_array( $properties ) ) {
+			return $arguments;
+		}
+
+		foreach ( $properties as $property_name => $property_schema ) {
+			if ( ! array_key_exists( $property_name, $arguments ) && is_array( $property_schema ) && array_key_exists( 'default', $property_schema ) ) {
+				$arguments[ $property_name ] = $property_schema['default'];
+			}
+		}
+
+		return $arguments;
 	}
 }

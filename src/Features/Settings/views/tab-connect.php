@@ -16,15 +16,18 @@ $agmcp_claude_code = sprintf(
 	$endpoint_url
 );
 
-$agmcp_claude_desktop = wp_json_encode( [
-	'mcpServers' => [
-		'woocommerce' => [
-			'type'    => 'http',
-			'url'     => $endpoint_url,
-			'headers' => [ 'Authorization' => 'Bearer YOUR_TOKEN' ],
+$agmcp_claude_desktop = wp_json_encode(
+	[
+		'mcpServers' => [
+			'woocommerce' => [
+				'type'    => 'http',
+				'url'     => $endpoint_url,
+				'headers' => [ 'Authorization' => 'Bearer YOUR_TOKEN' ],
+			],
 		],
 	],
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+	JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+);
 
 $agmcp_curl = sprintf(
 	"curl -X POST %s \\\n  -H 'Content-Type: application/json' \\\n  -H 'Authorization: Bearer YOUR_TOKEN' \\\n  -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\",\"params\":{}}'",

@@ -57,17 +57,20 @@ final readonly class GetSalesReportTool extends AbstractWcTool {
 		// wc/v3 wraps the single report object in an array.
 		$sales = is_array( $report[0] ?? null ) ? $report[0] : $report;
 
-		return $this->shaper->shape_item( $sales, [
-			'total_sales',
-			'net_sales',
-			'total_orders',
-			'total_items',
-			'total_tax',
-			'total_shipping',
-			'total_refunds',
-			'total_discount',
-			'totals_grouped_by',
-			'totals',
-		] );
+		return $this->shaper->shape_item(
+			$sales,
+			[
+				'total_sales',
+				'net_sales',
+				'total_orders',
+				'total_items',
+				'total_tax',
+				'total_shipping',
+				'total_refunds',
+				'total_discount',
+				'totals_grouped_by',
+				'totals',
+			]
+		);
 	}
 }

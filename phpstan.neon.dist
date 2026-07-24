@@ -1,0 +1,16 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - src
+    scanFiles:
+        - agentgate-mcp-for-woocommerce.php
+        - tests/phpstan-wc-stubs.php
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # Generic array value types add churn without safety in WP glue code.
+        - identifier: missingType.iterableValue

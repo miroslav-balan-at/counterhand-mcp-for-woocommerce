@@ -25,7 +25,8 @@ final class LogSchema {
 		$table_name      = self::table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
-		dbDelta( "CREATE TABLE {$table_name} (
+		dbDelta(
+			"CREATE TABLE {$table_name} (
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 			created_at DATETIME NOT NULL,
 			tool_name VARCHAR(64) NOT NULL,
@@ -34,7 +35,8 @@ final class LogSchema {
 			summary TEXT NOT NULL,
 			PRIMARY KEY  (id),
 			KEY created_at (created_at)
-		) {$charset_collate};" );
+		) {$charset_collate};"
+		);
 
 		update_option( self::VERSION_OPTION, self::VERSION, false );
 	}

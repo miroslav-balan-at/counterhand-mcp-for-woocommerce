@@ -49,12 +49,12 @@ final readonly class GetStoreOverviewTool extends AbstractWcTool {
 		}
 
 		return [
-			'store_name'     => get_bloginfo( 'name' ),
-			'store_url'      => home_url(),
-			'currency'       => get_woocommerce_currency(),
-			'country'        => WC()->countries->get_base_country(),
-			'wc_version'     => defined( 'WC_VERSION' ) ? WC_VERSION : '',
-			'products'       => [
+			'store_name'       => get_bloginfo( 'name' ),
+			'store_url'        => home_url(),
+			'currency'         => get_woocommerce_currency(),
+			'country'          => WC()->countries->get_base_country(),
+			'wc_version'       => defined( 'WC_VERSION' ) ? WC_VERSION : '',
+			'products'         => [
 				'published' => (int) ( $product_counts['publish'] ?? 0 ),
 				'draft'     => (int) ( $product_counts['draft'] ?? 0 ),
 			],

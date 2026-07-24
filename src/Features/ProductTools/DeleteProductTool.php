@@ -55,9 +55,9 @@ final readonly class DeleteProductTool extends AbstractWcTool {
 		);
 
 		return [
-			'id'      => $deleted['id'] ?? null,
-			'name'    => $deleted['name'] ?? '',
-			'status'  => ( $arguments['force'] ?? false ) ? 'permanently_deleted' : 'trashed',
+			'id'     => $deleted['id'] ?? null,
+			'name'   => $deleted['name'] ?? '',
+			'status' => ( $arguments['force'] ?? false ) ? 'permanently_deleted' : 'trashed',
 		];
 	}
 }

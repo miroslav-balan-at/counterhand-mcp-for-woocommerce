@@ -29,24 +29,33 @@ require_once __DIR__ . '/src/Autoloader.php';
 AgentGateMcp\Autoloader::register();
 
 // HPOS (custom order tables) compatibility.
-add_action( 'before_woocommerce_init', static function (): void {
-	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+add_action(
+	'before_woocommerce_init',
+	static function (): void {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
 	}
-} );
+);
 
 register_activation_hook( __FILE__, [ AgentGateMcp\Plugin::class, 'activate' ] );
 register_deactivation_hook( __FILE__, [ AgentGateMcp\Plugin::class, 'deactivate' ] );
 
-add_action( 'plugins_loaded', static function (): void {
-	if ( ! class_exists( 'WooCommerce' ) ) {
-		add_action( 'admin_notices', static function (): void {
-			echo '<div class="notice notice-error"><p>';
-			echo esc_html__( 'AgentGate MCP for WooCommerce requires WooCommerce to be installed and active.', 'agentgate-mcp-for-woocommerce' );
-			echo '</p></div>';
-		} );
-		return;
-	}
+add_action(
+	'plugins_loaded',
+	static function (): void {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			add_action(
+				'admin_notices',
+				static function (): void {
+					echo '<div class="notice notice-error"><p>';
+					echo esc_html__( 'AgentGate MCP for WooCommerce requires WooCommerce to be installed and active.', 'agentgate-mcp-for-woocommerce' );
+					echo '</p></div>';
+				}
+			);
+			return;
+		}
 
-	AgentGateMcp\Plugin::boot();
-} );
+		AgentGateMcp\Plugin::boot();
+	}
+);

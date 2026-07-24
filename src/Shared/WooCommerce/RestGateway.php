@@ -32,11 +32,13 @@ final readonly class RestGateway {
 		if ( $response->is_error() ) {
 			$error = $response->as_error();
 
-			throw new ToolCallException( sprintf(
-				'WooCommerce rejected the request (%s): %s',
-				(string) $error->get_error_code(),
-				$error->get_error_message()
-			) );
+			throw new ToolCallException(
+				sprintf(
+					'WooCommerce rejected the request (%s): %s',
+					(string) $error->get_error_code(),
+					$error->get_error_message()
+				)
+			);
 		}
 
 		$data = rest_get_server()->response_to_data( $response, false );

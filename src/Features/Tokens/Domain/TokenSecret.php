@@ -31,6 +31,6 @@ final readonly class TokenSecret {
 	}
 
 	private static function base64url( string $bytes ): string {
-		return rtrim( strtr( base64_encode( $bytes ), '+/', '-_' ), '=' );
+		return rtrim( strtr( base64_encode( $bytes ), '+/', '-_' ), '=' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- encoding random bytes for a token, not obfuscation.
 	}
 }

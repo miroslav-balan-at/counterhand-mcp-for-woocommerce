@@ -44,11 +44,15 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	public function register_settings(): void {
-		register_setting( 'agmcp_settings_group', PluginSettings::OPTION, [
-			'type'              => 'array',
-			'sanitize_callback' => [ $this, 'sanitize_settings' ],
-			'default'           => PluginSettings::defaults(),
-		] );
+		register_setting(
+			'agmcp_settings_group',
+			PluginSettings::OPTION,
+			[
+				'type'              => 'array',
+				'sanitize_callback' => [ $this, 'sanitize_settings' ],
+				'default'           => PluginSettings::defaults(),
+			]
+		);
 	}
 
 	/** Whitelist keys and cast types — unknown keys never persist. */
@@ -71,11 +75,11 @@ final readonly class SettingsFeature implements FeatureInterface {
 			$active_tab = 'settings';
 		}
 
-		$settings      = $this->settings;
-		$tool_groups   = ToolGroup::cases();
-		$endpoint_url  = home_url( '/mcp' );
-		$fallback_url  = rest_url( 'agentgate/v1/mcp' );
-		$verify_nonce  = wp_create_nonce( 'agmcp_verify_connection' );
+		$settings     = $this->settings;
+		$tool_groups  = ToolGroup::cases();
+		$endpoint_url = home_url( '/mcp' );
+		$fallback_url = rest_url( 'agentgate/v1/mcp' );
+		$verify_nonce = wp_create_nonce( 'agmcp_verify_connection' );
 
 		include __DIR__ . '/views/page.php';
 
@@ -134,28 +138,40 @@ final readonly class SettingsFeature implements FeatureInterface {
 			$headers['Authorization'] = 'Bearer ' . $token;
 		}
 
-		$response = wp_remote_post( home_url( '/mcp' ), [
-			'headers'   => $headers,
-			'body'      => (string) wp_json_encode( [
-				'jsonrpc' => '2.0',
-				'id'      => 1,
-				'method'  => 'initialize',
-				'params'  => [
-					'protocolVersion' => '2025-06-18',
-					'capabilities'    => new \stdClass(),
-					'clientInfo'      => [ 'name' => 'agmcp-verify', 'version' => AGMCP_VERSION ],
-				],
-			] ),
-			'timeout'   => 15,
-			'sslverify' => apply_filters( 'agmcp_verify_sslverify', true ),
-		] );
+		$response = wp_remote_post(
+			home_url( '/mcp' ),
+			[
+				'headers'   => $headers,
+				'body'      => (string) wp_json_encode(
+					[
+						'jsonrpc' => '2.0',
+						'id'      => 1,
+						'method'  => 'initialize',
+						'params'  => [
+							'protocolVersion' => '2025-06-18',
+							'capabilities'    => new \stdClass(),
+							'clientInfo'      => [
+								'name'    => 'agmcp-verify',
+								'version' => AGMCP_VERSION,
+							],
+						],
+					]
+				),
+				'timeout'   => 15,
+				'sslverify' => apply_filters( 'agmcp_verify_sslverify', true ),
+			]
+		);
 
 		if ( is_wp_error( $response ) ) {
-			wp_send_json_error( [ 'message' => sprintf(
-				/* translators: %s: error message */
-				__( 'Endpoint not reachable: %s', 'agentgate-mcp-for-woocommerce' ),
-				$response->get_error_message()
-			) ] );
+			wp_send_json_error(
+				[
+					'message' => sprintf(
+					/* translators: %s: error message */
+						__( 'Endpoint not reachable: %s', 'agentgate-mcp-for-woocommerce' ),
+						$response->get_error_message()
+					),
+				]
+			);
 		}
 
 		$status = (int) wp_remote_retrieve_response_code( $response );
@@ -163,27 +179,39 @@ final readonly class SettingsFeature implements FeatureInterface {
 		if ( '' === $token ) {
 			401 === $status
 				? wp_send_json_success( [ 'message' => __( 'Endpoint is reachable and authentication is enforced (401 without token). Paste a token for a full check.', 'agentgate-mcp-for-woocommerce' ) ] )
-				: wp_send_json_error( [ 'message' => sprintf(
-					/* translators: %d: HTTP status code */
-					__( 'Unexpected status %d — check permalinks or the master switch.', 'agentgate-mcp-for-woocommerce' ),
-					$status
-				) ] );
+				: wp_send_json_error(
+					[
+						'message' => sprintf(
+						/* translators: %d: HTTP status code */
+							__( 'Unexpected status %d — check permalinks or the master switch.', 'agentgate-mcp-for-woocommerce' ),
+							$status
+						),
+					]
+				);
 		}
 
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
 		if ( 200 === $status && isset( $body['result']['serverInfo'] ) ) {
-			wp_send_json_success( [ 'message' => sprintf(
-				/* translators: %s: negotiated MCP protocol version */
-				__( 'Connected! MCP handshake succeeded (protocol %s).', 'agentgate-mcp-for-woocommerce' ),
-				(string) ( $body['result']['protocolVersion'] ?? '?' )
-			) ] );
+			wp_send_json_success(
+				[
+					'message' => sprintf(
+					/* translators: %s: negotiated MCP protocol version */
+						__( 'Connected! MCP handshake succeeded (protocol %s).', 'agentgate-mcp-for-woocommerce' ),
+						(string) ( $body['result']['protocolVersion'] ?? '?' )
+					),
+				]
+			);
 		}
 
-		wp_send_json_error( [ 'message' => sprintf(
-			/* translators: %d: HTTP status code */
-			__( 'Handshake failed with status %d — is the token valid and active?', 'agentgate-mcp-for-woocommerce' ),
-			$status
-		) ] );
+		wp_send_json_error(
+			[
+				'message' => sprintf(
+				/* translators: %d: HTTP status code */
+					__( 'Handshake failed with status %d — is the token valid and active?', 'agentgate-mcp-for-woocommerce' ),
+					$status
+				),
+			]
+		);
 	}
 }

@@ -48,19 +48,22 @@ final readonly class McpServer {
 			$agent->scopes()->all()
 		);
 
-		return JsonRpcResponse::result( $request->id, [
-			'protocolVersion' => $agreed_version,
-			'capabilities'    => [ 'tools' => [ 'listChanged' => false ] ],
-			'serverInfo'      => [
-				'name'    => 'AgentGate MCP for WooCommerce',
-				'version' => AGMCP_VERSION,
-			],
-			'instructions'    => sprintf(
-				'WooCommerce store MCP server for %s. Your token grants these scopes: %s. Product creation defaults to draft status. List tools are paginated (per_page, page).',
-				get_bloginfo( 'name' ),
-				$scope_values ? implode( ', ', $scope_values ) : 'none'
-			),
-		] );
+		return JsonRpcResponse::result(
+			$request->id,
+			[
+				'protocolVersion' => $agreed_version,
+				'capabilities'    => [ 'tools' => [ 'listChanged' => false ] ],
+				'serverInfo'      => [
+					'name'    => 'AgentGate MCP for WooCommerce',
+					'version' => AGMCP_VERSION,
+				],
+				'instructions'    => sprintf(
+					'WooCommerce store MCP server for %s. Your token grants these scopes: %s. Product creation defaults to draft status. List tools are paginated (per_page, page).',
+					get_bloginfo( 'name' ),
+					$scope_values ? implode( ', ', $scope_values ) : 'none'
+				),
+			]
+		);
 	}
 
 	private function list_tools( JsonRpcRequest $request, AuthenticatedAgent $agent ): JsonRpcResponse {
@@ -117,31 +120,37 @@ final readonly class McpServer {
 			 */
 			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, false, $validated );
 
-			return JsonRpcResponse::result( $request->id, [
-				'content'           => [
-					[
-						'type' => 'text',
-						'text' => (string) wp_json_encode( $data ),
+			return JsonRpcResponse::result(
+				$request->id,
+				[
+					'content'           => [
+						[
+							'type' => 'text',
+							'text' => (string) wp_json_encode( $data ),
+						],
 					],
-				],
-				'structuredContent' => $data,
-				'isError'           => false,
-			] );
+					'structuredContent' => $data,
+					'isError'           => false,
+				]
+			);
 		} catch ( ScopeDeniedException | ToolCallException $exception ) {
 			/** This hook is documented above. */
 			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, true, $validated );
 
 			// Tool failures are results, not protocol errors — the agent can read
 			// the message and self-correct (MCP spec).
-			return JsonRpcResponse::result( $request->id, [
-				'content' => [
-					[
-						'type' => 'text',
-						'text' => $exception->getMessage(),
+			return JsonRpcResponse::result(
+				$request->id,
+				[
+					'content' => [
+						[
+							'type' => 'text',
+							'text' => $exception->getMessage(),
+						],
 					],
-				],
-				'isError' => true,
-			] );
+					'isError' => true,
+				]
+			);
 		}
 	}
 

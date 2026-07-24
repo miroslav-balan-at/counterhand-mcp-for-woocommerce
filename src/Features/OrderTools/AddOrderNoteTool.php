@@ -52,10 +52,14 @@ final readonly class AddOrderNoteTool extends AbstractWcTool {
 	}
 
 	public function execute( array $arguments ): array {
-		$created = $this->gateway->dispatch( 'POST', '/orders/' . (int) $arguments['id'] . '/notes', [
-			'note'          => (string) $arguments['note'],
-			'customer_note' => (bool) ( $arguments['customer_note'] ?? false ),
-		] );
+		$created = $this->gateway->dispatch(
+			'POST',
+			'/orders/' . (int) $arguments['id'] . '/notes',
+			[
+				'note'          => (string) $arguments['note'],
+				'customer_note' => (bool) ( $arguments['customer_note'] ?? false ),
+			]
+		);
 
 		return [
 			'note_id'       => $created['id'] ?? null,

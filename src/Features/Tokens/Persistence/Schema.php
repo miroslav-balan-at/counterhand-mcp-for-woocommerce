@@ -28,7 +28,8 @@ final class Schema {
 		$table_name      = self::table_name();
 		$charset_collate = $wpdb->get_charset_collate();
 
-		dbDelta( "CREATE TABLE {$table_name} (
+		dbDelta(
+			"CREATE TABLE {$table_name} (
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 			token_id VARCHAR(16) NOT NULL,
 			secret_hash CHAR(64) NOT NULL,
@@ -43,7 +44,8 @@ final class Schema {
 			PRIMARY KEY  (id),
 			UNIQUE KEY token_id (token_id),
 			KEY owner_user_id (owner_user_id)
-		) {$charset_collate};" );
+		) {$charset_collate};"
+		);
 
 		update_option( self::VERSION_OPTION, self::VERSION, false );
 	}

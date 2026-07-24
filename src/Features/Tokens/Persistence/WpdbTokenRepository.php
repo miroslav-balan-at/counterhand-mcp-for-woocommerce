@@ -46,10 +46,9 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 
 		$table_name = Schema::table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$table_name} WHERE token_id = %s AND status = %s",
+				"SELECT * FROM {$table_name} WHERE token_id = %s AND status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
 				$token_id->value,
 				TokenStatus::Active->value
 			),
@@ -68,10 +67,9 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 
 		$table_name = Schema::table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
-		$rows = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY created_at DESC", ARRAY_A );
+		$rows = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned, no user input.
 
-		return array_map( fn ( array $row ): ApiToken => $this->hydrate( $row ), $rows ?: [] );
+		return array_map( fn ( array $row ): ApiToken => $this->hydrate( $row ), is_array( $rows ) ? $rows : [] );
 	}
 
 	public function revoke( int $id ): bool {

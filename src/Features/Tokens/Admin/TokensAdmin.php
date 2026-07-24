@@ -41,12 +41,12 @@ final readonly class TokensAdmin {
 	public function handle_create(): void {
 		$this->guard( self::NONCE_CREATE );
 
-		$label = sanitize_text_field( wp_unslash( $_POST['agmcp_label'] ?? '' ) );
+		$label = sanitize_text_field( wp_unslash( $_POST['agmcp_label'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
 		if ( '' === $label ) {
 			$this->redirect_back( [ 'agmcp_error' => 'label' ] );
 		}
 
-		$requested_scopes = array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['agmcp_scopes'] ?? [] ) ) );
+		$requested_scopes = array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['agmcp_scopes'] ?? [] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
 
 		// Reject unknown scopes outright — never silently persist garbage.
 		foreach ( $requested_scopes as $requested_scope ) {
@@ -60,8 +60,8 @@ final readonly class TokensAdmin {
 			$this->redirect_back( [ 'agmcp_error' => 'scope' ] );
 		}
 
-		$expires_at   = null;
-		$expiry_days  = (int) ( $_POST['agmcp_expiry_days'] ?? 0 );
+		$expires_at  = null;
+		$expiry_days = (int) ( $_POST['agmcp_expiry_days'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified in guard(); (int) cast sanitizes.
 		if ( in_array( $expiry_days, [ 30, 90, 365 ], true ) ) {
 			$expires_at = ( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) )->modify( '+' . $expiry_days . ' days' );
 		}
@@ -78,7 +78,7 @@ final readonly class TokensAdmin {
 	public function handle_revoke(): void {
 		$this->guard( self::NONCE_REVOKE );
 
-		$token_row_id = (int) ( $_POST['agmcp_token_id'] ?? 0 );
+		$token_row_id = (int) ( $_POST['agmcp_token_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified in guard(); (int) cast sanitizes.
 		if ( $token_row_id > 0 ) {
 			$this->repository->revoke( $token_row_id );
 		}
@@ -109,7 +109,13 @@ final readonly class TokensAdmin {
 
 	private function redirect_back( array $query_args ): never {
 		$url = add_query_arg(
-			array_merge( [ 'page' => 'agentgate-mcp', 'tab' => 'tokens' ], $query_args ),
+			array_merge(
+				[
+					'page' => 'agentgate-mcp',
+					'tab'  => 'tokens',
+				],
+				$query_args
+			),
 			admin_url( 'admin.php' )
 		);
 

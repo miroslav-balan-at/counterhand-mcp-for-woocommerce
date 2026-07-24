@@ -45,11 +45,12 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		$retention_days = $this->settings->log_retention_days();
 		$table_name     = LogSchema::table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
-		$wpdb->query( $wpdb->prepare(
-			"DELETE FROM {$table_name} WHERE created_at < %s",
-			gmdate( 'Y-m-d H:i:s', time() - $retention_days * DAY_IN_SECONDS )
-		) );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$table_name} WHERE created_at < %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
+				gmdate( 'Y-m-d H:i:s', time() - $retention_days * DAY_IN_SECONDS )
+			)
+		);
 	}
 
 	public function handle_clear(): void {
@@ -62,13 +63,18 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		global $wpdb;
 		$table_name = LogSchema::table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
-		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
+		$wpdb->query( "TRUNCATE TABLE {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
 
-		wp_safe_redirect( add_query_arg(
-			[ 'page' => 'agentgate-mcp', 'tab' => 'log', 'agmcp_cleared' => '1' ],
-			admin_url( 'admin.php' )
-		) );
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'page'          => 'agentgate-mcp',
+					'tab'           => 'log',
+					'agmcp_cleared' => '1',
+				],
+				admin_url( 'admin.php' )
+			)
+		);
 		exit;
 	}
 
@@ -77,8 +83,8 @@ final readonly class ActionLogFeature implements FeatureInterface {
 
 		$table_name = LogSchema::table_name();
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
-		$entries = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY id DESC LIMIT 100", ARRAY_A ) ?: [];
+		$entries = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY id DESC LIMIT 100", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
+		$entries = is_array( $entries ) ? $entries : [];
 
 		$is_enabled  = $this->settings->is_action_log_enabled();
 		$clear_nonce = wp_create_nonce( 'agmcp_clear_log' );

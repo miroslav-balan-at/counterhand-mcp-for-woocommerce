@@ -56,7 +56,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 		}
 
 		$result = $this->endpoint->process(
-			(string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ),
+			(string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared against a fixed verb whitelist, never output.
 			(string) file_get_contents( 'php://input' ),
 			$this->read_authorization_header(),
 			$this->read_header( 'HTTP_X_AGENTGATE_TOKEN' )
@@ -77,15 +77,19 @@ final readonly class McpServerFeature implements FeatureInterface {
 	}
 
 	public function register_rest_fallback(): void {
-		register_rest_route( 'agentgate/v1', '/mcp', [
+		register_rest_route(
+			'agentgate/v1',
+			'/mcp',
 			[
-				'methods'             => [ 'POST', 'GET' ],
-				'callback'            => [ $this, 'handle_rest_fallback' ],
-				// Authentication happens inside process() with a uniform 401;
-				// the route itself is open by design.
-				'permission_callback' => '__return_true',
-			],
-		] );
+				[
+					'methods'             => [ 'POST', 'GET' ],
+					'callback'            => [ $this, 'handle_rest_fallback' ],
+					// Authentication happens inside process() with a uniform 401;
+					// the route itself is open by design.
+					'permission_callback' => '__return_true',
+				],
+			]
+		);
 	}
 
 	public function handle_rest_fallback( \WP_REST_Request $request ): \WP_REST_Response {

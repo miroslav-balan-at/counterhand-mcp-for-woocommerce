@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ruleset name="AgentGate MCP">
+	<description>WordPress coding standards for AgentGate MCP for WooCommerce.</description>
+
+	<file>src</file>
+	<file>agentgate-mcp-for-woocommerce.php</file>
+	<file>uninstall.php</file>
+
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+
+	<rule ref="WordPress-Extra">
+		<!-- PSR-4 class files instead of WP class-*.php convention. -->
+		<exclude name="WordPress.Files.FileName"/>
+		<!-- Short array syntax is the project standard. -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<!-- PSR-4 file-per-class layout; no file docblocks required. -->
+		<exclude name="Squiz.Commenting"/>
+		<exclude name="Generic.Commenting"/>
+		<!-- Exception messages are emitted exclusively inside JSON-RPC bodies via
+		     wp_json_encode(), never as HTML; esc_html() there would corrupt them. -->
+		<exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+	</rule>
+
+	<rule ref="WordPress.Security"/>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<!-- Registered by WooCommerce core. -->
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="agentgate-mcp-for-woocommerce"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="6.4"/>
+</ruleset>

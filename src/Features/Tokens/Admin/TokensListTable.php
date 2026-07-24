@@ -18,11 +18,13 @@ if ( ! class_exists( '\WP_List_Table' ) ) {
 final class TokensListTable extends \WP_List_Table {
 
 	public function __construct( private readonly TokenRepositoryInterface $repository ) {
-		parent::__construct( [
-			'singular' => 'agmcp_token',
-			'plural'   => 'agmcp_tokens',
-			'ajax'     => false,
-		] );
+		parent::__construct(
+			[
+				'singular' => 'agmcp_token',
+				'plural'   => 'agmcp_tokens',
+				'ajax'     => false,
+			]
+		);
 	}
 
 	public function get_columns(): array {
@@ -62,7 +64,7 @@ final class TokensListTable extends \WP_List_Table {
 		$badges = '';
 
 		foreach ( $item->scopes->all() as $scope ) {
-			$class  = $scope->is_write() ? 'agmcp-badge agmcp-badge--write' : 'agmcp-badge';
+			$class   = $scope->is_write() ? 'agmcp-badge agmcp-badge--write' : 'agmcp-badge';
 			$badges .= '<span class="' . esc_attr( $class ) . '">' . esc_html( $scope->value ) . '</span> ';
 		}
 

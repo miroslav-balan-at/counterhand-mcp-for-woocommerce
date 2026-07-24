@@ -61,11 +61,13 @@ final readonly class UpdateOrderStatusTool extends AbstractWcTool {
 		);
 
 		if ( ! in_array( $status, $valid_statuses, true ) ) {
-			throw new ToolCallException( sprintf(
-				'Unknown order status "%s". Valid statuses for this store: %s.',
-				$status,
-				implode( ', ', $valid_statuses )
-			) );
+			throw new ToolCallException(
+				sprintf(
+					'Unknown order status "%s". Valid statuses for this store: %s.',
+					$status,
+					implode( ', ', $valid_statuses )
+				)
+			);
 		}
 
 		$order_id = (int) $arguments['id'];
@@ -73,10 +75,14 @@ final readonly class UpdateOrderStatusTool extends AbstractWcTool {
 		$updated = $this->gateway->dispatch( 'PUT', '/orders/' . $order_id, [ 'status' => $status ] );
 
 		if ( isset( $arguments['note'] ) && '' !== trim( (string) $arguments['note'] ) ) {
-			$this->gateway->dispatch( 'POST', '/orders/' . $order_id . '/notes', [
-				'note'          => (string) $arguments['note'],
-				'customer_note' => false,
-			] );
+			$this->gateway->dispatch(
+				'POST',
+				'/orders/' . $order_id . '/notes',
+				[
+					'note'          => (string) $arguments['note'],
+					'customer_note' => false,
+				]
+			);
 		}
 
 		return [

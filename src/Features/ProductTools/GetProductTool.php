@@ -73,7 +73,10 @@ final readonly class GetProductTool extends AbstractWcTool {
 		$shaped['description']       = $this->shaper->strip_html( $item['description'] ?? '' );
 		$shaped['short_description'] = $this->shaper->strip_html( $item['short_description'] ?? '' );
 		$shaped['images']            = array_map(
-			static fn ( array $image ): array => [ 'id' => $image['id'] ?? null, 'src' => $image['src'] ?? '' ],
+			static fn ( array $image ): array => [
+				'id'  => $image['id'] ?? null,
+				'src' => $image['src'] ?? '',
+			],
 			is_array( $shaped['images'] ?? null ) ? $shaped['images'] : []
 		);
 

@@ -21,7 +21,19 @@ $agmcp_tabs = [
 
 	<nav class="nav-tab-wrapper">
 		<?php foreach ( $agmcp_tabs as $agmcp_tab_key => $agmcp_tab_label ) : ?>
-			<a href="<?php echo esc_url( add_query_arg( [ 'page' => \AgentGateMcp\Features\Settings\SettingsFeature::PAGE_SLUG, 'tab' => $agmcp_tab_key ], admin_url( 'admin.php' ) ) ); ?>"
+			<a href="
+			<?php
+			echo esc_url(
+				add_query_arg(
+					[
+						'page' => \AgentGateMcp\Features\Settings\SettingsFeature::PAGE_SLUG,
+						'tab'  => $agmcp_tab_key,
+					],
+					admin_url( 'admin.php' )
+				)
+			);
+			?>
+						"
 				class="nav-tab <?php echo $active_tab === $agmcp_tab_key ? 'nav-tab-active' : ''; ?>">
 				<?php echo esc_html( $agmcp_tab_label ); ?>
 			</a>

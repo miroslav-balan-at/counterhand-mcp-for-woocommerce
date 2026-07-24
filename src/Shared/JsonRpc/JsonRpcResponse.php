@@ -14,12 +14,14 @@ final readonly class JsonRpcResponse {
 	private function __construct( public array $payload ) {}
 
 	public static function result( string|int|null $id, array $result ): self {
-		return new self( [
-			'jsonrpc' => '2.0',
-			'id'      => $id,
-			// An empty result must encode as {} per JSON-RPC, not [].
-			'result'  => [] === $result ? new \stdClass() : $result,
-		] );
+		return new self(
+			[
+				'jsonrpc' => '2.0',
+				'id'      => $id,
+				// An empty result must encode as {} per JSON-RPC, not [].
+				'result'  => [] === $result ? new \stdClass() : $result,
+			]
+		);
 	}
 
 	public static function error( string|int|null $id, JsonRpcErrorCode $code, string $message, ?array $data = null ): self {
@@ -32,11 +34,13 @@ final readonly class JsonRpcResponse {
 			$error['data'] = $data;
 		}
 
-		return new self( [
-			'jsonrpc' => '2.0',
-			'id'      => $id,
-			'error'   => $error,
-		] );
+		return new self(
+			[
+				'jsonrpc' => '2.0',
+				'id'      => $id,
+				'error'   => $error,
+			]
+		);
 	}
 
 	public function to_json(): string {

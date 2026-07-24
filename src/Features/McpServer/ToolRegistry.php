@@ -30,10 +30,12 @@ final class ToolRegistry {
 
 	/** @return list<ToolInterface> */
 	public function visible_for( AuthenticatedAgent $agent ): array {
-		return array_values( array_filter(
-			$this->tools,
-			fn ( ToolInterface $tool ): bool => $this->is_group_enabled( $tool ) && $agent->scopes()->contains( $tool->required_scope() )
-		) );
+		return array_values(
+			array_filter(
+				$this->tools,
+				fn ( ToolInterface $tool ): bool => $this->is_group_enabled( $tool ) && $agent->scopes()->contains( $tool->required_scope() )
+			)
+		);
 	}
 
 	public function resolve_for( AuthenticatedAgent $agent, string $tool_name ): ?ToolInterface {

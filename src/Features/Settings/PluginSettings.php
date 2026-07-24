@@ -25,6 +25,8 @@ final class PluginSettings {
 		'customers_read'        => false,
 		'reports_read'          => true,
 		'rate_limit_per_minute' => 60,
+		'action_log_enabled'    => false,
+		'log_retention_days'    => 30,
 	];
 
 	private ?array $cached = null;
@@ -35,6 +37,14 @@ final class PluginSettings {
 
 	public function rate_limit_per_minute(): int {
 		return max( 1, (int) $this->get( 'rate_limit_per_minute' ) );
+	}
+
+	public function is_action_log_enabled(): bool {
+		return (bool) $this->get( 'action_log_enabled' );
+	}
+
+	public function log_retention_days(): int {
+		return max( 1, (int) $this->get( 'log_retention_days' ) );
 	}
 
 	public function is_group_read_enabled( ToolGroup $group ): bool {

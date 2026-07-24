@@ -106,6 +106,17 @@ final readonly class McpServer {
 
 			$data = $tool->execute( $validated );
 
+			/**
+			 * Fires after every tool call (success or failure) — the ActionLog
+			 * slice subscribes here.
+			 *
+			 * @param string $tool_name  Tool that ran.
+			 * @param string $token_label Label of the calling token.
+			 * @param bool   $is_error   Whether the call failed.
+			 * @param array  $arguments  Validated tool arguments.
+			 */
+			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, false, $validated );
+
 			return JsonRpcResponse::result( $request->id, [
 				'content'           => [
 					[
@@ -117,6 +128,9 @@ final readonly class McpServer {
 				'isError'           => false,
 			] );
 		} catch ( ScopeDeniedException | ToolCallException $exception ) {
+			/** This hook is documented above. */
+			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, true, $validated );
+
 			// Tool failures are results, not protocol errors — the agent can read
 			// the message and self-correct (MCP spec).
 			return JsonRpcResponse::result( $request->id, [

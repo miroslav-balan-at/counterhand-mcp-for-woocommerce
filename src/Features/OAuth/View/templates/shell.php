@@ -2,10 +2,12 @@
 /**
  * Shell for every OAuth flow page.
  *
- * @var string $page_title     Document + heading title.
- * @var string $store_name     Site name.
- * @var string $body_template  Absolute path to the state partial.
- * @var array  $context        Variables for the state partial.
+ * @var string      $page_title     Document + heading title.
+ * @var string      $store_name     Site name.
+ * @var string|null $store_logo     Store mark URL, or null for a lettermark.
+ * @var string      $store_host     Host shown next to the padlock.
+ * @var string      $body_template  Absolute path to the state partial.
+ * @var array       $context        Variables for the state partial.
  */
 
 declare( strict_types=1 );

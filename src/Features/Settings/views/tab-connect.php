@@ -1,6 +1,9 @@
 <?php
 /**
- * Connect tab: endpoint URL, verify button, paste-ready client configs.
+ * Connect tab: guided setup per external MCP client.
+ *
+ * This is the OUTBOUND system — AI apps connecting to this store over OAuth.
+ * The Chat tab is separate: it runs a model server-side with your own API key.
  *
  * @var string $endpoint_url
  * @var string $fallback_url
@@ -9,54 +12,23 @@
 
 declare( strict_types=1 );
 
+use AgentGateMcp\Features\Settings\McpClient;
+
 defined( 'ABSPATH' ) || exit;
 
-// No token in any snippet: the client discovers OAuth, opens a browser, and
-// the admin approves scopes on the consent screen.
-$agmcp_claude_code = sprintf(
-	'claude mcp add --transport http woocommerce %s',
-	$endpoint_url
-);
-
-$agmcp_claude_desktop = wp_json_encode(
-	[
-		'mcpServers' => [
-			'woocommerce' => [
-				'type' => 'http',
-				'url'  => $endpoint_url,
-			],
-		],
-	],
-	JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-);
-
-$agmcp_curl = sprintf(
-	"curl -i -X POST %s \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}'\n# → 401 with a WWW-Authenticate header pointing at the OAuth discovery document",
-	$endpoint_url
-);
+$agmcp_clients = McpClient::all( $endpoint_url );
 ?>
 <div class="agmcp-connect">
-	<h2><?php esc_html_e( 'Your MCP endpoint', 'agentgate-mcp-for-woocommerce' ); ?></h2>
+	<p class="description agmcp-connect__intro">
+		<?php esc_html_e( 'Connect an outside AI app to this store. Pick your app below and follow the steps — there is no token to copy: the app opens a consent screen in your browser where you approve exactly what it may do.', 'agentgate-mcp-for-woocommerce' ); ?>
+	</p>
+
 	<div class="agmcp-endpoint-row">
 		<code class="agmcp-endpoint"><?php echo esc_html( $endpoint_url ); ?></code>
 		<button type="button" class="button agmcp-copy" data-copy="<?php echo esc_attr( $endpoint_url ); ?>"
 			data-copied-label="<?php esc_attr_e( 'Copied!', 'agentgate-mcp-for-woocommerce' ); ?>">
-			<?php esc_html_e( 'Copy', 'agentgate-mcp-for-woocommerce' ); ?>
+			<?php esc_html_e( 'Copy endpoint', 'agentgate-mcp-for-woocommerce' ); ?>
 		</button>
-	</div>
-	<p class="description">
-		<?php
-		printf(
-			/* translators: %s: fallback REST URL */
-			esc_html__( 'If your host breaks pretty permalinks, the same endpoint is available at %s.', 'agentgate-mcp-for-woocommerce' ),
-			'<code>' . esc_html( $fallback_url ) . '</code>'
-		);
-		?>
-	</p>
-
-	<h2><?php esc_html_e( 'Verify endpoint', 'agentgate-mcp-for-woocommerce' ); ?></h2>
-	<p class="description"><?php esc_html_e( 'Confirms the endpoint is reachable and advertising OAuth discovery (a 401 challenge pointing at the authorization server).', 'agentgate-mcp-for-woocommerce' ); ?></p>
-	<div class="agmcp-verify-row">
 		<button type="button" class="button button-primary" id="agmcp-verify"
 			data-nonce="<?php echo esc_attr( $verify_nonce ); ?>"
 			data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
@@ -65,28 +37,52 @@ $agmcp_curl = sprintf(
 		<span id="agmcp-verify-result" role="status"></span>
 	</div>
 
-	<h2><?php esc_html_e( 'Claude Code', 'agentgate-mcp-for-woocommerce' ); ?></h2>
-	<div class="agmcp-snippet">
-		<pre><code><?php echo esc_html( $agmcp_claude_code ); ?></code></pre>
-		<button type="button" class="button agmcp-copy" data-copy="<?php echo esc_attr( $agmcp_claude_code ); ?>"
-			data-copied-label="<?php esc_attr_e( 'Copied!', 'agentgate-mcp-for-woocommerce' ); ?>"><?php esc_html_e( 'Copy', 'agentgate-mcp-for-woocommerce' ); ?></button>
-	</div>
+	<div class="agmcp-clients">
+		<?php foreach ( $agmcp_clients as $agmcp_index => $agmcp_client ) : ?>
+			<details class="agmcp-client" <?php echo 0 === $agmcp_index ? 'open' : ''; ?>>
+				<summary class="agmcp-client__summary">
+					<span class="agmcp-client__name"><?php echo esc_html( $agmcp_client->name ); ?></span>
+					<span class="agmcp-client__blurb"><?php echo esc_html( $agmcp_client->blurb ); ?></span>
+				</summary>
 
-	<h2><?php esc_html_e( 'Claude Desktop / Cursor (mcp.json)', 'agentgate-mcp-for-woocommerce' ); ?></h2>
-	<div class="agmcp-snippet">
-		<pre><code><?php echo esc_html( (string) $agmcp_claude_desktop ); ?></code></pre>
-		<button type="button" class="button agmcp-copy" data-copy="<?php echo esc_attr( (string) $agmcp_claude_desktop ); ?>"
-			data-copied-label="<?php esc_attr_e( 'Copied!', 'agentgate-mcp-for-woocommerce' ); ?>"><?php esc_html_e( 'Copy', 'agentgate-mcp-for-woocommerce' ); ?></button>
-	</div>
+				<div class="agmcp-client__body">
+					<ol class="agmcp-client__steps">
+						<?php foreach ( $agmcp_client->steps as $agmcp_step ) : ?>
+							<li><?php echo esc_html( $agmcp_step ); ?></li>
+						<?php endforeach; ?>
+					</ol>
 
-	<h2><?php esc_html_e( 'Test with curl', 'agentgate-mcp-for-woocommerce' ); ?></h2>
-	<div class="agmcp-snippet">
-		<pre><code><?php echo esc_html( $agmcp_curl ); ?></code></pre>
-		<button type="button" class="button agmcp-copy" data-copy="<?php echo esc_attr( $agmcp_curl ); ?>"
-			data-copied-label="<?php esc_attr_e( 'Copied!', 'agentgate-mcp-for-woocommerce' ); ?>"><?php esc_html_e( 'Copy', 'agentgate-mcp-for-woocommerce' ); ?></button>
+					<?php if ( '' !== $agmcp_client->snippet ) : ?>
+						<div class="agmcp-snippet">
+							<span class="agmcp-snippet__label"><?php echo esc_html( $agmcp_client->snippet_label ); ?></span>
+							<pre><code><?php echo esc_html( $agmcp_client->snippet ); ?></code></pre>
+							<button type="button" class="button agmcp-copy" data-copy="<?php echo esc_attr( $agmcp_client->snippet ); ?>"
+								data-copied-label="<?php esc_attr_e( 'Copied!', 'agentgate-mcp-for-woocommerce' ); ?>">
+								<?php esc_html_e( 'Copy', 'agentgate-mcp-for-woocommerce' ); ?>
+							</button>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( '' !== $agmcp_client->docs_url ) : ?>
+						<p class="agmcp-client__docs">
+							<a href="<?php echo esc_url( $agmcp_client->docs_url ); ?>" target="_blank" rel="noreferrer noopener">
+								<?php esc_html_e( 'Official setup documentation', 'agentgate-mcp-for-woocommerce' ); ?> ↗
+							</a>
+						</p>
+					<?php endif; ?>
+				</div>
+			</details>
+		<?php endforeach; ?>
 	</div>
 
 	<p class="description">
-		<?php esc_html_e( 'No token to copy: when the assistant connects, your browser opens a consent screen where you approve which scopes it may use. Approved assistants appear on the Connections tab, where you can revoke them.', 'agentgate-mcp-for-woocommerce' ); ?>
+		<?php
+		printf(
+			/* translators: %s: fallback REST URL */
+			esc_html__( 'If your host breaks pretty permalinks, the same endpoint also answers at %s.', 'agentgate-mcp-for-woocommerce' ),
+			'<code>' . esc_html( $fallback_url ) . '</code>'
+		);
+		?>
+		<?php esc_html_e( 'Approved apps appear on the Connections tab, where you can revoke any of them.', 'agentgate-mcp-for-woocommerce' ); ?>
 	</p>
 </div>

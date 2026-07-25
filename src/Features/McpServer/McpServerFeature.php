@@ -23,9 +23,9 @@ final readonly class McpServerFeature implements FeatureInterface {
 	public function __construct(
 		private PluginSettings $settings,
 		TokenAuthenticator $authenticator,
-		ToolRegistry $tool_registry,
+		McpServer $server,
 	) {
-		$this->endpoint = new McpEndpoint( $authenticator, new McpServer( $tool_registry ) );
+		$this->endpoint = new McpEndpoint( $authenticator, $server );
 	}
 
 	public function register(): void {

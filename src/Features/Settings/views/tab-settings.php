@@ -4,6 +4,8 @@
  *
  * @var \AgentGateMcp\Features\Settings\PluginSettings $settings
  * @var list<\AgentGateMcp\Shared\Tool\ToolGroup>       $tool_groups
+ * @var \AgentGateMcp\Features\Playground\ChatSettings  $chat_settings
+ * @var array<string, \AgentGateMcp\Features\Playground\Provider\ProviderInterface> $chat_providers
  */
 
 declare( strict_types=1 );
@@ -83,4 +85,92 @@ $agmcp_option = PluginSettings::OPTION;
 	</p>
 
 	<?php submit_button(); ?>
+</form>
+
+<hr>
+
+<h2><?php esc_html_e( 'Chat model', 'agentgate-mcp-for-woocommerce' ); ?></h2>
+<p class="description">
+	<?php esc_html_e( 'Powers the Chat tab only. An AI model is what decides which store tools to use, so the chat needs one — this is separate from the apps you connect on the “Connect apps” tab, which bring their own AI.', 'agentgate-mcp-for-woocommerce' ); ?>
+</p>
+
+<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="agmcp-chat-settings">
+	<input type="hidden" name="action" value="agmcp_save_chat">
+	<?php wp_nonce_field( 'agmcp_save_chat' ); ?>
+
+	<table class="form-table" role="presentation">
+		<tr>
+			<th scope="row"><label for="agmcp-chat-provider"><?php esc_html_e( 'Provider', 'agentgate-mcp-for-woocommerce' ); ?></label></th>
+			<td>
+				<select id="agmcp-chat-provider" name="agmcp_chat_provider">
+					<?php foreach ( $chat_providers as $agmcp_provider ) : ?>
+						<option value="<?php echo esc_attr( $agmcp_provider->id() ); ?>"
+							<?php selected( $chat_settings->provider_id(), $agmcp_provider->id() ); ?>>
+							<?php echo esc_html( $agmcp_provider->label() ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="agmcp-chat-model"><?php esc_html_e( 'Model', 'agentgate-mcp-for-woocommerce' ); ?></label></th>
+			<td>
+				<input type="text" id="agmcp-chat-model" name="agmcp_chat_model" class="regular-text"
+					list="agmcp-chat-model-list"
+					value="<?php echo esc_attr( $chat_settings->model() ); ?>"
+					placeholder="claude-opus-5">
+				<datalist id="agmcp-chat-model-list">
+					<?php
+					foreach ( $chat_providers as $agmcp_provider ) {
+						foreach ( $agmcp_provider->default_models() as $agmcp_model_id => $agmcp_model_label ) {
+							printf(
+								'<option value="%s">%s</option>',
+								esc_attr( $agmcp_model_id ),
+								esc_attr( $agmcp_model_label )
+							);
+						}
+					}
+					?>
+				</datalist>
+				<p class="description"><?php esc_html_e( 'Pick from the list or type any model your provider offers.', 'agentgate-mcp-for-woocommerce' ); ?></p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="agmcp-chat-key"><?php esc_html_e( 'API key', 'agentgate-mcp-for-woocommerce' ); ?></label></th>
+			<td>
+				<?php
+				$agmcp_key_placeholder = '' !== $chat_settings->masked_key()
+					? sprintf(
+						/* translators: %s: masked API key */
+						__( 'Saved (%s) — leave blank to keep', 'agentgate-mcp-for-woocommerce' ),
+						$chat_settings->masked_key()
+					)
+					: __( 'Paste your provider API key', 'agentgate-mcp-for-woocommerce' );
+				?>
+				<input type="password" id="agmcp-chat-key" name="agmcp_chat_key" class="regular-text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( $agmcp_key_placeholder ); ?>">
+				<p class="description">
+					<?php esc_html_e( 'Stored in your database and sent only to the provider you chose. Local models such as Ollama need no key.', 'agentgate-mcp-for-woocommerce' ); ?>
+					<?php if ( '' !== $chat_settings->masked_key() ) : ?>
+						<label class="agmcp-forget-key">
+							<input type="checkbox" name="agmcp_chat_forget" value="1">
+							<?php esc_html_e( 'Remove the saved key', 'agentgate-mcp-for-woocommerce' ); ?>
+						</label>
+					<?php endif; ?>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="agmcp-chat-base-url"><?php esc_html_e( 'Base URL', 'agentgate-mcp-for-woocommerce' ); ?></label></th>
+			<td>
+				<input type="url" id="agmcp-chat-base-url" name="agmcp_chat_base_url" class="regular-text"
+					value="<?php echo esc_attr( $chat_settings->base_url() ); ?>"
+					placeholder="http://localhost:11434/v1">
+				<p class="description"><?php esc_html_e( 'Only for OpenAI-compatible endpoints (Ollama, OpenRouter, Azure, LM Studio). Leave blank otherwise.', 'agentgate-mcp-for-woocommerce' ); ?></p>
+			</td>
+		</tr>
+	</table>
+
+	<?php submit_button( __( 'Save chat model', 'agentgate-mcp-for-woocommerce' ) ); ?>
 </form>

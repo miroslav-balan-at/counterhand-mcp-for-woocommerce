@@ -6,10 +6,15 @@ namespace AgentGateMcp;
 
 use AgentGateMcp\Features\ActionLog\ActionLogFeature;
 use AgentGateMcp\Features\CustomerTools\CustomerToolsFeature;
+use AgentGateMcp\Features\McpServer\McpServer;
 use AgentGateMcp\Features\McpServer\McpServerFeature;
 use AgentGateMcp\Features\McpServer\ToolRegistry;
 use AgentGateMcp\Features\OAuth\OAuthFeature;
 use AgentGateMcp\Features\OrderTools\OrderToolsFeature;
+use AgentGateMcp\Features\Playground\AgentLoop;
+use AgentGateMcp\Features\Playground\ChatSettings;
+use AgentGateMcp\Features\Playground\PlaygroundFeature;
+use AgentGateMcp\Features\Playground\Provider\ProviderRegistry;
 use AgentGateMcp\Features\ProductTools\ProductToolsFeature;
 use AgentGateMcp\Features\ReportTools\ReportToolsFeature;
 use AgentGateMcp\Features\Settings\PluginSettings;
@@ -71,14 +76,25 @@ final class Plugin {
 
 		$this->tool_registry = new ToolRegistry( $settings );
 
+		// One protocol instance shared by the HTTP endpoint and the admin
+		// playground, so both dispatch through exactly the same path.
+		$mcp_server = new McpServer( $this->tool_registry );
+
 		$tokens     = new TokensFeature( $repository );
 		$action_log = new ActionLogFeature( $settings );
+		$playground = new PlaygroundFeature(
+			$this->tool_registry,
+			new AgentLoop( $this->tool_registry, $mcp_server ),
+			new ChatSettings(),
+			new ProviderRegistry()
+		);
 
 		$this->features = [
 			$tokens,
 			$action_log,
-			new SettingsFeature( $settings, $tokens->admin(), $action_log ),
-			new McpServerFeature( $settings, $authenticator, $this->tool_registry ),
+			$playground,
+			new SettingsFeature( $settings, $tokens->admin(), $action_log, $playground ),
+			new McpServerFeature( $settings, $authenticator, $mcp_server ),
 			new OAuthFeature( $settings, $repository ),
 			new ProductToolsFeature( $this->tool_registry, $gateway, $shaper ),
 			new OrderToolsFeature( $this->tool_registry, $gateway, $shaper ),

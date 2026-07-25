@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\Settings;
 
 use AgentGateMcp\Features\ActionLog\ActionLogFeature;
+use AgentGateMcp\Features\Playground\PlaygroundFeature;
 use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
 use AgentGateMcp\Shared\FeatureInterface;
 use AgentGateMcp\Shared\Tool\ToolGroup;
@@ -23,6 +24,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 		private PluginSettings $settings,
 		private ConnectionsAdmin $connections_admin,
 		private ActionLogFeature $action_log,
+		private PlaygroundFeature $playground,
 	) {}
 
 	public function register(): void {
@@ -30,6 +32,45 @@ final readonly class SettingsFeature implements FeatureInterface {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'wp_ajax_agmcp_verify_connection', [ $this, 'handle_verify_connection' ] );
+		add_action( 'admin_post_agmcp_save_chat', [ $this, 'handle_save_chat' ] );
+	}
+
+	/** Saves the Chat tab's provider/model/key — separate from the tool settings. */
+	public function handle_save_chat(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'agentgate-mcp-for-woocommerce' ) );
+		}
+
+		check_admin_referer( 'agmcp_save_chat' );
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above.
+		$settings = $this->playground->settings();
+
+		if ( isset( $_POST['agmcp_chat_forget'] ) ) {
+			$settings->forget_key();
+		}
+
+		$submitted_key = isset( $_POST['agmcp_chat_key'] ) ? sanitize_text_field( wp_unslash( $_POST['agmcp_chat_key'] ) ) : '';
+
+		$settings->save(
+			sanitize_key( wp_unslash( $_POST['agmcp_chat_provider'] ?? '' ) ),
+			sanitize_text_field( wp_unslash( $_POST['agmcp_chat_model'] ?? '' ) ),
+			esc_url_raw( wp_unslash( $_POST['agmcp_chat_base_url'] ?? '' ) ),
+			$submitted_key
+		);
+		// phpcs:enable
+
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'page'             => self::PAGE_SLUG,
+					'tab'              => 'settings',
+					'agmcp_chat_saved' => '1',
+				],
+				admin_url( 'admin.php' )
+			)
+		);
+		exit;
 	}
 
 	public function add_menu(): void {
@@ -70,28 +111,29 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	public function render_page(): void {
-		$active_tab = sanitize_key( $_GET['tab'] ?? 'settings' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
-		if ( ! in_array( $active_tab, [ 'settings', 'connections', 'connect', 'log' ], true ) ) {
-			$active_tab = 'settings';
+		// The playground is the plugin's centrepiece, so it is the landing tab.
+		$active_tab = sanitize_key( $_GET['tab'] ?? 'playground' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
+		if ( ! in_array( $active_tab, [ 'playground', 'connect', 'connections', 'log', 'settings' ], true ) ) {
+			$active_tab = 'playground';
 		}
 
-		$settings     = $this->settings;
-		$tool_groups  = ToolGroup::cases();
-		$endpoint_url = home_url( '/mcp' );
-		$fallback_url = rest_url( 'agentgate/v1/mcp' );
-		$verify_nonce = wp_create_nonce( 'agmcp_verify_connection' );
+		$settings       = $this->settings;
+		$tool_groups    = ToolGroup::cases();
+		$endpoint_url   = home_url( '/mcp' );
+		$fallback_url   = rest_url( 'agentgate/v1/mcp' );
+		$verify_nonce   = wp_create_nonce( 'agmcp_verify_connection' );
+		$chat_settings  = $this->playground->settings();
+		$chat_providers = $this->playground->providers()->all();
 
 		include __DIR__ . '/views/page.php';
 
-		if ( 'connections' === $active_tab ) {
-			$this->connections_admin->render_tab();
-		} elseif ( 'connect' === $active_tab ) {
-			include __DIR__ . '/views/tab-connect.php';
-		} elseif ( 'log' === $active_tab ) {
-			$this->action_log->render_tab();
-		} else {
-			include __DIR__ . '/views/tab-settings.php';
-		}
+		match ( $active_tab ) {
+			'connect'     => require __DIR__ . '/views/tab-connect.php',
+			'connections' => $this->connections_admin->render_tab(),
+			'log'         => $this->action_log->render_tab(),
+			'settings'    => require __DIR__ . '/views/tab-settings.php',
+			default       => $this->playground->render_tab(),
+		};
 
 		echo '</div>'; // closes .wrap opened in page.php
 	}
@@ -117,6 +159,45 @@ final readonly class SettingsFeature implements FeatureInterface {
 			[],
 			(string) filemtime( $base_path . '/assets/admin/tokens.js' ),
 			true
+		);
+
+		// The chat bundle only loads on its own tab, which is also the default.
+		$active_tab = sanitize_key( $_GET['tab'] ?? 'playground' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
+		if ( 'playground' !== $active_tab ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'agmcp-chat',
+			$base_url . '/assets/admin/chat.css',
+			[ 'agmcp-admin' ],
+			(string) filemtime( $base_path . '/assets/admin/chat.css' )
+		);
+
+		wp_enqueue_script(
+			'agmcp-chat',
+			$base_url . '/assets/admin/chat.js',
+			[],
+			(string) filemtime( $base_path . '/assets/admin/chat.js' ),
+			true
+		);
+
+		wp_localize_script(
+			'agmcp-chat',
+			'agmcpChat',
+			[
+				'i18n' => [
+					'you'        => __( 'You', 'agentgate-mcp-for-woocommerce' ),
+					'assistant'  => __( 'Assistant', 'agentgate-mcp-for-woocommerce' ),
+					'thinking'   => __( 'Thinking…', 'agentgate-mcp-for-woocommerce' ),
+					'failed'     => __( 'The request failed.', 'agentgate-mcp-for-woocommerce' ),
+					'arguments'  => __( 'Arguments', 'agentgate-mcp-for-woocommerce' ),
+					'result'     => __( 'Result', 'agentgate-mcp-for-woocommerce' ),
+					'toolRan'    => __( 'ran', 'agentgate-mcp-for-woocommerce' ),
+					'toolFailed' => __( 'failed', 'agentgate-mcp-for-woocommerce' ),
+					'tokens'     => __( 'Tokens', 'agentgate-mcp-for-woocommerce' ),
+				],
+			]
 		);
 	}
 

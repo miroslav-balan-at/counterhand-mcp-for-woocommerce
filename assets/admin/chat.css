@@ -1,0 +1,288 @@
+/*
+ * AgentGate MCP — in-admin chat.
+ * WordPress admin palette: blue-50 #2271b1, gray-100 #1d2327, gray-5 #dcdcde.
+ */
+
+.agmcp-chat {
+	max-width: 900px;
+}
+
+.agmcp-chat__setup {
+	margin: 1em 0;
+}
+
+/* Panel ------------------------------------------------------------------ */
+
+.agmcp-chat__panel {
+	margin-top: 1em;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.agmcp-chat__log {
+	height: min(60vh, 560px);
+	overflow-y: auto;
+	padding: 20px;
+	background: #f6f7f7;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+/* Empty state ------------------------------------------------------------ */
+
+.agmcp-chat__empty {
+	margin: auto;
+	text-align: center;
+	max-width: 460px;
+}
+
+.agmcp-chat__empty-title {
+	font-size: 15px;
+	font-weight: 600;
+	color: #50575e;
+	margin: 0 0 14px;
+}
+
+.agmcp-chat__suggestions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.agmcp-chat__suggestion {
+	padding: 10px 14px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 999px;
+	font-size: 13px;
+	color: #2271b1;
+	cursor: pointer;
+	transition: border-color .15s ease, background-color .15s ease;
+}
+
+.agmcp-chat__suggestion:hover {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+/* Messages --------------------------------------------------------------- */
+
+.agmcp-msg {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	max-width: 82%;
+}
+
+.agmcp-msg--user {
+	align-self: flex-end;
+	align-items: flex-end;
+}
+
+.agmcp-msg__role {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: #787c82;
+}
+
+.agmcp-msg__body {
+	padding: 11px 14px;
+	border-radius: 12px;
+	font-size: 14px;
+	line-height: 1.55;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.agmcp-msg--user .agmcp-msg__body {
+	background: #2271b1;
+	color: #fff;
+	border-bottom-right-radius: 3px;
+}
+
+.agmcp-msg--assistant .agmcp-msg__body {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	color: #1d2327;
+	border-bottom-left-radius: 3px;
+}
+
+.agmcp-msg--error .agmcp-msg__body {
+	background: #fcf0f1;
+	border-color: #d63638;
+	color: #8a1f21;
+}
+
+/* Typing indicator ------------------------------------------------------- */
+
+.agmcp-typing {
+	display: inline-flex;
+	gap: 4px;
+	padding: 14px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 12px;
+	border-bottom-left-radius: 3px;
+	width: fit-content;
+}
+
+.agmcp-typing span {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #a7aaad;
+	animation: agmcp-bounce 1.2s infinite ease-in-out;
+}
+
+.agmcp-typing span:nth-child(2) { animation-delay: .15s; }
+.agmcp-typing span:nth-child(3) { animation-delay: .3s; }
+
+@keyframes agmcp-bounce {
+	0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+	30%           { transform: translateY(-4px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.agmcp-typing span { animation: none; }
+}
+
+/* Tool cards ------------------------------------------------------------- */
+
+.agmcp-tool {
+	align-self: flex-start;
+	max-width: 82%;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 3px solid #2271b1;
+	border-radius: 4px;
+	font-size: 13px;
+}
+
+.agmcp-tool--error {
+	border-left-color: #d63638;
+}
+
+.agmcp-tool__summary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 9px 12px;
+	cursor: pointer;
+	list-style: none;
+}
+
+.agmcp-tool__summary::-webkit-details-marker {
+	display: none;
+}
+
+.agmcp-tool__icon {
+	color: #00a32a;
+	font-weight: 700;
+}
+
+.agmcp-tool--error .agmcp-tool__icon {
+	color: #d63638;
+}
+
+.agmcp-tool__name {
+	font-size: 12px;
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+.agmcp-tool__hint {
+	color: #787c82;
+	font-size: 12px;
+}
+
+.agmcp-tool__body {
+	padding: 0 12px 12px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.agmcp-tool__label {
+	margin: 10px 0 4px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: #787c82;
+}
+
+.agmcp-tool__code {
+	margin: 0;
+	padding: 10px 12px;
+	max-height: 260px;
+	overflow: auto;
+	background: #1d2327;
+	color: #f0f0f1;
+	border-radius: 4px;
+	font-size: 12px;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+/* Composer --------------------------------------------------------------- */
+
+.agmcp-chat__composer {
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+	padding: 12px;
+	border-top: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.agmcp-chat__input {
+	flex: 1 1 auto;
+	resize: none;
+	min-height: 38px;
+	max-height: 200px;
+	padding: 8px 12px;
+	font-size: 14px;
+	line-height: 1.5;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+}
+
+.agmcp-chat__input:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.agmcp-chat__send {
+	flex: 0 0 auto;
+	height: 38px;
+}
+
+.agmcp-chat__foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	padding: 8px 14px;
+	border-top: 1px solid #f0f0f1;
+	background: #f6f7f7;
+	font-size: 12px;
+	color: #787c82;
+}
+
+.agmcp-chat__note {
+	margin-top: 10px;
+}
+
+@media screen and (max-width: 782px) {
+	.agmcp-msg,
+	.agmcp-tool {
+		max-width: 100%;
+	}
+}

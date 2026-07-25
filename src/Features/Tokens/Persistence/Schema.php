@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Schema {
 
-	private const VERSION        = '1';
+	private const VERSION        = '2';
 	private const VERSION_OPTION = 'agmcp_schema_version';
 
 	public static function table_name(): string {
@@ -37,6 +37,8 @@ final class Schema {
 			scopes TEXT NOT NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'active',
 			owner_user_id BIGINT UNSIGNED NOT NULL,
+			client_id VARCHAR(255) DEFAULT NULL,
+			audience VARCHAR(255) DEFAULT NULL,
 			created_at DATETIME NOT NULL,
 			last_used_at DATETIME DEFAULT NULL,
 			expires_at DATETIME DEFAULT NULL,

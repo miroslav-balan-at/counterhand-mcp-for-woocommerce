@@ -10,10 +10,10 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 $agmcp_tabs = [
-	'settings' => __( 'Settings', 'agentgate-mcp-for-woocommerce' ),
-	'tokens'   => __( 'API Tokens', 'agentgate-mcp-for-woocommerce' ),
-	'connect'  => __( 'Connect', 'agentgate-mcp-for-woocommerce' ),
-	'log'      => __( 'Action Log', 'agentgate-mcp-for-woocommerce' ),
+	'settings'    => __( 'Settings', 'agentgate-mcp-for-woocommerce' ),
+	'connect'     => __( 'Connect', 'agentgate-mcp-for-woocommerce' ),
+	'connections' => __( 'Connections', 'agentgate-mcp-for-woocommerce' ),
+	'log'         => __( 'Action Log', 'agentgate-mcp-for-woocommerce' ),
 ];
 ?>
 <div class="wrap agmcp-wrap">

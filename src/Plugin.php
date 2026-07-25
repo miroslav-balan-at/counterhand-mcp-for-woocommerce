@@ -8,6 +8,7 @@ use AgentGateMcp\Features\ActionLog\ActionLogFeature;
 use AgentGateMcp\Features\CustomerTools\CustomerToolsFeature;
 use AgentGateMcp\Features\McpServer\McpServerFeature;
 use AgentGateMcp\Features\McpServer\ToolRegistry;
+use AgentGateMcp\Features\OAuth\OAuthFeature;
 use AgentGateMcp\Features\OrderTools\OrderToolsFeature;
 use AgentGateMcp\Features\ProductTools\ProductToolsFeature;
 use AgentGateMcp\Features\ReportTools\ReportToolsFeature;
@@ -48,6 +49,7 @@ final class Plugin {
 		Schema::install();
 		\AgentGateMcp\Features\ActionLog\Persistence\LogSchema::install();
 		McpServerFeature::register_rewrite();
+		OAuthFeature::register_rewrites();
 		flush_rewrite_rules();
 	}
 
@@ -77,6 +79,7 @@ final class Plugin {
 			$action_log,
 			new SettingsFeature( $settings, $tokens->admin(), $action_log ),
 			new McpServerFeature( $settings, $authenticator, $this->tool_registry ),
+			new OAuthFeature( $settings, $repository ),
 			new ProductToolsFeature( $this->tool_registry, $gateway, $shaper ),
 			new OrderToolsFeature( $this->tool_registry, $gateway, $shaper ),
 			new CustomerToolsFeature( $this->tool_registry, $gateway, $shaper ),

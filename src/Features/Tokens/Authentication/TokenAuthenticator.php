@@ -6,6 +6,7 @@ namespace AgentGateMcp\Features\Tokens\Authentication;
 
 use AgentGateMcp\Features\Tokens\Domain\PlainToken;
 use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
+use AgentGateMcp\Shared\CanonicalUri;
 use AgentGateMcp\Shared\Exception\AuthenticationFailedException;
 use AgentGateMcp\Shared\Exception\RateLimitExceededException;
 
@@ -53,6 +54,13 @@ final readonly class TokenAuthenticator {
 		}
 
 		if ( ! hash_equals( $stored->secret_hash, $secret->hash() ) ) {
+			throw new AuthenticationFailedException();
+		}
+
+		// RFC 8707 audience binding (spec MUST): an OAuth-minted token carries the
+		// resource it was issued for; reject it if presented to a different one.
+		// Legacy/manual tokens (audience null) are not audience-bound.
+		if ( null !== $stored->token->audience && ! CanonicalUri::matches( $stored->token->audience, CanonicalUri::mcp() ) ) {
 			throw new AuthenticationFailedException();
 		}
 

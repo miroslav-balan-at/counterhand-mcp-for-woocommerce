@@ -5,7 +5,7 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\Settings;
 
 use AgentGateMcp\Features\ActionLog\ActionLogFeature;
-use AgentGateMcp\Features\Tokens\Admin\TokensAdmin;
+use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
 use AgentGateMcp\Shared\FeatureInterface;
 use AgentGateMcp\Shared\Tool\ToolGroup;
 
@@ -21,7 +21,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	public function __construct(
 		private PluginSettings $settings,
-		private TokensAdmin $tokens_admin,
+		private ConnectionsAdmin $connections_admin,
 		private ActionLogFeature $action_log,
 	) {}
 
@@ -71,7 +71,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	public function render_page(): void {
 		$active_tab = sanitize_key( $_GET['tab'] ?? 'settings' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
-		if ( ! in_array( $active_tab, [ 'settings', 'tokens', 'connect', 'log' ], true ) ) {
+		if ( ! in_array( $active_tab, [ 'settings', 'connections', 'connect', 'log' ], true ) ) {
 			$active_tab = 'settings';
 		}
 
@@ -83,8 +83,8 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 		include __DIR__ . '/views/page.php';
 
-		if ( 'tokens' === $active_tab ) {
-			$this->tokens_admin->render_tab();
+		if ( 'connections' === $active_tab ) {
+			$this->connections_admin->render_tab();
 		} elseif ( 'connect' === $active_tab ) {
 			include __DIR__ . '/views/tab-connect.php';
 		} elseif ( 'log' === $active_tab ) {
@@ -121,8 +121,8 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	/**
-	 * Connection verifier: without a token, expects the endpoint to answer 401
-	 * (reachable + auth enforced). With a pasted token, runs initialize + tools/list.
+	 * Endpoint verifier: the endpoint must be reachable and answer an
+	 * unauthenticated request with a 401 carrying the OAuth discovery challenge.
 	 */
 	public function handle_verify_connection(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
@@ -131,30 +131,16 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 		check_ajax_referer( 'agmcp_verify_connection' );
 
-		$token   = sanitize_text_field( wp_unslash( $_POST['token'] ?? '' ) );
-		$headers = [ 'Content-Type' => 'application/json' ];
-
-		if ( '' !== $token ) {
-			$headers['Authorization'] = 'Bearer ' . $token;
-		}
-
 		$response = wp_remote_post(
 			home_url( '/mcp' ),
 			[
-				'headers'   => $headers,
+				'headers'   => [ 'Content-Type' => 'application/json' ],
 				'body'      => (string) wp_json_encode(
 					[
 						'jsonrpc' => '2.0',
 						'id'      => 1,
 						'method'  => 'initialize',
-						'params'  => [
-							'protocolVersion' => '2025-06-18',
-							'capabilities'    => new \stdClass(),
-							'clientInfo'      => [
-								'name'    => 'agmcp-verify',
-								'version' => AGMCP_VERSION,
-							],
-						],
+						'params'  => new \stdClass(),
 					]
 				),
 				'timeout'   => 15,
@@ -174,41 +160,18 @@ final readonly class SettingsFeature implements FeatureInterface {
 			);
 		}
 
-		$status = (int) wp_remote_retrieve_response_code( $response );
+		$status    = (int) wp_remote_retrieve_response_code( $response );
+		$challenge = (string) wp_remote_retrieve_header( $response, 'www-authenticate' );
 
-		if ( '' === $token ) {
-			401 === $status
-				? wp_send_json_success( [ 'message' => __( 'Endpoint is reachable and authentication is enforced (401 without token). Paste a token for a full check.', 'agentgate-mcp-for-woocommerce' ) ] )
-				: wp_send_json_error(
-					[
-						'message' => sprintf(
-						/* translators: %d: HTTP status code */
-							__( 'Unexpected status %d — check permalinks or the master switch.', 'agentgate-mcp-for-woocommerce' ),
-							$status
-						),
-					]
-				);
-		}
-
-		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
-
-		if ( 200 === $status && isset( $body['result']['serverInfo'] ) ) {
-			wp_send_json_success(
-				[
-					'message' => sprintf(
-					/* translators: %s: negotiated MCP protocol version */
-						__( 'Connected! MCP handshake succeeded (protocol %s).', 'agentgate-mcp-for-woocommerce' ),
-						(string) ( $body['result']['protocolVersion'] ?? '?' )
-					),
-				]
-			);
+		if ( 401 === $status && str_contains( $challenge, 'resource_metadata' ) ) {
+			wp_send_json_success( [ 'message' => __( 'Endpoint is live and advertising OAuth discovery. Assistants can now connect.', 'agentgate-mcp-for-woocommerce' ) ] );
 		}
 
 		wp_send_json_error(
 			[
 				'message' => sprintf(
 				/* translators: %d: HTTP status code */
-					__( 'Handshake failed with status %d — is the token valid and active?', 'agentgate-mcp-for-woocommerce' ),
+					__( 'Unexpected response (status %d) — check that the connector is enabled and permalinks are working.', 'agentgate-mcp-for-woocommerce' ),
 					$status
 				),
 			]

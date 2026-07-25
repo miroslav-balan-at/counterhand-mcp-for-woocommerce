@@ -5,7 +5,6 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\Tokens\Admin;
 
 use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\PlainToken;
 use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
 use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
 
@@ -15,13 +14,17 @@ if ( ! class_exists( '\WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-final class TokensListTable extends \WP_List_Table {
+/**
+ * Lists OAuth-granted connections (client, scopes, last-used) with a revoke
+ * action. Read-only otherwise — no secret is ever shown.
+ */
+final class ConnectionsListTable extends \WP_List_Table {
 
 	public function __construct( private readonly TokenRepositoryInterface $repository ) {
 		parent::__construct(
 			[
-				'singular' => 'agmcp_token',
-				'plural'   => 'agmcp_tokens',
+				'singular' => 'agmcp_connection',
+				'plural'   => 'agmcp_connections',
 				'ajax'     => false,
 			]
 		);
@@ -29,11 +32,10 @@ final class TokensListTable extends \WP_List_Table {
 
 	public function get_columns(): array {
 		return [
-			'label'        => __( 'Label', 'agentgate-mcp-for-woocommerce' ),
-			'token'        => __( 'Token', 'agentgate-mcp-for-woocommerce' ),
-			'scopes'       => __( 'Scopes', 'agentgate-mcp-for-woocommerce' ),
+			'client'       => __( 'Client', 'agentgate-mcp-for-woocommerce' ),
+			'scopes'       => __( 'Granted scopes', 'agentgate-mcp-for-woocommerce' ),
 			'status'       => __( 'Status', 'agentgate-mcp-for-woocommerce' ),
-			'created_at'   => __( 'Created', 'agentgate-mcp-for-woocommerce' ),
+			'created_at'   => __( 'Connected', 'agentgate-mcp-for-woocommerce' ),
 			'last_used_at' => __( 'Last used', 'agentgate-mcp-for-woocommerce' ),
 			'actions'      => __( 'Actions', 'agentgate-mcp-for-woocommerce' ),
 		];
@@ -44,11 +46,14 @@ final class TokensListTable extends \WP_List_Table {
 		$this->items           = $this->repository->list_all();
 	}
 
+	public function no_items(): void {
+		esc_html_e( 'No connections yet. Connect an AI assistant using the endpoint on the Connect tab.', 'agentgate-mcp-for-woocommerce' );
+	}
+
 	/** @param ApiToken $item */
 	public function column_default( $item, $column_name ): string {
 		return match ( $column_name ) {
-			'label'        => esc_html( $item->label ),
-			'token'        => '<code>' . esc_html( PlainToken::PREFIX . '_' . substr( $item->token_id->value, 0, 4 ) . '…' . substr( $item->token_id->value, -4 ) ) . '</code>',
+			'client'       => $this->render_client( $item ),
 			'scopes'       => $this->render_scope_badges( $item ),
 			'status'       => $this->render_status( $item ),
 			'created_at'   => esc_html( wp_date( get_option( 'date_format', 'Y-m-d' ), $item->created_at->getTimestamp() ) ),
@@ -58,6 +63,20 @@ final class TokensListTable extends \WP_List_Table {
 			'actions'      => $this->render_actions( $item ),
 			default        => '',
 		};
+	}
+
+	private function render_client( ApiToken $item ): string {
+		$name = $item->label;
+
+		if ( null !== $item->client_id ) {
+			return sprintf(
+				'<strong>%s</strong><br><span class="agmcp-muted">%s</span>',
+				esc_html( $name ),
+				esc_html( $item->client_id )
+			);
+		}
+
+		return esc_html( $name );
 	}
 
 	private function render_scope_badges( ApiToken $item ): string {
@@ -87,10 +106,10 @@ final class TokensListTable extends \WP_List_Table {
 		}
 
 		$form  = '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="agmcp-revoke-form">';
-		$form .= '<input type="hidden" name="action" value="agmcp_revoke_token">';
+		$form .= '<input type="hidden" name="action" value="agmcp_revoke_connection">';
 		$form .= '<input type="hidden" name="agmcp_token_id" value="' . esc_attr( (string) $item->id ) . '">';
-		$form .= wp_nonce_field( 'agmcp_revoke_token', '_wpnonce', true, false );
-		$form .= '<button type="submit" class="button button-small agmcp-revoke-button">' . esc_html__( 'Revoke', 'agentgate-mcp-for-woocommerce' ) . '</button>';
+		$form .= wp_nonce_field( 'agmcp_revoke_connection', '_wpnonce', true, false );
+		$form .= '<button type="submit" class="button button-small">' . esc_html__( 'Revoke', 'agentgate-mcp-for-woocommerce' ) . '</button>';
 		$form .= '</form>';
 
 		return $form;

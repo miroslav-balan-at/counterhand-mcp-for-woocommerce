@@ -40,10 +40,19 @@ final readonly class McpEndpoint {
 		try {
 			$agent = $this->authenticator->authenticate( $authorization_header, $fallback_header );
 		} catch ( AuthenticationFailedException $exception ) {
+			// RFC 9728 §5.1: point clients at the protected-resource metadata so
+			// they can discover the authorization server and start the OAuth flow.
+			$resource_metadata = home_url( '/.well-known/oauth-protected-resource' );
+
 			return [
 				'status'  => 401,
 				'body'    => [ 'error' => $exception->getMessage() ],
-				'headers' => [ 'WWW-Authenticate' => 'Bearer realm="AgentGate MCP", error="invalid_token"' ],
+				'headers' => [
+					'WWW-Authenticate' => sprintf(
+						'Bearer realm="AgentGate MCP", error="invalid_token", resource_metadata="%s"',
+						$resource_metadata
+					),
+				],
 			];
 		} catch ( RateLimitExceededException $exception ) {
 			return [

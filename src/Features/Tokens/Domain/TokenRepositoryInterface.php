@@ -8,7 +8,14 @@ defined( 'ABSPATH' ) || exit;
 
 interface TokenRepositoryInterface {
 
-	public function create( string $label, GrantedScopeSet $scopes, int $owner_user_id, ?\DateTimeImmutable $expires_at ): PlainToken;
+	public function create(
+		string $label,
+		GrantedScopeSet $scopes,
+		int $owner_user_id,
+		?\DateTimeImmutable $expires_at,
+		?string $client_id = null,
+		?string $audience = null
+	): PlainToken;
 
 	public function find_active_by_token_id( TokenId $token_id ): ?StoredToken;
 

@@ -21,6 +21,8 @@ final readonly class ApiToken {
 		public \DateTimeImmutable $created_at,
 		public ?\DateTimeImmutable $last_used_at,
 		public ?\DateTimeImmutable $expires_at,
+		public ?string $client_id = null,
+		public ?string $audience = null,
 	) {}
 
 	public function is_expired( \DateTimeImmutable $now ): bool {

@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace AgentGateMcp\Features\Tokens;
 
-use AgentGateMcp\Features\Tokens\Admin\TokensAdmin;
+use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
 use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
 use AgentGateMcp\Features\Tokens\Persistence\Schema;
 use AgentGateMcp\Shared\FeatureInterface;
@@ -12,14 +12,14 @@ use AgentGateMcp\Shared\FeatureInterface;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Bootstrap for the Tokens slice: schema upgrades + admin token management.
+ * Bootstrap for the Tokens slice: schema upgrades + connection management.
  */
 final readonly class TokensFeature implements FeatureInterface {
 
-	private TokensAdmin $admin;
+	private ConnectionsAdmin $admin;
 
 	public function __construct( private TokenRepositoryInterface $repository ) {
-		$this->admin = new TokensAdmin( $repository );
+		$this->admin = new ConnectionsAdmin( $repository );
 	}
 
 	public function register(): void {
@@ -30,7 +30,7 @@ final readonly class TokensFeature implements FeatureInterface {
 		}
 	}
 
-	public function admin(): TokensAdmin {
+	public function admin(): ConnectionsAdmin {
 		return $this->admin;
 	}
 

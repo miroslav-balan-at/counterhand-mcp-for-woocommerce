@@ -51,8 +51,6 @@
 
 	function verifyConnection( button ) {
 		var result = document.getElementById( 'agmcp-verify-result' );
-		var tokenField = document.getElementById( 'agmcp-verify-token' );
-
 		result.className = '';
 		result.textContent = '…';
 		button.disabled = true;
@@ -60,7 +58,6 @@
 		var body = new URLSearchParams();
 		body.set( 'action', 'agmcp_verify_connection' );
 		body.set( '_ajax_nonce', button.dataset.nonce );
-		body.set( 'token', tokenField ? tokenField.value.trim() : '' );
 
 		fetch( button.dataset.ajaxUrl, {
 			method: 'POST',

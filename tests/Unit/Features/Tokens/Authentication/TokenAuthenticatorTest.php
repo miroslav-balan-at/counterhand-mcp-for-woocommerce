@@ -41,6 +41,28 @@ final class TokenAuthenticatorTest extends TestCase {
 		Functions\when( 'user_can' )->justReturn( true );
 		Functions\when( 'wp_set_current_user' )->justReturn( null );
 		Functions\when( 'apply_filters' )->returnArg( 2 );
+		Functions\when( 'home_url' )->justReturn( 'https://store.example/mcp' );
+		Functions\when( 'untrailingslashit' )->alias( static fn ( string $value ): string => rtrim( $value, '/' ) );
+	}
+
+	public function test_matching_audience_authenticates(): void {
+		$agent = $this->authenticator( $this->stored_token( audience: 'https://store.example/mcp' ) )
+			->authenticate( $this->bearer, null );
+
+		self::assertSame( 846, $agent->token->owner_user_id );
+	}
+
+	public function test_mismatched_audience_is_rejected(): void {
+		$this->expectException( AuthenticationFailedException::class );
+
+		$this->authenticator( $this->stored_token( audience: 'https://someone-else.example/mcp' ) )
+			->authenticate( $this->bearer, null );
+	}
+
+	public function test_null_audience_legacy_token_still_authenticates(): void {
+		$agent = $this->authenticator( $this->stored_token() )->authenticate( $this->bearer, null );
+
+		self::assertSame( 846, $agent->token->owner_user_id );
 	}
 
 	public function test_valid_token_authenticates_and_exposes_scopes(): void {
@@ -112,7 +134,7 @@ final class TokenAuthenticatorTest extends TestCase {
 		self::assertSame( 846, $agent->token->owner_user_id );
 	}
 
-	private function stored_token( ?\DateTimeImmutable $expires_at = null ): StoredToken {
+	private function stored_token( ?\DateTimeImmutable $expires_at = null, ?string $audience = null ): StoredToken {
 		return new StoredToken(
 			new ApiToken(
 				id: 1,
@@ -124,6 +146,8 @@ final class TokenAuthenticatorTest extends TestCase {
 				created_at: new \DateTimeImmutable( '-1 day' ),
 				last_used_at: new \DateTimeImmutable( '-1 second' ),
 				expires_at: $expires_at,
+				client_id: null,
+				audience: $audience,
 			),
 			$this->secret->hash()
 		);

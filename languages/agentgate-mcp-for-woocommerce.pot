@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-24T19:25:15+00:00\n"
+"POT-Creation-Date: 2026-07-25T07:15:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: agentgate-mcp-for-woocommerce\n"
@@ -64,7 +64,6 @@ msgid "Tool"
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/tab-log.php:35
-#: src/Features/Tokens/Admin/TokensListTable.php:33
 msgid "Token"
 msgstr ""
 
@@ -80,6 +79,43 @@ msgstr ""
 msgid "No entries yet."
 msgstr ""
 
+#: src/Features/OAuth/AuthorizeEndpoint.php:52
+msgid "You do not have permission to authorize AI access to this store."
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:57
+msgid "Invalid authorization request."
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:63
+msgid "The client could not be verified or its redirect URI is not allowed."
+msgstr ""
+
+#: src/Features/OAuth/views/consent.php:21
+#: src/Features/OAuth/views/consent.php:41
+msgid "Authorize AI access"
+msgstr ""
+
+#. translators: 1: AI client name, 2: store name
+#: src/Features/OAuth/views/consent.php:46
+#, php-format
+msgid "%1$s wants to connect to %2$s. Choose what it may do, then approve."
+msgstr ""
+
+#: src/Features/OAuth/views/consent.php:72
+msgid "Deny"
+msgstr ""
+
+#: src/Features/OAuth/views/consent.php:73
+msgid "Approve"
+msgstr ""
+
+#. translators: %s: current admin display name
+#: src/Features/OAuth/views/consent.php:81
+#, php-format
+msgid "Signed in as %s. You can revoke this connection anytime under WooCommerce → AgentGate MCP."
+msgstr ""
+
 #: src/Features/Settings/SettingsFeature.php:38
 #: src/Features/Settings/SettingsFeature.php:39
 msgid "AgentGate MCP"
@@ -90,31 +126,19 @@ msgid "Not allowed."
 msgstr ""
 
 #. translators: %s: error message
-#: src/Features/Settings/SettingsFeature.php:170
+#: src/Features/Settings/SettingsFeature.php:156
 #, php-format
 msgid "Endpoint not reachable: %s"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:181
-msgid "Endpoint is reachable and authentication is enforced (401 without token). Paste a token for a full check."
+#: src/Features/Settings/SettingsFeature.php:167
+msgid "Endpoint is live and advertising OAuth discovery. Assistants can now connect."
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Features/Settings/SettingsFeature.php:186
+#: src/Features/Settings/SettingsFeature.php:174
 #, php-format
-msgid "Unexpected status %d — check permalinks or the master switch."
-msgstr ""
-
-#. translators: %s: negotiated MCP protocol version
-#: src/Features/Settings/SettingsFeature.php:200
-#, php-format
-msgid "Connected! MCP handshake succeeded (protocol %s)."
-msgstr ""
-
-#. translators: %d: HTTP status code
-#: src/Features/Settings/SettingsFeature.php:211
-#, php-format
-msgid "Handshake failed with status %d — is the token valid and active?"
+msgid "Unexpected response (status %d) — check that the connector is enabled and permalinks are working."
 msgstr ""
 
 #: src/Features/Settings/views/page.php:13
@@ -122,73 +146,64 @@ msgid "Settings"
 msgstr ""
 
 #: src/Features/Settings/views/page.php:14
-msgid "API Tokens"
+msgid "Connect"
 msgstr ""
 
 #: src/Features/Settings/views/page.php:15
-msgid "Connect"
+msgid "Connections"
 msgstr ""
 
 #: src/Features/Settings/views/page.php:16
 msgid "Action Log"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:38
+#: src/Features/Settings/views/tab-connect.php:39
 msgid "Your MCP endpoint"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:42
-#: src/Features/Settings/views/tab-connect.php:73
-#: src/Features/Settings/views/tab-connect.php:80
-#: src/Features/Settings/views/tab-connect.php:87
-#: src/Features/Tokens/Admin/views/tab-tokens.php:22
+#: src/Features/Settings/views/tab-connect.php:43
+#: src/Features/Settings/views/tab-connect.php:72
+#: src/Features/Settings/views/tab-connect.php:79
+#: src/Features/Settings/views/tab-connect.php:86
 msgid "Copied!"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:43
-#: src/Features/Settings/views/tab-connect.php:73
-#: src/Features/Settings/views/tab-connect.php:80
-#: src/Features/Settings/views/tab-connect.php:87
-#: src/Features/Tokens/Admin/views/tab-tokens.php:23
+#: src/Features/Settings/views/tab-connect.php:44
+#: src/Features/Settings/views/tab-connect.php:72
+#: src/Features/Settings/views/tab-connect.php:79
+#: src/Features/Settings/views/tab-connect.php:86
 msgid "Copy"
 msgstr ""
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:50
+#: src/Features/Settings/views/tab-connect.php:51
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint is available at %s."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:56
-msgid "Verify connection"
-msgstr ""
-
 #: src/Features/Settings/views/tab-connect.php:57
-msgid "Checks that the endpoint is reachable. Paste a token (optional) for a full MCP handshake test."
+#: src/Features/Settings/views/tab-connect.php:63
+msgid "Verify endpoint"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:60
-msgid "agmcp_… (optional)"
+#: src/Features/Settings/views/tab-connect.php:58
+msgid "Confirms the endpoint is reachable and advertising OAuth discovery (a 401 challenge pointing at the authorization server)."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:64
-msgid "Verify"
-msgstr ""
-
-#: src/Features/Settings/views/tab-connect.php:69
+#: src/Features/Settings/views/tab-connect.php:68
 msgid "Claude Code"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:76
+#: src/Features/Settings/views/tab-connect.php:75
 msgid "Claude Desktop / Cursor (mcp.json)"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:83
+#: src/Features/Settings/views/tab-connect.php:82
 msgid "Test with curl"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:91
-msgid "Replace YOUR_TOKEN with a token from the API Tokens tab. Tokens are shown exactly once at creation."
+#: src/Features/Settings/views/tab-connect.php:90
+msgid "No token to copy: when the assistant connects, your browser opens a consent screen where you approve which scopes it may use. Approved assistants appear on the Connections tab, where you can revoke them."
 msgstr ""
 
 #: src/Features/Settings/views/tab-settings.php:22
@@ -243,98 +258,56 @@ msgstr ""
 msgid "Keep log entries for (days)"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensAdmin.php:104
-msgid "You are not allowed to manage API tokens."
+#: src/Features/Tokens/Admin/ConnectionsAdmin.php:37
+msgid "You are not allowed to manage connections."
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:32
-#: src/Features/Tokens/Admin/views/tab-tokens.php:47
-msgid "Label"
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:35
+msgid "Client"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:34
-#: src/Features/Tokens/Admin/views/tab-tokens.php:53
-msgid "Scopes"
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:36
+msgid "Granted scopes"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:35
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
 msgid "Status"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:36
-msgid "Created"
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+msgid "Connected"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:37
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
 msgid "Last used"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:38
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:40
 msgid "Actions"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:56
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:50
+msgid "No connections yet. Connect an AI assistant using the endpoint on the Connect tab."
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:61
 msgid "ago"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:57
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:62
 msgid "never"
 msgstr ""
 
-#: src/Features/Tokens/Admin/TokensListTable.php:93
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:112
 msgid "Revoke"
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-tokens.php:18
-msgid "API token created"
+#: src/Features/Tokens/Admin/views/tab-connections.php:14
+msgid "Connection revoked."
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-tokens.php:19
-msgid "Copy it now — it will never be shown again."
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:33
-msgid "Select at least one valid scope."
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:34
-msgid "A label is required."
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:41
-msgid "Create token"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:49
-msgid "e.g. Claude Desktop — Anna"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:63
-msgid "Expires"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:65
-msgid "Never"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:66
-msgid "30 days"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:67
-msgid "90 days"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:68
-msgid "1 year"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:72
-msgid "Create API token"
-msgstr ""
-
-#: src/Features/Tokens/Admin/views/tab-tokens.php:77
-msgid "Existing tokens"
+#: src/Features/Tokens/Admin/views/tab-connections.php:18
+msgid "Each connection is an AI assistant that completed the browser consent flow. Revoking one immediately cuts off its access."
 msgstr ""
 
 #: src/Features/Tokens/Domain/ApiScope.php:31

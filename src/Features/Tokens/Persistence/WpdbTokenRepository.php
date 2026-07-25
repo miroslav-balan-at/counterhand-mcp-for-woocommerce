@@ -17,7 +17,14 @@ defined( 'ABSPATH' ) || exit;
 
 final class WpdbTokenRepository implements TokenRepositoryInterface {
 
-	public function create( string $label, GrantedScopeSet $scopes, int $owner_user_id, ?\DateTimeImmutable $expires_at ): PlainToken {
+	public function create(
+		string $label,
+		GrantedScopeSet $scopes,
+		int $owner_user_id,
+		?\DateTimeImmutable $expires_at,
+		?string $client_id = null,
+		?string $audience = null
+	): PlainToken {
 		global $wpdb;
 
 		$token_id = TokenId::generate();
@@ -34,8 +41,10 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 				'owner_user_id' => $owner_user_id,
 				'created_at'    => current_time( 'mysql', true ),
 				'expires_at'    => $expires_at?->format( 'Y-m-d H:i:s' ),
+				'client_id'     => $client_id,
+				'audience'      => $audience,
 			],
-			[ '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s' ]
+			[ '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s' ]
 		);
 
 		return PlainToken::compose( $token_id, $secret );
@@ -124,6 +133,8 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 			created_at: new \DateTimeImmutable( (string) $row['created_at'], new \DateTimeZone( 'UTC' ) ),
 			last_used_at: isset( $row['last_used_at'] ) && $row['last_used_at'] ? new \DateTimeImmutable( (string) $row['last_used_at'], new \DateTimeZone( 'UTC' ) ) : null,
 			expires_at: isset( $row['expires_at'] ) && $row['expires_at'] ? new \DateTimeImmutable( (string) $row['expires_at'], new \DateTimeZone( 'UTC' ) ) : null,
+			client_id: isset( $row['client_id'] ) && $row['client_id'] ? (string) $row['client_id'] : null,
+			audience: isset( $row['audience'] ) && $row['audience'] ? (string) $row['audience'] : null,
 		);
 	}
 }

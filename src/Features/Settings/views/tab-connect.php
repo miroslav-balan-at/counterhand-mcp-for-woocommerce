@@ -11,8 +11,10 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
+// No token in any snippet: the client discovers OAuth, opens a browser, and
+// the admin approves scopes on the consent screen.
 $agmcp_claude_code = sprintf(
-	'claude mcp add --transport http woocommerce %s --header "Authorization: Bearer YOUR_TOKEN"',
+	'claude mcp add --transport http woocommerce %s',
 	$endpoint_url
 );
 
@@ -20,9 +22,8 @@ $agmcp_claude_desktop = wp_json_encode(
 	[
 		'mcpServers' => [
 			'woocommerce' => [
-				'type'    => 'http',
-				'url'     => $endpoint_url,
-				'headers' => [ 'Authorization' => 'Bearer YOUR_TOKEN' ],
+				'type' => 'http',
+				'url'  => $endpoint_url,
 			],
 		],
 	],
@@ -30,7 +31,7 @@ $agmcp_claude_desktop = wp_json_encode(
 );
 
 $agmcp_curl = sprintf(
-	"curl -X POST %s \\\n  -H 'Content-Type: application/json' \\\n  -H 'Authorization: Bearer YOUR_TOKEN' \\\n  -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\",\"params\":{}}'",
+	"curl -i -X POST %s \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}'\n# → 401 with a WWW-Authenticate header pointing at the OAuth discovery document",
 	$endpoint_url
 );
 ?>
@@ -53,15 +54,13 @@ $agmcp_curl = sprintf(
 		?>
 	</p>
 
-	<h2><?php esc_html_e( 'Verify connection', 'agentgate-mcp-for-woocommerce' ); ?></h2>
-	<p class="description"><?php esc_html_e( 'Checks that the endpoint is reachable. Paste a token (optional) for a full MCP handshake test.', 'agentgate-mcp-for-woocommerce' ); ?></p>
+	<h2><?php esc_html_e( 'Verify endpoint', 'agentgate-mcp-for-woocommerce' ); ?></h2>
+	<p class="description"><?php esc_html_e( 'Confirms the endpoint is reachable and advertising OAuth discovery (a 401 challenge pointing at the authorization server).', 'agentgate-mcp-for-woocommerce' ); ?></p>
 	<div class="agmcp-verify-row">
-		<input type="password" id="agmcp-verify-token" class="regular-text"
-			placeholder="<?php esc_attr_e( 'agmcp_… (optional)', 'agentgate-mcp-for-woocommerce' ); ?>" autocomplete="off">
 		<button type="button" class="button button-primary" id="agmcp-verify"
 			data-nonce="<?php echo esc_attr( $verify_nonce ); ?>"
 			data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
-			<?php esc_html_e( 'Verify', 'agentgate-mcp-for-woocommerce' ); ?>
+			<?php esc_html_e( 'Verify endpoint', 'agentgate-mcp-for-woocommerce' ); ?>
 		</button>
 		<span id="agmcp-verify-result" role="status"></span>
 	</div>
@@ -88,6 +87,6 @@ $agmcp_curl = sprintf(
 	</div>
 
 	<p class="description">
-		<?php esc_html_e( 'Replace YOUR_TOKEN with a token from the API Tokens tab. Tokens are shown exactly once at creation.', 'agentgate-mcp-for-woocommerce' ); ?>
+		<?php esc_html_e( 'No token to copy: when the assistant connects, your browser opens a consent screen where you approve which scopes it may use. Approved assistants appear on the Connections tab, where you can revoke them.', 'agentgate-mcp-for-woocommerce' ); ?>
 	</p>
 </div>

@@ -15,11 +15,28 @@ final readonly class ProviderRegistry {
 	private array $providers;
 
 	public function __construct() {
-		$providers = [
-			new AnthropicProvider(),
-			OpenAiCompatibleProvider::openai(),
-			OpenAiCompatibleProvider::compatible(),
-		];
+		$providers = [];
+
+		/*
+		 * Core's client goes first so it is the default offer: when WordPress
+		 * provides it, the store owner connects a model without this plugin
+		 * ever handling an API key. The direct adapters stay available for
+		 * older WordPress and for anyone who would rather use their own key.
+		 */
+		if ( CoreAiClientProvider::is_available() ) {
+			$providers[] = new CoreAiClientProvider();
+		}
+
+		$providers = array_merge(
+			$providers,
+			[
+				new AnthropicProvider(),
+				OpenAiCompatibleProvider::openai(),
+				OpenAiCompatibleProvider::google(),
+				OpenAiCompatibleProvider::ollama(),
+				OpenAiCompatibleProvider::compatible(),
+			]
+		);
 
 		/**
 		 * Filters the available chat providers.
@@ -40,6 +57,11 @@ final readonly class ProviderRegistry {
 
 	public function get( string $id ): ?ProviderInterface {
 		return $this->providers[ $id ] ?? null;
+	}
+
+	/** The provider offered first: core's client whenever WordPress has one. */
+	public function default_id(): string {
+		return (string) ( array_key_first( $this->providers ) ?? 'anthropic' );
 	}
 
 	/** @return array<string, ProviderInterface> */

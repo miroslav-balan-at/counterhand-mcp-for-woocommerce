@@ -6,3 +6,10 @@
 /build/
 /dist/
 .phpunit.cache/
+
+# IDE
+/.idea/
+
+# Never commit data exports: the store's Mailchimp export landed here once, and
+# a repo is exactly the wrong place for 2,000 subscribers' emails and IPs.
+*.csv

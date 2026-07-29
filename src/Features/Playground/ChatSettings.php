@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace AgentGateMcp\Features\Playground;
 
+use AgentGateMcp\Shared\Tool\ToolGroup;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -17,11 +19,20 @@ final class ChatSettings {
 
 	private const OPTION = 'agmcp_chat';
 
+	/**
+	 * Empty provider and model on purpose: which one to offer first depends on
+	 * what the site can actually serve, so ProviderRegistry::default_id()
+	 * decides rather than a constant that would go stale.
+	 */
 	private const DEFAULTS = [
-		'provider' => 'anthropic',
-		'model'    => 'claude-opus-5',
-		'base_url' => '',
-		'api_key'  => '',
+		'provider'    => '',
+		'model'       => '',
+		'base_url'    => '',
+		'api_key'     => '',
+		// null means "never chosen", which is not the same as "chosen to be
+		// none" — an admin who unticks everything gets an empty array and keeps
+		// it. See groups().
+		'tool_groups' => null,
 	];
 
 	private ?array $cached = null;
@@ -44,6 +55,50 @@ final class ChatSettings {
 
 	public function is_configured(): bool {
 		return '' !== $this->model();
+	}
+
+	/**
+	 * Which tool groups this chat may reach.
+	 *
+	 * Every group enabled here costs a schema in the request on every single
+	 * message, so this is narrower than what the store exposes to external
+	 * clients and is meant to stay that way.
+	 *
+	 * @return list<ToolGroup>
+	 */
+	public function groups(): array {
+		$stored = $this->get( 'tool_groups' );
+
+		if ( ! is_array( $stored ) ) {
+			return array_values( array_filter( ToolGroup::cases(), static fn ( ToolGroup $group ): bool => $group->in_chat_by_default() ) );
+		}
+
+		// tryFrom, so a group removed in a later release drops out of a stored
+		// selection instead of fataling on every chat render.
+		return array_values(
+			array_filter(
+				array_map(
+					static fn ( $value ): ?ToolGroup => is_string( $value ) ? ToolGroup::tryFrom( $value ) : null,
+					$stored
+				)
+			)
+		);
+	}
+
+	/**
+	 * @param list<string> $values Raw group slugs, as posted.
+	 */
+	public function save_groups( array $values ): void {
+		$stored                = $this->all();
+		$stored['tool_groups'] = array_values(
+			array_map(
+				static fn ( ToolGroup $group ): string => $group->value,
+				array_filter( array_map( static fn ( string $value ): ?ToolGroup => ToolGroup::tryFrom( $value ), $values ) )
+			)
+		);
+
+		update_option( self::OPTION, $stored, false );
+		$this->cached = null;
 	}
 
 	/** Enough of the key to recognise it, never enough to use it. */

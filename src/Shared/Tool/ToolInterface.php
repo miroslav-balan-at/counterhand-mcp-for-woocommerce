@@ -28,6 +28,22 @@ interface ToolInterface {
 	public function group(): ToolGroup;
 
 	/**
+	 * False when the current user's capabilities — or a missing endpoint — make
+	 * this tool unusable.
+	 *
+	 * The third gate, after store policy and token scope, and the only one that
+	 * asks WordPress rather than this plugin's own settings. It is deliberately
+	 * a plain boolean: how a tool decides is its own business, and expressing
+	 * the decision as, say, a REST route to probe would drag the WP REST router
+	 * into a contract that McpServer, Playground and Settings all import.
+	 *
+	 * Advisory, not enforcement. Answering true does not authorize anything —
+	 * every dispatch still runs WooCommerce's own permission callback, with the
+	 * resource id in hand, which this cannot have.
+	 */
+	public function is_available(): bool;
+
+	/**
 	 * @param array $arguments Already schema-sanitized and validated arguments.
 	 * @throws ToolCallException On any execution failure, with an agent-actionable message.
 	 */

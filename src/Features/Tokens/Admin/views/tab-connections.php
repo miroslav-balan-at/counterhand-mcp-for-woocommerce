@@ -1,6 +1,9 @@
 <?php
 /**
- * Connections tab: read + revoke list of OAuth-granted connections.
+ * Connected apps: read + revoke list of OAuth-granted connections.
+ *
+ * Shares the Connect screen with the client cards above — a connection is the
+ * result of connecting an app, so it belongs beside the thing that made it.
  *
  * @var \AgentGateMcp\Features\Tokens\Admin\ConnectionsListTable $list_table
  */
@@ -9,7 +12,6 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-
 <?php if ( isset( $_GET['agmcp_revoked'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 	<div class="notice notice-success inline"><p><?php esc_html_e( 'Connection revoked.', 'agentgate-mcp-for-woocommerce' ); ?></p></div>
 <?php endif; ?>

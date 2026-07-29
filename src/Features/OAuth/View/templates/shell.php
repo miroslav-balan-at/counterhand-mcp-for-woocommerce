@@ -14,8 +14,15 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-$agmcp_css_url = plugins_url( 'assets/oauth/flow.css', AGMCP_PLUGIN_FILE )
-	. '?v=' . rawurlencode( (string) filemtime( AGMCP_PLUGIN_DIR . '/assets/oauth/flow.css' ) );
+/** Cache-busted asset URL; these pages render outside the wp_enqueue pipeline. */
+$agmcp_asset_url = static function ( string $relative_path ): string {
+	return plugins_url( $relative_path, AGMCP_PLUGIN_FILE )
+		. '?v=' . rawurlencode( (string) filemtime( AGMCP_PLUGIN_DIR . '/' . $relative_path ) );
+};
+
+// Tokens first — flow.css consumes the custom properties it defines.
+$agmcp_tokens_url = $agmcp_asset_url( 'assets/shared/tokens.css' );
+$agmcp_css_url    = $agmcp_asset_url( 'assets/oauth/flow.css' );
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -24,7 +31,10 @@ $agmcp_css_url = plugins_url( 'assets/oauth/flow.css', AGMCP_PLUGIN_FILE )
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex,nofollow">
 	<title><?php echo esc_html( $page_title . ' — ' . $store_name ); ?></title>
+	<?php // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- Standalone OAuth pages render their own document outside the wp_enqueue pipeline. ?>
+	<link rel="stylesheet" href="<?php echo esc_url( $agmcp_tokens_url ); ?>">
 	<link rel="stylesheet" href="<?php echo esc_url( $agmcp_css_url ); ?>">
+	<?php // phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet ?>
 </head>
 <body class="agmcp-flow">
 	<header class="agmcp-siteheader">

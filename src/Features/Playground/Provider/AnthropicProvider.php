@@ -40,6 +40,37 @@ final readonly class AnthropicProvider implements ProviderInterface {
 		return false;
 	}
 
+	public function default_base_url(): string {
+		return '';
+	}
+
+	public function needs_key(): bool {
+		return true;
+	}
+
+	public function key_url(): string {
+		return 'https://console.anthropic.com/settings/keys';
+	}
+
+	public function is_ready( ProviderConfig $config ): bool {
+		return '' !== $config->api_key && '' !== $config->model;
+	}
+
+	/** One tiny completion — the cheapest proof that key and model both work. */
+	public function test( ProviderConfig $config ): void {
+		$this->complete(
+			[ $this->user_message( 'ping' ) ],
+			[],
+			new ProviderConfig(
+				api_key: $config->api_key,
+				model: $config->model,
+				base_url: $config->base_url,
+				system_prompt: 'Reply with OK.',
+				max_tokens: 16,
+			)
+		);
+	}
+
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
 		$body = [
 			'model'      => $config->model,
@@ -87,6 +118,7 @@ final readonly class AnthropicProvider implements ProviderInterface {
 		return new ProviderTurn(
 			text: trim( $text ),
 			tool_calls: $tool_calls,
+			// phpcs:ignore WordPress.PHP.YodaConditions.NotYoda -- already Yoda; the sniff misreads the named argument.
 			wants_tools: 'tool_use' === ( $payload['stop_reason'] ?? '' ),
 			raw: $payload,
 			usage: [

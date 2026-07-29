@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\Tokens\Admin;
 
 use AgentGateMcp\Features\Tokens\Domain\ApiToken;
+use AgentGateMcp\Features\Tokens\Domain\ScopeSummary;
 use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
 use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
 
@@ -79,15 +80,31 @@ final class ConnectionsListTable extends \WP_List_Table {
 		return esc_html( $name );
 	}
 
-	private function render_scope_badges( ApiToken $item ): string {
-		$badges = '';
+	/** Beyond this the column stops informing and starts being a wall of badges. */
+	private const BADGE_LIMIT = 3;
 
-		foreach ( $item->scopes->all() as $scope ) {
-			$class   = $scope->is_write() ? 'agmcp-badge agmcp-badge--write' : 'agmcp-badge';
-			$badges .= '<span class="' . esc_attr( $class ) . '">' . esc_html( $scope->value ) . '</span> ';
+	private function render_scope_badges( ApiToken $item ): string {
+		$summary = ScopeSummary::of( $item->scopes );
+		$badges  = '';
+
+		foreach ( $summary->shown( self::BADGE_LIMIT ) as $grant ) {
+			$class   = $grant->writable ? 'agmcp-badge agmcp-badge--write' : 'agmcp-badge';
+			$badges .= '<span class="' . esc_attr( $class ) . '">' . esc_html( $grant->badge() ) . '</span> ';
 		}
 
-		return $badges;
+		$hidden = $summary->hidden( self::BADGE_LIMIT );
+
+		if ( 0 === $hidden ) {
+			return $badges;
+		}
+
+		return $badges . '<span class="agmcp-muted">' . esc_html(
+			sprintf(
+				/* translators: %d: number of further tool groups this token can reach. */
+				_n( '+%d more', '+%d more', $hidden, 'agentgate-mcp-for-woocommerce' ),
+				$hidden
+			)
+		) . '</span>';
 	}
 
 	private function render_status( ApiToken $item ): string {

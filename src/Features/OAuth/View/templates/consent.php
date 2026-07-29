@@ -3,10 +3,10 @@
  * Consent state: the store admin approves (and may narrow) requested scopes.
  *
  * @var array $context {
- *     @type string                                             $client_name
- *     @type string                                             $client_host
- *     @type list<\AgentGateMcp\Features\Tokens\Domain\ApiScope> $scopes
- *     @type array<string, string>                              $hidden
+ *     @type string                                              $client_name
+ *     @type string                                              $client_host
+ *     @type \AgentGateMcp\Features\OAuth\View\ConsentScopes      $scopes
+ *     @type array<string, string>                               $hidden
  * }
  */
 
@@ -15,7 +15,7 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 $agmcp_scopes      = $context['scopes'];
-$agmcp_has_write   = (bool) array_filter( $agmcp_scopes, static fn ( $scope ): bool => $scope->is_write() );
+$agmcp_has_write   = $agmcp_scopes->has_write();
 $agmcp_client_name = $context['client_name'];
 ?>
 <div class="agmcp-card__body">
@@ -56,19 +56,24 @@ $agmcp_client_name = $context['client_name'];
 		<fieldset class="agmcp-scopes">
 			<legend class="agmcp-scopes__legend"><?php esc_html_e( 'Choose what it may do', 'agentgate-mcp-for-woocommerce' ); ?></legend>
 
-			<?php foreach ( $agmcp_scopes as $agmcp_scope ) : ?>
-				<?php $agmcp_id = 'agmcp-scope-' . sanitize_html_class( $agmcp_scope->value ); ?>
-				<label class="agmcp-scope <?php echo $agmcp_scope->is_write() ? 'agmcp-scope--write' : ''; ?>" for="<?php echo esc_attr( $agmcp_id ); ?>">
-					<input type="checkbox" id="<?php echo esc_attr( $agmcp_id ); ?>"
-						name="agmcp_scopes[]" value="<?php echo esc_attr( $agmcp_scope->value ); ?>" checked>
-					<span class="agmcp-scope__text">
-						<span class="agmcp-scope__name"><?php echo esc_html( $agmcp_scope->label() ); ?></span>
-						<span class="agmcp-scope__desc"><?php echo esc_html( $agmcp_scope->description() ); ?></span>
-					</span>
-					<?php if ( $agmcp_scope->is_write() ) : ?>
-						<span class="agmcp-tag agmcp-tag--write"><?php esc_html_e( 'Can change data', 'agentgate-mcp-for-woocommerce' ); ?></span>
-					<?php endif; ?>
-				</label>
+			<?php foreach ( $agmcp_scopes->sections as $agmcp_section ) : ?>
+				<?php if ( $agmcp_section->is_collapsed() ) : ?>
+					<details class="agmcp-scopes__section agmcp-scopes__section--advanced">
+						<summary class="agmcp-scopes__heading">
+							<?php echo esc_html( $agmcp_section->section->label() ); ?>
+							<span class="agmcp-scopes__heading-desc"><?php echo esc_html( $agmcp_section->section->description() ); ?></span>
+						</summary>
+						<?php require __DIR__ . '/partial-consent-rows.php'; ?>
+					</details>
+				<?php else : ?>
+					<div class="agmcp-scopes__section">
+						<p class="agmcp-scopes__heading">
+							<?php echo esc_html( $agmcp_section->section->label() ); ?>
+							<span class="agmcp-scopes__heading-desc"><?php echo esc_html( $agmcp_section->section->description() ); ?></span>
+						</p>
+						<?php require __DIR__ . '/partial-consent-rows.php'; ?>
+					</div>
+				<?php endif; ?>
 			<?php endforeach; ?>
 		</fieldset>
 

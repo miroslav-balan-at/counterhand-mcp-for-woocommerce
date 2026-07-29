@@ -26,6 +26,33 @@ interface ProviderInterface {
 	/** Whether this provider needs a base URL (OpenAI-compatible endpoints do). */
 	public function needs_base_url(): bool;
 
+	/** The base URL used when the admin does not supply one; '' when none applies. */
+	public function default_base_url(): string;
+
+	/** Whether an API key is required; local models and core's client need none. */
+	public function needs_key(): bool;
+
+	/** Whether the chat could run with this config. Runs per render — no network. */
+	public function is_ready( ProviderConfig $config ): bool;
+
+	/**
+	 * Where the admin creates a key for this provider.
+	 *
+	 * Surfaced as a link next to the key field so nobody has to go hunting for
+	 * the right console page. Empty when the provider has no such page.
+	 */
+	public function key_url(): string;
+
+	/**
+	 * Proves the credentials and model actually work.
+	 *
+	 * Called when the admin saves, so a bad key is reported there and then
+	 * rather than surfacing as a failed first message.
+	 *
+	 * @throws ToolCallException With an admin-readable reason when it doesn't.
+	 */
+	public function test( ProviderConfig $config ): void;
+
 	/**
 	 * Runs one completion.
 	 *

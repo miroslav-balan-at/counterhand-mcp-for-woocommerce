@@ -2,21 +2,20 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: AgentGate MCP for WooCommerce 0.1.0\n"
+"Project-Id-Version: AgentGate MCP for WooCommerce 0.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/agentgate-mcp-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-25T07:15:54+00:00\n"
+"POT-Creation-Date: 2026-07-29T15:00:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: agentgate-mcp-for-woocommerce\n"
 
 #. Plugin Name of the plugin
 #: agentgate-mcp-for-woocommerce.php
-#: src/Features/Settings/views/page.php:20
 msgid "AgentGate MCP for WooCommerce"
 msgstr ""
 
@@ -39,7 +38,7 @@ msgstr ""
 msgid "AgentGate MCP for WooCommerce requires WooCommerce to be installed and active."
 msgstr ""
 
-#: src/Features/ActionLog/ActionLogFeature.php:58
+#: src/Features/ActionLog/ActionLogFeature.php:83
 msgid "You are not allowed to clear the log."
 msgstr ""
 
@@ -79,257 +78,1411 @@ msgstr ""
 msgid "No entries yet."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:52
-msgid "You do not have permission to authorize AI access to this store."
+#: src/Features/OAuth/AuthorizeEndpoint.php:59
+msgid "Not permitted"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:57
-msgid "Invalid authorization request."
+#: src/Features/OAuth/AuthorizeEndpoint.php:60
+msgid "Your account cannot authorize AI access to this store. Ask a store administrator to approve the connection."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:63
-msgid "The client could not be verified or its redirect URI is not allowed."
+#: src/Features/OAuth/AuthorizeEndpoint.php:68
+msgid "Incomplete request"
 msgstr ""
 
-#: src/Features/OAuth/views/consent.php:21
-#: src/Features/OAuth/views/consent.php:41
+#: src/Features/OAuth/AuthorizeEndpoint.php:69
+msgid "This authorization link is missing required details or has expired. Start the connection again from your AI assistant."
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:77
+msgid "Could not verify the app"
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:78
+msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:145
+#: src/Features/OAuth/View/templates/denied.php:22
+msgid "Access not granted"
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:179
+#: src/Features/OAuth/View/templates/connected.php:24
+msgid "Access approved"
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:192
+#: src/Features/OAuth/View/templates/consent.php:22
 msgid "Authorize AI access"
 msgstr ""
 
-#. translators: 1: AI client name, 2: store name
-#: src/Features/OAuth/views/consent.php:46
-#, php-format
-msgid "%1$s wants to connect to %2$s. Choose what it may do, then approve."
+#: src/Features/OAuth/View/FlowPage.php:55
+msgid "Connection problem"
 msgstr ""
 
-#: src/Features/OAuth/views/consent.php:72
+#. translators: %s: name of the AI application
+#: src/Features/OAuth/View/templates/connected.php:30
+#, php-format
+msgid "%s may now use your store with the permissions below."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/connected.php:44
+msgid "Return to your AI assistant to finish connecting. You can close this tab."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/connected.php:48
+msgid "View connections"
+msgstr ""
+
+#. translators: %s: name of the AI application requesting access
+#: src/Features/OAuth/View/templates/consent.php:28
+#, php-format
+msgid "%s wants to connect to your store."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:38
+msgid "Approving as"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:44
+msgid "Verified origin"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:57
+msgid "Choose what it may do"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:80
+msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:84
+msgid "This request includes permission to change store data. New products are always created as drafts for you to review."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:90
 msgid "Deny"
 msgstr ""
 
-#: src/Features/OAuth/views/consent.php:73
-msgid "Approve"
+#: src/Features/OAuth/View/templates/consent.php:93
+msgid "Approve access"
 msgstr ""
 
-#. translators: %s: current admin display name
-#: src/Features/OAuth/views/consent.php:81
+#: src/Features/OAuth/View/templates/consent.php:100
+msgid "You can revoke this connection anytime under WooCommerce → AgentGate MCP."
+msgstr ""
+
+#. translators: %s: name of the AI application
+#: src/Features/OAuth/View/templates/denied.php:28
 #, php-format
-msgid "Signed in as %s. You can revoke this connection anytime under WooCommerce → AgentGate MCP."
+msgid "You declined the request from %s. Nothing was shared and no connection was created."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:38
-#: src/Features/Settings/SettingsFeature.php:39
-msgid "AgentGate MCP"
+#: src/Features/OAuth/View/templates/denied.php:34
+msgid "You can close this tab. If you meant to allow it, start the connection again from your AI assistant."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:129
+#: src/Features/OAuth/View/templates/denied.php:38
+msgid "Manage connections"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/error.php:27
+msgid "Nothing was connected. Try starting the connection again from your AI assistant."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/error.php:31
+msgid "Connection help"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/partial-consent-rows.php:33
+msgid "Can change data"
+msgstr ""
+
+#. translators: %s: store name
+#: src/Features/OAuth/View/templates/shell.php:72
+#, php-format
+msgid "Back to %s"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/shell.php:78
+msgid "Secured by AgentGate MCP"
+msgstr ""
+
+#: src/Features/Playground/AgentLoop.php:110
+msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
+msgstr ""
+
+#. translators: 1: number of enabled tools, 2: the supported maximum.
+#: src/Features/Playground/AgentLoop.php:190
+#, php-format
+msgid "Chat has %1$d tools enabled and can carry %2$d. Untick some areas under \"Chat can use…\" below the conversation."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:64
+#: src/Features/Playground/ModelConnect.php:178
+#: src/Features/Playground/PlaygroundFeature.php:122
+msgid "You are not allowed to change these settings."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:75
+msgid "Unknown provider."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:79
+msgid "Paste the API key first."
+msgstr ""
+
+#. translators: %s: provider name
+#: src/Features/Playground/ModelConnect.php:89
+#, php-format
+msgid "Saved your %s key."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:121
+msgid "You are not allowed to install plugins."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:129
+msgid "Unknown provider plugin."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:135
+msgid "The provider plugin could not be installed. Try it from the Plugins screen."
+msgstr ""
+
+#. translators: %s: provider plugin name
+#: src/Features/Playground/ModelConnect.php:148
+#, php-format
+msgid "%s is installed. Last step: add your API key where WordPress keeps it."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:186
+msgid "The saved key was removed."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:198
+msgid "Choose a model provider first."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:205
+msgid "This provider needs an API key."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:220
+msgid "The model could not be reached. Check the details and try again."
+msgstr ""
+
+#. translators: 1: provider name, 2: model name
+#: src/Features/Playground/ModelConnect.php:230
+#, php-format
+msgid "Connected to %1$s%2$s."
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:79
+#: src/Features/Settings/SettingsFeature.php:293
+#: src/Features/Settings/SettingsFeature.php:307
 msgid "Not allowed."
 msgstr ""
 
-#. translators: %s: error message
-#: src/Features/Settings/SettingsFeature.php:156
+#: src/Features/Playground/PlaygroundFeature.php:86
+msgid "No model is connected yet. Pick one at the top of this tab."
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:91
+msgid "Type a message first."
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:108
+msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
+msgstr ""
+
+#. translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders"
+#: src/Features/Playground/PlaygroundFeature.php:165
 #, php-format
-msgid "Endpoint not reachable: %s"
+msgid "You are a WooCommerce store assistant for \"%1$s\". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:167
-msgid "Endpoint is live and advertising OAuth discovery. Assistants can now connect."
+#: src/Features/Playground/PlaygroundFeature.php:168
+msgid "none — no tool groups are selected for chat"
 msgstr ""
 
-#. translators: %d: HTTP status code
-#: src/Features/Settings/SettingsFeature.php:174
+#: src/Features/Playground/PlaygroundFeature.php:189
+msgid "Admin chat"
+msgstr ""
+
+#: src/Features/Playground/Provider/AnthropicProvider.php:28
+msgid "Anthropic (Claude)"
+msgstr ""
+
+#. translators: %s: transport error message
+#: src/Features/Playground/Provider/AnthropicProvider.php:180
 #, php-format
-msgid "Unexpected response (status %d) — check that the connector is enabled and permalinks are working."
+msgid "Could not reach Anthropic: %s"
 msgstr ""
 
-#: src/Features/Settings/views/page.php:13
+#. translators: 1: HTTP status, 2: API error message
+#: src/Features/Playground/Provider/AnthropicProvider.php:193
+#, php-format
+msgid "Anthropic returned %1$d: %2$s"
+msgstr ""
+
+#: src/Features/Playground/Provider/AnthropicProvider.php:195
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:270
+msgid "unknown error"
+msgstr ""
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:71
+msgid "WordPress AI (built in)"
+msgstr ""
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:121
+msgid "No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins."
+msgstr ""
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:128
+msgid "Nothing to send to the model."
+msgstr ""
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:34
+#: src/Features/Playground/ProviderPlugin.php:23
+msgid "ChatGPT (OpenAI)"
+msgstr ""
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:53
+#: src/Features/Playground/ProviderPlugin.php:24
+msgid "Gemini (Google)"
+msgstr ""
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:70
+msgid "Ollama (on this server)"
+msgstr ""
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:82
+msgid "Custom OpenAI-compatible endpoint"
+msgstr ""
+
+#. translators: %s: transport error message
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:255
+#, php-format
+msgid "Could not reach the model endpoint: %s"
+msgstr ""
+
+#. translators: 1: HTTP status, 2: API error message
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:268
+#, php-format
+msgid "The model endpoint returned %1$d: %2$s"
+msgstr ""
+
+#: src/Features/Playground/ProviderPlugin.php:22
+msgid "Claude (Anthropic)"
+msgstr ""
+
+#. translators: %d: how many tools the chat can currently call.
+#: src/Features/Playground/views/partial-chat-tools.php:26
+#, php-format
+msgid "Chat can use %d tool"
+msgid_plural "Chat can use %d tools"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:37
+msgid "Every area you tick here is described to the model on every message, so keep it to what you actually ask about. Areas switched off in Settings stay off here too."
+msgstr ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:55
+msgid "Save areas"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:34
+msgid "Connect a model to start chatting"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:36
+msgid "One step, then this becomes your conversation."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:43
+msgid "Let WordPress manage the model"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:44
+msgid "The recommended way — fewer steps now, nothing to maintain later."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:49
+msgid "One connection for the whole site — every AI plugin shares it instead of each asking for its own key."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:50
+msgid "The key stays with WordPress. This plugin never sees or stores it."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:51
+msgid "Rotate the key or switch provider in one place, without touching this plugin again."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:62
+msgid "Use WordPress AI"
+msgstr ""
+
+#. translators: %s: provider name
+#: src/Features/Playground/views/partial-model-chooser.php:77
+#, php-format
+msgid "%s API key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:87
+msgid "A key is saved — paste a new one to replace it"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:87
+msgid "Paste your API key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:88
+msgid "Save key"
+msgstr ""
+
+#. translators: %s: provider name
+#: src/Features/Playground/views/partial-model-chooser.php:97
+#, php-format
+msgid "%s did not accept the stored key. Paste a different one."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:104
+msgid "Key accepted."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:107
+msgid "WordPress stores it, not this plugin."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:110
+msgid "Get a key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:117
+msgid "Who do you have an account with? One click installs the official provider for it."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:140
+msgid "On WordPress 7.0 or newer, WordPress manages the model and the key for you — this screen offers it automatically after you update."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:147
+msgid "Use your own provider account"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:148
+msgid "Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:157
+msgid "Provider"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:177
+msgid "Needs an API key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:178
+msgid "No key needed"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:188
+msgid "Model"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:192
+msgid "e.g. claude-opus-5"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:206
+msgid "Pick from the list or type any model your provider offers."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:210
+msgid "API key"
+msgstr ""
+
+#. translators: %s: masked API key
+#: src/Features/Playground/views/partial-model-chooser.php:214
+#, php-format
+msgid "Saved (%s) — leave blank to keep"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:215
+msgid "Paste your provider API key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:221
+msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:223
+msgid "Get a key:"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:245
+msgid "Remove the saved key"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:255
+#: src/Shared/Tool/ToolSection.php:33
+msgid "Advanced"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:256
+msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:260
+msgid "Base URL"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:270
+msgid "Connect model"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:273
+msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:39
+msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:51
+msgid "Ask about your store"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:52
+msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:56
+msgid "How many orders are waiting to be processed?"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:57
+msgid "Show me my 5 best selling products this month"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:58
+msgid "Which products are out of stock?"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:59
+msgid "What were my sales last week?"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:73
+msgid "Message"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:79
+msgid "Ask about products, orders, customers or sales…"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:80
+msgid "Connect a model above, then ask your first question here…"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:85
+msgid "Send"
+msgstr ""
+
+#. translators: 1: Enter key name, 2: Shift+Enter key combination
+#: src/Features/Playground/views/tab-chat.php:96
+#, php-format
+msgid "%1$s to send · %2$s for a new line"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:97
+msgid "Enter"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:98
+msgid "Shift+Enter"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:113
+msgid "Change"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:118
+msgid "Clear conversation"
+msgstr ""
+
+#: src/Features/Playground/views/tab-chat.php:127
+msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Your store data is sent to the model provider you configured."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:27
+msgid "Chat"
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:28
+#: src/Features/Settings/AdminScreen.php:37
+msgid "Connect AI apps"
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:29
 msgid "Settings"
 msgstr ""
 
-#: src/Features/Settings/views/page.php:14
-msgid "Connect"
-msgstr ""
-
-#: src/Features/Settings/views/page.php:15
-msgid "Connections"
-msgstr ""
-
-#: src/Features/Settings/views/page.php:16
+#: src/Features/Settings/AdminScreen.php:30
+#: src/Features/Settings/AdminScreen.php:39
 msgid "Action Log"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:39
-msgid "Your MCP endpoint"
+#: src/Features/Settings/AdminScreen.php:36
+msgid "Chat with your store"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:43
-#: src/Features/Settings/views/tab-connect.php:72
-#: src/Features/Settings/views/tab-connect.php:79
-#: src/Features/Settings/views/tab-connect.php:86
-msgid "Copied!"
+#: src/Features/Settings/AdminScreen.php:38
+msgid "AgentGate MCP settings"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:44
-#: src/Features/Settings/views/tab-connect.php:72
-#: src/Features/Settings/views/tab-connect.php:79
-#: src/Features/Settings/views/tab-connect.php:86
-msgid "Copy"
+#: src/Features/Settings/AdminScreen.php:45
+msgid "Use AI here, inside WooCommerce, on a model you connect."
 msgstr ""
 
-#. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:51
+#: src/Features/Settings/AdminScreen.php:46
+msgid "Let AI apps you already use work with this store, and manage what they may do."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:47
+msgid "What this store exposes, and how much of it."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:48
+msgid "What each connected app actually did."
+msgstr ""
+
+#: src/Features/Settings/ClientGroup.php:29
+msgid "Apps that connect from the cloud"
+msgstr ""
+
+#: src/Features/Settings/ClientGroup.php:30
+msgid "Tools on your own machine"
+msgstr ""
+
+#: src/Features/Settings/ClientGroup.php:36
+msgid "Web, mobile and desktop assistants. These need your store to be reachable from the internet."
+msgstr ""
+
+#: src/Features/Settings/ClientGroup.php:37
+msgid "Terminal tools and code editors. These connect from your computer, so a local store works too."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:52
+msgid "Local site — only tools on your own machine can connect"
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:59
+msgid "Ready for every AI app"
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:60
+msgid "The endpoint is live and advertising OAuth discovery."
+msgstr ""
+
+#. translators: %s: error message
+#: src/Features/Settings/ConnectReadiness.php:98
 #, php-format
-msgid "If your host breaks pretty permalinks, the same endpoint is available at %s."
+msgid "The endpoint could not be reached: %s"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:57
-#: src/Features/Settings/views/tab-connect.php:63
-msgid "Verify endpoint"
+#. translators: %d: HTTP status code
+#: src/Features/Settings/ConnectReadiness.php:112
+#, php-format
+msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:58
-msgid "Confirms the endpoint is reachable and advertising OAuth discovery (a 401 challenge pointing at the authorization server)."
+#. translators: %s: error message
+#: src/Features/Settings/ConnectReadiness.php:126
+#, php-format
+msgid "The discovery document could not be fetched: %s"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:68
+#. translators: %s: discovery URL
+#: src/Features/Settings/ConnectReadiness.php:137
+#, php-format
+msgid "The server does not serve %s. Some hosts block paths starting with a dot — allow that path in your server configuration."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:143
+msgid "The discovery document points at a different address than this store. Check for a stale cache or a URL rewrite."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:161
+msgid "The site address could not be read."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:165
+msgid "The store is served over HTTP. Cloud assistants require HTTPS."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:169
+msgid "The store address points at this machine, which no outside service can reach."
+msgstr ""
+
+#. translators: %s: hostname suffix, e.g. .test
+#: src/Features/Settings/ConnectReadiness.php:176
+#, php-format
+msgid "The %s suffix is reserved for local development and does not resolve on the internet."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:190
+msgid "The store address is a private or reserved IP address, which is not routable from the internet."
+msgstr ""
+
+#: src/Features/Settings/ConnectReadiness.php:194
+msgid "The store hostname has no public domain suffix, so it cannot be resolved from outside your network."
+msgstr ""
+
+#: src/Features/Settings/ConnectTab.php:23
+msgid "Add an app"
+msgstr ""
+
+#: src/Features/Settings/ConnectTab.php:24
+msgid "Connected apps"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:64
+msgid "Claude"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:65
+msgid "Web, mobile and the desktop app — one connection covers all three, and it shows up in Claude Code too."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:68
+msgid "Open Claude, then go to Customize → Connectors and press the + button."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:69
+msgid "Choose \"Add custom connector\", give it a name and paste the store URL."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:70
+msgid "Press Add, then Connect — your browser opens this store's consent screen."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:71
+msgid "Approve the scopes you want to grant. On Team and Enterprise plans an owner has to add the connector first."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:74
+#: src/Features/Settings/McpClient.php:92
+#: src/Features/Settings/McpClient.php:136
+#: src/Features/Settings/McpClient.php:169
+msgid "Server URL"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:76
+msgid "Copy URL & open Claude"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:82
+msgid "ChatGPT"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:83
+msgid "Add the store as a custom connector. Needs a paid plan with developer mode switched on."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:86
+msgid "In ChatGPT, open Settings → Apps & Connectors → Advanced and turn on Developer mode."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:87
+msgid "Back in Connectors, choose \"Add custom connector\" and paste the store URL."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:88
+msgid "Connect, then approve the scopes on this store's consent screen."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:89
+msgid "Custom connectors are web only, and are not available on the free plan."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:94
+msgid "Copy URL & open ChatGPT"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:100
+msgid "Cursor"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:101
+msgid "Use store tools inside the Cursor editor."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:104
+msgid "Press the button below — Cursor opens and asks you to confirm the server."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:105
+#: src/Features/Settings/McpClient.php:132
+msgid "Confirm, then approve the scopes on this store's consent screen."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:106
+msgid "If your browser blocks the link, paste the JSON below into your mcp.json instead."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:119
+msgid "mcp.json"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:121
+msgid "Add to Cursor"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:127
+msgid "VS Code"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:128
+msgid "Use store tools from Copilot Chat in Visual Studio Code."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:131
+msgid "Press the button below — VS Code opens and asks you to confirm the server."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:133
+msgid "Manage it later with \"MCP: List Servers\" from the Command Palette."
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:138
+msgid "Add to VS Code"
+msgstr ""
+
+#: src/Features/Settings/McpClient.php:144
 msgid "Claude Code"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:75
-msgid "Claude Desktop / Cursor (mcp.json)"
+#: src/Features/Settings/McpClient.php:145
+msgid "Manage the store from your terminal. Already covered if you connected Claude above."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:82
-msgid "Test with curl"
+#: src/Features/Settings/McpClient.php:148
+msgid "Run the command below in any terminal."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:90
-msgid "No token to copy: when the assistant connects, your browser opens a consent screen where you approve which scopes it may use. Approved assistants appear on the Connections tab, where you can revoke them."
+#: src/Features/Settings/McpClient.php:149
+msgid "Start Claude Code and run /mcp — it opens the consent screen in your browser."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:22
-msgid "Connector"
+#: src/Features/Settings/McpClient.php:150
+msgid "Approve the scopes you want to grant."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:23
-msgid "When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant."
+#: src/Features/Settings/McpClient.php:155
+msgid "Terminal command"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:27
-msgid "Enable the MCP connector"
+#: src/Features/Settings/McpClient.php:160
+msgid "Any other MCP client"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:30
-msgid "Tool groups"
+#: src/Features/Settings/McpClient.php:161
+msgid "Anything implementing the Model Context Protocol over HTTP."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:31
-msgid "Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A token additionally needs the matching scope."
+#: src/Features/Settings/McpClient.php:164
+msgid "Add the store URL as a streamable HTTP MCP server."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:36
-msgid "Group"
+#: src/Features/Settings/McpClient.php:165
+msgid "The client discovers authorization automatically (OAuth 2.1 with PKCE)."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:37
-msgid "Read"
+#: src/Features/Settings/McpClient.php:166
+msgid "Approve the scopes on this store's consent screen."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:38
-msgid "Write"
+#: src/Features/Settings/SettingsFeature.php:52
+msgid "AgentGate MCP"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:64
-msgid "Limits"
+#: src/Features/Settings/SettingsFeature.php:81
+msgid "AI Chat"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:66
-msgid "Requests per minute per token"
+#: src/Features/Settings/SettingsFeature.php:232
+#: src/Features/Settings/views/tab-connect.php:57
+msgid "Checking the store…"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:72
-msgid "Action log"
+#: src/Features/Settings/SettingsFeature.php:233
+msgid "The check could not be run."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:76
-msgid "Record every tool call (PII is masked before storage)"
+#: src/Features/Settings/SettingsFeature.php:234
+msgid "Waiting for the app to connect…"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:79
-msgid "Keep log entries for (days)"
-msgstr ""
-
-#: src/Features/Tokens/Admin/ConnectionsAdmin.php:37
-msgid "You are not allowed to manage connections."
-msgstr ""
-
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:35
-msgid "Client"
-msgstr ""
-
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:36
-msgid "Granted scopes"
-msgstr ""
-
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
-msgid "Status"
-msgstr ""
-
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+#: src/Features/Settings/SettingsFeature.php:235
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
 msgid "Connected"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
-msgid "Last used"
+#: src/Features/Settings/SettingsFeature.php:268
+msgid "You"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:269
+msgid "Assistant"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:270
+msgid "Thinking…"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:271
+msgid "The request failed."
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:272
+msgid "Arguments"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:273
+msgid "Result"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:274
+msgid "ran"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:275
+msgid "failed"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:276
+msgid "Tokens"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:277
+msgid "Installing…"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:278
+msgid "Installed"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:279
+msgid "The install failed."
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:38
+msgid "Your store address"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:40
+msgid "Paste this one URL into any AI app. The app identifies itself with its own published address, so there is no token to create and nothing to copy back — you just approve what it may do."
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:49
+#: src/Features/Settings/views/tab-connect.php:126
+msgid "Copied!"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:50
+#: src/Features/Settings/views/tab-connect.php:127
+msgid "Copy"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:59
+msgid "Check again"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:82
+msgid "✓ Connected"
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:135
+msgid "Official setup documentation"
+msgstr ""
+
+#. translators: %s: fallback REST URL
+#: src/Features/Settings/views/tab-connect.php:149
+#, php-format
+msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
+msgstr ""
+
+#: src/Features/Settings/views/tab-connect.php:153
+msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:30
+msgid "Connector"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:31
+msgid "When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:37
+msgid "Enable the MCP connector"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:45
+msgid "Tool groups"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:46
+msgid "Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:53
+msgid "Group"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:54
+msgid "Read"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:55
+msgid "Write"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:97
+msgid "Limits"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:98
+msgid "Caps how fast a single connection can call the store."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:103
+msgid "Requests per minute per connection"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:114
+msgid "Action log"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:115
+msgid "Records what each connection did. Emails and phone numbers are masked before anything is stored."
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:123
+msgid "Record every tool call"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:128
+msgid "Keep log entries for (days)"
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsAdmin.php:50
+msgid "You are not allowed to manage connections."
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:36
+msgid "Client"
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
+msgid "Granted scopes"
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+msgid "Status"
 msgstr ""
 
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:40
+msgid "Last used"
+msgstr ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:41
 msgid "Actions"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:50
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:51
 msgid "No connections yet. Connect an AI assistant using the endpoint on the Connect tab."
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:61
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:62
 msgid "ago"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:62
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:63
 msgid "never"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:112
+#. translators: %d: number of further tool groups this token can reach.
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:104
+#, php-format
+msgid "+%d more"
+msgid_plural "+%d more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:129
 msgid "Revoke"
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-connections.php:14
+#: src/Features/Tokens/Admin/views/tab-connections.php:16
 msgid "Connection revoked."
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-connections.php:18
+#: src/Features/Tokens/Admin/views/tab-connections.php:20
 msgid "Each connection is an AI assistant that completed the browser consent flow. Revoking one immediately cuts off its access."
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:31
-msgid "Products — read"
+#: src/Features/Tokens/Domain/ApiScope.php:133
+msgid "Update orders"
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:32
-msgid "Products — write (create, update, delete)"
+#: src/Features/Tokens/Domain/ApiScope.php:140
+msgid "See product names, prices, stock and categories."
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:33
-msgid "Orders — read"
+#: src/Features/Tokens/Domain/ApiScope.php:141
+msgid "Create, edit and trash products. New products start as drafts."
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:34
-msgid "Orders — write (status, notes)"
+#: src/Features/Tokens/Domain/ApiScope.php:142
+msgid "See orders, totals and customer addresses."
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:35
-msgid "Customers — read"
+#: src/Features/Tokens/Domain/ApiScope.php:143
+msgid "Change order status and add order notes. May send customer emails."
 msgstr ""
 
-#: src/Features/Tokens/Domain/ApiScope.php:36
-msgid "Reports — read"
+#: src/Features/Tokens/Domain/ApiScope.php:144
+msgid "See registered customers and their addresses."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:145
+msgid "See sales totals, best sellers and store statistics."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:146
+msgid "See discount codes, their amounts, limits and expiry dates."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:147
+msgid "Create, edit and trash discount codes. A new coupon can be redeemed at checkout immediately."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:151
+msgid "Issue refunds against orders. Depending on the gateway this returns money to the customer immediately and cannot be undone here."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:152
+msgid "See customer reviews, including reviewer names and email addresses."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:153
+msgid "Publish, edit, hold and delete customer reviews. Approving a review makes it public on the storefront."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:154
+msgid "Create, rename and delete categories, tags, brands and attributes. Deleting one detaches it from every product using it."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:155
+msgid "Create, edit and delete the variants of a variable product, including their prices and stock."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:156
+msgid "Add, edit and delete tax rates. This changes what customers are charged at checkout."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:157
+msgid "Add, edit and delete shipping zones and methods. This changes the delivery options and rates offered at checkout."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:158
+msgid "See which payment methods exist and whether each is enabled. API keys and secrets are never returned."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:159
+msgid "Read store configuration such as currency, tax behaviour and checkout options. Values that look like keys, secrets or passwords are withheld."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:160
+msgid "Change store configuration, including currency and tax behaviour. Settings named like API keys, secrets or passwords stay off limits, and every change needs explicit confirmation."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:161
+msgid "Enable, disable and reorder payment methods. This decides how customers can pay, and every change needs explicit confirmation."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:162
+msgid "See blog posts and pages, including drafts."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:163
+msgid "Create, edit and trash blog posts and pages. New ones start as drafts."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:164
+msgid "See the environment report: versions, server settings and active plugins."
+msgstr ""
+
+#: src/Features/Tokens/Domain/ApiScope.php:165
+msgid "Run WooCommerce's maintenance tools. The ones that cannot be undone are refused outright; the rest need explicit confirmation."
+msgstr ""
+
+#. translators: %s: tool group name mid-sentence, e.g. "products".
+#: src/Features/Tokens/Domain/ApiScope.php:172
+#, php-format
+msgid "Manage %s"
+msgstr ""
+
+#. translators: %s: tool group name mid-sentence, e.g. "products".
+#: src/Features/Tokens/Domain/ApiScope.php:174
+#, php-format
+msgid "Read %s"
+msgstr ""
+
+#. translators: %s: tool group name, e.g. "Orders". Marks a grant that includes writes.
+#: src/Features/Tokens/Domain/ScopeGrant.php:41
+#, php-format
+msgid "%s ·W"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:52
+msgid "Products"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:53
+msgid "Orders"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:54
+msgid "Customers"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:55
+msgid "Reports"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:56
+msgid "Coupons"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:57
+msgid "Categories & tags"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:58
+msgid "Variations"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:59
+msgid "Reviews"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:60
+msgid "Refunds"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:61
+msgid "Shipping"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:62
+msgid "Taxes"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:63
+msgid "Reference data"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:64
+msgid "Payment gateways"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:65
+msgid "Store settings"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:66
+msgid "Posts & pages"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:67
+msgid "System & maintenance"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:74
+msgid "Names, prices, stock, categories and images."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:75
+msgid "Orders, totals, line items and customer addresses."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:76
+msgid "Registered customers and their addresses. Guest buyers appear under Orders."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:77
+msgid "Sales totals, best sellers and store statistics."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:78
+msgid "Discount codes, their amounts, limits and expiry dates."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:79
+msgid "How the catalog is organised: categories, tags, brands, attributes and shipping classes."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:80
+msgid "The size, colour and other variants of a variable product, each with its own price and stock."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:81
+msgid "Customer reviews and ratings, including reviewer names and email addresses."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:82
+msgid "Refunds against orders. Creating one moves money back to the customer."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:83
+msgid "Shipping zones, the regions they cover and the methods offered in each."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:84
+msgid "Tax rates by country and region, and the tax classes products are assigned to."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:85
+msgid "WooCommerce's own reference lists of countries, regions and currencies."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:86
+msgid "Which payment methods exist and whether each is enabled. Credentials are never returned."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:87
+msgid "Store configuration values, including currency, tax behaviour and checkout options."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:88
+msgid "WordPress blog posts and pages. Products and orders are not affected."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:89
+msgid "Environment report and WooCommerce's maintenance tools. The most dangerous group here."
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:103
+msgid "products"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:104
+msgid "orders"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:105
+msgid "customers"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:106
+msgid "reports"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:107
+msgid "coupons"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:108
+msgid "categories and tags"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:109
+msgid "variations"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:110
+msgid "reviews"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:111
+msgid "refunds"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:112
+msgid "shipping"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:113
+msgid "taxes"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:114
+msgid "reference data"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:115
+msgid "payment gateways"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:116
+msgid "store settings"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:117
+msgid "posts and pages"
+msgstr ""
+
+#: src/Shared/Tool/ToolGroup.php:118
+msgid "system tools"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:28
+msgid "Catalog"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:29
+msgid "Sales"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:30
+msgid "Insights"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:31
+msgid "Content"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:32
+msgid "Store setup"
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:39
+msgid "What you sell."
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:40
+msgid "Who bought what."
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:41
+msgid "Totals and statistics. Read-only."
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:42
+msgid "The blog posts and pages around your store."
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:43
+msgid "Shipping, tax and reference data."
+msgstr ""
+
+#: src/Shared/Tool/ToolSection.php:44
+msgid "Store configuration and maintenance. Enable only if you know why you need it."
 msgstr ""

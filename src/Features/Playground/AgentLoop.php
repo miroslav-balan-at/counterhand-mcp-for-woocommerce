@@ -25,6 +25,16 @@ final readonly class AgentLoop {
 	/** Hard stop so a misbehaving model cannot bill indefinitely. */
 	private const MAX_ITERATIONS = 12;
 
+	/**
+	 * How many tool definitions one request may carry.
+	 *
+	 * Not a provider limit — it is the point past which models reliably start
+	 * choosing the wrong tool, and past which the definitions cost more tokens
+	 * than the conversation. Providers silently truncate; failing loudly here
+	 * means the admin finds out from a message rather than from a wrong answer.
+	 */
+	private const MAX_TOOL_DEFINITIONS = 60;
+
 	public function __construct(
 		private ToolRegistry $tool_registry,
 		private McpServer $server,
@@ -136,7 +146,9 @@ final readonly class AgentLoop {
 			];
 		}
 
-		$payload = $response?->payload ?? [];
+		// handle() returns null for notifications, which a tools/call never is;
+		// ?? covers that case anyway, since it suppresses property access on null.
+		$payload = $response->payload ?? [];
 
 		if ( isset( $payload['error'] ) ) {
 			return [
@@ -160,15 +172,35 @@ final readonly class AgentLoop {
 		];
 	}
 
-	/** @return list<array<string,mixed>> */
+	/**
+	 * Built once per run() and reused across iterations: the visible set cannot
+	 * change mid-conversation, and input_schema() asks WooCommerce for its route
+	 * args, which is not work to repeat twelve times.
+	 *
+	 * @throws ToolCallException When more tools are enabled than one request should carry.
+	 * @return list<array<string,mixed>>
+	 */
 	private function tool_definitions( ProviderInterface $provider, AuthenticatedAgent $agent ): array {
+		$tools = $this->tool_registry->visible_for( $agent );
+
+		if ( count( $tools ) > self::MAX_TOOL_DEFINITIONS ) {
+			throw new ToolCallException(
+				sprintf(
+					/* translators: 1: number of enabled tools, 2: the supported maximum. */
+					__( 'Chat has %1$d tools enabled and can carry %2$d. Untick some areas under "Chat can use…" below the conversation.', 'agentgate-mcp-for-woocommerce' ),
+					count( $tools ),
+					self::MAX_TOOL_DEFINITIONS
+				)
+			);
+		}
+
 		return array_map(
 			static fn ( ToolInterface $tool ): array => $provider->describe_tool(
 				$tool->name(),
 				$tool->description(),
 				$tool->input_schema()
 			),
-			$this->tool_registry->visible_for( $agent )
+			$tools
 		);
 	}
 }

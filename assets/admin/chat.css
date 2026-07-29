@@ -1,34 +1,60 @@
 /*
  * AgentGate MCP — in-admin chat.
- * WordPress admin palette: blue-50 #2271b1, gray-100 #1d2327, gray-5 #dcdcde.
+ *
+ * Built on ../shared/tokens.css. Unlike the Connect and Settings screens this
+ * is not a settings page, so it deliberately breaks WooCommerce's 720px
+ * measure: a conversation needs room. The panel is sized to the window so the
+ * chat is the page rather than a widget sitting on it.
  */
 
 .agmcp-chat {
-	max-width: 900px;
+	max-width: 1100px;
 }
 
-.agmcp-chat__setup {
-	margin: 1em 0;
+/*
+ * The chat owns the viewport: the wrap loses WordPress's bottom padding so the
+ * panel can be sized against the window instead of stretching the page.
+ */
+.agmcp-wrap--chat {
+	margin-right: 20px;
+	padding-bottom: 0;
 }
 
 /* Panel ------------------------------------------------------------------ */
 
+/*
+ * A fixed-height column sized to the window, so the page itself never scrolls
+ * and the composer is always in reach. Everything inside flexes against this
+ * height rather than adding to it.
+ */
 .agmcp-chat__panel {
-	margin-top: 1em;
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 210px);
+	min-height: 420px;
+	margin-top: var(--agmcp-gap);
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	border-radius: var(--agmcp-radius-card);
+	box-shadow: var(--agmcp-shadow-card);
 	overflow: hidden;
 }
 
+/*
+ * min-height:0 is what actually makes this scroll: a flex child defaults to
+ * min-height:auto, which refuses to shrink below its content, so the log grew
+ * past the panel and the page scrolled instead of the messages.
+ */
 .agmcp-chat__log {
-	height: min(60vh, 560px);
+	flex: 1 1 auto;
+	min-height: 0;
 	overflow-y: auto;
-	padding: 20px;
-	background: #f6f7f7;
+	overscroll-behavior: contain;
+	padding: var(--agmcp-pad) clamp(16px, 3vw, 28px);
+	background: var(--agmcp-surface-neutral);
 	display: flex;
 	flex-direction: column;
-	gap: 14px;
+	gap: var(--agmcp-gap);
 }
 
 /* Empty state ------------------------------------------------------------ */
@@ -36,49 +62,110 @@
 .agmcp-chat__empty {
 	margin: auto;
 	text-align: center;
-	max-width: 460px;
+	max-width: 620px;
 }
 
 .agmcp-chat__empty-title {
-	font-size: 15px;
+	font-size: 20px;
 	font-weight: 600;
-	color: #50575e;
-	margin: 0 0 14px;
+	color: var(--agmcp-text);
+	margin: 0 0 6px;
+}
+
+.agmcp-chat__empty-hint {
+	font-size: 14px;
+	color: var(--agmcp-text-muted);
+	margin: 0 0 var(--agmcp-gap-large);
 }
 
 .agmcp-chat__suggestions {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	text-align: left;
 }
 
 .agmcp-chat__suggestion {
-	padding: 10px 14px;
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 999px;
-	font-size: 13px;
-	color: #2271b1;
+	padding: 14px 16px;
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	border-radius: var(--agmcp-radius-card);
+	font-size: 14px;
+	line-height: 1.45;
+	color: var(--agmcp-text);
+	text-align: left;
 	cursor: pointer;
-	transition: border-color .15s ease, background-color .15s ease;
+	transition: border-color .15s ease, background-color .15s ease, transform .15s ease;
 }
 
 .agmcp-chat__suggestion:hover {
-	border-color: #2271b1;
-	background: #f0f6fc;
+	border-color: var(--agmcp-accent);
+	background: var(--agmcp-accent-surface);
+	transform: translateY(-1px);
+}
+
+.agmcp-chat__suggestion:focus-visible {
+	outline: 2px solid var(--agmcp-accent);
+	outline-offset: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.agmcp-chat__suggestion {
+		transition: none;
+	}
+
+	.agmcp-chat__suggestion:hover {
+		transform: none;
+	}
 }
 
 /* Messages --------------------------------------------------------------- */
 
 .agmcp-msg {
 	display: flex;
-	flex-direction: column;
-	gap: 3px;
-	max-width: 82%;
+	align-items: flex-start;
+	gap: 10px;
+	max-width: 78%;
 }
 
 .agmcp-msg--user {
 	align-self: flex-end;
+	max-width: 72%;
+}
+
+/* The store's own mark, matching the avatar on the consent screen. */
+.agmcp-msg__avatar {
+	width: 32px;
+	height: 32px;
+	flex: 0 0 auto;
+	margin-top: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	overflow: hidden;
+	background: var(--agmcp-accent);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.agmcp-msg__avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	background: var(--agmcp-surface);
+}
+
+.agmcp-msg__main {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.agmcp-msg--user .agmcp-msg__main {
 	align-items: flex-end;
 }
 
@@ -87,55 +174,107 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: #787c82;
+	color: var(--agmcp-text-subtle);
 }
 
 .agmcp-msg__body {
-	padding: 11px 14px;
-	border-radius: 12px;
-	font-size: 14px;
-	line-height: 1.55;
-	white-space: pre-wrap;
+	padding: 14px 18px;
+	border-radius: 14px;
+	font-size: 15px;
+	line-height: 1.65;
 	word-break: break-word;
 }
 
 .agmcp-msg--user .agmcp-msg__body {
-	background: #2271b1;
+	background: var(--agmcp-accent);
 	color: #fff;
-	border-bottom-right-radius: 3px;
+	border-bottom-right-radius: 4px;
 }
 
 .agmcp-msg--assistant .agmcp-msg__body {
-	background: #fff;
-	border: 1px solid #dcdcde;
-	color: #1d2327;
-	border-bottom-left-radius: 3px;
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	color: var(--agmcp-text);
+	border-bottom-left-radius: 4px;
 }
 
 .agmcp-msg--error .agmcp-msg__body {
-	background: #fcf0f1;
-	border-color: #d63638;
-	color: #8a1f21;
+	background: var(--agmcp-error-surface);
+	border-color: var(--agmcp-error);
+	color: var(--agmcp-error-text);
+}
+
+/* Formatted answer content ----------------------------------------------- */
+
+.agmcp-msg__body p {
+	margin: 0 0 10px;
+}
+
+.agmcp-msg__body p:last-child,
+.agmcp-msg__body ul:last-child,
+.agmcp-msg__body ol:last-child,
+.agmcp-msg__body pre:last-child {
+	margin-bottom: 0;
+}
+
+.agmcp-msg__body ul,
+.agmcp-msg__body ol {
+	margin: 0 0 10px;
+	padding-left: 22px;
+}
+
+.agmcp-msg__body li {
+	margin: 0 0 4px;
+}
+
+.agmcp-msg__body code {
+	padding: 1px 5px;
+	border-radius: 3px;
+	background: var(--agmcp-surface-sunken);
+	font-size: 13px;
+}
+
+.agmcp-msg--user .agmcp-msg__body code {
+	background: rgba(255, 255, 255, .2);
+	color: inherit;
+}
+
+.agmcp-msg__body pre {
+	margin: 0 0 10px;
+	padding: 12px 14px;
+	overflow-x: auto;
+	background: var(--agmcp-surface-inverse);
+	color: var(--agmcp-text-inverse);
+	border-radius: var(--agmcp-radius);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.agmcp-msg__body pre code {
+	padding: 0;
+	background: none;
+	color: inherit;
+	font-size: inherit;
 }
 
 /* Typing indicator ------------------------------------------------------- */
 
 .agmcp-typing {
 	display: inline-flex;
-	gap: 4px;
-	padding: 14px;
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 12px;
-	border-bottom-left-radius: 3px;
+	gap: 5px;
+	padding: 18px;
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	border-radius: 14px;
+	border-bottom-left-radius: 4px;
 	width: fit-content;
 }
 
 .agmcp-typing span {
-	width: 6px;
-	height: 6px;
+	width: 7px;
+	height: 7px;
 	border-radius: 50%;
-	background: #a7aaad;
+	background: var(--agmcp-border-strong);
 	animation: agmcp-bounce 1.2s infinite ease-in-out;
 }
 
@@ -153,57 +292,69 @@
 
 /* Tool cards ------------------------------------------------------------- */
 
+/*
+ * Deliberately quiet: a tool call is supporting evidence for the answer above
+ * it, not a peer of the conversation, so it stays narrow, small and collapsed.
+ */
 .agmcp-tool {
 	align-self: flex-start;
-	max-width: 82%;
-	background: #fff;
-	border: 1px solid #dcdcde;
-	border-left: 3px solid #2271b1;
-	border-radius: 4px;
+	max-width: 78%;
+	margin-left: 42px;
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	border-left: 3px solid var(--agmcp-border-strong);
+	border-radius: var(--agmcp-radius);
 	font-size: 13px;
 }
 
 .agmcp-tool--error {
-	border-left-color: #d63638;
+	border-left-color: var(--agmcp-error);
 }
 
 .agmcp-tool__summary {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 9px 12px;
+	gap: var(--agmcp-gap-small);
+	padding: 8px 12px;
 	cursor: pointer;
 	list-style: none;
+	color: var(--agmcp-text-muted);
 }
 
 .agmcp-tool__summary::-webkit-details-marker {
 	display: none;
 }
 
+.agmcp-tool__summary:focus-visible {
+	outline: 2px solid var(--agmcp-accent);
+	outline-offset: -2px;
+}
+
 .agmcp-tool__icon {
-	color: #00a32a;
+	color: var(--agmcp-success);
 	font-weight: 700;
 }
 
 .agmcp-tool--error .agmcp-tool__icon {
-	color: #d63638;
+	color: var(--agmcp-error);
 }
 
 .agmcp-tool__name {
 	font-size: 12px;
-	background: #f0f0f1;
+	background: var(--agmcp-surface-sunken);
+	color: var(--agmcp-text);
 	padding: 2px 6px;
 	border-radius: 3px;
 }
 
 .agmcp-tool__hint {
-	color: #787c82;
+	color: var(--agmcp-text-subtle);
 	font-size: 12px;
 }
 
 .agmcp-tool__body {
 	padding: 0 12px 12px;
-	border-top: 1px solid #f0f0f1;
+	border-top: 1px solid var(--agmcp-surface-sunken);
 }
 
 .agmcp-tool__label {
@@ -212,7 +363,7 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: #787c82;
+	color: var(--agmcp-text-subtle);
 }
 
 .agmcp-tool__code {
@@ -220,9 +371,9 @@
 	padding: 10px 12px;
 	max-height: 260px;
 	overflow: auto;
-	background: #1d2327;
-	color: #f0f0f1;
-	border-radius: 4px;
+	background: var(--agmcp-surface-inverse);
+	color: var(--agmcp-text-inverse);
+	border-radius: var(--agmcp-radius);
 	font-size: 12px;
 	line-height: 1.5;
 	white-space: pre-wrap;
@@ -235,54 +386,285 @@
 	display: flex;
 	gap: 10px;
 	align-items: flex-end;
-	padding: 12px;
-	border-top: 1px solid #dcdcde;
-	background: #fff;
+	padding: var(--agmcp-pad-small);
+	border-top: 1px solid var(--agmcp-border);
+	background: var(--agmcp-surface);
 }
 
 .agmcp-chat__input {
 	flex: 1 1 auto;
 	resize: none;
-	min-height: 38px;
-	max-height: 200px;
-	padding: 8px 12px;
-	font-size: 14px;
-	line-height: 1.5;
-	border: 1px solid #8c8f94;
-	border-radius: 4px;
+	/* Height comes from rows + padding so a wrapped placeholder is never cut. */
+	min-height: 0;
+	max-height: 240px;
+	padding: 14px 18px;
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--agmcp-text);
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border-field);
+	border-radius: var(--agmcp-radius-card);
 }
 
 .agmcp-chat__input:focus {
-	border-color: #2271b1;
-	box-shadow: 0 0 0 1px #2271b1;
+	border-color: var(--agmcp-accent);
+	box-shadow: 0 0 0 1px var(--agmcp-accent);
 	outline: none;
 }
 
-.agmcp-chat__send {
+.agmcp-chat__input:disabled {
+	background: var(--agmcp-surface-neutral);
+}
+
+.agmcp-chat__send.button {
 	flex: 0 0 auto;
-	height: 38px;
+	align-self: stretch;
+	padding: 0 24px;
+	font-size: 14px;
+	border-radius: var(--agmcp-radius-card);
 }
 
 .agmcp-chat__foot {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: 12px;
+	gap: var(--agmcp-gap-small);
+	flex-wrap: wrap;
 	margin: 0;
-	padding: 8px 14px;
-	border-top: 1px solid #f0f0f1;
-	background: #f6f7f7;
+	padding: 10px 14px;
+	border-top: 1px solid var(--agmcp-surface-sunken);
+	background: var(--agmcp-surface-neutral);
 	font-size: 12px;
-	color: #787c82;
+	color: var(--agmcp-text-subtle);
+}
+
+.agmcp-chat__foot-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.agmcp-chat__hint {
+	color: var(--agmcp-text-subtle);
+}
+
+.agmcp-chat__hint kbd {
+	padding: 1px 5px;
+	border: 1px solid var(--agmcp-border);
+	border-bottom-width: 2px;
+	border-radius: 3px;
+	background: var(--agmcp-surface);
+	font-size: 11px;
+	font-family: inherit;
+}
+
+/* Model selector in the footer — switching never means leaving the tab. */
+.agmcp-chat__model {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.agmcp-chat__model select {
+	font-size: 12px;
+	min-height: 28px;
+	max-width: 220px;
 }
 
 .agmcp-chat__note {
-	margin-top: 10px;
+	max-width: 1100px;
+	margin-top: var(--agmcp-gap-small);
 }
+
+/* Tool areas ------------------------------------------------------------- */
+
+/*
+ * A set-once decision, so it sits below the conversation and stays folded. The
+ * summary carries the tool count because that number is the only reason to open
+ * it — everything else here is a checkbox list nobody needs twice.
+ */
+.agmcp-chat-tools {
+	max-width: 1100px;
+	margin-top: var(--agmcp-gap-small);
+}
+
+.agmcp-chat-tools__summary {
+	cursor: pointer;
+	font-size: 12px;
+	color: var(--agmcp-gray-60);
+}
+
+.agmcp-chat-tools__form {
+	padding: var(--agmcp-gap-small) 0 0;
+}
+
+.agmcp-chat-tools__lede {
+	max-width: 640px;
+	margin: 0 0 var(--agmcp-gap-small);
+	font-size: 12px;
+	color: var(--agmcp-gray-60);
+}
+
+.agmcp-chat-tools__section {
+	margin: 0 0 10px;
+	border: 0;
+	padding: 0;
+}
+
+.agmcp-chat-tools__section legend {
+	padding: 0;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--agmcp-gray-60);
+}
+
+.agmcp-chat-tools__group {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 4px 16px 0 0;
+}
+
+/* Model chooser ---------------------------------------------------------- */
+
+/*
+ * Shown in place of the conversation until a model is connected. It is the
+ * whole job of the screen at that moment, so it gets the full panel rather
+ * than a notice bar pointing at another tab.
+ */
+/* Setup sits where the conversation will appear, so the frame is there from
+   the first visit. Block flow so the card stacks normally while it scrolls. */
+.agmcp-chat__log--setup {
+	display: block;
+}
+
+.agmcp-chooser {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: var(--agmcp-gap) 0;
+}
+
+.agmcp-chooser__title {
+	margin: 0 0 4px;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--agmcp-text);
+	text-align: center;
+}
+
+.agmcp-chooser__lede {
+	margin: 0 0 var(--agmcp-gap);
+	color: var(--agmcp-text-muted);
+	font-size: 14px;
+	text-align: center;
+}
+
+.agmcp-chooser .agmcp-card {
+	max-width: none;
+}
+
+.agmcp-chooser__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 10px;
+	margin: 0 0 var(--agmcp-gap);
+}
+
+/* One provider tile: name, who runs it, and what it needs. */
+.agmcp-provider {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 14px 16px;
+	background: var(--agmcp-surface);
+	border: 1px solid var(--agmcp-border);
+	border-radius: var(--agmcp-radius-card);
+	text-align: left;
+	cursor: pointer;
+	transition: border-color .15s ease, background-color .15s ease;
+}
+
+.agmcp-provider:hover {
+	border-color: var(--agmcp-accent);
+	background: var(--agmcp-accent-surface);
+}
+
+.agmcp-provider:focus-visible {
+	outline: 2px solid var(--agmcp-accent);
+	outline-offset: 1px;
+}
+
+.agmcp-provider[aria-pressed="true"] {
+	border-color: var(--agmcp-accent);
+	background: var(--agmcp-accent-surface);
+	box-shadow: inset 0 0 0 1px var(--agmcp-accent);
+}
+
+.agmcp-provider__name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--agmcp-text);
+}
+
+.agmcp-provider__meta {
+	font-size: 12px;
+	color: var(--agmcp-text-muted);
+}
+
+.agmcp-chooser__result {
+	margin: var(--agmcp-gap-small) 0 0;
+	font-size: 13px;
+}
+
+.agmcp-chooser__result.agmcp-ok {
+	color: var(--agmcp-success);
+	font-weight: 600;
+}
+
+.agmcp-chooser__result.agmcp-fail {
+	color: var(--agmcp-error);
+	font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.agmcp-provider {
+		transition: none;
+	}
+}
+
+/* Small screens ---------------------------------------------------------- */
 
 @media screen and (max-width: 782px) {
 	.agmcp-msg,
+	.agmcp-msg--user,
 	.agmcp-tool {
 		max-width: 100%;
+	}
+
+	.agmcp-tool {
+		margin-left: 0;
+	}
+
+	.agmcp-chat__panel {
+		height: calc(100vh - 260px);
+	}
+
+	.agmcp-chat__log {
+		padding: var(--agmcp-gap-small);
+	}
+
+	.agmcp-chat__suggestions {
+		grid-template-columns: 1fr;
+	}
+
+	.agmcp-chat__composer {
+		gap: var(--agmcp-gap-small);
+	}
+
+	.agmcp-chat__send.button {
+		padding: 0 16px;
 	}
 }

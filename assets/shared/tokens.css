@@ -1,0 +1,94 @@
+/*
+ * AgentGate MCP — design tokens, shared by the wp-admin screens and the
+ * front-end OAuth flow pages so both surfaces read as one product.
+ *
+ * Every value maps to a WordPress Design System token (--wpds-*) with the
+ * current WordPress admin palette as the fallback. WooCommerce's 2026 guidance
+ * for extensions is to "map every value to a semantic --wpds-* token rather
+ * than a raw color or size", because those tokens carry the user's admin colour
+ * scheme and the eventual dark mode. Sites without the design system simply get
+ * the fallback and look exactly as before.
+ *
+ * The --wpds-* names below follow the documented namespace but have not been
+ * verified against a shipped WordPress 7.x / WooCommerce 10.9 build. A wrong
+ * name degrades silently to its fallback rather than breaking the page, so this
+ * is safe to ship — but confirm the spellings before relying on theming.
+ *
+ * Brand colour comes from --wpds-color-brand or not at all. WooCommerce purple
+ * is deliberately never hardcoded: #7f54b3 fails AA contrast on light surfaces
+ * and would fight the user's chosen colour scheme.
+ */
+
+:root {
+	/* Surfaces ----------------------------------------------------------- */
+	--agmcp-surface: var(--wpds-color-background-surface, #fff);
+	--agmcp-surface-neutral: var(--wpds-color-background-surface-neutral, #f6f7f7);
+	--agmcp-surface-sunken: var(--wpds-color-background-surface-sunken, #f0f0f1);
+	--agmcp-surface-inverse: var(--wpds-color-background-surface-inverse, #1d2327);
+
+	/* Text --------------------------------------------------------------- */
+	--agmcp-text: var(--wpds-color-text-primary, #1d2327);
+	--agmcp-text-muted: var(--wpds-color-text-secondary, #50575e);
+	--agmcp-text-subtle: var(--wpds-color-text-tertiary, #787c82);
+	--agmcp-text-inverse: var(--wpds-color-text-inverse, #f0f0f1);
+
+	/* Borders ------------------------------------------------------------ */
+	--agmcp-border: var(--wpds-color-stroke-subtle, #dcdcde);
+	--agmcp-border-strong: var(--wpds-color-stroke, #a7aaad);
+	--agmcp-border-field: var(--wpds-color-stroke-field, #8c8f94);
+
+	/* Accent / interactive ----------------------------------------------- */
+	--agmcp-accent: var(--wpds-color-brand, #2271b1);
+	--agmcp-accent-hover: var(--wpds-color-brand-hover, #135e96);
+	--agmcp-accent-active: var(--wpds-color-brand-active, #0a4b78);
+	--agmcp-accent-surface: var(--wpds-color-background-brand-subtle, #f0f6fc);
+
+	/* Status triplets: surface / stroke / foreground ---------------------- */
+	--agmcp-success: var(--wpds-color-text-success, #00a32a);
+	--agmcp-success-surface: var(--wpds-color-background-success-subtle, #edfaef);
+
+	--agmcp-warning: var(--wpds-color-stroke-warning, #dba617);
+	--agmcp-warning-surface: var(--wpds-color-background-warning-subtle, #fcf9e8);
+	--agmcp-warning-text: var(--wpds-color-text-warning, #614a00);
+
+	--agmcp-error: var(--wpds-color-text-error, #d63638);
+	--agmcp-error-surface: var(--wpds-color-background-error-subtle, #fcf0f1);
+	--agmcp-error-text: var(--wpds-color-text-error-strong, #8a1f21);
+
+	/* Dimensions --------------------------------------------------------- */
+	/* 720px is WooCommerce's settings measure — one centred column so every
+	   extension lines up at the same width. */
+	--agmcp-measure: var(--wpds-dimension-surface-width-xl, 720px);
+	--agmcp-radius: var(--wpds-dimension-radius-small, 4px);
+	--agmcp-radius-card: var(--wpds-dimension-radius-medium, 6px);
+	--agmcp-gap-small: var(--wpds-dimension-gap-small, 8px);
+	--agmcp-gap: var(--wpds-dimension-gap-medium, 16px);
+	--agmcp-gap-large: var(--wpds-dimension-gap-large, 24px);
+	--agmcp-pad: var(--wpds-dimension-padding-large, 24px);
+	--agmcp-pad-small: var(--wpds-dimension-padding-small, 12px);
+
+	/* Elevation: two layers so cards lift off the neutral background without
+	   a hard edge. Not tokenised upstream, so these stay literal. */
+	--agmcp-shadow-card: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
+
+	/*
+	 * Legacy palette aliases.
+	 *
+	 * The OAuth flow stylesheet was written against raw palette names before
+	 * this sheet existed. Aliasing them onto the semantic tokens means those
+	 * rules inherit theming for free without rewriting 500 lines of working,
+	 * shipped CSS. New rules should use the semantic names above.
+	 */
+	--agmcp-blue-50: var(--agmcp-accent);
+	--agmcp-blue-60: var(--agmcp-accent-hover);
+	--agmcp-blue-70: var(--agmcp-accent-active);
+	--agmcp-gray-0: var(--agmcp-surface-neutral);
+	--agmcp-gray-5: var(--agmcp-border);
+	--agmcp-gray-20: var(--agmcp-border-strong);
+	--agmcp-gray-60: var(--agmcp-text-muted);
+	--agmcp-gray-100: var(--agmcp-text);
+	--agmcp-red-50: var(--agmcp-error);
+	--agmcp-green-50: var(--agmcp-success);
+	--agmcp-yellow-5: var(--agmcp-warning-surface);
+	--agmcp-yellow-40: var(--agmcp-warning);
+}

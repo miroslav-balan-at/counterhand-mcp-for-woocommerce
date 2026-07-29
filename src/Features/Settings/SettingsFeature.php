@@ -8,80 +8,139 @@ use AgentGateMcp\Features\ActionLog\ActionLogFeature;
 use AgentGateMcp\Features\Playground\PlaygroundFeature;
 use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
 use AgentGateMcp\Shared\FeatureInterface;
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use AgentGateMcp\Shared\StoreMark;
+use AgentGateMcp\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Admin shell: menu entry under WooCommerce, tab router, Settings API,
- * page-gated assets, and the connection verifier.
+ * Admin shell: the plugin's menu and screens, the Settings API registration,
+ * per-screen assets, and the Connect screen's readiness and connection checks.
  */
 final readonly class SettingsFeature implements FeatureInterface {
 
-	public const PAGE_SLUG = 'agentgate-mcp';
+	private const CAPABILITY = 'manage_woocommerce';
 
 	public function __construct(
 		private PluginSettings $settings,
 		private ConnectionsAdmin $connections_admin,
 		private ActionLogFeature $action_log,
 		private PlaygroundFeature $playground,
+		private ConnectReadiness $readiness,
+		private ConnectionMatcher $matcher,
+		private SettingSanitizer $sanitizer,
 	) {}
 
 	public function register(): void {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'wp_ajax_agmcp_verify_connection', [ $this, 'handle_verify_connection' ] );
-		add_action( 'admin_post_agmcp_save_chat', [ $this, 'handle_save_chat' ] );
+		add_action( 'wp_ajax_agmcp_preflight', [ $this, 'handle_preflight' ] );
+		add_action( 'wp_ajax_agmcp_connection_status', [ $this, 'handle_connection_status' ] );
 	}
 
-	/** Saves the Chat tab's provider/model/key — separate from the tool settings. */
-	public function handle_save_chat(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'agentgate-mcp-for-woocommerce' ) );
-		}
-
-		check_admin_referer( 'agmcp_save_chat' );
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above.
-		$settings = $this->playground->settings();
-
-		if ( isset( $_POST['agmcp_chat_forget'] ) ) {
-			$settings->forget_key();
-		}
-
-		$submitted_key = isset( $_POST['agmcp_chat_key'] ) ? sanitize_text_field( wp_unslash( $_POST['agmcp_chat_key'] ) ) : '';
-
-		$settings->save(
-			sanitize_key( wp_unslash( $_POST['agmcp_chat_provider'] ?? '' ) ),
-			sanitize_text_field( wp_unslash( $_POST['agmcp_chat_model'] ?? '' ) ),
-			esc_url_raw( wp_unslash( $_POST['agmcp_chat_base_url'] ?? '' ) ),
-			$submitted_key
-		);
-		// phpcs:enable
-
-		wp_safe_redirect(
-			add_query_arg(
-				[
-					'page'             => self::PAGE_SLUG,
-					'tab'              => 'settings',
-					'agmcp_chat_saved' => '1',
-				],
-				admin_url( 'admin.php' )
-			)
-		);
-		exit;
-	}
-
+	/**
+	 * A top-level menu for the plugin's own screens, plus one WooCommerce entry
+	 * pointing at the chat — that is the screen a shop manager opens daily, so
+	 * it stays where they already work.
+	 */
 	public function add_menu(): void {
+		$chat = AdminScreen::Chat;
+
+		add_menu_page(
+			$chat->page_title(),
+			__( 'AgentGate MCP', 'agentgate-mcp-for-woocommerce' ),
+			self::CAPABILITY,
+			$chat->value,
+			[ $this, 'render_chat' ],
+			'dashicons-format-chat',
+			56
+		);
+
+		$screens = [
+			[ AdminScreen::Chat, [ $this, 'render_chat' ] ],
+			[ AdminScreen::Connect, [ $this, 'render_connect' ] ],
+			[ AdminScreen::Settings, [ $this, 'render_settings' ] ],
+			[ AdminScreen::Log, [ $this, 'render_log' ] ],
+		];
+
+		foreach ( $screens as [$screen, $callback] ) {
+			add_submenu_page(
+				$chat->value,
+				$screen->page_title(),
+				$screen->menu_title(),
+				self::CAPABILITY,
+				$screen->value,
+				$callback
+			);
+		}
+
 		add_submenu_page(
 			'woocommerce',
-			__( 'AgentGate MCP', 'agentgate-mcp-for-woocommerce' ),
-			__( 'AgentGate MCP', 'agentgate-mcp-for-woocommerce' ),
-			'manage_woocommerce',
-			self::PAGE_SLUG,
-			[ $this, 'render_page' ]
+			$chat->page_title(),
+			__( 'AI Chat', 'agentgate-mcp-for-woocommerce' ),
+			self::CAPABILITY,
+			$chat->value
 		);
+	}
+
+	public function render_chat(): void {
+		$this->render( AdminScreen::Chat, fn () => $this->playground->render_tab() );
+	}
+
+	public function render_connect(): void {
+		$this->render(
+			AdminScreen::Connect,
+			function (): void {
+				$active = ConnectTab::current();
+				$counts = [ ConnectTab::Connections->value => $this->connections_admin->active_count() ];
+
+				require __DIR__ . '/views/connect-tabs.php';
+
+				if ( ConnectTab::Connections === $active ) {
+					$this->connections_admin->render_tab();
+
+					return;
+				}
+
+				$endpoint_url      = home_url( '/mcp' );
+				$fallback_url      = rest_url( 'agentgate/v1/mcp' );
+				$connect_clients   = McpClient::all( $endpoint_url );
+				$connected_clients = $this->matcher->connected( $connect_clients );
+
+				require __DIR__ . '/views/tab-connect.php';
+			}
+		);
+	}
+
+	public function render_settings(): void {
+		$this->render(
+			AdminScreen::Settings,
+			function (): void {
+				$settings      = $this->settings;
+				$tool_sections = ToolSection::populated();
+
+				require __DIR__ . '/views/tab-settings.php';
+			}
+		);
+	}
+
+	public function render_log(): void {
+		$this->render( AdminScreen::Log, fn () => $this->action_log->render_tab() );
+	}
+
+	/** Shared page chrome: heading, subtitle, then the screen's own body. */
+	private function render( AdminScreen $screen, callable $body ): void {
+		printf(
+			'<div class="wrap agmcp-wrap%s"><h1>%s</h1><p class="agmcp-subtitle">%s</p>',
+			$screen->is_full_bleed() ? ' agmcp-wrap--chat' : '',
+			esc_html( $screen->page_title() ),
+			esc_html( $screen->subtitle() )
+		);
+
+		$body();
+
+		echo '</div>';
 	}
 
 	public function register_settings(): void {
@@ -96,60 +155,33 @@ final readonly class SettingsFeature implements FeatureInterface {
 		);
 	}
 
-	/** Whitelist keys and cast types — unknown keys never persist. */
+	/** Registered as the Settings API sanitize_callback. */
 	public function sanitize_settings( mixed $raw ): array {
-		$raw       = is_array( $raw ) ? $raw : [];
-		$sanitized = [];
-
-		foreach ( PluginSettings::defaults() as $key => $default_value ) {
-			$sanitized[ $key ] = is_bool( $default_value )
-				? ! empty( $raw[ $key ] )
-				: max( 1, min( 1000, (int) ( $raw[ $key ] ?? $default_value ) ) );
-		}
-
-		return $sanitized;
+		return $this->sanitizer->sanitize( $raw );
 	}
 
-	public function render_page(): void {
-		// The playground is the plugin's centrepiece, so it is the landing tab.
-		$active_tab = sanitize_key( $_GET['tab'] ?? 'playground' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
-		if ( ! in_array( $active_tab, [ 'playground', 'connect', 'connections', 'log', 'settings' ], true ) ) {
-			$active_tab = 'playground';
-		}
+	public function enqueue_assets(): void {
+		$screen = $this->current_screen();
 
-		$settings       = $this->settings;
-		$tool_groups    = ToolGroup::cases();
-		$endpoint_url   = home_url( '/mcp' );
-		$fallback_url   = rest_url( 'agentgate/v1/mcp' );
-		$verify_nonce   = wp_create_nonce( 'agmcp_verify_connection' );
-		$chat_settings  = $this->playground->settings();
-		$chat_providers = $this->playground->providers()->all();
-
-		include __DIR__ . '/views/page.php';
-
-		match ( $active_tab ) {
-			'connect'     => require __DIR__ . '/views/tab-connect.php',
-			'connections' => $this->connections_admin->render_tab(),
-			'log'         => $this->action_log->render_tab(),
-			'settings'    => require __DIR__ . '/views/tab-settings.php',
-			default       => $this->playground->render_tab(),
-		};
-
-		echo '</div>'; // closes .wrap opened in page.php
-	}
-
-	public function enqueue_assets( string $hook_suffix ): void {
-		if ( 'woocommerce_page_' . self::PAGE_SLUG !== $hook_suffix ) {
+		if ( null === $screen ) {
 			return;
 		}
 
 		$base_url  = plugins_url( '', AGMCP_PLUGIN_FILE );
 		$base_path = AGMCP_PLUGIN_DIR;
 
+		// Design tokens load first; every other sheet reads its custom properties.
+		wp_enqueue_style(
+			'agmcp-tokens',
+			$base_url . '/assets/shared/tokens.css',
+			[],
+			(string) filemtime( $base_path . '/assets/shared/tokens.css' )
+		);
+
 		wp_enqueue_style(
 			'agmcp-admin',
 			$base_url . '/assets/admin/settings.css',
-			[],
+			[ 'agmcp-tokens' ],
 			(string) filemtime( $base_path . '/assets/admin/settings.css' )
 		);
 
@@ -161,12 +193,52 @@ final readonly class SettingsFeature implements FeatureInterface {
 			true
 		);
 
-		// The chat bundle only loads on its own tab, which is also the default.
-		$active_tab = sanitize_key( $_GET['tab'] ?? 'playground' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab routing only.
-		if ( 'playground' !== $active_tab ) {
+		if ( AdminScreen::Connect === $screen ) {
+			if ( ConnectTab::Apps === ConnectTab::current() ) {
+				$this->enqueue_connect( $base_url, $base_path );
+			}
+
 			return;
 		}
 
+		if ( AdminScreen::Chat === $screen ) {
+			$this->enqueue_chat( $base_url, $base_path );
+		}
+	}
+
+	/** Which of our screens is being rendered, or null when it is not ours. */
+	private function current_screen(): ?AdminScreen {
+		$page = sanitize_key( $_GET['page'] ?? '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- screen routing only.
+
+		return AdminScreen::tryFrom( $page );
+	}
+
+	private function enqueue_connect( string $base_url, string $base_path ): void {
+		wp_enqueue_script(
+			'agmcp-connect',
+			$base_url . '/assets/admin/connect.js',
+			[ 'agmcp-admin' ],
+			(string) filemtime( $base_path . '/assets/admin/connect.js' ),
+			true
+		);
+
+		wp_localize_script(
+			'agmcp-connect',
+			'agmcpConnect',
+			[
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'agmcp_connect' ),
+				'i18n'    => [
+					'checking'    => __( 'Checking the store…', 'agentgate-mcp-for-woocommerce' ),
+					'checkFailed' => __( 'The check could not be run.', 'agentgate-mcp-for-woocommerce' ),
+					'waiting'     => __( 'Waiting for the app to connect…', 'agentgate-mcp-for-woocommerce' ),
+					'connected'   => __( 'Connected', 'agentgate-mcp-for-woocommerce' ),
+				],
+			]
+		);
+	}
+
+	private function enqueue_chat( string $base_url, string $base_path ): void {
 		wp_enqueue_style(
 			'agmcp-chat',
 			$base_url . '/assets/admin/chat.css',
@@ -186,75 +258,64 @@ final readonly class SettingsFeature implements FeatureInterface {
 			'agmcp-chat',
 			'agmcpChat',
 			[
-				'i18n' => [
-					'you'        => __( 'You', 'agentgate-mcp-for-woocommerce' ),
-					'assistant'  => __( 'Assistant', 'agentgate-mcp-for-woocommerce' ),
-					'thinking'   => __( 'Thinking…', 'agentgate-mcp-for-woocommerce' ),
-					'failed'     => __( 'The request failed.', 'agentgate-mcp-for-woocommerce' ),
-					'arguments'  => __( 'Arguments', 'agentgate-mcp-for-woocommerce' ),
-					'result'     => __( 'Result', 'agentgate-mcp-for-woocommerce' ),
-					'toolRan'    => __( 'ran', 'agentgate-mcp-for-woocommerce' ),
-					'toolFailed' => __( 'failed', 'agentgate-mcp-for-woocommerce' ),
-					'tokens'     => __( 'Tokens', 'agentgate-mcp-for-woocommerce' ),
+				// The assistant speaks as the store, so it wears the store's
+				// mark — the same one the OAuth consent screen shows.
+				'avatar' => [
+					'url'    => StoreMark::url() ?? '',
+					'letter' => StoreMark::letter(),
+				],
+				'i18n'   => [
+					'you'           => __( 'You', 'agentgate-mcp-for-woocommerce' ),
+					'assistant'     => __( 'Assistant', 'agentgate-mcp-for-woocommerce' ),
+					'thinking'      => __( 'Thinking…', 'agentgate-mcp-for-woocommerce' ),
+					'failed'        => __( 'The request failed.', 'agentgate-mcp-for-woocommerce' ),
+					'arguments'     => __( 'Arguments', 'agentgate-mcp-for-woocommerce' ),
+					'result'        => __( 'Result', 'agentgate-mcp-for-woocommerce' ),
+					'toolRan'       => __( 'ran', 'agentgate-mcp-for-woocommerce' ),
+					'toolFailed'    => __( 'failed', 'agentgate-mcp-for-woocommerce' ),
+					'tokens'        => __( 'Tokens', 'agentgate-mcp-for-woocommerce' ),
+					'installing'    => __( 'Installing…', 'agentgate-mcp-for-woocommerce' ),
+					'installed'     => __( 'Installed', 'agentgate-mcp-for-woocommerce' ),
+					'installFailed' => __( 'The install failed.', 'agentgate-mcp-for-woocommerce' ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Endpoint verifier: the endpoint must be reachable and answer an
-	 * unauthenticated request with a 401 carrying the OAuth discovery challenge.
+	 * Readiness check for the Connect tab, run automatically on load.
+	 *
+	 * Replaces the old manual verifier: an admin should not have to press a
+	 * button to discover that their store cannot be reached.
 	 */
-	public function handle_verify_connection(): void {
+	public function handle_preflight(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'agentgate-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		check_ajax_referer( 'agmcp_verify_connection' );
+		check_ajax_referer( 'agmcp_connect' );
 
-		$response = wp_remote_post(
-			home_url( '/mcp' ),
-			[
-				'headers'   => [ 'Content-Type' => 'application/json' ],
-				'body'      => (string) wp_json_encode(
-					[
-						'jsonrpc' => '2.0',
-						'id'      => 1,
-						'method'  => 'initialize',
-						'params'  => new \stdClass(),
-					]
-				),
-				'timeout'   => 15,
-				'sslverify' => apply_filters( 'agmcp_verify_sslverify', true ),
-			]
-		);
+		wp_send_json_success( $this->readiness->check()->to_array() );
+	}
 
-		if ( is_wp_error( $response ) ) {
-			wp_send_json_error(
-				[
-					'message' => sprintf(
-					/* translators: %s: error message */
-						__( 'Endpoint not reachable: %s', 'agentgate-mcp-for-woocommerce' ),
-						$response->get_error_message()
-					),
-				]
-			);
+	/**
+	 * Whether a connection landed since the admin left for the app's site, so
+	 * the client card can confirm itself in place.
+	 */
+	public function handle_connection_status(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'agentgate-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		$status    = (int) wp_remote_retrieve_response_code( $response );
-		$challenge = (string) wp_remote_retrieve_header( $response, 'www-authenticate' );
+		check_ajax_referer( 'agmcp_connect' );
 
-		if ( 401 === $status && str_contains( $challenge, 'resource_metadata' ) ) {
-			wp_send_json_success( [ 'message' => __( 'Endpoint is live and advertising OAuth discovery. Assistants can now connect.', 'agentgate-mcp-for-woocommerce' ) ] );
-		}
+		$since = absint( $_POST['since'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+		$token = $this->matcher->newest_since( $since );
 
-		wp_send_json_error(
+		wp_send_json_success(
 			[
-				'message' => sprintf(
-				/* translators: %d: HTTP status code */
-					__( 'Unexpected response (status %d) — check that the connector is enabled and permalinks are working.', 'agentgate-mcp-for-woocommerce' ),
-					$status
-				),
+				'connected' => null !== $token,
+				'client'    => $token->client_id ?? '',
 			]
 		);
 	}

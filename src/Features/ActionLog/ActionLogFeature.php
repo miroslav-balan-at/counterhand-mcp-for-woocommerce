@@ -7,6 +7,7 @@ namespace AgentGateMcp\Features\ActionLog;
 use AgentGateMcp\Features\ActionLog\Persistence\LogSchema;
 use AgentGateMcp\Features\Settings\PluginSettings;
 use AgentGateMcp\Shared\FeatureInterface;
+use AgentGateMcp\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,15 +29,39 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		add_action( self::PURGE_HOOK, [ $this, 'purge_expired' ] );
 		add_action( 'admin_post_agmcp_clear_log', [ $this, 'handle_clear' ] );
 
+		// Subscribed whatever the setting says: some groups are logged
+		// unconditionally, and the callback is what decides.
+		add_action( 'agmcp_tool_called', [ $this, 'maybe_log' ], 10, 5 );
+
 		if ( ! $this->settings->is_action_log_enabled() ) {
 			return;
 		}
 
-		add_action( 'agmcp_tool_called', [ $this->logger, 'log' ], 10, 4 );
-
 		if ( ! wp_next_scheduled( self::PURGE_HOOK ) ) {
 			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', self::PURGE_HOOK );
 		}
+	}
+
+	/**
+	 * Writes the row when logging is on, and also when the group demands it.
+	 *
+	 * Turning the log off is a reasonable choice about routine traffic — a store
+	 * that lists products all day does not need a row per call. It is not a
+	 * reasonable choice about running a maintenance routine against the live
+	 * database, and a store owner who finds their roles reset deserves a record
+	 * of what asked for it. So those groups are logged regardless, and the
+	 * setting governs everything else.
+	 *
+	 * @param array<string, mixed> $arguments
+	 */
+	public function maybe_log( string $tool_name, string $token_label, bool $is_error, array $arguments, string $group = '' ): void {
+		$always = ToolGroup::tryFrom( $group )?->is_always_logged() ?? false;
+
+		if ( ! $always && ! $this->settings->is_action_log_enabled() ) {
+			return;
+		}
+
+		$this->logger->log( $tool_name, $token_label, $is_error, $arguments );
 	}
 
 	public function purge_expired(): void {
@@ -68,8 +93,7 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'          => 'agentgate-mcp',
-					'tab'           => 'log',
+					'page'          => 'agentgate-mcp-log',
 					'agmcp_cleared' => '1',
 				],
 				admin_url( 'admin.php' )

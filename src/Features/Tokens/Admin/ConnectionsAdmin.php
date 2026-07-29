@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\Tokens\Admin;
 
 use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
+use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,6 +24,18 @@ final readonly class ConnectionsAdmin {
 
 	public function register(): void {
 		add_action( 'admin_post_agmcp_revoke_connection', [ $this, 'handle_revoke' ] );
+	}
+
+	/** Live connections, for the Connect screen's tab badge. */
+	public function active_count(): int {
+		$now = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
+
+		return count(
+			array_filter(
+				$this->repository->list_all(),
+				static fn ( $token ): bool => TokenStatus::Active === $token->status && ! $token->is_expired( $now )
+			)
+		);
 	}
 
 	public function render_tab(): void {
@@ -47,8 +60,8 @@ final readonly class ConnectionsAdmin {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'          => 'agentgate-mcp',
-					'tab'           => 'connections',
+					'page'          => 'agentgate-mcp-connect',
+					'view'          => 'connections',
 					'agmcp_revoked' => '1',
 				],
 				admin_url( 'admin.php' )

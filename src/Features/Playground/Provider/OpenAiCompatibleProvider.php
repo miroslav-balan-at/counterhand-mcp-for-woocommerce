@@ -24,12 +24,14 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 		private string $default_base_url,
 		private array $models,
 		private bool $base_url_required,
+		private string $key_url = '',
+		private bool $key_required = true,
 	) {}
 
 	public static function openai(): self {
 		return new self(
 			id: 'openai',
-			label: __( 'OpenAI', 'agentgate-mcp-for-woocommerce' ),
+			label: __( 'ChatGPT (OpenAI)', 'agentgate-mcp-for-woocommerce' ),
 			default_base_url: 'https://api.openai.com/v1',
 			models: [
 				'gpt-5'      => 'GPT-5',
@@ -37,17 +39,51 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 				'gpt-4.1'    => 'GPT-4.1',
 			],
 			base_url_required: false,
+			key_url: 'https://platform.openai.com/api-keys',
 		);
 	}
 
-	/** Any self-hosted or third-party endpoint; the admin supplies the URL. */
+	/**
+	 * Gemini through Google's OpenAI-compatible endpoint, so it needs no
+	 * adapter of its own — only a different base URL.
+	 */
+	public static function google(): self {
+		return new self(
+			id: 'google',
+			label: __( 'Gemini (Google)', 'agentgate-mcp-for-woocommerce' ),
+			default_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+			// Google renames models often; the picker is a starting point and
+			// the field accepts whatever the account actually offers.
+			models: [
+				'gemini-3-flash-preview' => 'Gemini 3 Flash',
+				'gemini-2.5-pro'         => 'Gemini 2.5 Pro',
+			],
+			base_url_required: false,
+			key_url: 'https://aistudio.google.com/apikey',
+		);
+	}
+
+	/** A model running on the same machine: no account, no key, no data leaving. */
+	public static function ollama(): self {
+		return new self(
+			id: 'ollama',
+			label: __( 'Ollama (on this server)', 'agentgate-mcp-for-woocommerce' ),
+			default_base_url: 'http://localhost:11434/v1',
+			models: [],
+			base_url_required: false,
+			key_required: false,
+		);
+	}
+
+	/** Any other self-hosted or third-party endpoint; the admin supplies the URL. */
 	public static function compatible(): self {
 		return new self(
 			id: 'openai_compatible',
-			label: __( 'OpenAI-compatible (Ollama, OpenRouter, Azure, local)', 'agentgate-mcp-for-woocommerce' ),
-			default_base_url: 'http://localhost:11434/v1',
+			label: __( 'Custom OpenAI-compatible endpoint', 'agentgate-mcp-for-woocommerce' ),
+			default_base_url: '',
 			models: [],
 			base_url_required: true,
+			key_required: false,
 		);
 	}
 
@@ -69,6 +105,41 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 
 	public function default_base_url(): string {
 		return $this->default_base_url;
+	}
+
+	public function needs_key(): bool {
+		return $this->key_required;
+	}
+
+	public function key_url(): string {
+		return $this->key_url;
+	}
+
+	public function is_ready( ProviderConfig $config ): bool {
+		if ( '' === $config->model ) {
+			return false;
+		}
+
+		if ( $this->key_required && '' === $config->api_key ) {
+			return false;
+		}
+
+		return ! $this->base_url_required || '' !== $config->base_url;
+	}
+
+	/** One tiny completion — the cheapest proof that key and model both work. */
+	public function test( ProviderConfig $config ): void {
+		$this->complete(
+			[ $this->user_message( 'ping' ) ],
+			[],
+			new ProviderConfig(
+				api_key: $config->api_key,
+				model: $config->model,
+				base_url: $config->base_url,
+				system_prompt: 'Reply with OK.',
+				max_tokens: 16,
+			)
+		);
 	}
 
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {

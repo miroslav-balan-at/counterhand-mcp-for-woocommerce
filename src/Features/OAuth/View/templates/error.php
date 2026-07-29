@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 	<p class="agmcp-hint"><?php esc_html_e( 'Nothing was connected. Try starting the connection again from your AI assistant.', 'agentgate-mcp-for-woocommerce' ); ?></p>
 
 	<div class="agmcp-actions agmcp-actions--single">
-		<a class="agmcp-button agmcp-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=agentgate-mcp&tab=connect' ) ); ?>">
+		<a class="agmcp-button agmcp-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=agentgate-mcp-connect' ) ); ?>">
 			<?php esc_html_e( 'Connection help', 'agentgate-mcp-for-woocommerce' ); ?>
 		</a>
 	</div>

@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace AgentGateMcp\Features\OAuth;
 
+use AgentGateMcp\Features\OAuth\View\ConsentScopes;
 use AgentGateMcp\Features\OAuth\View\FlowPage;
 use AgentGateMcp\Features\Tokens\Domain\ApiScope;
 use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
@@ -184,16 +185,7 @@ final readonly class AuthorizeEndpoint {
 	}
 
 	private function render_consent( array $request, ClientMetadata $client ): void {
-		$scopes = array_values(
-			array_filter(
-				array_map( static fn ( string $value ): ?ApiScope => ApiScope::tryFrom( $value ), $request['scopes'] )
-			)
-		);
-
-		// Fall back to all scopes if the client requested none explicitly.
-		if ( [] === $scopes ) {
-			$scopes = ApiScope::cases();
-		}
+		$scopes = $this->offered_scopes( $request );
 
 		$this->page->render(
 			FlowPage::STATE_CONSENT,
@@ -201,7 +193,7 @@ final readonly class AuthorizeEndpoint {
 			[
 				'client_name' => $client->client_name,
 				'client_host' => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'      => $scopes,
+				'scopes'      => ConsentScopes::from( $scopes ),
 				'hidden'      => [
 					'client_id'             => $request['client_id'],
 					'redirect_uri'          => $request['redirect_uri'],
@@ -210,10 +202,32 @@ final readonly class AuthorizeEndpoint {
 					'state'                 => $request['state'],
 					'resource'              => $request['resource'],
 					'response_type'         => 'code',
-					'scope'                 => implode( ' ', $request['scopes'] ),
+					// The offered set, not the requested one. handle_decision()
+					// intersects the admin's ticks with whatever this field
+					// replays, so a client that named no scopes would otherwise
+					// walk away with a token granting nothing — the screen would
+					// show a full list of ticked boxes and mint an empty grant.
+					'scope'                 => implode( ' ', array_map( static fn ( ApiScope $scope ): string => $scope->value, $scopes ) ),
 				],
 			]
 		);
+	}
+
+	/**
+	 * The scopes the consent screen puts in front of the admin.
+	 *
+	 * @return list<ApiScope>
+	 */
+	private function offered_scopes( array $request ): array {
+		$scopes = array_values(
+			array_filter(
+				array_map( static fn ( string $value ): ?ApiScope => ApiScope::tryFrom( $value ), $request['scopes'] )
+			)
+		);
+
+		// A client that named no scopes is offered a read-only, non-advanced set
+		// rather than the whole catalogue — see ApiScope::conservative_default().
+		return [] === $scopes ? ApiScope::conservative_default() : $scopes;
 	}
 
 	/**

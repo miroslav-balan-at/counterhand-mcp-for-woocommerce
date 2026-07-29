@@ -66,6 +66,20 @@ final readonly class DiscoveryController {
 				'grant_types_supported'                 => [ 'authorization_code' ],
 				'code_challenge_methods_supported'      => [ 'S256' ],
 				'token_endpoint_auth_methods_supported' => [ 'none' ],
+				/*
+				 * How clients discover that this server identifies them by their
+				 * Client ID Metadata Document instead of Dynamic Client
+				 * Registration (draft-ietf-oauth-client-id-metadata-document,
+				 * adopted by MCP as SEP-991).
+				 *
+				 * Without this flag a client sees an authorization server with
+				 * no registration_endpoint and no advertised alternative, and
+				 * refuses to connect — Claude Code reports "Incompatible auth
+				 * server: does not support dynamic client registration". CIMD is
+				 * this plugin's whole authorization model, so omitting the flag
+				 * made it undiscoverable.
+				 */
+				'client_id_metadata_document_supported' => true,
 			],
 			200
 		);

@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace AgentGateMcp\Features\McpServer;
 
 use AgentGateMcp\Features\Tokens\Authentication\AuthenticatedAgent;
+use AgentGateMcp\Features\Tokens\Domain\ScopeSummary;
 use AgentGateMcp\Shared\Exception\ScopeDeniedException;
 use AgentGateMcp\Shared\Exception\ToolCallException;
 use AgentGateMcp\Shared\JsonRpc\JsonRpcErrorCode;
@@ -43,10 +44,10 @@ final readonly class McpServer {
 		$requested_version = (string) ( $request->params['protocolVersion'] ?? self::PROTOCOL_VERSION );
 		$agreed_version    = in_array( $requested_version, self::KNOWN_PROTOCOL_VERSIONS, true ) ? $requested_version : self::PROTOCOL_VERSION;
 
-		$scope_values = array_map(
-			static fn ( $scope ): string => $scope->value,
-			$agent->scopes()->all()
-		);
+		// Group labels, not raw scope values: the model does not need to know
+		// this plugin's slug grammar, and a token holding thirty scopes would
+		// otherwise spend most of its instructions reciting them.
+		$granted = ScopeSummary::of( $agent->scopes() )->labels();
 
 		return JsonRpcResponse::result(
 			$request->id,
@@ -58,9 +59,9 @@ final readonly class McpServer {
 					'version' => AGMCP_VERSION,
 				],
 				'instructions'    => sprintf(
-					'WooCommerce store MCP server for %s. Your token grants these scopes: %s. Product creation defaults to draft status. List tools are paginated (per_page, page).',
+					'WooCommerce store MCP server for %s. Your token can reach: %s. The tools you were given are the whole of what you may do — anything else is out of reach, not merely discouraged. Product creation defaults to draft status. List tools are paginated (per_page, page).',
 					get_bloginfo( 'name' ),
-					$scope_values ? implode( ', ', $scope_values ) : 'none'
+					[] !== $granted ? implode( ', ', $granted ) : 'nothing'
 				),
 			]
 		);
@@ -113,12 +114,14 @@ final readonly class McpServer {
 			 * Fires after every tool call (success or failure) — the ActionLog
 			 * slice subscribes here.
 			 *
-			 * @param string $tool_name  Tool that ran.
+			 * @param string $tool_name   Tool that ran.
 			 * @param string $token_label Label of the calling token.
-			 * @param bool   $is_error   Whether the call failed.
-			 * @param array  $arguments  Validated tool arguments.
+			 * @param bool   $is_error    Whether the call failed.
+			 * @param array  $arguments   Validated tool arguments.
+			 * @param string $group       Slug of the tool's group, so a listener can
+			 *                            decide by area without resolving the tool.
 			 */
-			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, false, $validated );
+			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, false, $validated, $tool->group()->value );
 
 			return JsonRpcResponse::result(
 				$request->id,
@@ -134,24 +137,67 @@ final readonly class McpServer {
 				]
 			);
 		} catch ( ScopeDeniedException | ToolCallException $exception ) {
-			/** This hook is documented above. */
-			do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, true, $validated );
+			// Both carry a message written for an agent to act on.
+			return $this->failed_call( $request, $tool, $agent, $validated, $exception->getMessage() );
+		} catch ( \Throwable $throwable ) {
+			// A bug rather than a refusal: a TypeError from a tool used to escape
+			// as an opaque protocol error, which also skipped the hook below and
+			// silently lost the call's audit row. The agent gets a message it can
+			// act on, and the detail goes where an administrator can find it.
+			$this->log_failure( $tool, $throwable );
 
-			// Tool failures are results, not protocol errors — the agent can read
-			// the message and self-correct (MCP spec).
-			return JsonRpcResponse::result(
-				$request->id,
-				[
-					'content' => [
-						[
-							'type' => 'text',
-							'text' => $exception->getMessage(),
-						],
-					],
-					'isError' => true,
-				]
+			return $this->failed_call(
+				$request,
+				$tool,
+				$agent,
+				$validated,
+				'The tool failed unexpectedly. This is a fault in the store, not in the request — retrying the same call is unlikely to help.'
 			);
 		}
+	}
+
+	/**
+	 * A failed call is still a call: it is logged, and it comes back as a result
+	 * carrying isError rather than a protocol error, so the agent can read the
+	 * message and self-correct (MCP spec).
+	 *
+	 * @param array<string, mixed> $arguments Validated arguments, as executed.
+	 */
+	private function failed_call( JsonRpcRequest $request, ToolInterface $tool, AuthenticatedAgent $agent, array $arguments, string $message ): JsonRpcResponse {
+		/** This hook is documented above. */
+		do_action( 'agmcp_tool_called', $tool->name(), $agent->token->label, true, $arguments, $tool->group()->value );
+
+		return JsonRpcResponse::result(
+			$request->id,
+			[
+				'content' => [
+					[
+						'type' => 'text',
+						'text' => $message,
+					],
+				],
+				'isError' => true,
+			]
+		);
+	}
+
+	/** The unexpected is worth recording whether or not the store logs tool calls. */
+	private function log_failure( ToolInterface $tool, \Throwable $throwable ): void {
+		if ( ! function_exists( 'wc_get_logger' ) ) {
+			return;
+		}
+
+		wc_get_logger()->error(
+			sprintf(
+				'Tool "%s" threw %s: %s in %s:%d',
+				$tool->name(),
+				$throwable::class,
+				$throwable->getMessage(),
+				$throwable->getFile(),
+				$throwable->getLine()
+			),
+			[ 'source' => 'agentgate-mcp' ]
+		);
 	}
 
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {

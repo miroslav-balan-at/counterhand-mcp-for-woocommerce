@@ -7,3 +7,5 @@ define( 'ABSPATH', __DIR__ . '/../' );
 define( 'AGMCP_VERSION', 'test' );
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/wp-schema-stubs.php';
+require_once __DIR__ . '/wp-rest-stubs.php';

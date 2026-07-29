@@ -3,9 +3,9 @@
  * Plugin Name:       AgentGate MCP for WooCommerce
  * Plugin URI:        https://github.com/miroslavbalan/agentgate-mcp-for-woocommerce
  * Description:       Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.5
- * Requires PHP:      8.1
+ * Requires PHP:      8.2
  * Requires Plugins:  woocommerce
  * Author:            Miroslav Balan
  * License:           GPL-2.0-or-later
@@ -21,7 +21,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AGMCP_VERSION', '0.1.0' );
+define( 'AGMCP_VERSION', '0.2.0' );
 define( 'AGMCP_PLUGIN_FILE', __FILE__ );
 define( 'AGMCP_PLUGIN_DIR', __DIR__ );
 

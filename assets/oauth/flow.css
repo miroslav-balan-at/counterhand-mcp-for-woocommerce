@@ -1,25 +1,12 @@
 /*
  * AgentGate MCP — OAuth flow pages (consent, denied, error, connected).
- * Colors are the WordPress admin palette (WP 5.7+ standardized shades) so the
- * pages read as part of the store's admin: blue-50 #2271b1 primary,
- * blue-60 #135e96 border, blue-70 #0a4b78 hover, gray-100 #1d2327 text.
+ *
+ * Colours and dimensions come from ../shared/tokens.css, which the page shell
+ * links first. That sheet is shared with the wp-admin screens so the consent
+ * flow and the plugin's admin read as one product, and it maps every value to
+ * a WordPress Design System token, so these pages follow the store's admin
+ * colour scheme without any change here.
  */
-
-:root {
-	--agmcp-blue-50: #2271b1;
-	--agmcp-blue-60: #135e96;
-	--agmcp-blue-70: #0a4b78;
-	--agmcp-gray-0: #f6f7f7;
-	--agmcp-gray-5: #dcdcde;
-	--agmcp-gray-20: #a7aaad;
-	--agmcp-gray-60: #50575e;
-	--agmcp-gray-100: #1d2327;
-	--agmcp-red-50: #d63638;
-	--agmcp-green-50: #00a32a;
-	--agmcp-yellow-5: #fcf9e8;
-	--agmcp-yellow-40: #dba617;
-	--agmcp-radius: 4px;
-}
 
 * {
 	box-sizing: border-box;
@@ -240,6 +227,55 @@ body.agmcp-flow {
 .agmcp-scopes__legend {
 	padding: 0 0 10px;
 	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--agmcp-gray-60);
+}
+
+.agmcp-scopes__section {
+	margin: 0 0 18px;
+}
+
+/*
+ * Advanced sections ship collapsed: the groups inside can change how the store
+ * charges money or run maintenance routines, so opening one is a deliberate act.
+ */
+.agmcp-scopes__section--advanced > .agmcp-scopes__heading {
+	cursor: pointer;
+}
+
+.agmcp-scopes__section--advanced[open] > .agmcp-scopes__heading {
+	margin-bottom: 10px;
+}
+
+.agmcp-scopes__heading {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0 0 10px;
+	font-weight: 600;
+}
+
+.agmcp-scopes__heading-desc {
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--agmcp-gray-60);
+}
+
+.agmcp-scope-group {
+	margin-bottom: 8px;
+}
+
+/*
+ * The group name is an eyebrow above its own scopes rather than a heading in
+ * its own right — it orients, the scope rows below carry the real consequence.
+ */
+.agmcp-scope-group__name {
+	display: block;
+	padding-left: 2px;
+	margin-bottom: 4px;
+	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;

@@ -36,7 +36,7 @@
 
 .nav-tab-active .ctrh-tab-count {
 	background: var(--ctrh-accent);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 }
 
 .ctrh-subtitle {
@@ -161,9 +161,10 @@
  * A client that cannot work right now — dimmed rather than hidden, so the
  * admin sees the option exists and reads why it is out of reach.
  */
-.ctrh-card--muted > .ctrh-card__head .ctrh-card__title,
-.ctrh-card--muted > .ctrh-card__head .ctrh-card__desc {
-	opacity: .6;
+/* Dimmed by colour, not opacity: opacity composited the description below the
+   AA contrast floor, and the injected note already says why it is out of reach. */
+.ctrh-card--muted > .ctrh-card__head .ctrh-card__title {
+	color: var(--ctrh-text-muted);
 }
 
 .ctrh-unavailable {
@@ -317,7 +318,7 @@
 }
 
 .ctrh-status--active {
-	color: var(--ctrh-success);
+	color: var(--ctrh-success-text);
 	font-weight: 600;
 }
 
@@ -341,7 +342,7 @@
 	padding: 2px 10px;
 	border-radius: 999px;
 	background: var(--ctrh-success-surface);
-	color: var(--ctrh-success);
+	color: var(--ctrh-success-text);
 	border: 1px solid var(--ctrh-success);
 	font-size: 11px;
 	font-weight: 600;

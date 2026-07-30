@@ -438,6 +438,42 @@ final class SchemaFromArgsTest extends TestCase {
 	 * @param list<string>         $path_params
 	 * @return array<string, mixed>
 	 */
+	/**
+	 * A route arg is third-party data, and an extension may register a spec that
+	 * references itself. Recursing into one would exhaust the stack — a fatal on
+	 * tools/list, taking the whole surface down rather than one tool.
+	 */
+	public function test_a_self_referential_arg_spec_does_not_exhaust_the_stack(): void {
+		$spec           = [ 'type' => 'object' ];
+		$spec['properties'] = [ 'self' => &$spec ];
+
+		$built = $this->build( [ 'recursive' => $spec ] );
+
+		$this->assertSame( 'object', $built['properties']['recursive']['type'] );
+	}
+
+	/** Deep-but-finite nesting is translated, not truncated at the first level. */
+	public function test_nesting_below_the_ceiling_is_still_translated(): void {
+		$built = $this->build(
+			[
+				'outer' => [
+					'type'       => 'object',
+					'properties' => [
+						'middle' => [
+							'type'       => 'object',
+							'properties' => [ 'inner' => [ 'type' => 'string' ] ],
+						],
+					],
+				],
+			]
+		);
+
+		$this->assertSame(
+			'string',
+			$built['properties']['outer']['properties']['middle']['properties']['inner']['type']
+		);
+	}
+
 	private function build( array $args, ?FieldProfile $fields = null, array $path_params = [] ): array {
 		return $this->schema->build(
 			new RouteArgs( '/wc/v3/coupons', RestMethod::Post, $args ),

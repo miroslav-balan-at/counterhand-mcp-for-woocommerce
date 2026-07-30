@@ -35,7 +35,7 @@ $ctrh_ordered_groups = array_values(
 	<div class="ctrh-card">
 		<div class="ctrh-card__head">
 			<span class="ctrh-card__heading">
-				<span class="ctrh-card__title"><?php esc_html_e( 'Your store address', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<h3 class="ctrh-card__title"><?php esc_html_e( 'Your store address', 'counterhand-mcp-for-woocommerce' ); ?></h3>
 				<span class="ctrh-card__desc">
 					<?php esc_html_e( 'Paste this one URL into any AI app. The app identifies itself with its own published address, so there is no token to create and nothing to copy back — you just approve what it may do.', 'counterhand-mcp-for-woocommerce' ); ?>
 				</span>
@@ -64,7 +64,7 @@ $ctrh_ordered_groups = array_values(
 	</div>
 
 	<?php foreach ( $ctrh_ordered_groups as $ctrh_group ) : ?>
-		<p class="ctrh-group-title"><?php echo esc_html( $ctrh_group->label() ); ?></p>
+		<h2 class="ctrh-group-title"><?php echo esc_html( $ctrh_group->label() ); ?></h2>
 		<p class="ctrh-subtitle"><?php echo esc_html( $ctrh_group->hint() ); ?></p>
 
 		<div class="ctrh-clients"
@@ -73,7 +73,7 @@ $ctrh_ordered_groups = array_values(
 				<details class="ctrh-card ctrh-card--collapsible" data-client="<?php echo esc_attr( $ctrh_client->id ); ?>">
 					<summary class="ctrh-card__head">
 						<span class="ctrh-card__heading">
-							<span class="ctrh-card__title"><?php echo esc_html( $ctrh_client->name ); ?></span>
+							<h3 class="ctrh-card__title"><?php echo esc_html( $ctrh_client->name ); ?></h3>
 							<span class="ctrh-card__desc"><?php echo esc_html( $ctrh_client->blurb ); ?></span>
 						</span>
 
@@ -152,4 +152,6 @@ $ctrh_ordered_groups = array_values(
 		?>
 		<?php esc_html_e( 'Approved apps appear on the Connections tab, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?>
 	</p>
+
+	<span class="screen-reader-text" role="status" id="ctrh-copy-status"></span>
 </div>

@@ -29,7 +29,7 @@
 	/* Text --------------------------------------------------------------- */
 	--ctrh-text: var(--wpds-color-text-primary, #1d2327);
 	--ctrh-text-muted: var(--wpds-color-text-secondary, #50575e);
-	--ctrh-text-subtle: var(--wpds-color-text-tertiary, #787c82);
+	--ctrh-text-subtle: var(--wpds-color-text-tertiary, #6a6e73);
 	--ctrh-text-inverse: var(--wpds-color-text-inverse, #f0f0f1);
 
 	/* Borders ------------------------------------------------------------ */
@@ -46,6 +46,9 @@
 	/* Status triplets: surface / stroke / foreground ---------------------- */
 	--ctrh-success: var(--wpds-color-text-success, #00a32a);
 	--ctrh-success-surface: var(--wpds-color-background-success-subtle, #edfaef);
+	/* --ctrh-success is 3.4:1 on white: a fill colour, not a text colour. Small
+	   text says "active"/"connected" in this instead, as warning and error do. */
+	--ctrh-success-text: var(--wpds-color-text-success-strong, #005c12);
 
 	--ctrh-warning: var(--wpds-color-stroke-warning, #dba617);
 	--ctrh-warning-surface: var(--wpds-color-background-warning-subtle, #fcf9e8);

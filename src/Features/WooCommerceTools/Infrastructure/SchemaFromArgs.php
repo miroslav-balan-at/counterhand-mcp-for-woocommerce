@@ -31,6 +31,9 @@ final readonly class SchemaFromArgs {
 	/** The only types JSON Schema defines. Anything else is dropped, not guessed at. */
 	private const JSON_SCHEMA_TYPES = [ 'array', 'boolean', 'integer', 'null', 'number', 'object', 'string' ];
 
+	/** Well past anything wc/v3 declares; the ceiling is for third-party args. */
+	private const MAX_SCHEMA_DEPTH = 20;
+
 	/**
 	 * Params the REST envelope owns.
 	 *
@@ -167,7 +170,7 @@ final readonly class SchemaFromArgs {
 	 * @param array<string, mixed> $spec
 	 * @return array<string, mixed>
 	 */
-	private function schema( array $spec ): array {
+	private function schema( array $spec, int $depth = 0 ): array {
 		// Core's own list, so validate_callback, sanitize_callback and
 		// arg_options fall away here, and a keyword WordPress adds later
 		// survives with no edit. This is the same call get_data_for_route()
@@ -175,12 +178,20 @@ final readonly class SchemaFromArgs {
 		$schema = array_intersect_key( $spec, array_flip( rest_get_allowed_schema_keywords() ) );
 		$schema = $this->normalize_type( $schema );
 
+		// A route arg is third-party data: an extension is free to register a
+		// spec that references itself, and recursing into one would exhaust the
+		// stack rather than fail a tool. Stopping leaves the branch untyped,
+		// which is what an agent can still work with.
+		if ( $depth >= self::MAX_SCHEMA_DEPTH ) {
+			return $schema;
+		}
+
 		if ( isset( $schema['items'] ) && is_array( $schema['items'] ) ) {
-			$schema['items'] = $this->schema( $schema['items'] );
+			$schema['items'] = $this->schema( $schema['items'], $depth + 1 );
 		}
 
 		if ( isset( $schema['additionalProperties'] ) && is_array( $schema['additionalProperties'] ) ) {
-			$schema['additionalProperties'] = $this->schema( $schema['additionalProperties'] );
+			$schema['additionalProperties'] = $this->schema( $schema['additionalProperties'], $depth + 1 );
 		}
 
 		foreach ( [ 'properties', 'patternProperties', 'anyOf', 'oneOf' ] as $keyword ) {
@@ -188,7 +199,7 @@ final readonly class SchemaFromArgs {
 				continue;
 			}
 
-			$schema[ $keyword ] = $this->map_schemas( $schema[ $keyword ] );
+			$schema[ $keyword ] = $this->map_schemas( $schema[ $keyword ], $depth + 1 );
 		}
 
 		/*
@@ -209,9 +220,9 @@ final readonly class SchemaFromArgs {
 	 * @param array<array-key, mixed> $schemas
 	 * @return array<array-key, mixed>
 	 */
-	private function map_schemas( array $schemas ): array {
+	private function map_schemas( array $schemas, int $depth = 0 ): array {
 		return array_map(
-			fn ( mixed $schema ): mixed => is_array( $schema ) ? $this->schema( $schema ) : $schema,
+			fn ( mixed $schema ): mixed => is_array( $schema ) ? $this->schema( $schema, $depth ) : $schema,
 			$schemas
 		);
 	}

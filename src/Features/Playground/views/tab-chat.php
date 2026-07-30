@@ -42,8 +42,13 @@ $ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 	<?php endif; ?>
 
 	<div class="ctrh-chat__panel">
+		<?php
+		// The live-region attributes are on the conversation branch only: the
+		// model chooser is a form, and announcing every field it contains as a
+		// log entry is what breaks a screen reader on this screen.
+		?>
 		<div class="ctrh-chat__log <?php echo $is_ready ? '' : 'ctrh-chat__log--setup'; ?>"
-			id="ctrh-chat-log" role="log" aria-live="polite">
+			id="ctrh-chat-log" <?php echo $is_ready ? 'role="log" aria-live="polite"' : ''; ?>>
 
 			<?php if ( ! $is_ready ) : ?>
 				<?php require __DIR__ . '/partial-model-chooser.php'; ?>

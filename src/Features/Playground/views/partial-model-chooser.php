@@ -40,7 +40,7 @@ $ctrh_key_hint = $chat_settings->masked_key();
 		<div class="ctrh-card">
 			<div class="ctrh-card__head">
 				<span class="ctrh-card__heading">
-					<span class="ctrh-card__title"><?php esc_html_e( 'Let WordPress manage the model', 'counterhand-mcp-for-woocommerce' ); ?></span>
+					<h3 class="ctrh-card__title"><?php esc_html_e( 'Let WordPress manage the model', 'counterhand-mcp-for-woocommerce' ); ?></h3>
 					<span class="ctrh-card__desc"><?php esc_html_e( 'The recommended way — fewer steps now, nothing to maintain later.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 				</span>
 			</div>
@@ -144,7 +144,7 @@ $ctrh_key_hint = $chat_settings->masked_key();
 	<details class="ctrh-card ctrh-card--collapsible" <?php echo null === $core_state ? 'open' : ''; ?>>
 		<summary class="ctrh-card__head">
 			<span class="ctrh-card__heading">
-				<span class="ctrh-card__title"><?php esc_html_e( 'Use your own provider account', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<h3 class="ctrh-card__title"><?php esc_html_e( 'Use your own provider account', 'counterhand-mcp-for-woocommerce' ); ?></h3>
 				<span class="ctrh-card__desc"><?php esc_html_e( 'Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</summary>
@@ -247,7 +247,7 @@ $ctrh_key_hint = $chat_settings->masked_key();
 				<?php echo ( null !== $ctrh_selected && $ctrh_selected->needs_base_url() ) ? 'open' : ''; ?>>
 				<summary class="ctrh-card__head">
 					<span class="ctrh-card__heading">
-						<span class="ctrh-card__title"><?php esc_html_e( 'Advanced', 'counterhand-mcp-for-woocommerce' ); ?></span>
+						<h3 class="ctrh-card__title"><?php esc_html_e( 'Advanced', 'counterhand-mcp-for-woocommerce' ); ?></h3>
 						<span class="ctrh-card__desc"><?php esc_html_e( 'Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 					</span>
 				</summary>

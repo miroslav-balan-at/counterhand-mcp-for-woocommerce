@@ -145,7 +145,7 @@
 	border-radius: 8px;
 	overflow: hidden;
 	background: var(--ctrh-accent);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -187,7 +187,7 @@
 
 .ctrh-msg--user .ctrh-msg__body {
 	background: var(--ctrh-accent);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 	border-bottom-right-radius: 4px;
 }
 
@@ -406,10 +406,15 @@
 	border-radius: var(--ctrh-radius-card);
 }
 
-.ctrh-chat__input:focus {
+/*
+ * The accent ring replaces the UA outline, but box-shadow is dropped in Windows
+ * forced-colors mode — a transparent outline is what the system palette then
+ * paints, so the field never ends up with no focus indicator at all.
+ */
+.ctrh-chat__input:focus-visible {
 	border-color: var(--ctrh-accent);
 	box-shadow: 0 0 0 1px var(--ctrh-accent);
-	outline: none;
+	outline: 2px solid transparent;
 }
 
 .ctrh-chat__input:disabled {
@@ -543,12 +548,18 @@
 	color: var(--ctrh-warning-text);
 }
 
+.ctrh-pill--error {
+	background: var(--ctrh-error-surface);
+	border-color: var(--ctrh-error);
+	color: var(--ctrh-error-text);
+}
+
 .ctrh-chat-tools__form {
 	padding: var(--ctrh-gap);
 	border: 1px solid var(--ctrh-gray-5);
 	border-top: 0;
 	border-radius: 0 0 var(--ctrh-radius-card) var(--ctrh-radius-card);
-	background: var(--ctrh-surface, #fff);
+	background: var(--ctrh-surface);
 }
 
 .ctrh-chat-tools__lede {
@@ -577,6 +588,12 @@
 	color: var(--ctrh-warning-text);
 }
 
+.ctrh-callout--error {
+	background: var(--ctrh-error-surface);
+	border-left: 3px solid var(--ctrh-error);
+	color: var(--ctrh-error-text);
+}
+
 .ctrh-callout__icon {
 	flex: 0 0 18px;
 	display: flex;
@@ -586,8 +603,7 @@
 	height: 18px;
 	margin-top: 1px;
 	border-radius: 999px;
-	background: var(--ctrh-warning);
-	color: #fff;
+	border: 2px solid currentcolor;
 	font-size: 12px;
 	font-weight: 700;
 	line-height: 1;
@@ -672,7 +688,7 @@
 
 .ctrh-area:focus-within {
 	border-color: var(--ctrh-accent);
-	box-shadow: 0 0 0 2px var(--ctrh-accent-surface);
+	box-shadow: 0 0 0 2px var(--ctrh-accent);
 }
 
 .ctrh-area__input {
@@ -775,16 +791,11 @@
 	background: var(--ctrh-accent-surface);
 }
 
-.ctrh-provider:focus-visible {
+.ctrh-provider:focus-within {
 	outline: 2px solid var(--ctrh-accent);
 	outline-offset: 1px;
 }
 
-.ctrh-provider[aria-pressed="true"] {
-	border-color: var(--ctrh-accent);
-	background: var(--ctrh-accent-surface);
-	box-shadow: inset 0 0 0 1px var(--ctrh-accent);
-}
 
 .ctrh-provider__name {
 	font-size: 14px;
@@ -803,7 +814,7 @@
 }
 
 .ctrh-chooser__result.ctrh-ok {
-	color: var(--ctrh-success);
+	color: var(--ctrh-success-text);
 	font-weight: 600;
 }
 

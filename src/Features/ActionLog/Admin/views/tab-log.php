@@ -46,9 +46,14 @@ defined( 'ABSPATH' ) || exit;
 					<td><?php echo esc_html( $ctrh_entry['created_at'] ); ?></td>
 					<td><code><?php echo esc_html( $ctrh_entry['tool_name'] ); ?></code></td>
 					<td><?php echo esc_html( $ctrh_entry['token_label'] ); ?></td>
+					<?php $ctrh_failed = 'error' === $ctrh_entry['outcome']; ?>
 					<td>
-						<span class="<?php echo 'error' === $ctrh_entry['outcome'] ? 'ctrh-status--revoked' : 'ctrh-status--active'; ?>">
-							<?php echo esc_html( $ctrh_entry['outcome'] ); ?>
+						<span class="<?php echo $ctrh_failed ? 'ctrh-status--revoked' : 'ctrh-status--active'; ?>">
+							<?php
+							echo $ctrh_failed
+								? esc_html__( 'Failed', 'counterhand-mcp-for-woocommerce' )
+								: esc_html__( 'Succeeded', 'counterhand-mcp-for-woocommerce' );
+							?>
 						</span>
 					</td>
 					<td><code class="ctrh-log-args"><?php echo esc_html( $ctrh_entry['summary'] ); ?></code></td>

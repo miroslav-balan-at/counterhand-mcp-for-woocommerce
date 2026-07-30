@@ -114,7 +114,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 			TokenStatus::Expired => 'ctrh-status ctrh-status--expired',
 		};
 
-		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $item->status->value ) . '</span>';
+		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $item->status->label() ) . '</span>';
 	}
 
 	private function render_actions( ApiToken $item ): string {

@@ -85,12 +85,18 @@ $ctrh_client_name = $context['client_name'];
 			</p>
 		<?php endif; ?>
 
+		<?php
+		// Approve first in the DOM so keyboard order matches the stacked mobile
+		// layout; CSS puts Deny on the left on wider screens. Reversing this in
+		// markup instead would make a keyboard user tab upwards on a phone, on
+		// the screen that grants an app access to the store.
+		?>
 		<div class="ctrh-actions">
-			<button type="submit" name="ctrh_deny" value="1" class="ctrh-button ctrh-button--secondary">
-				<?php esc_html_e( 'Deny', 'counterhand-mcp-for-woocommerce' ); ?>
-			</button>
 			<button type="submit" name="ctrh_approve" value="1" class="ctrh-button ctrh-button--primary">
 				<?php esc_html_e( 'Approve access', 'counterhand-mcp-for-woocommerce' ); ?>
+			</button>
+			<button type="submit" name="ctrh_deny" value="1" class="ctrh-button ctrh-button--secondary">
+				<?php esc_html_e( 'Deny', 'counterhand-mcp-for-woocommerce' ); ?>
 			</button>
 		</div>
 	</form>

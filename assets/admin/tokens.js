@@ -28,11 +28,27 @@
 
 	window.ctrhCopyText = copyText;
 
+	/*
+	 * Swapping the button's own text says nothing to a screen reader: the label
+	 * changes but nothing announces it, and reverting it after 1500ms would race
+	 * the announcement anyway. A separate polite region is what gets spoken, and
+	 * it is not reverted.
+	 */
+	function announce( message ) {
+		var region = document.getElementById( 'ctrh-copy-status' );
+
+		if ( region ) {
+			region.textContent = message;
+		}
+	}
+
 	function copyFromButton( button ) {
 		var restoreLabel = button.textContent;
+		var copiedLabel = button.dataset.copiedLabel || 'Copied!';
 
 		copyText( button.dataset.copy || '' ).then( function () {
-			button.textContent = button.dataset.copiedLabel || 'Copied!';
+			button.textContent = copiedLabel;
+			announce( copiedLabel );
 			window.setTimeout( function () {
 				button.textContent = restoreLabel;
 			}, 1500 );

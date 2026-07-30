@@ -46,7 +46,7 @@ body.ctrh-flow {
 	height: 48px;
 	border-radius: 8px;
 	object-fit: contain;
-	background: #fff;
+	background: var(--ctrh-surface);
 	border: 1px solid var(--ctrh-gray-5);
 	padding: 4px;
 	flex: 0 0 auto;
@@ -61,7 +61,7 @@ body.ctrh-flow {
 	justify-content: center;
 	border-radius: 8px;
 	background: var(--ctrh-blue-50);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 	font-size: 22px;
 	font-weight: 700;
 }
@@ -97,7 +97,7 @@ body.ctrh-flow {
 .ctrh-card {
 	width: 100%;
 	max-width: 720px;
-	background: #fff;
+	background: var(--ctrh-surface);
 	border: 1px solid var(--ctrh-gray-5);
 	border-radius: 6px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
@@ -114,7 +114,7 @@ body.ctrh-flow {
 	padding: 10px 12px;
 	border: 1px solid var(--ctrh-gray-5);
 	border-radius: var(--ctrh-radius);
-	background: #fff;
+	background: var(--ctrh-surface);
 }
 
 /* Initial-based mark: no external avatar request, so nothing can fail to load. */
@@ -126,7 +126,7 @@ body.ctrh-flow {
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	background: #e0e7ec;
+	background: var(--ctrh-surface-sunken);
 	color: var(--ctrh-gray-60);
 	font-size: 14px;
 	font-weight: 700;
@@ -296,7 +296,7 @@ body.ctrh-flow {
 
 .ctrh-scope:hover {
 	border-color: var(--ctrh-blue-50);
-	background: #f0f6fc;
+	background: var(--ctrh-accent-surface);
 }
 
 .ctrh-scope--write {
@@ -340,7 +340,7 @@ body.ctrh-flow {
 
 .ctrh-tag--write {
 	background: var(--ctrh-yellow-5);
-	color: #7d5a00;
+	color: var(--ctrh-warning-text);
 	border: 1px solid var(--ctrh-yellow-40);
 }
 
@@ -356,13 +356,15 @@ body.ctrh-flow {
 .ctrh-notice--warning {
 	background: var(--ctrh-yellow-5);
 	border-left: 4px solid var(--ctrh-yellow-40);
-	color: #614a00;
+	color: var(--ctrh-warning-text);
 }
 
 /* Actions ---------------------------------------------------------------- */
 
 .ctrh-actions {
 	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
 	gap: 12px;
 	margin-top: 24px;
 }
@@ -397,25 +399,25 @@ body.ctrh-flow {
 .ctrh-button--primary {
 	background: var(--ctrh-blue-50);
 	border-color: var(--ctrh-blue-60);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 }
 
 .ctrh-button--primary:hover,
 .ctrh-button--primary:focus {
 	background: var(--ctrh-blue-70);
 	border-color: var(--ctrh-blue-70);
-	color: #fff;
+	color: var(--ctrh-text-inverse);
 }
 
 .ctrh-button--secondary {
-	background: #f6f7f7;
+	background: var(--ctrh-surface-neutral);
 	border-color: var(--ctrh-gray-20);
 	color: var(--ctrh-blue-50);
 }
 
 .ctrh-button--secondary:hover,
 .ctrh-button--secondary:focus {
-	background: #f0f0f1;
+	background: var(--ctrh-surface-sunken);
 	border-color: var(--ctrh-blue-50);
 	color: var(--ctrh-blue-70);
 }
@@ -438,12 +440,12 @@ body.ctrh-flow {
 }
 
 .ctrh-status-icon--success {
-	background: #edfaef;
+	background: var(--ctrh-success-surface);
 	color: var(--ctrh-green-50);
 }
 
 .ctrh-status-icon--error {
-	background: #fcf0f1;
+	background: var(--ctrh-error-surface);
 	color: var(--ctrh-red-50);
 }
 
@@ -508,7 +510,7 @@ body.ctrh-flow {
 
 .ctrh-sitefooter__sep,
 .ctrh-sitefooter__note {
-	color: var(--ctrh-gray-20);
+	color: var(--ctrh-gray-60);
 }
 
 /* Small screens ---------------------------------------------------------- */
@@ -538,9 +540,9 @@ body.ctrh-flow {
 		font-size: 15px;
 	}
 
-	/* Stack the buttons, keeping Approve as the top (primary) target. */
+	/* Approve is first in the DOM, so plain column keeps it the top target. */
 	.ctrh-actions {
-		flex-direction: column-reverse;
+		flex-direction: column;
 	}
 
 	.ctrh-actions--single .ctrh-button {

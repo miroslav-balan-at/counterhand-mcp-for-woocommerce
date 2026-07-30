@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Domain;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\MetaKeyPolicy;
-use AgentGateMcp\Features\WooCommerceTools\Domain\MetaOwner;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
+use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

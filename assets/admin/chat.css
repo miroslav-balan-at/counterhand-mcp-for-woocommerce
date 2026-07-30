@@ -1,5 +1,5 @@
 /*
- * AgentGate MCP — in-admin chat.
+ * Counterhand MCP — in-admin chat.
  *
  * Built on ../shared/tokens.css. Unlike the Connect and Settings screens this
  * is not a settings page, so it deliberately breaks WooCommerce's 720px
@@ -7,7 +7,7 @@
  * chat is the page rather than a widget sitting on it.
  */
 
-.agmcp-chat {
+.ctrh-chat {
 	max-width: 1100px;
 }
 
@@ -15,7 +15,7 @@
  * The chat owns the viewport: the wrap loses WordPress's bottom padding so the
  * panel can be sized against the window instead of stretching the page.
  */
-.agmcp-wrap--chat {
+.ctrh-wrap--chat {
 	margin-right: 20px;
 	padding-bottom: 0;
 }
@@ -27,16 +27,16 @@
  * and the composer is always in reach. Everything inside flexes against this
  * height rather than adding to it.
  */
-.agmcp-chat__panel {
+.ctrh-chat__panel {
 	display: flex;
 	flex-direction: column;
 	height: calc(100vh - 210px);
 	min-height: 420px;
-	margin-top: var(--agmcp-gap);
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	border-radius: var(--agmcp-radius-card);
-	box-shadow: var(--agmcp-shadow-card);
+	margin-top: var(--ctrh-gap);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	border-radius: var(--ctrh-radius-card);
+	box-shadow: var(--ctrh-shadow-card);
 	overflow: hidden;
 }
 
@@ -45,96 +45,96 @@
  * min-height:auto, which refuses to shrink below its content, so the log grew
  * past the panel and the page scrolled instead of the messages.
  */
-.agmcp-chat__log {
+.ctrh-chat__log {
 	flex: 1 1 auto;
 	min-height: 0;
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	padding: var(--agmcp-pad) clamp(16px, 3vw, 28px);
-	background: var(--agmcp-surface-neutral);
+	padding: var(--ctrh-pad) clamp(16px, 3vw, 28px);
+	background: var(--ctrh-surface-neutral);
 	display: flex;
 	flex-direction: column;
-	gap: var(--agmcp-gap);
+	gap: var(--ctrh-gap);
 }
 
 /* Empty state ------------------------------------------------------------ */
 
-.agmcp-chat__empty {
+.ctrh-chat__empty {
 	margin: auto;
 	text-align: center;
 	max-width: 620px;
 }
 
-.agmcp-chat__empty-title {
+.ctrh-chat__empty-title {
 	font-size: 20px;
 	font-weight: 600;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 	margin: 0 0 6px;
 }
 
-.agmcp-chat__empty-hint {
+.ctrh-chat__empty-hint {
 	font-size: 14px;
-	color: var(--agmcp-text-muted);
-	margin: 0 0 var(--agmcp-gap-large);
+	color: var(--ctrh-text-muted);
+	margin: 0 0 var(--ctrh-gap-large);
 }
 
-.agmcp-chat__suggestions {
+.ctrh-chat__suggestions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 10px;
 	text-align: left;
 }
 
-.agmcp-chat__suggestion {
+.ctrh-chat__suggestion {
 	padding: 14px 16px;
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	border-radius: var(--agmcp-radius-card);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	border-radius: var(--ctrh-radius-card);
 	font-size: 14px;
 	line-height: 1.45;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 	text-align: left;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease, transform .15s ease;
 }
 
-.agmcp-chat__suggestion:hover {
-	border-color: var(--agmcp-accent);
-	background: var(--agmcp-accent-surface);
+.ctrh-chat__suggestion:hover {
+	border-color: var(--ctrh-accent);
+	background: var(--ctrh-accent-surface);
 	transform: translateY(-1px);
 }
 
-.agmcp-chat__suggestion:focus-visible {
-	outline: 2px solid var(--agmcp-accent);
+.ctrh-chat__suggestion:focus-visible {
+	outline: 2px solid var(--ctrh-accent);
 	outline-offset: 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.agmcp-chat__suggestion {
+	.ctrh-chat__suggestion {
 		transition: none;
 	}
 
-	.agmcp-chat__suggestion:hover {
+	.ctrh-chat__suggestion:hover {
 		transform: none;
 	}
 }
 
 /* Messages --------------------------------------------------------------- */
 
-.agmcp-msg {
+.ctrh-msg {
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
 	max-width: 78%;
 }
 
-.agmcp-msg--user {
+.ctrh-msg--user {
 	align-self: flex-end;
 	max-width: 72%;
 }
 
 /* The store's own mark, matching the avatar on the consent screen. */
-.agmcp-msg__avatar {
+.ctrh-msg__avatar {
 	width: 32px;
 	height: 32px;
 	flex: 0 0 auto;
@@ -144,40 +144,40 @@
 	justify-content: center;
 	border-radius: 8px;
 	overflow: hidden;
-	background: var(--agmcp-accent);
+	background: var(--ctrh-accent);
 	color: #fff;
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
 }
 
-.agmcp-msg__avatar img {
+.ctrh-msg__avatar img {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
-	background: var(--agmcp-surface);
+	background: var(--ctrh-surface);
 }
 
-.agmcp-msg__main {
+.ctrh-msg__main {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 	min-width: 0;
 }
 
-.agmcp-msg--user .agmcp-msg__main {
+.ctrh-msg--user .ctrh-msg__main {
 	align-items: flex-end;
 }
 
-.agmcp-msg__role {
+.ctrh-msg__role {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-text-subtle);
+	color: var(--ctrh-text-subtle);
 }
 
-.agmcp-msg__body {
+.ctrh-msg__body {
 	padding: 14px 18px;
 	border-radius: 14px;
 	font-size: 15px;
@@ -185,72 +185,72 @@
 	word-break: break-word;
 }
 
-.agmcp-msg--user .agmcp-msg__body {
-	background: var(--agmcp-accent);
+.ctrh-msg--user .ctrh-msg__body {
+	background: var(--ctrh-accent);
 	color: #fff;
 	border-bottom-right-radius: 4px;
 }
 
-.agmcp-msg--assistant .agmcp-msg__body {
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	color: var(--agmcp-text);
+.ctrh-msg--assistant .ctrh-msg__body {
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	color: var(--ctrh-text);
 	border-bottom-left-radius: 4px;
 }
 
-.agmcp-msg--error .agmcp-msg__body {
-	background: var(--agmcp-error-surface);
-	border-color: var(--agmcp-error);
-	color: var(--agmcp-error-text);
+.ctrh-msg--error .ctrh-msg__body {
+	background: var(--ctrh-error-surface);
+	border-color: var(--ctrh-error);
+	color: var(--ctrh-error-text);
 }
 
 /* Formatted answer content ----------------------------------------------- */
 
-.agmcp-msg__body p {
+.ctrh-msg__body p {
 	margin: 0 0 10px;
 }
 
-.agmcp-msg__body p:last-child,
-.agmcp-msg__body ul:last-child,
-.agmcp-msg__body ol:last-child,
-.agmcp-msg__body pre:last-child {
+.ctrh-msg__body p:last-child,
+.ctrh-msg__body ul:last-child,
+.ctrh-msg__body ol:last-child,
+.ctrh-msg__body pre:last-child {
 	margin-bottom: 0;
 }
 
-.agmcp-msg__body ul,
-.agmcp-msg__body ol {
+.ctrh-msg__body ul,
+.ctrh-msg__body ol {
 	margin: 0 0 10px;
 	padding-left: 22px;
 }
 
-.agmcp-msg__body li {
+.ctrh-msg__body li {
 	margin: 0 0 4px;
 }
 
-.agmcp-msg__body code {
+.ctrh-msg__body code {
 	padding: 1px 5px;
 	border-radius: 3px;
-	background: var(--agmcp-surface-sunken);
+	background: var(--ctrh-surface-sunken);
 	font-size: 13px;
 }
 
-.agmcp-msg--user .agmcp-msg__body code {
+.ctrh-msg--user .ctrh-msg__body code {
 	background: rgba(255, 255, 255, .2);
 	color: inherit;
 }
 
-.agmcp-msg__body pre {
+.ctrh-msg__body pre {
 	margin: 0 0 10px;
 	padding: 12px 14px;
 	overflow-x: auto;
-	background: var(--agmcp-surface-inverse);
-	color: var(--agmcp-text-inverse);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-surface-inverse);
+	color: var(--ctrh-text-inverse);
+	border-radius: var(--ctrh-radius);
 	font-size: 13px;
 	line-height: 1.5;
 }
 
-.agmcp-msg__body pre code {
+.ctrh-msg__body pre code {
 	padding: 0;
 	background: none;
 	color: inherit;
@@ -259,35 +259,35 @@
 
 /* Typing indicator ------------------------------------------------------- */
 
-.agmcp-typing {
+.ctrh-typing {
 	display: inline-flex;
 	gap: 5px;
 	padding: 18px;
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
 	border-radius: 14px;
 	border-bottom-left-radius: 4px;
 	width: fit-content;
 }
 
-.agmcp-typing span {
+.ctrh-typing span {
 	width: 7px;
 	height: 7px;
 	border-radius: 50%;
-	background: var(--agmcp-border-strong);
-	animation: agmcp-bounce 1.2s infinite ease-in-out;
+	background: var(--ctrh-border-strong);
+	animation: ctrh-bounce 1.2s infinite ease-in-out;
 }
 
-.agmcp-typing span:nth-child(2) { animation-delay: .15s; }
-.agmcp-typing span:nth-child(3) { animation-delay: .3s; }
+.ctrh-typing span:nth-child(2) { animation-delay: .15s; }
+.ctrh-typing span:nth-child(3) { animation-delay: .3s; }
 
-@keyframes agmcp-bounce {
+@keyframes ctrh-bounce {
 	0%, 60%, 100% { transform: translateY(0); opacity: .5; }
 	30%           { transform: translateY(-4px); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.agmcp-typing span { animation: none; }
+	.ctrh-typing span { animation: none; }
 }
 
 /* Tool cards ------------------------------------------------------------- */
@@ -296,84 +296,84 @@
  * Deliberately quiet: a tool call is supporting evidence for the answer above
  * it, not a peer of the conversation, so it stays narrow, small and collapsed.
  */
-.agmcp-tool {
+.ctrh-tool {
 	align-self: flex-start;
 	max-width: 78%;
 	margin-left: 42px;
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	border-left: 3px solid var(--agmcp-border-strong);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	border-left: 3px solid var(--ctrh-border-strong);
+	border-radius: var(--ctrh-radius);
 	font-size: 13px;
 }
 
-.agmcp-tool--error {
-	border-left-color: var(--agmcp-error);
+.ctrh-tool--error {
+	border-left-color: var(--ctrh-error);
 }
 
-.agmcp-tool__summary {
+.ctrh-tool__summary {
 	display: flex;
 	align-items: center;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	padding: 8px 12px;
 	cursor: pointer;
 	list-style: none;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
-.agmcp-tool__summary::-webkit-details-marker {
+.ctrh-tool__summary::-webkit-details-marker {
 	display: none;
 }
 
-.agmcp-tool__summary:focus-visible {
-	outline: 2px solid var(--agmcp-accent);
+.ctrh-tool__summary:focus-visible {
+	outline: 2px solid var(--ctrh-accent);
 	outline-offset: -2px;
 }
 
-.agmcp-tool__icon {
-	color: var(--agmcp-success);
+.ctrh-tool__icon {
+	color: var(--ctrh-success);
 	font-weight: 700;
 }
 
-.agmcp-tool--error .agmcp-tool__icon {
-	color: var(--agmcp-error);
+.ctrh-tool--error .ctrh-tool__icon {
+	color: var(--ctrh-error);
 }
 
-.agmcp-tool__name {
+.ctrh-tool__name {
 	font-size: 12px;
-	background: var(--agmcp-surface-sunken);
-	color: var(--agmcp-text);
+	background: var(--ctrh-surface-sunken);
+	color: var(--ctrh-text);
 	padding: 2px 6px;
 	border-radius: 3px;
 }
 
-.agmcp-tool__hint {
-	color: var(--agmcp-text-subtle);
+.ctrh-tool__hint {
+	color: var(--ctrh-text-subtle);
 	font-size: 12px;
 }
 
-.agmcp-tool__body {
+.ctrh-tool__body {
 	padding: 0 12px 12px;
-	border-top: 1px solid var(--agmcp-surface-sunken);
+	border-top: 1px solid var(--ctrh-surface-sunken);
 }
 
-.agmcp-tool__label {
+.ctrh-tool__label {
 	margin: 10px 0 4px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-text-subtle);
+	color: var(--ctrh-text-subtle);
 }
 
-.agmcp-tool__code {
+.ctrh-tool__code {
 	margin: 0;
 	padding: 10px 12px;
 	max-height: 260px;
 	overflow: auto;
-	background: var(--agmcp-surface-inverse);
-	color: var(--agmcp-text-inverse);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-surface-inverse);
+	color: var(--ctrh-text-inverse);
+	border-radius: var(--ctrh-radius);
 	font-size: 12px;
 	line-height: 1.5;
 	white-space: pre-wrap;
@@ -382,16 +382,16 @@
 
 /* Composer --------------------------------------------------------------- */
 
-.agmcp-chat__composer {
+.ctrh-chat__composer {
 	display: flex;
 	gap: 10px;
 	align-items: flex-end;
-	padding: var(--agmcp-pad-small);
-	border-top: 1px solid var(--agmcp-border);
-	background: var(--agmcp-surface);
+	padding: var(--ctrh-pad-small);
+	border-top: 1px solid var(--ctrh-border);
+	background: var(--ctrh-surface);
 }
 
-.agmcp-chat__input {
+.ctrh-chat__input {
 	flex: 1 1 auto;
 	resize: none;
 	/* Height comes from rows + padding so a wrapped placeholder is never cut. */
@@ -400,81 +400,81 @@
 	padding: 14px 18px;
 	font-size: 15px;
 	line-height: 1.6;
-	color: var(--agmcp-text);
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border-field);
-	border-radius: var(--agmcp-radius-card);
+	color: var(--ctrh-text);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border-field);
+	border-radius: var(--ctrh-radius-card);
 }
 
-.agmcp-chat__input:focus {
-	border-color: var(--agmcp-accent);
-	box-shadow: 0 0 0 1px var(--agmcp-accent);
+.ctrh-chat__input:focus {
+	border-color: var(--ctrh-accent);
+	box-shadow: 0 0 0 1px var(--ctrh-accent);
 	outline: none;
 }
 
-.agmcp-chat__input:disabled {
-	background: var(--agmcp-surface-neutral);
+.ctrh-chat__input:disabled {
+	background: var(--ctrh-surface-neutral);
 }
 
-.agmcp-chat__send.button {
+.ctrh-chat__send.button {
 	flex: 0 0 auto;
 	align-self: stretch;
 	padding: 0 24px;
 	font-size: 14px;
-	border-radius: var(--agmcp-radius-card);
+	border-radius: var(--ctrh-radius-card);
 }
 
-.agmcp-chat__foot {
+.ctrh-chat__foot {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	flex-wrap: wrap;
 	margin: 0;
 	padding: 10px 14px;
-	border-top: 1px solid var(--agmcp-surface-sunken);
-	background: var(--agmcp-surface-neutral);
+	border-top: 1px solid var(--ctrh-surface-sunken);
+	background: var(--ctrh-surface-neutral);
 	font-size: 12px;
-	color: var(--agmcp-text-subtle);
+	color: var(--ctrh-text-subtle);
 }
 
-.agmcp-chat__foot-group {
+.ctrh-chat__foot-group {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
 }
 
-.agmcp-chat__hint {
-	color: var(--agmcp-text-subtle);
+.ctrh-chat__hint {
+	color: var(--ctrh-text-subtle);
 }
 
-.agmcp-chat__hint kbd {
+.ctrh-chat__hint kbd {
 	padding: 1px 5px;
-	border: 1px solid var(--agmcp-border);
+	border: 1px solid var(--ctrh-border);
 	border-bottom-width: 2px;
 	border-radius: 3px;
-	background: var(--agmcp-surface);
+	background: var(--ctrh-surface);
 	font-size: 11px;
 	font-family: inherit;
 }
 
 /* Model selector in the footer — switching never means leaving the tab. */
-.agmcp-chat__model {
+.ctrh-chat__model {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.agmcp-chat__model select {
+.ctrh-chat__model select {
 	font-size: 12px;
 	min-height: 28px;
 	max-width: 220px;
 }
 
-.agmcp-chat__note {
+.ctrh-chat__note {
 	max-width: 1100px;
-	margin-top: var(--agmcp-gap-small);
+	margin-top: var(--ctrh-gap-small);
 }
 
 /* Tool areas ------------------------------------------------------------- */
@@ -484,48 +484,231 @@
  * summary carries the tool count because that number is the only reason to open
  * it — everything else here is a checkbox list nobody needs twice.
  */
-.agmcp-chat-tools {
+.ctrh-chat-tools {
 	max-width: 1100px;
-	margin-top: var(--agmcp-gap-small);
+	margin-top: var(--ctrh-gap-small);
 }
 
-.agmcp-chat-tools__summary {
+.ctrh-chat-tools__summary {
+	display: flex;
+	align-items: center;
+	gap: var(--ctrh-gap-small);
 	cursor: pointer;
+	padding: 10px 12px;
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: var(--ctrh-radius-card);
+	background: var(--ctrh-gray-0);
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
+	transition: border-color .15s ease, background .15s ease;
 }
 
-.agmcp-chat-tools__form {
-	padding: var(--agmcp-gap-small) 0 0;
+.ctrh-chat-tools__summary:hover {
+	border-color: var(--ctrh-gray-20);
 }
 
-.agmcp-chat-tools__lede {
+.ctrh-chat-tools[open] .ctrh-chat-tools__summary {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.ctrh-chat-tools__count {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--ctrh-gray-100);
+}
+
+.ctrh-chat-tools__summary-label {
+	margin-right: auto;
+}
+
+/*
+ * Pill, not a WP notice: it rides inside the summary line, so it has to read as
+ * a status on that line rather than as a block interrupting it.
+ */
+.ctrh-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 10px;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ctrh-pill--warn {
+	background: var(--ctrh-warning-surface);
+	border-color: var(--ctrh-warning);
+	color: var(--ctrh-warning-text);
+}
+
+.ctrh-chat-tools__form {
+	padding: var(--ctrh-gap);
+	border: 1px solid var(--ctrh-gray-5);
+	border-top: 0;
+	border-radius: 0 0 var(--ctrh-radius-card) var(--ctrh-radius-card);
+	background: var(--ctrh-surface, #fff);
+}
+
+.ctrh-chat-tools__lede {
 	max-width: 640px;
-	margin: 0 0 var(--agmcp-gap-small);
+	margin: 0 0 var(--ctrh-gap);
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-chat-tools__section {
-	margin: 0 0 10px;
+/*
+ * The explanation a ticked-but-withheld area needs. Disabling the checkbox was
+ * the other option and a worse one: it would state the refusal without the
+ * reason or the way out, so this carries both and keeps the box usable.
+ */
+.ctrh-callout {
+	display: flex;
+	gap: var(--ctrh-gap-small);
+	margin: 0 0 var(--ctrh-gap);
+	padding: 12px 14px;
+	border-radius: var(--ctrh-radius-card);
+}
+
+.ctrh-callout--warn {
+	background: var(--ctrh-warning-surface);
+	border-left: 3px solid var(--ctrh-warning);
+	color: var(--ctrh-warning-text);
+}
+
+.ctrh-callout__icon {
+	flex: 0 0 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	margin-top: 1px;
+	border-radius: 999px;
+	background: var(--ctrh-warning);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.ctrh-callout__body {
+	min-width: 0;
+}
+
+.ctrh-callout__title {
+	display: block;
+	font-size: 13px;
+}
+
+.ctrh-callout__text {
+	margin: 4px 0 8px;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.ctrh-callout__action {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ctrh-callout__action:hover {
+	text-decoration: underline;
+}
+
+.ctrh-chat-tools__hint {
+	margin: 0 0 var(--ctrh-gap);
+	font-size: 12px;
+	color: var(--ctrh-gray-60);
+}
+
+.ctrh-chat-tools__section {
+	margin: 0 0 var(--ctrh-gap);
 	border: 0;
 	padding: 0;
 }
 
-.agmcp-chat-tools__section legend {
-	padding: 0;
+.ctrh-chat-tools__legend {
+	padding: 0 0 6px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-chat-tools__group {
+.ctrh-chat-tools__grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+/*
+ * Each area is a pill the whole of which is the hit target — a bare checkbox in
+ * a wrapping row gives a 13px target and no room to say anything beside it.
+ */
+.ctrh-area {
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	margin: 4px 16px 0 0;
+	gap: 6px;
+	padding: 6px 12px 6px 10px;
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: 999px;
+	background: var(--ctrh-gray-0);
+	font-size: 12px;
+	cursor: pointer;
+	transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.ctrh-area:hover {
+	border-color: var(--ctrh-accent);
+	background: var(--ctrh-accent-surface);
+}
+
+.ctrh-area:focus-within {
+	border-color: var(--ctrh-accent);
+	box-shadow: 0 0 0 2px var(--ctrh-accent-surface);
+}
+
+.ctrh-area__input {
+	margin: 0;
+}
+
+.ctrh-area:has(.ctrh-area__input:checked) {
+	border-color: var(--ctrh-accent);
+	background: var(--ctrh-accent-surface);
+}
+
+.ctrh-area__name {
+	font-weight: 500;
+	color: var(--ctrh-gray-100);
+}
+
+/*
+ * Withheld reads muted but stays interactive, and says the cost in tools so the
+ * number in the summary can be reconciled with what is on screen.
+ */
+.ctrh-area--withheld {
+	border-style: dashed;
+}
+
+.ctrh-area--withheld .ctrh-area__name {
+	color: var(--ctrh-gray-60);
+}
+
+.ctrh-area__badge {
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: var(--ctrh-warning-surface);
+	color: var(--ctrh-warning-text);
+	font-size: 10px;
+	font-weight: 600;
+	white-space: nowrap;
 }
 
 /* Model chooser ---------------------------------------------------------- */
@@ -537,100 +720,100 @@
  */
 /* Setup sits where the conversation will appear, so the frame is there from
    the first visit. Block flow so the card stacks normally while it scrolls. */
-.agmcp-chat__log--setup {
+.ctrh-chat__log--setup {
 	display: block;
 }
 
-.agmcp-chooser {
+.ctrh-chooser {
 	max-width: 640px;
 	margin: 0 auto;
-	padding: var(--agmcp-gap) 0;
+	padding: var(--ctrh-gap) 0;
 }
 
-.agmcp-chooser__title {
+.ctrh-chooser__title {
 	margin: 0 0 4px;
 	font-size: 18px;
 	font-weight: 600;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 	text-align: center;
 }
 
-.agmcp-chooser__lede {
-	margin: 0 0 var(--agmcp-gap);
-	color: var(--agmcp-text-muted);
+.ctrh-chooser__lede {
+	margin: 0 0 var(--ctrh-gap);
+	color: var(--ctrh-text-muted);
 	font-size: 14px;
 	text-align: center;
 }
 
-.agmcp-chooser .agmcp-card {
+.ctrh-chooser .ctrh-card {
 	max-width: none;
 }
 
-.agmcp-chooser__grid {
+.ctrh-chooser__grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 	gap: 10px;
-	margin: 0 0 var(--agmcp-gap);
+	margin: 0 0 var(--ctrh-gap);
 }
 
 /* One provider tile: name, who runs it, and what it needs. */
-.agmcp-provider {
+.ctrh-provider {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 	padding: 14px 16px;
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	border-radius: var(--agmcp-radius-card);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	border-radius: var(--ctrh-radius-card);
 	text-align: left;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease;
 }
 
-.agmcp-provider:hover {
-	border-color: var(--agmcp-accent);
-	background: var(--agmcp-accent-surface);
+.ctrh-provider:hover {
+	border-color: var(--ctrh-accent);
+	background: var(--ctrh-accent-surface);
 }
 
-.agmcp-provider:focus-visible {
-	outline: 2px solid var(--agmcp-accent);
+.ctrh-provider:focus-visible {
+	outline: 2px solid var(--ctrh-accent);
 	outline-offset: 1px;
 }
 
-.agmcp-provider[aria-pressed="true"] {
-	border-color: var(--agmcp-accent);
-	background: var(--agmcp-accent-surface);
-	box-shadow: inset 0 0 0 1px var(--agmcp-accent);
+.ctrh-provider[aria-pressed="true"] {
+	border-color: var(--ctrh-accent);
+	background: var(--ctrh-accent-surface);
+	box-shadow: inset 0 0 0 1px var(--ctrh-accent);
 }
 
-.agmcp-provider__name {
+.ctrh-provider__name {
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 }
 
-.agmcp-provider__meta {
+.ctrh-provider__meta {
 	font-size: 12px;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
-.agmcp-chooser__result {
-	margin: var(--agmcp-gap-small) 0 0;
+.ctrh-chooser__result {
+	margin: var(--ctrh-gap-small) 0 0;
 	font-size: 13px;
 }
 
-.agmcp-chooser__result.agmcp-ok {
-	color: var(--agmcp-success);
+.ctrh-chooser__result.ctrh-ok {
+	color: var(--ctrh-success);
 	font-weight: 600;
 }
 
-.agmcp-chooser__result.agmcp-fail {
-	color: var(--agmcp-error);
+.ctrh-chooser__result.ctrh-fail {
+	color: var(--ctrh-error);
 	font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.agmcp-provider {
+	.ctrh-provider {
 		transition: none;
 	}
 }
@@ -638,33 +821,33 @@
 /* Small screens ---------------------------------------------------------- */
 
 @media screen and (max-width: 782px) {
-	.agmcp-msg,
-	.agmcp-msg--user,
-	.agmcp-tool {
+	.ctrh-msg,
+	.ctrh-msg--user,
+	.ctrh-tool {
 		max-width: 100%;
 	}
 
-	.agmcp-tool {
+	.ctrh-tool {
 		margin-left: 0;
 	}
 
-	.agmcp-chat__panel {
+	.ctrh-chat__panel {
 		height: calc(100vh - 260px);
 	}
 
-	.agmcp-chat__log {
-		padding: var(--agmcp-gap-small);
+	.ctrh-chat__log {
+		padding: var(--ctrh-gap-small);
 	}
 
-	.agmcp-chat__suggestions {
+	.ctrh-chat__suggestions {
 		grid-template-columns: 1fr;
 	}
 
-	.agmcp-chat__composer {
-		gap: var(--agmcp-gap-small);
+	.ctrh-chat__composer {
+		gap: var(--ctrh-gap-small);
 	}
 
-	.agmcp-chat__send.button {
+	.ctrh-chat__send.button {
 		padding: 0 16px;
 	}
 }

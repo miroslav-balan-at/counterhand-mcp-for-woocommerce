@@ -1,5 +1,5 @@
 /*
- * AgentGate MCP — Connect AI apps tab.
+ * Counterhand MCP — Connect AI apps tab.
  *
  * Three jobs, all aimed at removing round trips:
  *  - run the readiness check on load, so a store that cloud apps cannot reach
@@ -11,12 +11,12 @@
 ( function () {
 	'use strict';
 
-	var config = window.agmcpConnect || {};
+	var config = window.ctrhConnect || {};
 	var i18n = config.i18n || {};
 
-	var chip = document.getElementById( 'agmcp-readiness' );
-	var detail = document.getElementById( 'agmcp-readiness-detail' );
-	var recheck = document.getElementById( 'agmcp-recheck' );
+	var chip = document.getElementById( 'ctrh-readiness' );
+	var detail = document.getElementById( 'ctrh-readiness-detail' );
+	var recheck = document.getElementById( 'ctrh-recheck' );
 
 	function post( action, extra ) {
 		var body = new URLSearchParams();
@@ -44,8 +44,8 @@
 			return;
 		}
 
-		chip.className = 'agmcp-chip' + ( state ? ' agmcp-chip--' + state : '' );
-		chip.querySelector( '.agmcp-chip__text' ).textContent = text;
+		chip.className = 'ctrh-chip' + ( state ? ' ctrh-chip--' + state : '' );
+		chip.querySelector( '.ctrh-chip__text' ).textContent = text;
 	}
 
 	/**
@@ -55,21 +55,21 @@
 	 */
 	function markCloudUnavailable( reason ) {
 		document.querySelectorAll( '[data-needs-public="1"]' ).forEach( function ( group ) {
-			group.querySelectorAll( '.agmcp-card--collapsible' ).forEach( function ( card ) {
-				if ( card.querySelector( '.agmcp-unavailable' ) ) {
+			group.querySelectorAll( '.ctrh-card--collapsible' ).forEach( function ( card ) {
+				if ( card.querySelector( '.ctrh-unavailable' ) ) {
 					return;
 				}
 
 				var note = document.createElement( 'p' );
-				note.className = 'agmcp-field__hint agmcp-unavailable';
+				note.className = 'ctrh-field__hint ctrh-unavailable';
 				note.textContent = reason;
 
-				var body = card.querySelector( '.agmcp-card__body' );
+				var body = card.querySelector( '.ctrh-card__body' );
 				if ( body ) {
 					body.insertBefore( note, body.firstChild );
 				}
 
-				card.classList.add( 'agmcp-card--muted' );
+				card.classList.add( 'ctrh-card--muted' );
 			} );
 		} );
 	}
@@ -81,7 +81,7 @@
 
 		setChip( 'pending', i18n.checking || 'Checking the store…' );
 
-		post( 'agmcp_preflight' )
+		post( 'ctrh_preflight' )
 			.then( function ( payload ) {
 				var data = ( payload && payload.data ) || {};
 				var status = data.status || 'error';
@@ -107,21 +107,21 @@
 	var watchUntil = 0;
 
 	function cardFor( clientId ) {
-		return document.querySelector( '.agmcp-card--collapsible[data-client="' + clientId + '"]' );
+		return document.querySelector( '.ctrh-card--collapsible[data-client="' + clientId + '"]' );
 	}
 
 	function showConnected( clientId, label ) {
 		var card = cardFor( clientId );
-		if ( ! card || card.querySelector( '.agmcp-connected' ) ) {
+		if ( ! card || card.querySelector( '.ctrh-connected' ) ) {
 			return;
 		}
 
 		var badge = document.createElement( 'span' );
-		badge.className = 'agmcp-connected';
+		badge.className = 'ctrh-connected';
 		badge.textContent = '✓ ' + ( i18n.connected || 'Connected' );
 		badge.title = label || '';
 
-		var head = card.querySelector( '.agmcp-card__head' );
+		var head = card.querySelector( '.ctrh-card__head' );
 		if ( head ) {
 			head.appendChild( badge );
 		}
@@ -133,7 +133,7 @@
 			return;
 		}
 
-		var existing = card.querySelector( '.agmcp-waiting' );
+		var existing = card.querySelector( '.ctrh-waiting' );
 
 		if ( ! waiting ) {
 			if ( existing ) {
@@ -147,16 +147,16 @@
 		}
 
 		var note = document.createElement( 'span' );
-		note.className = 'agmcp-chip agmcp-chip--pending agmcp-waiting';
-		note.innerHTML = '<span class="agmcp-chip__dot" aria-hidden="true"></span>';
+		note.className = 'ctrh-chip ctrh-chip--pending ctrh-waiting';
+		note.innerHTML = '<span class="ctrh-chip__dot" aria-hidden="true"></span>';
 
 		var text = document.createElement( 'span' );
-		text.className = 'agmcp-chip__text';
+		text.className = 'ctrh-chip__text';
 		text.setAttribute( 'role', 'status' );
 		text.textContent = i18n.waiting || 'Waiting for the app to connect…';
 		note.appendChild( text );
 
-		var body = card.querySelector( '.agmcp-card__body' );
+		var body = card.querySelector( '.ctrh-card__body' );
 		if ( body ) {
 			body.insertBefore( note, body.firstChild );
 		}
@@ -191,7 +191,7 @@
 				return;
 			}
 
-			post( 'agmcp_connection_status', { since: String( since ) } )
+			post( 'ctrh_connection_status', { since: String( since ) } )
 				.then( function ( payload ) {
 					var data = ( payload && payload.data ) || {};
 
@@ -208,7 +208,7 @@
 	}
 
 	document.addEventListener( 'click', function ( event ) {
-		var trigger = event.target.closest( '.agmcp-copy-open' );
+		var trigger = event.target.closest( '.ctrh-copy-open' );
 		if ( ! trigger ) {
 			return;
 		}
@@ -216,8 +216,8 @@
 		// The shared copy helper in tokens.js already handles the clipboard,
 		// including the non-secure-context fallback; the link then follows
 		// normally, so the endpoint is on the clipboard when the page lands.
-		if ( window.agmcpCopyText ) {
-			window.agmcpCopyText( trigger.dataset.copy || '' );
+		if ( window.ctrhCopyText ) {
+			window.ctrhCopyText( trigger.dataset.copy || '' );
 		}
 
 		watchForConnection( trigger.dataset.client, Math.floor( Date.now() / 1000 ) );

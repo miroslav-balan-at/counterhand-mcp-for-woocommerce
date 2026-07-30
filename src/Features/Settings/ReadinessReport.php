@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
 defined( 'ABSPATH' ) || exit;
 

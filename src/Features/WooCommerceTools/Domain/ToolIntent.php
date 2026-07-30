@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Domain;
+namespace Counterhand\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 

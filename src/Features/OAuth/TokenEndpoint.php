@@ -2,16 +2,16 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth;
+namespace Counterhand\Features\OAuth;
 
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * OAuth 2.1 token endpoint: exchanges a PKCE-bound single-use code for an
- * access token. The access token IS an AgentGate token — same verification,
+ * access token. The access token IS an Counterhand token — same verification,
  * scoping, rate limiting, action log and revocation as manual tokens.
  */
 final readonly class TokenEndpoint {
@@ -25,7 +25,7 @@ final readonly class TokenEndpoint {
 
 	public function register_route(): void {
 		register_rest_route(
-			'agentgate/v1',
+			'counterhand/v1',
 			'/oauth/token',
 			[
 				[
@@ -59,19 +59,19 @@ final readonly class TokenEndpoint {
 			return $this->error( 'invalid_grant', 'Authorization code is invalid, expired or already used.' );
 		}
 
-		if ( $grant['client_id'] !== $client_id ) {
+		if ( $grant->client_id !== $client_id ) {
 			return $this->error( 'invalid_grant', 'client_id does not match the authorization.' );
 		}
 
-		if ( '' !== $redirect_uri && $grant['redirect_uri'] !== $redirect_uri ) {
+		if ( '' !== $redirect_uri && $grant->redirect_uri !== $redirect_uri ) {
 			return $this->error( 'invalid_grant', 'redirect_uri does not match the authorization.' );
 		}
 
-		if ( ! Pkce::verify( $grant['code_challenge'], $code_verifier ) ) {
+		if ( ! Pkce::verify( $grant->code_challenge, $code_verifier ) ) {
 			return $this->error( 'invalid_grant', 'PKCE verification failed.' );
 		}
 
-		$scope_set = GrantedScopeSet::from_values( $grant['scopes'] );
+		$scope_set = GrantedScopeSet::from_values( $grant->scopes );
 
 		$client_host = (string) wp_parse_url( $client_id, PHP_URL_HOST );
 		$expires_at  = ( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) )
@@ -80,10 +80,10 @@ final readonly class TokenEndpoint {
 		$plain_token = $this->repository->create(
 			sprintf( 'OAuth: %s', $client_host ),
 			$scope_set,
-			(int) $grant['user_id'],
+			$grant->user_id,
 			$expires_at,
-			$grant['client_id'],
-			$grant['resource']
+			$grant->client_id,
+			$grant->resource
 		);
 
 		$response = new \WP_REST_Response(
@@ -91,7 +91,7 @@ final readonly class TokenEndpoint {
 				'access_token' => $plain_token->to_string(),
 				'token_type'   => 'Bearer',
 				'expires_in'   => self::ACCESS_TOKEN_LIFETIME_DAYS * DAY_IN_SECONDS,
-				'scope'        => implode( ' ', $grant['scopes'] ),
+				'scope'        => implode( ' ', $grant->scopes ),
 			],
 			200
 		);

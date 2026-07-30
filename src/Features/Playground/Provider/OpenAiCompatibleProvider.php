@@ -2,9 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground\Provider;
-
-use AgentGateMcp\Shared\Exception\ToolCallException;
+namespace Counterhand\Features\Playground\Provider;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * `tool_calls`, `role: tool` results), so one adapter serves them all — the
  * base URL is what differs.
  */
-final readonly class OpenAiCompatibleProvider implements ProviderInterface {
+final readonly class OpenAiCompatibleProvider extends HttpProvider {
 
 	public function __construct(
 		private string $id,
@@ -31,7 +29,7 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 	public static function openai(): self {
 		return new self(
 			id: 'openai',
-			label: __( 'ChatGPT (OpenAI)', 'agentgate-mcp-for-woocommerce' ),
+			label: __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'https://api.openai.com/v1',
 			models: [
 				'gpt-5'      => 'GPT-5',
@@ -50,7 +48,7 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 	public static function google(): self {
 		return new self(
 			id: 'google',
-			label: __( 'Gemini (Google)', 'agentgate-mcp-for-woocommerce' ),
+			label: __( 'Gemini (Google)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/',
 			// Google renames models often; the picker is a starting point and
 			// the field accepts whatever the account actually offers.
@@ -67,7 +65,7 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 	public static function ollama(): self {
 		return new self(
 			id: 'ollama',
-			label: __( 'Ollama (on this server)', 'agentgate-mcp-for-woocommerce' ),
+			label: __( 'Ollama (on this server)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'http://localhost:11434/v1',
 			models: [],
 			base_url_required: false,
@@ -79,7 +77,7 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 	public static function compatible(): self {
 		return new self(
 			id: 'openai_compatible',
-			label: __( 'Custom OpenAI-compatible endpoint', 'agentgate-mcp-for-woocommerce' ),
+			label: __( 'Custom OpenAI-compatible endpoint', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: '',
 			models: [],
 			base_url_required: true,
@@ -127,21 +125,6 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 		return ! $this->base_url_required || '' !== $config->base_url;
 	}
 
-	/** One tiny completion — the cheapest proof that key and model both work. */
-	public function test( ProviderConfig $config ): void {
-		$this->complete(
-			[ $this->user_message( 'ping' ) ],
-			[],
-			new ProviderConfig(
-				api_key: $config->api_key,
-				model: $config->model,
-				base_url: $config->base_url,
-				system_prompt: 'Reply with OK.',
-				max_tokens: 16,
-			)
-		);
-	}
-
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
 		$base = untrailingslashit( '' !== $config->base_url ? $config->base_url : $this->default_base_url );
 
@@ -185,11 +168,11 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 		foreach ( $message['tool_calls'] ?? [] as $call ) {
 			$arguments = json_decode( (string) ( $call['function']['arguments'] ?? '{}' ), true );
 
-			$tool_calls[] = [
-				'id'    => (string) ( $call['id'] ?? '' ),
-				'name'  => (string) ( $call['function']['name'] ?? '' ),
-				'input' => is_array( $arguments ) ? $arguments : [],
-			];
+			$tool_calls[] = new ToolCall(
+				id: (string) ( $call['id'] ?? '' ),
+				name: (string) ( $call['function']['name'] ?? '' ),
+				input: is_array( $arguments ) ? $arguments : [],
+			);
 		}
 
 		return new ProviderTurn(
@@ -197,11 +180,25 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 			tool_calls: $tool_calls,
 			wants_tools: [] !== $tool_calls,
 			raw: $message,
-			usage: [
-				'input'  => (int) ( $payload['usage']['prompt_tokens'] ?? 0 ),
-				'output' => (int) ( $payload['usage']['completion_tokens'] ?? 0 ),
-			],
+			usage: new TokenUsage(
+				input: (int) ( $payload['usage']['prompt_tokens'] ?? 0 ),
+				output: (int) ( $payload['usage']['completion_tokens'] ?? 0 ),
+			),
 		);
+	}
+
+	/**
+	 * Well under OpenAI's hard limit of 128 tools per request, because the wire
+	 * limit is not the useful one: accuracy falls off long before it, and this
+	 * format has no deferred-loading escape hatch to move the ceiling.
+	 */
+	public function max_eager_tools(): int {
+		return 60;
+	}
+
+	/** No searchable catalogue on this wire format; the set is sent as-is. */
+	public function with_tool_search( array $tools ): array {
+		return $tools;
 	}
 
 	public function describe_tool( string $name, string $description, array $input_schema ): array {
@@ -231,47 +228,22 @@ final readonly class OpenAiCompatibleProvider implements ProviderInterface {
 	public function tool_result_messages( array $results ): array {
 		// One message per result, unlike Anthropic's single batched user turn.
 		return array_map(
-			static fn ( array $result ): array => [
+			static fn ( ToolResult $result ): array => [
 				'role'         => 'tool',
-				'tool_call_id' => $result['id'],
-				'content'      => $result['output'],
+				'tool_call_id' => $result->id,
+				'content'      => $result->output,
 			],
 			$results
 		);
 	}
 
-	public function user_message( string $text ): array {
-		return [
-			'role'    => 'user',
-			'content' => $text,
-		];
+	protected function unreachable_error(): string {
+		/* translators: %s: transport error message */
+		return __( 'Could not reach the model endpoint: %s', 'counterhand-mcp-for-woocommerce' );
 	}
 
-	private function decode( mixed $response ): array {
-		if ( is_wp_error( $response ) ) {
-			throw new ToolCallException(
-				sprintf(
-				/* translators: %s: transport error message */
-					__( 'Could not reach the model endpoint: %s', 'agentgate-mcp-for-woocommerce' ),
-					$response->get_error_message()
-				)
-			);
-		}
-
-		$payload = json_decode( (string) wp_remote_retrieve_body( $response ), true );
-		$status  = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( 200 !== $status ) {
-			throw new ToolCallException(
-				sprintf(
-				/* translators: 1: HTTP status, 2: API error message */
-					__( 'The model endpoint returned %1$d: %2$s', 'agentgate-mcp-for-woocommerce' ),
-					$status,
-					(string) ( $payload['error']['message'] ?? __( 'unknown error', 'agentgate-mcp-for-woocommerce' ) )
-				)
-			);
-		}
-
-		return is_array( $payload ) ? $payload : [];
+	protected function api_error(): string {
+		/* translators: 1: HTTP status, 2: API error message */
+		return __( 'The model endpoint returned %1$d: %2$s', 'counterhand-mcp-for-woocommerce' );
 	}
 }

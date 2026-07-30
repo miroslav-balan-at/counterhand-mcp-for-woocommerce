@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens;
+namespace Counterhand\Features\Tokens;
 
-use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Persistence\Schema;
-use AgentGateMcp\Shared\FeatureInterface;
+use Counterhand\Features\Tokens\Admin\ConnectionsAdmin;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Persistence\Schema;
+use Counterhand\Shared\FeatureInterface;
 
 defined( 'ABSPATH' ) || exit;
 

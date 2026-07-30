@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteArgs;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteArgs;
+use Counterhand\Tests\Unit\TestCase;
 
 final class RouteArgsTest extends TestCase {
 

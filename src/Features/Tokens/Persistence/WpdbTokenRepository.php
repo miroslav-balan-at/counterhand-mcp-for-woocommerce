@@ -2,16 +2,16 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Persistence;
+namespace Counterhand\Features\Tokens\Persistence;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\PlainToken;
-use AgentGateMcp\Features\Tokens\Domain\StoredToken;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Domain\TokenSecret;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\StoredToken;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\TokenSecret;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
 
 defined( 'ABSPATH' ) || exit;
 

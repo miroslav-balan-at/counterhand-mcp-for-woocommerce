@@ -2,19 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Typed reader for the single agmcp_settings option.
+ * Typed reader for the single ctrh_settings option.
  * The admin UI (Settings slice) writes it; every other slice only reads.
  */
 final class PluginSettings {
 
-	public const OPTION = 'agmcp_settings';
+	public const OPTION = 'ctrh_settings';
 
 	private ?array $cached = null;
 

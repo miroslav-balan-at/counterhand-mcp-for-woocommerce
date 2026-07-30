@@ -2,9 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground\Provider;
-
-use AgentGateMcp\Shared\Exception\ToolCallException;
+namespace Counterhand\Features\Playground\Provider;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -15,17 +13,25 @@ defined( 'ABSPATH' ) || exit;
  * no Composer runtime dependencies, so a vendored SDK would risk the very
  * cross-plugin collisions we avoid elsewhere.
  */
-final readonly class AnthropicProvider implements ProviderInterface {
+final readonly class AnthropicProvider extends HttpProvider {
 
 	private const ENDPOINT    = 'https://api.anthropic.com/v1/messages';
 	private const API_VERSION = '2023-06-01';
+
+	/**
+	 * How many tools stay loaded up front once the catalogue is searchable.
+	 *
+	 * Anthropic recommends keeping the three-to-five most-used tools eager so
+	 * routine questions cost no search round trip.
+	 */
+	private const EAGER_TOOLS = 5;
 
 	public function id(): string {
 		return 'anthropic';
 	}
 
 	public function label(): string {
-		return __( 'Anthropic (Claude)', 'agentgate-mcp-for-woocommerce' );
+		return __( 'Anthropic (Claude)', 'counterhand-mcp-for-woocommerce' );
 	}
 
 	public function default_models(): array {
@@ -54,21 +60,6 @@ final readonly class AnthropicProvider implements ProviderInterface {
 
 	public function is_ready( ProviderConfig $config ): bool {
 		return '' !== $config->api_key && '' !== $config->model;
-	}
-
-	/** One tiny completion — the cheapest proof that key and model both work. */
-	public function test( ProviderConfig $config ): void {
-		$this->complete(
-			[ $this->user_message( 'ping' ) ],
-			[],
-			new ProviderConfig(
-				api_key: $config->api_key,
-				model: $config->model,
-				base_url: $config->base_url,
-				system_prompt: 'Reply with OK.',
-				max_tokens: 16,
-			)
-		);
 	}
 
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
@@ -107,11 +98,11 @@ final readonly class AnthropicProvider implements ProviderInterface {
 			}
 
 			if ( 'tool_use' === ( $block['type'] ?? '' ) ) {
-				$tool_calls[] = [
-					'id'    => (string) $block['id'],
-					'name'  => (string) $block['name'],
-					'input' => is_array( $block['input'] ?? null ) ? $block['input'] : [],
-				];
+				$tool_calls[] = new ToolCall(
+					id: (string) $block['id'],
+					name: (string) $block['name'],
+					input: is_array( $block['input'] ?? null ) ? $block['input'] : [],
+				);
 			}
 		}
 
@@ -121,10 +112,10 @@ final readonly class AnthropicProvider implements ProviderInterface {
 			// phpcs:ignore WordPress.PHP.YodaConditions.NotYoda -- already Yoda; the sniff misreads the named argument.
 			wants_tools: 'tool_use' === ( $payload['stop_reason'] ?? '' ),
 			raw: $payload,
-			usage: [
-				'input'  => (int) ( $payload['usage']['input_tokens'] ?? 0 ),
-				'output' => (int) ( $payload['usage']['output_tokens'] ?? 0 ),
-			],
+			usage: new TokenUsage(
+				input: (int) ( $payload['usage']['input_tokens'] ?? 0 ),
+				output: (int) ( $payload['usage']['output_tokens'] ?? 0 ),
+			),
 		);
 	}
 
@@ -134,6 +125,49 @@ final readonly class AnthropicProvider implements ProviderInterface {
 			'description'  => $description,
 			'input_schema' => $input_schema,
 		];
+	}
+
+	/** No ceiling: past the eager threshold the catalogue is searched instead. */
+	public function max_eager_tools(): ?int {
+		return null;
+	}
+
+	/**
+	 * Publishes a large tool set as a searchable catalogue.
+	 *
+	 * Anthropic's own guidance is that selection accuracy falls off past 30–50
+	 * eagerly-loaded tools, and that the fix is deferring the tail rather than
+	 * refusing the request: Claude searches names, descriptions and argument
+	 * names, and the API expands what it finds. Deferred definitions are left
+	 * out of the system-prompt prefix, so the schemas cost nothing until a
+	 * search surfaces them and the prompt cache survives.
+	 *
+	 * @param  list<array<string,mixed>> $tools
+	 * @return list<array<string,mixed>>
+	 */
+	public function with_tool_search( array $tools ): array {
+		if ( count( $tools ) <= self::EAGER_TOOLS ) {
+			return $tools;
+		}
+
+		$catalogue = [
+			[
+				'type' => 'tool_search_tool_bm25_20251119',
+				'name' => 'tool_search_tool_bm25',
+			],
+		];
+
+		// The first few stay eager so the common questions need no search at
+		// all; the API rejects a request in which everything is deferred.
+		foreach ( $tools as $index => $tool ) {
+			if ( $index >= self::EAGER_TOOLS ) {
+				$tool['defer_loading'] = true;
+			}
+
+			$catalogue[] = $tool;
+		}
+
+		return $catalogue;
 	}
 
 	public function assistant_message( ProviderTurn $turn ): array {
@@ -150,9 +184,9 @@ final readonly class AnthropicProvider implements ProviderInterface {
 		foreach ( $results as $result ) {
 			$blocks[] = [
 				'type'        => 'tool_result',
-				'tool_use_id' => $result['id'],
-				'content'     => $result['output'],
-				'is_error'    => $result['is_error'],
+				'tool_use_id' => $result->id,
+				'content'     => $result->output,
+				'is_error'    => $result->is_error,
 			];
 		}
 
@@ -165,38 +199,13 @@ final readonly class AnthropicProvider implements ProviderInterface {
 		];
 	}
 
-	public function user_message( string $text ): array {
-		return [
-			'role'    => 'user',
-			'content' => $text,
-		];
+	protected function unreachable_error(): string {
+		/* translators: %s: transport error message */
+		return __( 'Could not reach Anthropic: %s', 'counterhand-mcp-for-woocommerce' );
 	}
 
-	private function decode( mixed $response ): array {
-		if ( is_wp_error( $response ) ) {
-			throw new ToolCallException(
-				sprintf(
-				/* translators: %s: transport error message */
-					__( 'Could not reach Anthropic: %s', 'agentgate-mcp-for-woocommerce' ),
-					$response->get_error_message()
-				)
-			);
-		}
-
-		$payload = json_decode( (string) wp_remote_retrieve_body( $response ), true );
-		$status  = (int) wp_remote_retrieve_response_code( $response );
-
-		if ( 200 !== $status ) {
-			throw new ToolCallException(
-				sprintf(
-				/* translators: 1: HTTP status, 2: API error message */
-					__( 'Anthropic returned %1$d: %2$s', 'agentgate-mcp-for-woocommerce' ),
-					$status,
-					(string) ( $payload['error']['message'] ?? __( 'unknown error', 'agentgate-mcp-for-woocommerce' ) )
-				)
-			);
-		}
-
-		return is_array( $payload ) ? $payload : [];
+	protected function api_error(): string {
+		/* translators: 1: HTTP status, 2: API error message */
+		return __( 'Anthropic returned %1$d: %2$s', 'counterhand-mcp-for-woocommerce' );
 	}
 }

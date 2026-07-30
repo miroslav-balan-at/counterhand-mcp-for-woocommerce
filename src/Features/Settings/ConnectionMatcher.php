@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -58,6 +58,18 @@ final readonly class ConnectionMatcher {
 		}
 
 		return $matched;
+	}
+
+	/** Live connections, for the Connect screen's tab badge. */
+	public function live_count(): int {
+		$now = self::now();
+
+		return count(
+			array_filter(
+				$this->repository->list_all(),
+				fn ( ApiToken $token ): bool => $this->is_live( $token, $now )
+			)
+		);
 	}
 
 	/** Newest live connection, used to detect one arriving while the tab is open. */

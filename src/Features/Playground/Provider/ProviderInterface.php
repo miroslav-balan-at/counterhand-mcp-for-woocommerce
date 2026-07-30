@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground\Provider;
+namespace Counterhand\Features\Playground\Provider;
 
-use AgentGateMcp\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -31,6 +31,12 @@ interface ProviderInterface {
 
 	/** Whether an API key is required; local models and core's client need none. */
 	public function needs_key(): bool;
+
+	/**
+	 * Whether the admin connects this provider here — their own key, model and
+	 * endpoint — as opposed to WordPress core managing the credential for them.
+	 */
+	public function is_user_configured(): bool;
 
 	/** Whether the chat could run with this config. Runs per render — no network. */
 	public function is_ready( ProviderConfig $config ): bool;
@@ -65,13 +71,33 @@ interface ProviderInterface {
 	/** Translates one MCP tool into this provider's tool-definition shape. */
 	public function describe_tool( string $name, string $description, array $input_schema ): array;
 
+	/**
+	 * The most tool definitions one request should carry, or null for no ceiling.
+	 *
+	 * Not a wire limit — it is where the provider's own model stops picking
+	 * reliably. A provider that can search a deferred catalogue answers null,
+	 * because for it the ceiling has moved from the request to the search.
+	 */
+	public function max_eager_tools(): ?int;
+
+	/**
+	 * Rewrites a full tool set into a searchable catalogue, or returns it as-is.
+	 *
+	 * Asked of the provider rather than decided by the loop: whether a catalogue
+	 * can be searched, and how one is spelled, is provider knowledge.
+	 *
+	 * @param  list<array<string,mixed>> $tools
+	 * @return list<array<string,mixed>>
+	 */
+	public function with_tool_search( array $tools ): array;
+
 	/** Builds the assistant turn to append after a tool-calling response. */
 	public function assistant_message( ProviderTurn $turn ): array;
 
 	/**
 	 * Builds the message(s) carrying tool results back to the model.
 	 *
-	 * @param list<array{id: string, name: string, output: string, is_error: bool}> $results
+	 * @param list<ToolResult> $results
 	 * @return list<array<string,mixed>>
 	 */
 	public function tool_result_messages( array $results ): array;

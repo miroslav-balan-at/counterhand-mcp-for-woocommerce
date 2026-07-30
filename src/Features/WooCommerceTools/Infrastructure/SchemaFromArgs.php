@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -90,7 +90,9 @@ final readonly class SchemaFromArgs {
 
 		$schema = [
 			'type'       => 'object',
-			'properties' => $properties,
+			// An empty PHP array encodes as [], and a provider rejects the whole
+			// request over it: "input_schema.properties: Input should be an object".
+			'properties' => [] !== $properties ? $properties : new \stdClass(),
 		];
 
 		if ( [] !== $required ) {
@@ -266,7 +268,7 @@ final readonly class SchemaFromArgs {
 				$route_args->method->value,
 				$route_args->template
 			),
-			[ 'source' => 'agentgate' ]
+			[ 'source' => 'counterhand' ]
 		);
 	}
 }

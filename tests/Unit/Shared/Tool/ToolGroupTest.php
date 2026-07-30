@@ -2,14 +2,14 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Shared\Tool;
+namespace Counterhand\Tests\Unit\Shared\Tool;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * ToolGroup values are not cosmetic: they are the prefix of every ApiScope and
- * of every agmcp_settings option key, so renaming a case silently orphans
+ * of every ctrh_settings option key, so renaming a case silently orphans
  * stored settings on existing installs.
  */
 final class ToolGroupTest extends TestCase {

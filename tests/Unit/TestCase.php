@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit;
+namespace Counterhand\Tests\Unit;
 
 use Brain\Monkey;
 use Brain\Monkey\Functions;

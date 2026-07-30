@@ -1,4 +1,4 @@
-=== AgentGate MCP for WooCommerce ===
+=== Counterhand MCP for WooCommerce ===
 Contributors: miroslavbalan
 Tags: woocommerce, mcp, ai, claude, oauth
 Requires at least: 6.5
@@ -12,7 +12,7 @@ Turn your WooCommerce store into a secure MCP server so AI assistants like Claud
 
 == Description ==
 
-AgentGate MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature.
+Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature.
 
 Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an assistant connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
 
@@ -58,7 +58,7 @@ Add the endpoint URL (`https://yourstore.com/mcp`) to your MCP client — no tok
 
 = The endpoint or discovery documents return 404 or 403 =
 
-Two causes: (1) pretty permalinks — the endpoint is also available at `/wp-json/agentgate/v1/mcp`, and re-saving Settings → Permalinks refreshes rewrite rules; (2) some servers block `/.well-known/` paths. OAuth discovery lives at `/.well-known/oauth-protected-resource`, so your server must allow that path. On nginx, add before any dotfile-deny rule:
+Two causes: (1) pretty permalinks — the endpoint is also available at `/wp-json/counterhand/v1/mcp`, and re-saving Settings → Permalinks refreshes rewrite rules; (2) some servers block `/.well-known/` paths. OAuth discovery lives at `/.well-known/oauth-protected-resource`, so your server must allow that path. On nginx, add before any dotfile-deny rule:
 
 `location ^~ /.well-known/ { try_files $uri $uri/ /index.php?$args; }`
 
@@ -80,7 +80,7 @@ The things that could are gated separately. Store settings, payment gateways and
 
 = Can I connect a client that only supports bearer headers? =
 
-The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `agmcp_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
+The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `ctrh_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
 
 == Changelog ==
 

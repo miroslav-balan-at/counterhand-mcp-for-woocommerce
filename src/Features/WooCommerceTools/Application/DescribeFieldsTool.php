@@ -2,17 +2,17 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Application;
+namespace Counterhand\Features\WooCommerceTools\Application;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\WooCommerceTools\Domain\DescriptorProvider;
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolInterface;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -109,8 +109,10 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 			$route->parameters()
 		);
 
-		$published = array_keys( $this->schemas->schema( $name, $route, $method, $operation->fields, $route->parameters() )['properties'] ?? [] );
-		$all       = array_keys( $full['properties'] ?? [] );
+		// Cast: an argument-less route publishes properties as stdClass, and
+		// array_keys() fatals on an object.
+		$published = array_keys( (array) ( $this->schemas->schema( $name, $route, $method, $operation->fields, $route->parameters() )['properties'] ?? [] ) );
+		$all       = array_keys( (array) ( $full['properties'] ?? [] ) );
 
 		return [
 			'tool'          => $name,

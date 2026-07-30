@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Playground\Provider;
+namespace Counterhand\Tests\Unit\Features\Playground\Provider;
 
-use AgentGateMcp\Features\Playground\Provider\AnthropicProvider;
-use AgentGateMcp\Features\Playground\Provider\OpenAiCompatibleProvider;
-use AgentGateMcp\Features\Playground\Provider\ProviderConfig;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Playground\Provider\AnthropicProvider;
+use Counterhand\Features\Playground\Provider\OpenAiCompatibleProvider;
+use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * is_ready() drives which screen the Chat tab shows, so each provider's

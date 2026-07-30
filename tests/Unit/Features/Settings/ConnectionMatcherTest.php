@@ -2,18 +2,18 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Settings;
+namespace Counterhand\Tests\Unit\Features\Settings;
 
-use AgentGateMcp\Features\Settings\ClientGroup;
-use AgentGateMcp\Features\Settings\ConnectionMatcher;
-use AgentGateMcp\Features\Settings\McpClient;
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\ClientGroup;
+use Counterhand\Features\Settings\ConnectionMatcher;
+use Counterhand\Features\Settings\McpClient;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 final class ConnectionMatcherTest extends TestCase {

@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Domain;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * The only place a descriptor is allowed to restate anything about WooCommerce

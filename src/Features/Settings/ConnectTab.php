@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,8 +20,8 @@ enum ConnectTab: string {
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Apps        => __( 'Add an app', 'agentgate-mcp-for-woocommerce' ),
-			self::Connections => __( 'Connected apps', 'agentgate-mcp-for-woocommerce' ),
+			self::Apps        => __( 'Add an app', 'counterhand-mcp-for-woocommerce' ),
+			self::Connections => __( 'Connected apps', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class ChatSettings {
 
-	private const OPTION = 'agmcp_chat';
+	private const OPTION = 'ctrh_chat';
 
 	/**
 	 * Empty provider and model on purpose: which one to offer first depends on

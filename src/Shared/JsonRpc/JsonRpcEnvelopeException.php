@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\JsonRpc;
+namespace Counterhand\Shared\JsonRpc;
 
 defined( 'ABSPATH' ) || exit;
 

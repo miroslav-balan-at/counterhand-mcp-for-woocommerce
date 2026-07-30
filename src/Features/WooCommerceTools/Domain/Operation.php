@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Domain;
+namespace Counterhand\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
 
 defined( 'ABSPATH' ) || exit;
 

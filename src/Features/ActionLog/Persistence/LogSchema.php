@@ -2,19 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\ActionLog\Persistence;
+namespace Counterhand\Features\ActionLog\Persistence;
 
 defined( 'ABSPATH' ) || exit;
 
 final class LogSchema {
 
 	private const VERSION        = '1';
-	private const VERSION_OPTION = 'agmcp_log_schema_version';
+	private const VERSION_OPTION = 'ctrh_log_schema_version';
 
 	public static function table_name(): string {
 		global $wpdb;
 
-		return $wpdb->prefix . 'agmcp_log';
+		return $wpdb->prefix . 'ctrh_log';
 	}
 
 	public static function install(): void {

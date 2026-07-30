@@ -1,5 +1,5 @@
 /*
- * AgentGate MCP — admin screens.
+ * Counterhand MCP — admin screens.
  *
  * Built on ../shared/tokens.css, the same sheet the OAuth consent pages use, so
  * the admin and the consent flow are visibly one product. No raw colours here:
@@ -12,68 +12,68 @@
  * page heading and tab bar directly above it.
  */
 
-.agmcp-wrap .nav-tab-wrapper {
-	margin-bottom: var(--agmcp-gap);
+.ctrh-wrap .nav-tab-wrapper {
+	margin-bottom: var(--ctrh-gap);
 }
 
-.agmcp-connect-tabs {
-	margin-top: var(--agmcp-gap);
+.ctrh-connect-tabs {
+	margin-top: var(--ctrh-gap);
 }
 
 /* Live-connection count, so the tab says whether there is anything to review. */
-.agmcp-tab-count {
+.ctrh-tab-count {
 	display: inline-block;
 	min-width: 18px;
 	margin-left: 4px;
 	padding: 0 6px;
 	border-radius: 9px;
-	background: var(--agmcp-surface-sunken);
-	color: var(--agmcp-text-muted);
+	background: var(--ctrh-surface-sunken);
+	color: var(--ctrh-text-muted);
 	font-size: 11px;
 	line-height: 18px;
 	text-align: center;
 }
 
-.nav-tab-active .agmcp-tab-count {
-	background: var(--agmcp-accent);
+.nav-tab-active .ctrh-tab-count {
+	background: var(--ctrh-accent);
 	color: #fff;
 }
 
-.agmcp-subtitle {
-	max-width: var(--agmcp-measure);
-	margin: -8px 0 var(--agmcp-gap);
-	color: var(--agmcp-text-muted);
+.ctrh-subtitle {
+	max-width: var(--ctrh-measure);
+	margin: -8px 0 var(--ctrh-gap);
+	color: var(--ctrh-text-muted);
 	font-size: 14px;
 }
 
-.agmcp-measure {
-	max-width: var(--agmcp-measure);
+.ctrh-measure {
+	max-width: var(--ctrh-measure);
 }
 
 /* Card ------------------------------------------------------------------- */
 
-.agmcp-card {
-	max-width: var(--agmcp-measure);
-	margin: 0 0 var(--agmcp-gap);
-	background: var(--agmcp-surface);
-	border: 1px solid var(--agmcp-border);
-	border-radius: var(--agmcp-radius-card);
-	box-shadow: var(--agmcp-shadow-card);
+.ctrh-card {
+	max-width: var(--ctrh-measure);
+	margin: 0 0 var(--ctrh-gap);
+	background: var(--ctrh-surface);
+	border: 1px solid var(--ctrh-border);
+	border-radius: var(--ctrh-radius-card);
+	box-shadow: var(--ctrh-shadow-card);
 	overflow: hidden;
 }
 
-.agmcp-card--wide {
+.ctrh-card--wide {
 	max-width: none;
 }
 
-.agmcp-card__head {
+.ctrh-card__head {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--agmcp-gap-small);
-	padding: var(--agmcp-pad-small) clamp(14px, 3vw, var(--agmcp-pad));
+	gap: var(--ctrh-gap-small);
+	padding: var(--ctrh-pad-small) clamp(14px, 3vw, var(--ctrh-pad));
 }
 
-.agmcp-card__heading {
+.ctrh-card__heading {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -81,34 +81,34 @@
 	flex: 1 1 auto;
 }
 
-.agmcp-card__title {
+.ctrh-card__title {
 	margin: 0;
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 }
 
-.agmcp-card__desc {
+.ctrh-card__desc {
 	margin: 0;
 	font-size: 13px;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
-.agmcp-card__body {
-	padding: 0 clamp(14px, 3vw, var(--agmcp-pad)) var(--agmcp-pad-small);
+.ctrh-card__body {
+	padding: 0 clamp(14px, 3vw, var(--ctrh-pad)) var(--ctrh-pad-small);
 }
 
-.agmcp-card__head + .agmcp-card__body {
-	border-top: 1px solid var(--agmcp-surface-sunken);
-	padding-top: var(--agmcp-pad-small);
+.ctrh-card__head + .ctrh-card__body {
+	border-top: 1px solid var(--ctrh-surface-sunken);
+	padding-top: var(--ctrh-pad-small);
 }
 
-.agmcp-card__foot {
-	padding: 10px clamp(14px, 3vw, var(--agmcp-pad));
-	border-top: 1px solid var(--agmcp-border);
-	background: var(--agmcp-surface-neutral);
+.ctrh-card__foot {
+	padding: 10px clamp(14px, 3vw, var(--ctrh-pad));
+	border-top: 1px solid var(--ctrh-border);
+	background: var(--ctrh-surface-neutral);
 	font-size: 12px;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
 /*
@@ -116,44 +116,44 @@
  * keeps the browser's built-in keyboard and screen-reader behaviour.
  */
 
-.agmcp-card--collapsible > .agmcp-card__head {
+.ctrh-card--collapsible > .ctrh-card__head {
 	cursor: pointer;
 	list-style: none;
 	padding-left: 38px;
 	position: relative;
 }
 
-.agmcp-card--collapsible > .agmcp-card__head::-webkit-details-marker {
+.ctrh-card--collapsible > .ctrh-card__head::-webkit-details-marker {
 	display: none;
 }
 
-.agmcp-card--collapsible > .agmcp-card__head::before {
+.ctrh-card--collapsible > .ctrh-card__head::before {
 	content: "";
 	position: absolute;
 	left: 16px;
 	top: 18px;
 	width: 7px;
 	height: 7px;
-	border-right: 2px solid var(--agmcp-text-subtle);
-	border-bottom: 2px solid var(--agmcp-text-subtle);
+	border-right: 2px solid var(--ctrh-text-subtle);
+	border-bottom: 2px solid var(--ctrh-text-subtle);
 	transform: rotate(-45deg);
 	transition: transform .15s ease;
 }
 
-.agmcp-card--collapsible[open] > .agmcp-card__head::before {
+.ctrh-card--collapsible[open] > .ctrh-card__head::before {
 	transform: rotate(45deg);
 }
 
-.agmcp-card--collapsible > .agmcp-card__head:hover .agmcp-card__title {
-	color: var(--agmcp-accent);
+.ctrh-card--collapsible > .ctrh-card__head:hover .ctrh-card__title {
+	color: var(--ctrh-accent);
 }
 
-.agmcp-card--collapsible > .agmcp-card__head:focus-visible {
-	outline: 2px solid var(--agmcp-accent);
+.ctrh-card--collapsible > .ctrh-card__head:focus-visible {
+	outline: 2px solid var(--ctrh-accent);
 	outline-offset: -2px;
 }
 
-.agmcp-card--collapsible > .agmcp-card__body {
+.ctrh-card--collapsible > .ctrh-card__body {
 	padding-left: 38px;
 }
 
@@ -161,178 +161,178 @@
  * A client that cannot work right now — dimmed rather than hidden, so the
  * admin sees the option exists and reads why it is out of reach.
  */
-.agmcp-card--muted > .agmcp-card__head .agmcp-card__title,
-.agmcp-card--muted > .agmcp-card__head .agmcp-card__desc {
+.ctrh-card--muted > .ctrh-card__head .ctrh-card__title,
+.ctrh-card--muted > .ctrh-card__head .ctrh-card__desc {
 	opacity: .6;
 }
 
-.agmcp-unavailable {
-	margin-top: var(--agmcp-gap-small);
-	color: var(--agmcp-warning-text);
+.ctrh-unavailable {
+	margin-top: var(--ctrh-gap-small);
+	color: var(--ctrh-warning-text);
 }
 
 /* Benefits list: why the WordPress-managed model beats per-plugin keys. */
-.agmcp-benefits {
-	margin: 0 0 var(--agmcp-gap);
+.ctrh-benefits {
+	margin: 0 0 var(--ctrh-gap);
 	padding: 0;
 	list-style: none;
 	font-size: 13px;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 }
 
-.agmcp-benefits li {
+.ctrh-benefits li {
 	position: relative;
 	padding: 3px 0 3px 24px;
 }
 
-.agmcp-benefits li::before {
+.ctrh-benefits li::before {
 	content: "✓";
 	position: absolute;
 	left: 2px;
-	color: var(--agmcp-success);
+	color: var(--ctrh-success);
 	font-weight: 700;
 }
 
 /* Micro label ------------------------------------------------------------ */
 
-.agmcp-label {
+.ctrh-label {
 	display: block;
 	margin-bottom: 4px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
 /* Section heading between card groups ------------------------------------ */
 
-.agmcp-group-title {
+.ctrh-group-title {
 	display: flex;
 	align-items: center;
-	gap: var(--agmcp-gap-small);
-	max-width: var(--agmcp-measure);
-	margin: var(--agmcp-gap-large) 0 var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
+	max-width: var(--ctrh-measure);
+	margin: var(--ctrh-gap-large) 0 var(--ctrh-gap-small);
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
-.agmcp-group-title::after {
+.ctrh-group-title::after {
 	content: "";
 	flex: 1 1 auto;
 	height: 1px;
-	background: var(--agmcp-border);
+	background: var(--ctrh-border);
 }
 
 /* Status chip ------------------------------------------------------------ */
 
-.agmcp-chip {
+.ctrh-chip {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	padding: 8px 14px;
-	border: 1px solid var(--agmcp-border);
+	border: 1px solid var(--ctrh-border);
 	border-radius: 999px;
-	background: var(--agmcp-surface-neutral);
+	background: var(--ctrh-surface-neutral);
 	font-size: 13px;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
-.agmcp-chip__dot {
+.ctrh-chip__dot {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
-	background: var(--agmcp-border-strong);
+	background: var(--ctrh-border-strong);
 	flex: 0 0 auto;
 }
 
-.agmcp-chip--ok {
-	background: var(--agmcp-success-surface);
-	border-color: var(--agmcp-success);
-	color: var(--agmcp-text);
+.ctrh-chip--ok {
+	background: var(--ctrh-success-surface);
+	border-color: var(--ctrh-success);
+	color: var(--ctrh-text);
 }
 
-.agmcp-chip--ok .agmcp-chip__dot {
-	background: var(--agmcp-success);
+.ctrh-chip--ok .ctrh-chip__dot {
+	background: var(--ctrh-success);
 }
 
-.agmcp-chip--warn {
-	background: var(--agmcp-warning-surface);
-	border-color: var(--agmcp-warning);
-	color: var(--agmcp-warning-text);
+.ctrh-chip--warn {
+	background: var(--ctrh-warning-surface);
+	border-color: var(--ctrh-warning);
+	color: var(--ctrh-warning-text);
 }
 
-.agmcp-chip--warn .agmcp-chip__dot {
-	background: var(--agmcp-warning);
+.ctrh-chip--warn .ctrh-chip__dot {
+	background: var(--ctrh-warning);
 }
 
-.agmcp-chip--error {
-	background: var(--agmcp-error-surface);
-	border-color: var(--agmcp-error);
-	color: var(--agmcp-error-text);
+.ctrh-chip--error {
+	background: var(--ctrh-error-surface);
+	border-color: var(--ctrh-error);
+	color: var(--ctrh-error-text);
 }
 
-.agmcp-chip--error .agmcp-chip__dot {
-	background: var(--agmcp-error);
+.ctrh-chip--error .ctrh-chip__dot {
+	background: var(--ctrh-error);
 }
 
 /* Pulsing dot while a check or a connection is still in flight. */
-.agmcp-chip--pending .agmcp-chip__dot {
-	animation: agmcp-pulse 1.4s ease-in-out infinite;
+.ctrh-chip--pending .ctrh-chip__dot {
+	animation: ctrh-pulse 1.4s ease-in-out infinite;
 }
 
-@keyframes agmcp-pulse {
+@keyframes ctrh-pulse {
 	0%, 100% { opacity: .35; }
 	50%      { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.agmcp-chip--pending .agmcp-chip__dot {
+	.ctrh-chip--pending .ctrh-chip__dot {
 		animation: none;
 	}
 }
 
-.agmcp-chip__detail {
-	color: var(--agmcp-text-muted);
+.ctrh-chip__detail {
+	color: var(--ctrh-text-muted);
 }
 
 /* Badges & statuses (Connections table) ---------------------------------- */
 
-.agmcp-badge {
+.ctrh-badge {
 	display: inline-block;
 	padding: 1px 8px;
 	margin: 1px 0;
 	border-radius: 10px;
-	background: var(--agmcp-surface-sunken);
-	border: 1px solid var(--agmcp-border);
+	background: var(--ctrh-surface-sunken);
+	border: 1px solid var(--ctrh-border);
 	font-size: 11px;
 }
 
-.agmcp-badge--write {
-	background: var(--agmcp-error-surface);
-	border-color: var(--agmcp-error);
+.ctrh-badge--write {
+	background: var(--ctrh-error-surface);
+	border-color: var(--ctrh-error);
 }
 
-.agmcp-status--active {
-	color: var(--agmcp-success);
+.ctrh-status--active {
+	color: var(--ctrh-success);
 	font-weight: 600;
 }
 
-.agmcp-status--revoked,
-.agmcp-status--expired {
-	color: var(--agmcp-error);
+.ctrh-status--revoked,
+.ctrh-status--expired {
+	color: var(--ctrh-error);
 }
 
-.agmcp-muted {
-	color: var(--agmcp-text-subtle);
+.ctrh-muted {
+	color: var(--ctrh-text-subtle);
 }
 
 /* Connected marker on a client card -------------------------------------- */
 
-.agmcp-connected {
+.ctrh-connected {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
@@ -340,9 +340,9 @@
 	align-self: center;
 	padding: 2px 10px;
 	border-radius: 999px;
-	background: var(--agmcp-success-surface);
-	color: var(--agmcp-success);
-	border: 1px solid var(--agmcp-success);
+	background: var(--ctrh-success-surface);
+	color: var(--ctrh-success);
+	border: 1px solid var(--ctrh-success);
 	font-size: 11px;
 	font-weight: 600;
 	white-space: nowrap;
@@ -350,103 +350,103 @@
 
 /* Settings controls ------------------------------------------------------ */
 
-.agmcp-master-switch {
+.ctrh-master-switch {
 	display: flex;
 	align-items: flex-start;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	font-size: 14px;
 }
 
-.agmcp-groups-table {
-	margin: var(--agmcp-gap-small) 0;
-	border-radius: var(--agmcp-radius);
+.ctrh-groups-table {
+	margin: var(--ctrh-gap-small) 0;
+	border-radius: var(--ctrh-radius);
 }
 
-.agmcp-groups-table th,
-.agmcp-groups-table td {
+.ctrh-groups-table th,
+.ctrh-groups-table td {
 	padding: 10px 14px;
 }
 
 /* Section band separating one family of tool groups from the next. */
-.agmcp-groups-table__section th {
+.ctrh-groups-table__section th {
 	padding-top: 16px;
-	background: var(--agmcp-surface-neutral);
+	background: var(--ctrh-surface-neutral);
 	text-align: left;
 	font-weight: 600;
 }
 
-.agmcp-groups-table__section-title {
+.ctrh-groups-table__section-title {
 	margin-inline-end: 8px;
 }
 
 /* Group rows carry a one-line explanation under the name. */
-.agmcp-groups-table td .agmcp-muted {
+.ctrh-groups-table td .ctrh-muted {
 	display: block;
 	margin-top: 2px;
 	font-weight: 400;
 	font-size: 12px;
 }
 
-.agmcp-field {
-	margin: 0 0 var(--agmcp-gap);
+.ctrh-field {
+	margin: 0 0 var(--ctrh-gap);
 }
 
-.agmcp-field:last-child {
+.ctrh-field:last-child {
 	margin-bottom: 0;
 }
 
-.agmcp-field__hint {
+.ctrh-field__hint {
 	margin: 4px 0 0;
 	font-size: 12px;
-	color: var(--agmcp-text-muted);
+	color: var(--ctrh-text-muted);
 }
 
 /* Endpoint row ----------------------------------------------------------- */
 
-.agmcp-endpoint-row {
+.ctrh-endpoint-row {
 	display: flex;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	align-items: center;
 	flex-wrap: wrap;
 }
 
-.agmcp-endpoint {
+.ctrh-endpoint {
 	flex: 1 1 260px;
 	min-width: 0;
 	padding: 9px 12px;
-	background: var(--agmcp-surface-sunken);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-surface-sunken);
+	border-radius: var(--ctrh-radius);
 	font-size: 14px;
 	word-break: break-all;
 	user-select: all;
 }
 
-.agmcp-actions {
+.ctrh-actions {
 	display: flex;
-	gap: var(--agmcp-gap-small);
+	gap: var(--ctrh-gap-small);
 	align-items: center;
 	flex-wrap: wrap;
-	margin-top: var(--agmcp-gap-small);
+	margin-top: var(--ctrh-gap-small);
 }
 
 /* Snippet ---------------------------------------------------------------- */
 
-.agmcp-snippet {
+.ctrh-snippet {
 	position: relative;
-	margin: var(--agmcp-gap-small) 0 0;
+	margin: var(--ctrh-gap-small) 0 0;
 }
 
-.agmcp-snippet pre {
-	background: var(--agmcp-surface-inverse);
-	color: var(--agmcp-text-inverse);
+.ctrh-snippet pre {
+	background: var(--ctrh-surface-inverse);
+	color: var(--ctrh-text-inverse);
 	/* Room on the right so the copy button never covers the text. */
 	padding: 1em 6.5em 1em 1.25em;
 	overflow-x: auto;
-	border-radius: var(--agmcp-radius);
+	border-radius: var(--ctrh-radius);
 	margin: 0;
 }
 
-.agmcp-snippet .agmcp-copy {
+.ctrh-snippet .ctrh-copy {
 	position: absolute;
 	right: 8px;
 	bottom: 8px;
@@ -454,27 +454,27 @@
 
 /* Steps ------------------------------------------------------------------ */
 
-.agmcp-steps {
-	margin: var(--agmcp-gap-small) 0 0 20px;
+.ctrh-steps {
+	margin: var(--ctrh-gap-small) 0 0 20px;
 	padding: 0;
 	font-size: 13px;
 	line-height: 1.8;
-	color: var(--agmcp-text);
+	color: var(--ctrh-text);
 }
 
-.agmcp-steps li::marker {
-	color: var(--agmcp-text-subtle);
+.ctrh-steps li::marker {
+	color: var(--ctrh-text-subtle);
 	font-weight: 600;
 }
 
-.agmcp-docs-link {
+.ctrh-docs-link {
 	display: inline-block;
-	margin-top: var(--agmcp-gap-small);
+	margin-top: var(--ctrh-gap-small);
 	font-size: 13px;
 }
 
 @media screen and (max-width: 782px) {
-	.agmcp-endpoint {
+	.ctrh-endpoint {
 		flex-basis: 100%;
 	}
 }

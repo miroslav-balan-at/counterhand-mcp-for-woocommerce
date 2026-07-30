@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth;
+namespace Counterhand\Features\OAuth;
 
 defined( 'ABSPATH' ) || exit;
 

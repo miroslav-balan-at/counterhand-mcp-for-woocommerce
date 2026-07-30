@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Settings;
+namespace Counterhand\Tests\Unit\Features\Settings;
 
-use AgentGateMcp\Features\Settings\ReadinessReport;
-use AgentGateMcp\Features\Settings\ReadinessStatus;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\ReadinessReport;
+use Counterhand\Features\Settings\ReadinessStatus;
+use Counterhand\Tests\Unit\TestCase;
 
 final class ReadinessReportTest extends TestCase {
 

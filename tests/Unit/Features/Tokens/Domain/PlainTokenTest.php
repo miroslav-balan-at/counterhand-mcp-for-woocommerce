@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Tokens\Domain;
+namespace Counterhand\Tests\Unit\Features\Tokens\Domain;
 
-use AgentGateMcp\Features\Tokens\Domain\PlainToken;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenSecret;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenSecret;
+use Counterhand\Tests\Unit\TestCase;
 
 final class PlainTokenTest extends TestCase {
 
@@ -27,8 +27,8 @@ final class PlainTokenTest extends TestCase {
 	public function test_token_has_greppable_prefix_and_expected_length(): void {
 		$raw = PlainToken::compose( TokenId::generate(), TokenSecret::generate() )->to_string();
 
-		self::assertStringStartsWith( 'agmcp_', $raw );
-		self::assertSame( 6 + 16 + 1 + 43, strlen( $raw ) );
+		self::assertStringStartsWith( PlainToken::PREFIX . '_', $raw );
+		self::assertSame( strlen( PlainToken::PREFIX ) + 1 + 16 + 1 + 43, strlen( $raw ) );
 	}
 
 	/** @dataProvider malformed_tokens */
@@ -42,11 +42,11 @@ final class PlainTokenTest extends TestCase {
 		return [
 			'empty'            => [ '' ],
 			'wrong prefix'     => [ 'wcmcp_' . substr( $valid, 6 ) ],
-			'short id'         => [ 'agmcp_abc_' . str_repeat( 'A', 43 ) ],
-			'short secret'     => [ 'agmcp_' . str_repeat( 'a', 16 ) . '_short' ],
-			'uppercase id'     => [ 'agmcp_' . str_repeat( 'A', 16 ) . '_' . str_repeat( 'a', 43 ) ],
+			'short id'         => [ 'ctrh_abc_' . str_repeat( 'A', 43 ) ],
+			'short secret'     => [ 'ctrh_' . str_repeat( 'a', 16 ) . '_short' ],
+			'uppercase id'     => [ 'ctrh_' . str_repeat( 'A', 16 ) . '_' . str_repeat( 'a', 43 ) ],
 			'trailing garbage' => [ $valid . 'x' ],
-			'sql injection'    => [ "agmcp_' OR '1'='1_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ],
+			'sql injection'    => [ "ctrh_' OR '1'='1_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ],
 		];
 	}
 

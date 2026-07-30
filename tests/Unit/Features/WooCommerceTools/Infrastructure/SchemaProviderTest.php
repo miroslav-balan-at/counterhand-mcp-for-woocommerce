@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Tests\Doubles\FakeRestServer;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Tests\Doubles\FakeRestServer;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
@@ -60,10 +60,10 @@ final class SchemaProviderTest extends TestCase {
 		$schema = $this->provider( new FakeRestServer() )
 			->schema( 'get_coupons', $this->coupons(), RestMethod::Get, FieldProfile::everything() );
 
-		$this->assertSame(
+		$this->assertEquals(
 			[
 				'type'                 => 'object',
-				'properties'           => [],
+				'properties'           => new \stdClass(),
 				'additionalProperties' => false,
 			],
 			$schema

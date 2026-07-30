@@ -11,20 +11,20 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 global $wpdb;
 
 // Plugin-owned tables.
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}agmcp_tokens" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}agmcp_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ctrh_tokens" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}ctrh_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 // Options.
-delete_option( 'agmcp_settings' );
-delete_option( 'agmcp_schema_version' );
-delete_option( 'agmcp_log_schema_version' );
+delete_option( 'ctrh_settings' );
+delete_option( 'ctrh_schema_version' );
+delete_option( 'ctrh_log_schema_version' );
 
 // Transients (rate-limit windows + display-once tokens).
 $wpdb->query(
 	"DELETE FROM {$wpdb->options}
-	 WHERE option_name LIKE '\_transient\_agmcp\_%'
-	    OR option_name LIKE '\_transient\_timeout\_agmcp\_%'"
+	 WHERE option_name LIKE '\_transient\_ctrh\_%'
+	    OR option_name LIKE '\_transient\_timeout\_ctrh\_%'"
 );
 
 // Scheduled events.
-wp_clear_scheduled_hook( 'agmcp_purge_log' );
+wp_clear_scheduled_hook( 'ctrh_purge_log' );

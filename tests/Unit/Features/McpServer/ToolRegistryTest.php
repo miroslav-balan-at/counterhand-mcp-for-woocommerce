@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\McpServer;
+namespace Counterhand\Tests\Unit\Features\McpServer;
 
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Doubles\AgentFactory;
-use AgentGateMcp\Tests\Doubles\StubTool;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Doubles\AgentFactory;
+use Counterhand\Tests\Doubles\StubTool;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
@@ -35,7 +35,7 @@ final class ToolRegistryTest extends TestCase {
 	}
 
 	/**
-	 * @param  list<\AgentGateMcp\Shared\Tool\ToolInterface> $tools
+	 * @param  list<\Counterhand\Shared\Tool\ToolInterface> $tools
 	 * @return list<string>
 	 */
 	private function names( array $tools ): array {

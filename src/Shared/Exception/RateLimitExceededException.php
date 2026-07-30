@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\Exception;
+namespace Counterhand\Shared\Exception;
 
 defined( 'ABSPATH' ) || exit;
 

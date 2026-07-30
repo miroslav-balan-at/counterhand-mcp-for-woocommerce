@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Settings;
+namespace Counterhand\Tests\Unit\Features\Settings;
 
-use AgentGateMcp\Features\Settings\ConnectReadiness;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\ConnectReadiness;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

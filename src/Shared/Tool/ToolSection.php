@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\Tool;
+namespace Counterhand\Shared\Tool;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,23 +25,23 @@ enum ToolSection: string {
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Catalog  => __( 'Catalog', 'agentgate-mcp-for-woocommerce' ),
-			self::Sales    => __( 'Sales', 'agentgate-mcp-for-woocommerce' ),
-			self::Insights => __( 'Insights', 'agentgate-mcp-for-woocommerce' ),
-			self::Content  => __( 'Content', 'agentgate-mcp-for-woocommerce' ),
-			self::Store    => __( 'Store setup', 'agentgate-mcp-for-woocommerce' ),
-			self::Advanced => __( 'Advanced', 'agentgate-mcp-for-woocommerce' ),
+			self::Catalog  => __( 'Catalog', 'counterhand-mcp-for-woocommerce' ),
+			self::Sales    => __( 'Sales', 'counterhand-mcp-for-woocommerce' ),
+			self::Insights => __( 'Insights', 'counterhand-mcp-for-woocommerce' ),
+			self::Content  => __( 'Content', 'counterhand-mcp-for-woocommerce' ),
+			self::Store    => __( 'Store setup', 'counterhand-mcp-for-woocommerce' ),
+			self::Advanced => __( 'Advanced', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	public function description(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Catalog  => __( 'What you sell.', 'agentgate-mcp-for-woocommerce' ),
-			self::Sales    => __( 'Who bought what.', 'agentgate-mcp-for-woocommerce' ),
-			self::Insights => __( 'Totals and statistics. Read-only.', 'agentgate-mcp-for-woocommerce' ),
-			self::Content  => __( 'The blog posts and pages around your store.', 'agentgate-mcp-for-woocommerce' ),
-			self::Store    => __( 'Shipping, tax and reference data.', 'agentgate-mcp-for-woocommerce' ),
-			self::Advanced => __( 'Store configuration and maintenance. Enable only if you know why you need it.', 'agentgate-mcp-for-woocommerce' ),
+			self::Catalog  => __( 'What you sell.', 'counterhand-mcp-for-woocommerce' ),
+			self::Sales    => __( 'Who bought what.', 'counterhand-mcp-for-woocommerce' ),
+			self::Insights => __( 'Totals and statistics. Read-only.', 'counterhand-mcp-for-woocommerce' ),
+			self::Content  => __( 'The blog posts and pages around your store.', 'counterhand-mcp-for-woocommerce' ),
+			self::Store    => __( 'Shipping, tax and reference data.', 'counterhand-mcp-for-woocommerce' ),
+			self::Advanced => __( 'Store configuration and maintenance. Enable only if you know why you need it.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

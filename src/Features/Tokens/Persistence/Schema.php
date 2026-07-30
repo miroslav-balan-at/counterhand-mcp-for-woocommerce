@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Persistence;
+namespace Counterhand\Features\Tokens\Persistence;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -12,12 +12,12 @@ defined( 'ABSPATH' ) || exit;
 final class Schema {
 
 	private const VERSION        = '2';
-	private const VERSION_OPTION = 'agmcp_schema_version';
+	private const VERSION_OPTION = 'ctrh_schema_version';
 
 	public static function table_name(): string {
 		global $wpdb;
 
-		return $wpdb->prefix . 'agmcp_tokens';
+		return $wpdb->prefix . 'ctrh_tokens';
 	}
 
 	public static function install(): void {

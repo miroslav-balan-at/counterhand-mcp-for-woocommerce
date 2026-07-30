@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Tokens\Domain;
+namespace Counterhand\Tests\Unit\Features\Tokens\Domain;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Tests\Unit\TestCase;
 
 final class GrantedScopeSetTest extends TestCase {
 

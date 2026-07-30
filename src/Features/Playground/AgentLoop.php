@@ -2,23 +2,24 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
-use AgentGateMcp\Features\McpServer\McpServer;
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\Playground\Provider\ProviderConfig;
-use AgentGateMcp\Features\Playground\Provider\ProviderInterface;
-use AgentGateMcp\Features\Tokens\Authentication\AuthenticatedAgent;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcRequest;
-use AgentGateMcp\Shared\Tool\ToolInterface;
+use Counterhand\Features\McpServer\ToolDispatcherInterface;
+use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Features\Playground\Provider\ProviderInterface;
+use Counterhand\Features\Playground\Provider\TokenUsage;
+use Counterhand\Features\Playground\Provider\ToolCall;
+use Counterhand\Features\Playground\Provider\ToolResult;
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * The agentic loop: ask the model, run any tools it requests through the same
- * MCP dispatch an external assistant would use, feed the results back, repeat
- * until the model stops calling tools.
+ * gated dispatch pipeline an external assistant hits, feed the results back,
+ * repeat until the model stops calling tools.
  */
 final readonly class AgentLoop {
 
@@ -26,23 +27,17 @@ final readonly class AgentLoop {
 	private const MAX_ITERATIONS = 12;
 
 	/**
-	 * How many tool definitions one request may carry.
+	 * The ceiling used when a provider declines to name one.
 	 *
-	 * Not a provider limit — it is the point past which models reliably start
-	 * choosing the wrong tool, and past which the definitions cost more tokens
-	 * than the conversation. Providers silently truncate; failing loudly here
-	 * means the admin finds out from a message rather than from a wrong answer.
+	 * Selection accuracy falls off past roughly 30–50 eagerly-loaded tools, so a
+	 * provider that cannot defer the tail has to be given a smaller surface.
 	 */
-	private const MAX_TOOL_DEFINITIONS = 60;
+	public const FALLBACK_TOOL_CEILING = 60;
 
-	public function __construct(
-		private ToolRegistry $tool_registry,
-		private McpServer $server,
-	) {}
+	public function __construct( private ToolDispatcherInterface $dispatcher ) {}
 
 	/**
 	 * @param list<array<string,mixed>> $history Provider-format messages from earlier turns.
-	 * @return array{messages: list<array<string,mixed>>, transcript: list<array<string,mixed>>, usage: array{input:int,output:int}}
 	 */
 	public function run(
 		ProviderInterface $provider,
@@ -50,20 +45,16 @@ final readonly class AgentLoop {
 		array $history,
 		string $user_text,
 		AuthenticatedAgent $agent
-	): array {
+	): AgentLoopResult {
 		$messages   = array_merge( $history, [ $provider->user_message( $user_text ) ] );
 		$tools      = $this->tool_definitions( $provider, $agent );
 		$transcript = [];
-		$usage      = [
-			'input'  => 0,
-			'output' => 0,
-		];
+		$usage      = new TokenUsage();
 
 		for ( $iteration = 0; $iteration < self::MAX_ITERATIONS; $iteration++ ) {
 			$turn = $provider->complete( $messages, $tools, $config );
 
-			$usage['input']  += $turn->usage['input'] ?? 0;
-			$usage['output'] += $turn->usage['output'] ?? 0;
+			$usage = $usage->plus( $turn->usage );
 
 			if ( '' !== $turn->text ) {
 				$transcript[] = [
@@ -73,33 +64,29 @@ final readonly class AgentLoop {
 			}
 
 			if ( ! $turn->wants_tools || [] === $turn->tool_calls ) {
-				return [
-					'messages'   => $messages,
-					'transcript' => $transcript,
-					'usage'      => $usage,
-				];
+				return new AgentLoopResult( $messages, $transcript, $usage );
 			}
 
 			$messages[] = $provider->assistant_message( $turn );
 
 			$results = [];
 			foreach ( $turn->tool_calls as $call ) {
-				$outcome = $this->dispatch( $call, $agent );
+				$data = $this->tool_result( $call, $agent );
 
 				$transcript[] = [
 					'type'      => 'tool',
-					'name'      => $call['name'],
-					'arguments' => $call['input'],
-					'result'    => $outcome['data'],
-					'is_error'  => $outcome['is_error'],
+					'name'      => $call->name,
+					'arguments' => $call->input,
+					'result'    => $data['data'],
+					'is_error'  => $data['is_error'],
 				];
 
-				$results[] = [
-					'id'       => $call['id'],
-					'name'     => $call['name'],
-					'output'   => (string) wp_json_encode( $outcome['data'] ),
-					'is_error' => $outcome['is_error'],
-				];
+				$results[] = new ToolResult(
+					id: $call->id,
+					name: $call->name,
+					output: (string) wp_json_encode( $data['data'] ),
+					is_error: $data['is_error'],
+				);
 			}
 
 			$messages = array_merge( $messages, $provider->tool_result_messages( $results ) );
@@ -107,68 +94,25 @@ final readonly class AgentLoop {
 
 		$transcript[] = [
 			'type' => 'text',
-			'text' => __( 'Stopped: the assistant kept calling tools past the safety limit for one message.', 'agentgate-mcp-for-woocommerce' ),
+			'text' => __( 'Stopped: the assistant kept calling tools past the safety limit for one message.', 'counterhand-mcp-for-woocommerce' ),
 		];
 
-		return [
-			'messages'   => $messages,
-			'transcript' => $transcript,
-			'usage'      => $usage,
-		];
+		return new AgentLoopResult( $messages, $transcript, $usage );
 	}
 
 	/**
-	 * Runs one tool through McpServer so scope gating, schema validation and the
-	 * action log behave exactly as they do for an external client.
+	 * Runs one tool through the shared dispatch pipeline, so scope gating,
+	 * schema validation and the action log behave exactly as they do for an
+	 * external client — with no MCP envelope in between.
 	 *
 	 * @return array{data: mixed, is_error: bool}
 	 */
-	private function dispatch( array $call, AuthenticatedAgent $agent ): array {
-		$envelope = [
-			'jsonrpc' => '2.0',
-			'id'      => 1,
-			'method'  => 'tools/call',
-			'params'  => [
-				'name'      => $call['name'],
-				'arguments' => $call['input'],
-			],
-		];
-
-		try {
-			$response = $this->server->handle(
-				JsonRpcRequest::from_body( (string) wp_json_encode( $envelope ) ),
-				$agent
-			);
-		} catch ( \Throwable $throwable ) {
-			return [
-				'data'     => [ 'error' => $throwable->getMessage() ],
-				'is_error' => true,
-			];
-		}
-
-		// handle() returns null for notifications, which a tools/call never is;
-		// ?? covers that case anyway, since it suppresses property access on null.
-		$payload = $response->payload ?? [];
-
-		if ( isset( $payload['error'] ) ) {
-			return [
-				'data'     => [ 'error' => $payload['error']['message'] ?? 'error' ],
-				'is_error' => true,
-			];
-		}
-
-		$result = $payload['result'] ?? [];
-
-		if ( true === ( $result['isError'] ?? false ) ) {
-			return [
-				'data'     => [ 'error' => $result['content'][0]['text'] ?? 'error' ],
-				'is_error' => true,
-			];
-		}
+	private function tool_result( ToolCall $call, AuthenticatedAgent $agent ): array {
+		$outcome = $this->dispatcher->dispatch( $call->name, $call->input, $agent );
 
 		return [
-			'data'     => $result['structuredContent'] ?? $result,
-			'is_error' => false,
+			'data'     => $outcome->is_error() ? [ 'error' => $outcome->message ] : $outcome->data,
+			'is_error' => $outcome->is_error(),
 		];
 	}
 
@@ -181,20 +125,22 @@ final readonly class AgentLoop {
 	 * @return list<array<string,mixed>>
 	 */
 	private function tool_definitions( ProviderInterface $provider, AuthenticatedAgent $agent ): array {
-		$tools = $this->tool_registry->visible_for( $agent );
+		$tools   = $this->dispatcher->visible_for( $agent );
+		$ceiling = $provider->max_eager_tools() ?? PHP_INT_MAX;
 
-		if ( count( $tools ) > self::MAX_TOOL_DEFINITIONS ) {
+		if ( count( $tools ) > $ceiling ) {
 			throw new ToolCallException(
 				sprintf(
-					/* translators: 1: number of enabled tools, 2: the supported maximum. */
-					__( 'Chat has %1$d tools enabled and can carry %2$d. Untick some areas under "Chat can use…" below the conversation.', 'agentgate-mcp-for-woocommerce' ),
+					/* translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove. */
+					__( 'Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open "available to chat" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs.', 'counterhand-mcp-for-woocommerce' ),
 					count( $tools ),
-					self::MAX_TOOL_DEFINITIONS
+					$ceiling,
+					count( $tools ) - $ceiling
 				)
 			);
 		}
 
-		return array_map(
+		$definitions = array_map(
 			static fn ( ToolInterface $tool ): array => $provider->describe_tool(
 				$tool->name(),
 				$tool->description(),
@@ -202,5 +148,10 @@ final readonly class AgentLoop {
 			),
 			$tools
 		);
+
+		// Past the point where eager loading hurts selection accuracy, a
+		// provider that can defer the tail publishes a searchable catalogue
+		// instead — which is why there is no ceiling to trip for those.
+		return $provider->with_tool_search( $definitions );
 	}
 }

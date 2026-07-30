@@ -8,79 +8,79 @@
  *
  * One idea per card, following WooCommerce's extension settings guidance.
  *
- * @var \AgentGateMcp\Features\Settings\PluginSettings $settings
- * @var list<\AgentGateMcp\Shared\Tool\ToolSection>    $tool_sections
+ * @var \Counterhand\Features\Settings\PluginSettings $settings
+ * @var list<\Counterhand\Shared\Tool\ToolSection>    $tool_sections
  */
 
 declare( strict_types=1 );
 
-use AgentGateMcp\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\PluginSettings;
 
 defined( 'ABSPATH' ) || exit;
 
-$agmcp_values = $settings->all();
-$agmcp_option = PluginSettings::OPTION;
+$ctrh_values = $settings->all();
+$ctrh_option = PluginSettings::OPTION;
 ?>
-<form method="post" action="options.php" class="agmcp-settings-form">
-	<?php settings_fields( 'agmcp_settings_group' ); ?>
+<form method="post" action="options.php" class="ctrh-settings-form">
+	<?php settings_fields( 'ctrh_settings_group' ); ?>
 
-	<div class="agmcp-card">
-		<div class="agmcp-card__head">
-			<span class="agmcp-card__heading">
-				<span class="agmcp-card__title"><?php esc_html_e( 'Connector', 'agentgate-mcp-for-woocommerce' ); ?></span>
-				<span class="agmcp-card__desc"><?php esc_html_e( 'When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant.', 'agentgate-mcp-for-woocommerce' ); ?></span>
+	<div class="ctrh-card">
+		<div class="ctrh-card__head">
+			<span class="ctrh-card__heading">
+				<span class="ctrh-card__title"><?php esc_html_e( 'Connector', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<span class="ctrh-card__desc"><?php esc_html_e( 'When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="agmcp-card__body">
-			<label class="agmcp-master-switch">
-				<input type="checkbox" name="<?php echo esc_attr( $agmcp_option ); ?>[enabled]" value="1" <?php checked( (bool) $agmcp_values['enabled'] ); ?>>
-				<strong><?php esc_html_e( 'Enable the MCP connector', 'agentgate-mcp-for-woocommerce' ); ?></strong>
+		<div class="ctrh-card__body">
+			<label class="ctrh-master-switch">
+				<input type="checkbox" name="<?php echo esc_attr( $ctrh_option ); ?>[enabled]" value="1" <?php checked( (bool) $ctrh_values['enabled'] ); ?>>
+				<strong><?php esc_html_e( 'Enable the MCP connector', 'counterhand-mcp-for-woocommerce' ); ?></strong>
 			</label>
 		</div>
 	</div>
 
-	<div class="agmcp-card">
-		<div class="agmcp-card__head">
-			<span class="agmcp-card__heading">
-				<span class="agmcp-card__title"><?php esc_html_e( 'Tool groups', 'agentgate-mcp-for-woocommerce' ); ?></span>
-				<span class="agmcp-card__desc"><?php esc_html_e( 'Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope.', 'agentgate-mcp-for-woocommerce' ); ?></span>
+	<div class="ctrh-card">
+		<div class="ctrh-card__head">
+			<span class="ctrh-card__heading">
+				<span class="ctrh-card__title"><?php esc_html_e( 'Tool groups', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<span class="ctrh-card__desc"><?php esc_html_e( 'Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="agmcp-card__body">
-			<table class="widefat agmcp-groups-table">
+		<div class="ctrh-card__body">
+			<table class="widefat ctrh-groups-table">
 				<thead>
 					<tr>
-						<th><?php esc_html_e( 'Group', 'agentgate-mcp-for-woocommerce' ); ?></th>
-						<th><?php esc_html_e( 'Read', 'agentgate-mcp-for-woocommerce' ); ?></th>
-						<th><?php esc_html_e( 'Write', 'agentgate-mcp-for-woocommerce' ); ?></th>
+						<th><?php esc_html_e( 'Group', 'counterhand-mcp-for-woocommerce' ); ?></th>
+						<th><?php esc_html_e( 'Read', 'counterhand-mcp-for-woocommerce' ); ?></th>
+						<th><?php esc_html_e( 'Write', 'counterhand-mcp-for-woocommerce' ); ?></th>
 					</tr>
 				</thead>
-				<?php foreach ( $tool_sections as $agmcp_section ) : ?>
+				<?php foreach ( $tool_sections as $ctrh_section ) : ?>
 					<tbody>
-						<tr class="agmcp-groups-table__section">
+						<tr class="ctrh-groups-table__section">
 							<th colspan="3" scope="colgroup">
-								<span class="agmcp-groups-table__section-title"><?php echo esc_html( $agmcp_section->label() ); ?></span>
-								<span class="agmcp-muted"><?php echo esc_html( $agmcp_section->description() ); ?></span>
+								<span class="ctrh-groups-table__section-title"><?php echo esc_html( $ctrh_section->label() ); ?></span>
+								<span class="ctrh-muted"><?php echo esc_html( $ctrh_section->description() ); ?></span>
 							</th>
 						</tr>
-						<?php foreach ( $agmcp_section->groups() as $agmcp_group ) : ?>
+						<?php foreach ( $ctrh_section->groups() as $ctrh_group ) : ?>
 							<tr>
 								<td>
-									<strong><?php echo esc_html( $agmcp_group->label() ); ?></strong>
-									<span class="agmcp-muted"><?php echo esc_html( $agmcp_group->description() ); ?></span>
+									<strong><?php echo esc_html( $ctrh_group->label() ); ?></strong>
+									<span class="ctrh-muted"><?php echo esc_html( $ctrh_group->description() ); ?></span>
 								</td>
 								<td>
 									<input type="checkbox"
-										name="<?php echo esc_attr( $agmcp_option ); ?>[<?php echo esc_attr( $agmcp_group->read_option_key() ); ?>]"
-										value="1" <?php checked( (bool) ( $agmcp_values[ $agmcp_group->read_option_key() ] ?? false ) ); ?>>
+										name="<?php echo esc_attr( $ctrh_option ); ?>[<?php echo esc_attr( $ctrh_group->read_option_key() ); ?>]"
+										value="1" <?php checked( (bool) ( $ctrh_values[ $ctrh_group->read_option_key() ] ?? false ) ); ?>>
 								</td>
 								<td>
-									<?php if ( ! $agmcp_group->has_write() ) : ?>
-										<span class="agmcp-muted">—</span>
+									<?php if ( ! $ctrh_group->has_write() ) : ?>
+										<span class="ctrh-muted">—</span>
 									<?php else : ?>
 										<input type="checkbox"
-											name="<?php echo esc_attr( $agmcp_option ); ?>[<?php echo esc_attr( $agmcp_group->write_option_key() ); ?>]"
-											value="1" <?php checked( (bool) ( $agmcp_values[ $agmcp_group->write_option_key() ] ?? false ) ); ?>>
+											name="<?php echo esc_attr( $ctrh_option ); ?>[<?php echo esc_attr( $ctrh_group->write_option_key() ); ?>]"
+											value="1" <?php checked( (bool) ( $ctrh_values[ $ctrh_group->write_option_key() ] ?? false ) ); ?>>
 									<?php endif; ?>
 								</td>
 							</tr>
@@ -91,44 +91,44 @@ $agmcp_option = PluginSettings::OPTION;
 		</div>
 	</div>
 
-	<div class="agmcp-card">
-		<div class="agmcp-card__head">
-			<span class="agmcp-card__heading">
-				<span class="agmcp-card__title"><?php esc_html_e( 'Limits', 'agentgate-mcp-for-woocommerce' ); ?></span>
-				<span class="agmcp-card__desc"><?php esc_html_e( 'Caps how fast a single connection can call the store.', 'agentgate-mcp-for-woocommerce' ); ?></span>
+	<div class="ctrh-card">
+		<div class="ctrh-card__head">
+			<span class="ctrh-card__heading">
+				<span class="ctrh-card__title"><?php esc_html_e( 'Limits', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<span class="ctrh-card__desc"><?php esc_html_e( 'Caps how fast a single connection can call the store.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="agmcp-card__body">
-			<div class="agmcp-field">
-				<label class="agmcp-label" for="agmcp-rate-limit"><?php esc_html_e( 'Requests per minute per connection', 'agentgate-mcp-for-woocommerce' ); ?></label>
-				<input type="number" id="agmcp-rate-limit" min="1" max="1000"
-					name="<?php echo esc_attr( $agmcp_option ); ?>[rate_limit_per_minute]"
-					value="<?php echo esc_attr( (string) $agmcp_values['rate_limit_per_minute'] ); ?>">
+		<div class="ctrh-card__body">
+			<div class="ctrh-field">
+				<label class="ctrh-label" for="ctrh-rate-limit"><?php esc_html_e( 'Requests per minute per connection', 'counterhand-mcp-for-woocommerce' ); ?></label>
+				<input type="number" id="ctrh-rate-limit" min="1" max="1000"
+					name="<?php echo esc_attr( $ctrh_option ); ?>[rate_limit_per_minute]"
+					value="<?php echo esc_attr( (string) $ctrh_values['rate_limit_per_minute'] ); ?>">
 			</div>
 		</div>
 	</div>
 
-	<div class="agmcp-card">
-		<div class="agmcp-card__head">
-			<span class="agmcp-card__heading">
-				<span class="agmcp-card__title"><?php esc_html_e( 'Action log', 'agentgate-mcp-for-woocommerce' ); ?></span>
-				<span class="agmcp-card__desc"><?php esc_html_e( 'Records what each connection did. Emails and phone numbers are masked before anything is stored.', 'agentgate-mcp-for-woocommerce' ); ?></span>
+	<div class="ctrh-card">
+		<div class="ctrh-card__head">
+			<span class="ctrh-card__heading">
+				<span class="ctrh-card__title"><?php esc_html_e( 'Action log', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<span class="ctrh-card__desc"><?php esc_html_e( 'Records what each connection did. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="agmcp-card__body">
-			<div class="agmcp-field">
+		<div class="ctrh-card__body">
+			<div class="ctrh-field">
 				<label>
-					<input type="checkbox" name="<?php echo esc_attr( $agmcp_option ); ?>[action_log_enabled]" value="1"
-						<?php checked( (bool) ( $agmcp_values['action_log_enabled'] ?? false ) ); ?>>
-					<?php esc_html_e( 'Record every tool call', 'agentgate-mcp-for-woocommerce' ); ?>
+					<input type="checkbox" name="<?php echo esc_attr( $ctrh_option ); ?>[action_log_enabled]" value="1"
+						<?php checked( (bool) ( $ctrh_values['action_log_enabled'] ?? false ) ); ?>>
+					<?php esc_html_e( 'Record every tool call', 'counterhand-mcp-for-woocommerce' ); ?>
 				</label>
 			</div>
 
-			<div class="agmcp-field">
-				<label class="agmcp-label" for="agmcp-retention"><?php esc_html_e( 'Keep log entries for (days)', 'agentgate-mcp-for-woocommerce' ); ?></label>
-				<input type="number" id="agmcp-retention" min="1" max="365"
-					name="<?php echo esc_attr( $agmcp_option ); ?>[log_retention_days]"
-					value="<?php echo esc_attr( (string) ( $agmcp_values['log_retention_days'] ?? 30 ) ); ?>">
+			<div class="ctrh-field">
+				<label class="ctrh-label" for="ctrh-retention"><?php esc_html_e( 'Keep log entries for (days)', 'counterhand-mcp-for-woocommerce' ); ?></label>
+				<input type="number" id="ctrh-retention" min="1" max="365"
+					name="<?php echo esc_attr( $ctrh_option ); ?>[log_retention_days]"
+					value="<?php echo esc_attr( (string) ( $ctrh_values['log_retention_days'] ?? 30 ) ); ?>">
 			</div>
 		</div>
 	</div>

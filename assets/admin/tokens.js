@@ -1,5 +1,5 @@
 /*
- * AgentGate MCP admin behaviour: the copy buttons shared by every screen.
+ * Counterhand MCP admin behaviour: the copy buttons shared by every screen.
  *
  * The copy helper is published on window because connect.js needs the same
  * clipboard handling — including the non-secure-context fallback — when it
@@ -26,7 +26,7 @@
 		return Promise.resolve();
 	}
 
-	window.agmcpCopyText = copyText;
+	window.ctrhCopyText = copyText;
 
 	function copyFromButton( button ) {
 		var restoreLabel = button.textContent;
@@ -40,7 +40,7 @@
 	}
 
 	document.addEventListener( 'click', function ( event ) {
-		var copyButton = event.target.closest( '.agmcp-copy' );
+		var copyButton = event.target.closest( '.ctrh-copy' );
 
 		if ( copyButton ) {
 			copyFromButton( copyButton );

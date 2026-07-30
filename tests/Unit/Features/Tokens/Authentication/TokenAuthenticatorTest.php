@@ -2,22 +2,22 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Tokens\Authentication;
+namespace Counterhand\Tests\Unit\Features\Tokens\Authentication;
 
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Authentication\RateLimiter;
-use AgentGateMcp\Features\Tokens\Authentication\TokenAuthenticator;
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\PlainToken;
-use AgentGateMcp\Features\Tokens\Domain\StoredToken;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Domain\TokenSecret;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
-use AgentGateMcp\Shared\Exception\AuthenticationFailedException;
-use AgentGateMcp\Shared\Exception\RateLimitExceededException;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Authentication\RateLimiter;
+use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\StoredToken;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\TokenSecret;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Shared\Exception\AuthenticationFailedException;
+use Counterhand\Shared\Exception\RateLimitExceededException;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 final class TokenAuthenticatorTest extends TestCase {
@@ -69,7 +69,7 @@ final class TokenAuthenticatorTest extends TestCase {
 		$agent = $this->authenticator( $this->stored_token() )->authenticate( $this->bearer, null );
 
 		self::assertSame( 846, $agent->token->owner_user_id );
-		self::assertTrue( $agent->scopes()->contains( \AgentGateMcp\Features\Tokens\Domain\ApiScope::ProductsRead ) );
+		self::assertTrue( $agent->scopes()->contains( \Counterhand\Features\Tokens\Domain\ApiScope::ProductsRead ) );
 	}
 
 	public function test_wrong_secret_fails_with_generic_message(): void {

@@ -2,36 +2,38 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp;
+namespace Counterhand;
 
-use AgentGateMcp\Features\ActionLog\ActionLogFeature;
-use AgentGateMcp\Features\McpServer\McpServer;
-use AgentGateMcp\Features\McpServer\McpServerFeature;
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\OAuth\OAuthFeature;
-use AgentGateMcp\Features\Playground\AgentLoop;
-use AgentGateMcp\Features\Playground\ChatSettings;
-use AgentGateMcp\Features\Playground\ModelConnect;
-use AgentGateMcp\Features\Playground\PlaygroundFeature;
-use AgentGateMcp\Features\Playground\Provider\ProviderRegistry;
-use AgentGateMcp\Features\Settings\ConnectionMatcher;
-use AgentGateMcp\Features\Settings\ConnectReadiness;
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Settings\SettingSanitizer;
-use AgentGateMcp\Features\Settings\SettingsFeature;
-use AgentGateMcp\Features\Tokens\Authentication\RateLimiter;
-use AgentGateMcp\Features\Tokens\Authentication\TokenAuthenticator;
-use AgentGateMcp\Features\Tokens\Persistence\Schema;
-use AgentGateMcp\Features\Tokens\Persistence\WpdbTokenRepository;
-use AgentGateMcp\Features\Tokens\TokensFeature;
-use AgentGateMcp\Features\WooCommerceTools\Application\ToolFactory;
-use AgentGateMcp\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Domain\MetaKeyPolicy;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestGateway;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Features\WooCommerceTools\WooCommerceToolsFeature;
+use Counterhand\Features\ActionLog\ActionLogFeature;
+use Counterhand\Features\McpServer\McpServer;
+use Counterhand\Features\McpServer\McpServerFeature;
+use Counterhand\Features\McpServer\ToolDispatcher;
+use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\OAuth\OAuthFeature;
+use Counterhand\Features\Playground\AgentLoop;
+use Counterhand\Features\Playground\ChatSettings;
+use Counterhand\Features\Playground\ModelConnect;
+use Counterhand\Features\Playground\PlaygroundFeature;
+use Counterhand\Features\Playground\Provider\ProviderRegistry;
+use Counterhand\Features\Settings\ConnectionMatcher;
+use Counterhand\Features\Settings\ConnectReadiness;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\SettingSanitizer;
+use Counterhand\Features\Settings\SettingsFeature;
+use Counterhand\Features\Settings\StoreToolPolicy;
+use Counterhand\Features\Tokens\Authentication\RateLimiter;
+use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
+use Counterhand\Features\Tokens\Persistence\Schema;
+use Counterhand\Features\Tokens\Persistence\WpdbTokenRepository;
+use Counterhand\Features\Tokens\TokensFeature;
+use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
+use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
+use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestGateway;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Features\WooCommerceTools\WooCommerceToolsFeature;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -42,7 +44,7 @@ final class Plugin {
 
 	private static ?self $instance = null;
 
-	/** @var list<\AgentGateMcp\Shared\FeatureInterface> */
+	/** @var list<\Counterhand\Shared\FeatureInterface> */
 	private array $features = [];
 
 	private ?ToolRegistry $tool_registry = null;
@@ -58,7 +60,7 @@ final class Plugin {
 
 	public static function activate(): void {
 		Schema::install();
-		\AgentGateMcp\Features\ActionLog\Persistence\LogSchema::install();
+		\Counterhand\Features\ActionLog\Persistence\LogSchema::install();
 		McpServerFeature::register_rewrite();
 		OAuthFeature::register_rewrites();
 		flush_rewrite_rules();
@@ -66,7 +68,7 @@ final class Plugin {
 
 	public static function deactivate(): void {
 		flush_rewrite_rules();
-		wp_clear_scheduled_hook( 'agmcp_purge_log' );
+		wp_clear_scheduled_hook( 'ctrh_purge_log' );
 	}
 
 	public function tool_registry(): ?ToolRegistry {
@@ -102,9 +104,11 @@ final class Plugin {
 
 		$this->tool_registry = new ToolRegistry( $settings );
 
-		// One protocol instance shared by the HTTP endpoint and the admin
-		// playground, so both dispatch through exactly the same path.
-		$mcp_server = new McpServer( $this->tool_registry );
+		// One pipeline shared by the HTTP endpoint and the admin playground, so
+		// both dispatch through exactly the same gates — the playground just
+		// skips the JSON-RPC framing.
+		$tool_dispatcher = new ToolDispatcher( $this->tool_registry );
+		$mcp_server      = new McpServer( $tool_dispatcher );
 
 		$tokens     = new TokensFeature( $repository );
 		$action_log = new ActionLogFeature( $settings );
@@ -112,11 +116,12 @@ final class Plugin {
 		$chat_settings  = new ChatSettings();
 		$chat_providers = new ProviderRegistry();
 		$playground     = new PlaygroundFeature(
-			$this->tool_registry,
-			new AgentLoop( $this->tool_registry, $mcp_server ),
+			$tool_dispatcher,
+			new AgentLoop( $tool_dispatcher ),
 			$chat_settings,
 			$chat_providers,
-			new ModelConnect( $chat_settings, $chat_providers )
+			new ModelConnect( $chat_settings, $chat_providers ),
+			new StoreToolPolicy( $settings )
 		);
 
 		$this->features = [

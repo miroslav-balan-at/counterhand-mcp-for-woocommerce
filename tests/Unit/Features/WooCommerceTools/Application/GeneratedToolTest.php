@@ -2,28 +2,28 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Application;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Application;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\WooCommerceTools\Application\GeneratedTool;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ArgumentPolicy;
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolName;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Verdict;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestResult;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Doubles\FakeRestGateway;
-use AgentGateMcp\Tests\Doubles\FakeRestServer;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\WooCommerceTools\Application\GeneratedTool;
+use Counterhand\Features\WooCommerceTools\Domain\ArgumentPolicy;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Features\WooCommerceTools\Domain\Verdict;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestResult;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Doubles\FakeRestGateway;
+use Counterhand\Tests\Doubles\FakeRestServer;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
@@ -450,10 +450,10 @@ final class GeneratedToolTest extends TestCase {
 	}
 
 	public function test_a_missing_route_publishes_an_empty_schema_rather_than_failing(): void {
-		$this->assertSame(
+		$this->assertEquals(
 			[
 				'type'                 => 'object',
-				'properties'           => [],
+				'properties'           => new \stdClass(),
 				'additionalProperties' => false,
 			],
 			$this->tool( Operation::GetItems, routes: [] )->input_schema()

@@ -12,30 +12,30 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="agmcp-card__body agmcp-card__body--centered">
-	<span class="agmcp-status-icon agmcp-status-icon--neutral" aria-hidden="true">
+<div class="ctrh-card__body ctrh-card__body--centered">
+	<span class="ctrh-status-icon ctrh-status-icon--neutral" aria-hidden="true">
 		<svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
 			<path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
 		</svg>
 	</span>
 
-	<h1 class="agmcp-title"><?php esc_html_e( 'Access not granted', 'agentgate-mcp-for-woocommerce' ); ?></h1>
+	<h1 class="ctrh-title"><?php esc_html_e( 'Access not granted', 'counterhand-mcp-for-woocommerce' ); ?></h1>
 
-	<p class="agmcp-lede">
+	<p class="ctrh-lede">
 		<?php
 		printf(
 			/* translators: %s: name of the AI application */
-			esc_html__( 'You declined the request from %s. Nothing was shared and no connection was created.', 'agentgate-mcp-for-woocommerce' ),
+			esc_html__( 'You declined the request from %s. Nothing was shared and no connection was created.', 'counterhand-mcp-for-woocommerce' ),
 			'<strong>' . esc_html( $context['client_name'] ) . '</strong>'
 		);
 		?>
 	</p>
 
-	<p class="agmcp-hint"><?php esc_html_e( 'You can close this tab. If you meant to allow it, start the connection again from your AI assistant.', 'agentgate-mcp-for-woocommerce' ); ?></p>
+	<p class="ctrh-hint"><?php esc_html_e( 'You can close this tab. If you meant to allow it, start the connection again from your AI assistant.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
-	<div class="agmcp-actions agmcp-actions--single">
-		<a class="agmcp-button agmcp-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=agentgate-mcp-connect&view=connections' ) ); ?>">
-			<?php esc_html_e( 'Manage connections', 'agentgate-mcp-for-woocommerce' ); ?>
+	<div class="ctrh-actions ctrh-actions--single">
+		<a class="ctrh-button ctrh-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=counterhand-mcp-connect&view=connections' ) ); ?>">
+			<?php esc_html_e( 'Manage connections', 'counterhand-mcp-for-woocommerce' ); ?>
 		</a>
 	</div>
 </div>

@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\Tool;
+namespace Counterhand\Shared\Tool;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Exception\ToolCallException;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
 

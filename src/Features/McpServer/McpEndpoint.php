@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\McpServer;
+namespace Counterhand\Features\McpServer;
 
-use AgentGateMcp\Features\Tokens\Authentication\TokenAuthenticator;
-use AgentGateMcp\Shared\Exception\AuthenticationFailedException;
-use AgentGateMcp\Shared\Exception\RateLimitExceededException;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcEnvelopeException;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcErrorCode;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcRequest;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcResponse;
+use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
+use Counterhand\Shared\Exception\AuthenticationFailedException;
+use Counterhand\Shared\Exception\RateLimitExceededException;
+use Counterhand\Shared\JsonRpc\JsonRpcEnvelopeException;
+use Counterhand\Shared\JsonRpc\JsonRpcErrorCode;
+use Counterhand\Shared\JsonRpc\JsonRpcRequest;
+use Counterhand\Shared\JsonRpc\JsonRpcResponse;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,7 +49,7 @@ final readonly class McpEndpoint {
 				'body'    => [ 'error' => $exception->getMessage() ],
 				'headers' => [
 					'WWW-Authenticate' => sprintf(
-						'Bearer realm="AgentGate MCP", error="invalid_token", resource_metadata="%s"',
+						'Bearer realm="Counterhand MCP", error="invalid_token", resource_metadata="%s"',
 						$resource_metadata
 					),
 				],
@@ -107,7 +107,7 @@ final readonly class McpEndpoint {
 
 		wc_get_logger()->error(
 			$throwable->getMessage() . "\n" . $throwable->getTraceAsString(),
-			[ 'source' => 'agentgate' ]
+			[ 'source' => 'counterhand' ]
 		);
 	}
 }

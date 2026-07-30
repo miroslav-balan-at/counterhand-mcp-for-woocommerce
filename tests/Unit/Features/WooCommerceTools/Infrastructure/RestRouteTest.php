@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestNamespace;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestNamespace;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Tests\Unit\TestCase;
 
 final class RestRouteTest extends TestCase {
 

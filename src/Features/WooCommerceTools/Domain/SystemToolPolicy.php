@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Domain;
+namespace Counterhand\Features\WooCommerceTools\Domain;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -74,7 +74,7 @@ final readonly class SystemToolPolicy implements ArgumentPolicy {
 		 * @param string $id     The system tool id.
 		 */
 		$denied = (bool) apply_filters(
-			'agmcp_system_tool_denied',
+			'ctrh_system_tool_denied',
 			in_array( $id, self::IRREVERSIBLE, true ),
 			$id
 		);

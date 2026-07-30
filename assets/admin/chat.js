@@ -1,12 +1,12 @@
-/* AgentGate MCP — in-admin chat: message bubbles + inline tool-call cards. */
+/* Counterhand MCP — in-admin chat: message bubbles + inline tool-call cards. */
 ( function () {
 	'use strict';
 
-	var i18n = ( window.agmcpChat && window.agmcpChat.i18n ) || {};
+	var i18n = ( window.ctrhChat && window.ctrhChat.i18n ) || {};
 
 	// Provider install: intercept the chooser's install form so the button can
 	// show progress; the form itself stays as the no-JS fallback.
-	var installForm = document.getElementById( 'agmcp-install-form' );
+	var installForm = document.getElementById( 'ctrh-install-form' );
 
 	if ( installForm ) {
 		installForm.addEventListener( 'submit', function ( event ) {
@@ -23,8 +23,8 @@
 			clicked.textContent = i18n.installing || 'Installing…';
 
 			var body = new URLSearchParams( new FormData( installForm ) );
-			body.set( 'action', 'agmcp_install_provider' );
-			body.set( 'agmcp_provider_slug', clicked.value );
+			body.set( 'action', 'ctrh_install_provider' );
+			body.set( 'ctrh_provider_slug', clicked.value );
 
 			fetch( installForm.dataset.ajaxUrl, {
 				method: 'POST',
@@ -49,7 +49,7 @@
 						delete button.dataset.clicked;
 					} );
 
-					var note = document.getElementById( 'agmcp-install-error' );
+					var note = document.getElementById( 'ctrh-install-error' );
 					if ( note ) {
 						note.textContent = '✕ ' + ( error.message || i18n.installFailed || 'The install failed.' );
 					}
@@ -63,13 +63,13 @@
 		} );
 	}
 
-	var form = document.getElementById( 'agmcp-chat-form' );
-	var input = document.getElementById( 'agmcp-chat-input' );
-	var log = document.getElementById( 'agmcp-chat-log' );
-	var empty = document.getElementById( 'agmcp-chat-empty' );
-	var status = document.getElementById( 'agmcp-chat-status' );
-	var sendButton = document.getElementById( 'agmcp-chat-send' );
-	var resetButton = document.getElementById( 'agmcp-chat-reset' );
+	var form = document.getElementById( 'ctrh-chat-form' );
+	var input = document.getElementById( 'ctrh-chat-input' );
+	var log = document.getElementById( 'ctrh-chat-log' );
+	var empty = document.getElementById( 'ctrh-chat-empty' );
+	var status = document.getElementById( 'ctrh-chat-status' );
+	var sendButton = document.getElementById( 'ctrh-chat-send' );
+	var resetButton = document.getElementById( 'ctrh-chat-reset' );
 
 	if ( ! form || ! input || ! log ) {
 		return;
@@ -185,8 +185,8 @@
 
 	/** The store's own mark, matching the avatar on the OAuth consent screen. */
 	function avatar() {
-		var mark = ( window.agmcpChat && window.agmcpChat.avatar ) || {};
-		var node = el( 'span', 'agmcp-msg__avatar' );
+		var mark = ( window.ctrhChat && window.ctrhChat.avatar ) || {};
+		var node = el( 'span', 'ctrh-msg__avatar' );
 		node.setAttribute( 'aria-hidden', 'true' );
 
 		if ( mark.url ) {
@@ -203,16 +203,16 @@
 
 	/** A message row; assistant rows carry the store mark, user rows do not. */
 	function messageRow( role ) {
-		var row = el( 'div', 'agmcp-msg agmcp-msg--' + role );
+		var row = el( 'div', 'ctrh-msg ctrh-msg--' + role );
 
 		if ( role !== 'user' ) {
 			row.appendChild( avatar() );
 		}
 
-		var main = el( 'div', 'agmcp-msg__main' );
+		var main = el( 'div', 'ctrh-msg__main' );
 		main.appendChild( el(
 			'div',
-			'agmcp-msg__role',
+			'ctrh-msg__role',
 			role === 'user' ? ( i18n.you || 'You' ) : ( i18n.assistant || 'Assistant' )
 		) );
 		row.appendChild( main );
@@ -240,7 +240,7 @@
 		hideEmptyState();
 
 		var parts = messageRow( role );
-		var body = el( 'div', 'agmcp-msg__body' );
+		var body = el( 'div', 'ctrh-msg__body' );
 
 		if ( role === 'user' ) {
 			body.textContent = text;
@@ -259,27 +259,27 @@
 	function addToolCard( entry ) {
 		hideEmptyState();
 
-		var details = el( 'details', 'agmcp-tool' + ( entry.is_error ? ' agmcp-tool--error' : '' ) );
-		var summary = el( 'summary', 'agmcp-tool__summary' );
+		var details = el( 'details', 'ctrh-tool' + ( entry.is_error ? ' ctrh-tool--error' : '' ) );
+		var summary = el( 'summary', 'ctrh-tool__summary' );
 
-		summary.appendChild( el( 'span', 'agmcp-tool__icon', entry.is_error ? '✕' : '✓' ) );
-		summary.appendChild( el( 'code', 'agmcp-tool__name', entry.name ) );
+		summary.appendChild( el( 'span', 'ctrh-tool__icon', entry.is_error ? '✕' : '✓' ) );
+		summary.appendChild( el( 'code', 'ctrh-tool__name', entry.name ) );
 		summary.appendChild( el(
 			'span',
-			'agmcp-tool__hint',
+			'ctrh-tool__hint',
 			entry.is_error ? ( i18n.toolFailed || 'failed' ) : ( i18n.toolRan || 'ran' )
 		) );
 		details.appendChild( summary );
 
-		var body = el( 'div', 'agmcp-tool__body' );
+		var body = el( 'div', 'ctrh-tool__body' );
 
 		if ( entry.arguments && Object.keys( entry.arguments ).length ) {
-			body.appendChild( el( 'div', 'agmcp-tool__label', i18n.arguments || 'Arguments' ) );
-			body.appendChild( el( 'pre', 'agmcp-tool__code', JSON.stringify( entry.arguments, null, 2 ) ) );
+			body.appendChild( el( 'div', 'ctrh-tool__label', i18n.arguments || 'Arguments' ) );
+			body.appendChild( el( 'pre', 'ctrh-tool__code', JSON.stringify( entry.arguments, null, 2 ) ) );
 		}
 
-		body.appendChild( el( 'div', 'agmcp-tool__label', i18n.result || 'Result' ) );
-		body.appendChild( el( 'pre', 'agmcp-tool__code', JSON.stringify( entry.result, null, 2 ) ) );
+		body.appendChild( el( 'div', 'ctrh-tool__label', i18n.result || 'Result' ) );
+		body.appendChild( el( 'pre', 'ctrh-tool__code', JSON.stringify( entry.result, null, 2 ) ) );
 
 		details.appendChild( body );
 		log.appendChild( details );
@@ -289,7 +289,7 @@
 	function setBusy( busy ) {
 		sendButton.disabled = busy;
 		input.disabled = busy;
-		status.className = 'agmcp-chat__status';
+		status.className = 'ctrh-chat__status';
 		status.textContent = busy ? ( i18n.thinking || 'Thinking…' ) : '';
 	}
 
@@ -302,9 +302,9 @@
 		addBubble( 'user', text );
 
 		var parts = messageRow( 'assistant' );
-		parts.row.classList.add( 'agmcp-msg--pending' );
+		parts.row.classList.add( 'ctrh-msg--pending' );
 
-		var typing = el( 'div', 'agmcp-typing' );
+		var typing = el( 'div', 'ctrh-typing' );
 		for ( var dot = 0; dot < 3; dot++ ) {
 			typing.appendChild( el( 'span' ) );
 		}
@@ -316,7 +316,7 @@
 		setBusy( true );
 
 		var body = new URLSearchParams();
-		body.set( 'action', 'agmcp_chat_send' );
+		body.set( 'action', 'ctrh_chat_send' );
 		body.set( '_ajax_nonce', form.dataset.nonce );
 		body.set( 'message', text );
 		body.set( 'history', JSON.stringify( history ) );
@@ -337,7 +337,7 @@
 
 				if ( ! payload.success ) {
 					var failure = addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ) );
-					failure.classList.add( 'agmcp-msg--error' );
+					failure.classList.add( 'ctrh-msg--error' );
 					return;
 				}
 
@@ -358,7 +358,7 @@
 			} )
 			.catch( function ( error ) {
 				parts.row.remove();
-				addBubble( 'assistant', String( error ) ).classList.add( 'agmcp-msg--error' );
+				addBubble( 'assistant', String( error ) ).classList.add( 'ctrh-msg--error' );
 			} )
 			.finally( function () {
 				setBusy( false );
@@ -389,7 +389,7 @@
 	autoGrow();
 
 	document.addEventListener( 'click', function ( event ) {
-		if ( event.target.classList.contains( 'agmcp-chat__suggestion' ) ) {
+		if ( event.target.classList.contains( 'ctrh-chat__suggestion' ) ) {
 			input.value = event.target.textContent.trim();
 			autoGrow();
 			form.dispatchEvent( new Event( 'submit' ) );

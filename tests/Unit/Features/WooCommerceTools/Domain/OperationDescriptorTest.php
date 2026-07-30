@@ -2,13 +2,13 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Domain;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolName;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * The description is the entire brief a model gets before deciding whether to

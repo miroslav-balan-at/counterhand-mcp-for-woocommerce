@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth\View;
+namespace Counterhand\Features\OAuth\View;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 

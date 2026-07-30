@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Authentication;
+namespace Counterhand\Features\Tokens\Authentication;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Shared\Exception\ScopeDeniedException;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Shared\Exception\ScopeDeniedException;
 
 defined( 'ABSPATH' ) || exit;
 

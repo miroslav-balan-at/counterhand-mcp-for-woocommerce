@@ -28,9 +28,9 @@
  * A variable rather than a const: wp eval-file includes this inside a function,
  * and PHP will not declare a const in function scope.
  *
- * @var array<string, array{string, string}> $agmcp_fixture_routes
+ * @var array<string, array{string, string}> $ctrh_fixture_routes
  */
-$agmcp_fixture_routes = [
+$ctrh_fixture_routes = [
 	// The resource Phase 5 validates end to end.
 	'coupons-collection-get' => [ '/wc/v3/coupons', 'GET' ],
 	'coupons-collection-post' => [ '/wc/v3/coupons', 'POST' ],
@@ -58,9 +58,9 @@ $agmcp_fixture_routes = [
  * the fixture honest about the key being present without pretending to
  * serialize the callable.
  */
-function agmcp_exportable( mixed $value ): mixed {
+function ctrh_exportable( mixed $value ): mixed {
 	if ( is_array( $value ) ) {
-		return array_map( 'agmcp_exportable', $value );
+		return array_map( 'ctrh_exportable', $value );
 	}
 
 	if ( $value instanceof Closure ) {
@@ -105,13 +105,13 @@ foreach ( rest_get_server()->get_routes() as $pattern => $handlers ) {
 $wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : 'unknown';
 $wp_version = get_bloginfo( 'version' );
 
-foreach ( $agmcp_fixture_routes as $slug => [ $template, $verb ] ) {
+foreach ( $ctrh_fixture_routes as $slug => [ $template, $verb ] ) {
 	if ( ! isset( $index[ $template ][ $verb ] ) ) {
 		WP_CLI::warning( sprintf( 'Not registered on this store: %s %s', $verb, $template ) );
 		continue;
 	}
 
-	$route_args = agmcp_exportable( $index[ $template ][ $verb ] );
+	$route_args = ctrh_exportable( $index[ $template ][ $verb ] );
 	$export     = preg_replace( '/^(\s*)array \(/m', '$1array(', var_export( $route_args, true ) );
 
 	$contents = <<<PHP

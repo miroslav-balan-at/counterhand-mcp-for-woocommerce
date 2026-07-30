@@ -1,4 +1,4 @@
-# AgentGate MCP for WooCommerce — coding rules
+# Counterhand MCP for WooCommerce — coding rules
 
 ## Architecture
 - **DDD feature modules**: each feature under `src/Features/<Name>/` owns its views, admin glue and services. Domain objects live in `<Feature>/Domain/`. Cross-feature dependencies go through interfaces (e.g. `TokenRepositoryInterface`), never concrete classes of another feature.
@@ -6,6 +6,26 @@
 - **SOLID**: no `instanceof` branching on concrete types in feature/application code — put the varying behaviour on the interface. One responsibility per class; extract a service when a feature class grows a second workflow.
 - **Value objects over arrays**: structured data crossing a boundary (return values, transients, JSON payloads, view data) is a `final readonly` VO or a backed enum, not an `array{...}` shape. `to_array()` only at the serialization edge (`wp_send_json_*`, transients).
 - **DRY**: compute once, pass down — views receive data, they don't re-fetch it.
+
+## Protocol boundaries
+- **The MCP wire format belongs to one slice.** Only `Features/McpServer` may build or parse JSON-RPC envelopes and MCP result shapes (`content`, `isError`, `structuredContent`, error codes). Business logic elsewhere consumes `ToolInterface` / `ToolRegistry` directly — the way `AgentLoop::tool_definitions()` already does — never the wire format.
+- **In-process tool calls need a seam, not an envelope.** `AgentLoop::dispatch()` hand-builds a `tools/call` envelope and reverse-engineers the result shape; this is known debt, not a pattern to copy. The fix shape: McpServer publishes a transport-neutral dispatch contract (defaults → validation → scope gate → execute → `ctrh_tool_called`) that both the JSON-RPC handler and Playground consume. Any new in-process caller waits for that seam rather than adding a third envelope-builder.
+- **One tool pipeline.** Schema-default application, argument validation, scope enforcement and the audit hook run in exactly one place. If a caller can reach `ToolInterface::execute()` without passing through that pipeline, that is a bug, not a shortcut.
+- **The `/mcp` path is declared once.** It currently appears in four places (`McpServerFeature`, `CanonicalUri`, `ConnectReadiness`, `SettingsFeature`); do not add a fifth — route any new consumer through `CanonicalUri`.
+- **Features expose UI to Settings through a contract.** `render_tab()` is an informal convention with no interface behind it, and `SettingsFeature` already injects three concrete siblings for it. Don't add a fourth concrete — introduce/extend a tab contract instead.
+
+## Tool-surface size
+- **Never cap the surface when the provider can defer it.** Selection accuracy falls off past roughly 30–50 *eagerly loaded* tools — that is the real constraint, not any wire limit. Anthropic's answer is the tool search tool: send every definition, mark the tail `defer_loading: true`, and Claude searches names/descriptions/argument names on demand. Deferred definitions stay out of the system-prompt prefix, so they cost nothing until surfaced and the prompt cache survives. Keep 3–5 tools eager (the API rejects a request with everything deferred) and never defer the search tool itself.
+- **The ceiling is provider knowledge, not loop knowledge.** `ProviderInterface::max_eager_tools()` returns null when the provider can search a catalogue and a number when it cannot; `with_tool_search()` decides how a catalogue is spelled. `AgentLoop` asks — it must never hardcode a limit or branch on a provider. OpenAI and Gemini both hard-reject more than 128 tools and have no deferred-loading equivalent, so their adapters return a real number.
+- **A refusal is the last resort, and must say what to do.** Only a provider with no deferred loading refuses, and the message names the count, the ceiling, how many to untick, and that an Anthropic model removes the limit.
+
+## The official WordPress MCP stack (state as of July 2026)
+Know the landscape before building or duplicating anything:
+- **Abilities API is WordPress core since 6.9** (`wp_register_ability` on `wp_abilities_api_init`, JSON-schema in/out, `permission_callback`). **WooCommerce ≥10.3 ships its own experimental MCP server** (feature-flagged, developer preview): as of 10.9 it exposes 7 hand-authored product/order abilities via the bundled `wordpress/mcp-adapter`, authenticated with REST API keys / application passwords.
+- **This plugin's reason to exist is the gaps**: OAuth 2.1 for self-hosted HTTP transport (core has none — WordPress.com only), breadth beyond products/orders (coupons, customers, reports, settings, shipping, tax, wp/v2), scoped tokens with per-client consent, confirmation-gated risky writes, and the chat playground. Don't reimplement what core now does well; don't drop what core still lacks.
+- **Runtime derivation from wc/v3 is validated, keep it.** WooCommerce's own 10.3 `AbilitiesRestBridge` used the same pattern (derive schema + permissions from live REST controllers). Core later hand-authored its 7 canonical abilities for its *public contract* — that is curation, not a repudiation of derivation; our `FieldProfile` pruning plays the same role.
+- **Never register anything under the `woocommerce/` ability prefix** — reserved for core (10.9 announcement). If we ever bridge our tools into the Abilities API for interop with the official adapter, use our own prefix and treat it as a thin adapter over `ToolInterface`, not a second tool implementation.
+- **Do not vendor `wordpress/mcp-adapter`.** It is pre-1.0 (breaking changes at 0.3.0), WP ≥6.9 only, and recommends Jetpack Autoloader — all three collide with the zero-runtime-dependency rule. The in-house `Shared/JsonRpc` layer stays.
 
 ## Adding a tool
 Tools are **declared, not written**. `GeneratedTool` serves the whole wc/v3 and wp/v2 surface; a new resource is a `DescriptorProvider` under `Features/WooCommerceTools/Descriptors/` plus one line in `StaticDescriptorCatalog::shipped()`.
@@ -26,11 +46,13 @@ Unit tests run without WordPress, so they cannot tell you whether a field name i
 - Use: `final readonly` classes, constructor promotion, backed enums, `match`, named arguments, `never` return type where applicable.
 - **Avoid `else` — happy path last.** Guard clauses return/throw/redirect early; the main flow reads top-to-bottom unindented. (`if/else` in templates for markup branching is fine.)
 - Zero runtime Composer dependencies. Never vendor a library that could collide with core or other plugins (`src/Autoloader.php` explains why). WordPress-bundled libraries (e.g. the WP 7.0 AI Client) are used behind a capability check and a stub file for PHPStan.
-- WPCS via `phpcs.xml.dist` (WordPress-Extra, Yoda conditions, i18n text domain `agentgate-mcp-for-woocommerce`). PHPStan level 6 with stubs in `tests/phpstan-*.php`.
+- WPCS via `phpcs.xml.dist` (WordPress-Extra, Yoda conditions, i18n text domain `counterhand-mcp-for-woocommerce`). PHPStan level 6 with stubs in `tests/phpstan-*.php`.
 
 ## Comments
 - Only when needed, and short — one line unless the *why* genuinely needs more.
 - Comments explain why, never what. No restating the code, no section banners in PHP.
+- **Never comment the obvious.** If the line already says it, the comment is noise — a `// stdClass so it encodes as {}` beside `new \stdClass()` tells the reader nothing they cannot see. Write only what the code cannot say: the consequence, the constraint, the thing that breaks otherwise.
+- **Say it once, where the decision lives.** The same reason repeated at every call site and test that touches it is worse than no comment — it goes stale in five places instead of one.
 
 ## UI
 - Design tokens from `assets/shared/tokens.css` (mapped to `--wpds-*` with fallbacks). No raw hex in admin/OAuth CSS, never hardcode WooCommerce purple `#7f54b3`.

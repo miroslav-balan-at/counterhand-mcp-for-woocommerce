@@ -2,14 +2,14 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Domain;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolIntent;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * Two routes and two nouns is the whole per-resource knowledge this plugin

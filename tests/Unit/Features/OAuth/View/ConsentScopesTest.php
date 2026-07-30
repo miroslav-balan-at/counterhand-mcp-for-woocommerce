@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\OAuth\View;
+namespace Counterhand\Tests\Unit\Features\OAuth\View;
 
-use AgentGateMcp\Features\OAuth\View\ConsentScopes;
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\OAuth\View\ConsentScopes;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * The consent screen's layout, decided here rather than inside markup.

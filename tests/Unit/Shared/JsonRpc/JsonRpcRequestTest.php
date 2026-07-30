@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Shared\JsonRpc;
+namespace Counterhand\Tests\Unit\Shared\JsonRpc;
 
-use AgentGateMcp\Shared\JsonRpc\JsonRpcEnvelopeException;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcErrorCode;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcRequest;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Shared\JsonRpc\JsonRpcEnvelopeException;
+use Counterhand\Shared\JsonRpc\JsonRpcErrorCode;
+use Counterhand\Shared\JsonRpc\JsonRpcRequest;
+use Counterhand\Tests\Unit\TestCase;
 
 final class JsonRpcRequestTest extends TestCase {
 

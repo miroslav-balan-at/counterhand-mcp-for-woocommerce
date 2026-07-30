@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\McpServer;
+namespace Counterhand\Features\McpServer;
 
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Authentication\AuthenticatedAgent;
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolInterface;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -64,6 +64,23 @@ final class ToolRegistry {
 
 	public function resolve_for( AuthenticatedAgent $agent, string $tool_name ): ?ToolInterface {
 		return $this->visible_map_for( $agent )[ $tool_name ] ?? null;
+	}
+
+	/**
+	 * The whole registered surface per group, ungated on purpose: this is the
+	 * denominator an admin screen needs to say what a setting is withholding.
+	 *
+	 * @return array<string, int>
+	 */
+	public function tool_counts_by_group(): array {
+		$counts = [];
+
+		foreach ( $this->tools as $tool ) {
+			$slug            = $tool->group()->value;
+			$counts[ $slug ] = ( $counts[ $slug ] ?? 0 ) + 1;
+		}
+
+		return $counts;
 	}
 
 	/**

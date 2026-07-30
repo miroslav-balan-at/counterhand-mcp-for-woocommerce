@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Playground;
+namespace Counterhand\Tests\Unit\Features\Playground;
 
-use AgentGateMcp\Features\Playground\ProviderPlugin;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Playground\ProviderPlugin;
+use Counterhand\Tests\Unit\TestCase;
 
 final class ProviderPluginTest extends TestCase {
 

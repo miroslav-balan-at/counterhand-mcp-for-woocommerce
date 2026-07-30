@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\OAuth;
+namespace Counterhand\Tests\Unit\Features\OAuth;
 
-use AgentGateMcp\Features\OAuth\ClientMetadata;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\OAuth\ClientMetadata;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 final class ClientMetadataTest extends TestCase {

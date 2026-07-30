@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Admin;
+namespace Counterhand\Features\Tokens\Admin;
 
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,26 +16,14 @@ defined( 'ABSPATH' ) || exit;
  * there is no create form and no display-once secret — only listing and
  * revocation.
  */
-final readonly class ConnectionsAdmin {
+final readonly class ConnectionsAdmin implements SettingsTabInterface {
 
-	private const NONCE_REVOKE = 'agmcp_revoke_connection';
+	private const NONCE_REVOKE = 'ctrh_revoke_connection';
 
 	public function __construct( private TokenRepositoryInterface $repository ) {}
 
 	public function register(): void {
-		add_action( 'admin_post_agmcp_revoke_connection', [ $this, 'handle_revoke' ] );
-	}
-
-	/** Live connections, for the Connect screen's tab badge. */
-	public function active_count(): int {
-		$now = new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) );
-
-		return count(
-			array_filter(
-				$this->repository->list_all(),
-				static fn ( $token ): bool => TokenStatus::Active === $token->status && ! $token->is_expired( $now )
-			)
-		);
+		add_action( 'admin_post_ctrh_revoke_connection', [ $this, 'handle_revoke' ] );
 	}
 
 	public function render_tab(): void {
@@ -47,12 +35,12 @@ final readonly class ConnectionsAdmin {
 
 	public function handle_revoke(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage connections.', 'agentgate-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to manage connections.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		check_admin_referer( self::NONCE_REVOKE );
 
-		$token_row_id = (int) ( $_POST['agmcp_token_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified above; (int) cast sanitizes.
+		$token_row_id = (int) ( $_POST['ctrh_token_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified above; (int) cast sanitizes.
 		if ( $token_row_id > 0 ) {
 			$this->repository->revoke( $token_row_id );
 		}
@@ -60,9 +48,9 @@ final readonly class ConnectionsAdmin {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'          => 'agentgate-mcp-connect',
-					'view'          => 'connections',
-					'agmcp_revoked' => '1',
+					'page'         => 'counterhand-mcp-connect',
+					'view'         => 'connections',
+					'ctrh_revoked' => '1',
 				],
 				admin_url( 'admin.php' )
 			)

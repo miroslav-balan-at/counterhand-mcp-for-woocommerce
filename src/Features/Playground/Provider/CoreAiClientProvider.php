@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground\Provider;
+namespace Counterhand\Features\Playground\Provider;
 
-use AgentGateMcp\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Exception\ToolCallException;
 use WordPress\AiClient\Messages\DTO\Message;
 use WordPress\AiClient\Messages\DTO\MessagePart;
 use WordPress\AiClient\Messages\Enums\MessageRoleEnum;
@@ -68,7 +68,7 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 	}
 
 	public function label(): string {
-		return __( 'WordPress AI (built in)', 'agentgate-mcp-for-woocommerce' );
+		return __( 'WordPress AI (built in)', 'counterhand-mcp-for-woocommerce' );
 	}
 
 	/**
@@ -90,6 +90,11 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 	}
 
 	public function needs_key(): bool {
+		return false;
+	}
+
+	/** Core owns the credential, so the bring-your-own-key chooser skips this one. */
+	public function is_user_configured(): bool {
 		return false;
 	}
 
@@ -118,14 +123,14 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 	public function test( ProviderConfig $config ): void {
 		if ( ! $this->builder( $config )->with_text( 'ping' )->is_supported_for_text_generation() ) {
 			throw new ToolCallException(
-				__( 'No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins.', 'agentgate-mcp-for-woocommerce' )
+				__( 'No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins.', 'counterhand-mcp-for-woocommerce' )
 			);
 		}
 	}
 
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
 		if ( [] === $messages ) {
-			throw new ToolCallException( __( 'Nothing to send to the model.', 'agentgate-mcp-for-woocommerce' ) );
+			throw new ToolCallException( __( 'Nothing to send to the model.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		// The last message is the turn being asked; everything before it is context.
@@ -185,11 +190,11 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 
 			$arguments = $call->getArgs();
 
-			$tool_calls[] = [
-				'id'    => (string) ( $call->getId() ?? '' ),
-				'name'  => (string) ( $call->getName() ?? '' ),
-				'input' => is_array( $arguments ) ? $arguments : [],
-			];
+			$tool_calls[] = new ToolCall(
+				id: (string) ( $call->getId() ?? '' ),
+				name: (string) ( $call->getName() ?? '' ),
+				input: is_array( $arguments ) ? $arguments : [],
+			);
 		}
 
 		$usage = $result->getTokenUsage();
@@ -199,10 +204,10 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 			tool_calls: $tool_calls,
 			wants_tools: [] !== $tool_calls,
 			raw: $this->replayable( $message )->toArray(),
-			usage: [
-				'input'  => $usage->getPromptTokens(),
-				'output' => $usage->getCompletionTokens(),
-			],
+			usage: new TokenUsage(
+				input: $usage->getPromptTokens(),
+				output: $usage->getCompletionTokens(),
+			),
 		);
 	}
 
@@ -235,6 +240,20 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 	 * Returned as an array rather than a FunctionDeclaration so the shape stays
 	 * JSON-safe like every other provider's; complete() rehydrates it.
 	 */
+	/**
+	 * The AI Client hides which provider answers, so this has to hold for the
+	 * strictest of them. OpenAI and Gemini both reject more than 128 tools
+	 * outright, and Google's own advice is to keep 10–20 active.
+	 */
+	public function max_eager_tools(): int {
+		return 60;
+	}
+
+	/** No searchable catalogue through the AI Client; the set is sent as-is. */
+	public function with_tool_search( array $tools ): array {
+		return $tools;
+	}
+
 	public function describe_tool( string $name, string $description, array $input_schema ): array {
 		return ( new FunctionDeclaration( $name, $description, [] === $input_schema ? null : $input_schema ) )->toArray();
 	}
@@ -248,16 +267,16 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 		$parts = [];
 
 		foreach ( $results as $result ) {
-			$decoded = json_decode( $result['output'], true );
-			$payload = null === $decoded ? $result['output'] : $decoded;
+			$decoded = json_decode( $result->output, true );
+			$payload = null === $decoded ? $result->output : $decoded;
 
 			// FunctionResponse has no error flag, so failures are labelled in
 			// the payload — otherwise the model cannot tell them apart.
-			if ( $result['is_error'] ) {
+			if ( $result->is_error ) {
 				$payload = [ 'error' => $payload ];
 			}
 
-			$parts[] = new MessagePart( new FunctionResponse( $result['id'], $result['name'], $payload ) );
+			$parts[] = new MessagePart( new FunctionResponse( $result->id, $result->name, $payload ) );
 		}
 
 		return [ ( new Message( MessageRoleEnum::user(), $parts ) )->toArray() ];

@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\Exception;
+namespace Counterhand\Shared\Exception;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ApiScope;
 
 defined( 'ABSPATH' ) || exit;
 

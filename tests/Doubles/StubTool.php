@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Doubles;
+namespace Counterhand\Tests\Doubles;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolInterface;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolInterface;
 
 /**
  * A tool with no WooCommerce behind it, so registry and server tests can

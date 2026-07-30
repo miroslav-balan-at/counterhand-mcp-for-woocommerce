@@ -2,11 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\McpServer;
+namespace Counterhand\Features\McpServer;
 
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Authentication\TokenAuthenticator;
-use AgentGateMcp\Shared\FeatureInterface;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
+use Counterhand\Shared\CanonicalUri;
+use Counterhand\Shared\FeatureInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class McpServerFeature implements FeatureInterface {
 
-	private const QUERY_VAR = 'agmcp_mcp';
+	private const QUERY_VAR = 'ctrh_mcp';
 
 	private McpEndpoint $endpoint;
 
@@ -41,7 +42,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 	}
 
 	public static function register_rewrite(): void {
-		add_rewrite_rule( '^mcp/?$', 'index.php?' . self::QUERY_VAR . '=1', 'top' );
+		add_rewrite_rule( '^' . CanonicalUri::MCP_PATH . '/?$', 'index.php?' . self::QUERY_VAR . '=1', 'top' );
 	}
 
 	public function add_query_var( array $query_vars ): array {
@@ -59,7 +60,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 			(string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared against a fixed verb whitelist, never output.
 			(string) file_get_contents( 'php://input' ),
 			$this->read_authorization_header(),
-			$this->read_header( 'HTTP_X_AGENTGATE_TOKEN' )
+			$this->read_header( 'HTTP_X_COUNTERHAND_TOKEN' )
 		);
 
 		status_header( $result['status'] );
@@ -78,7 +79,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	public function register_rest_fallback(): void {
 		register_rest_route(
-			'agentgate/v1',
+			'counterhand/v1',
 			'/mcp',
 			[
 				[
@@ -97,7 +98,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 			$request->get_method(),
 			(string) $request->get_body(),
 			$request->get_header( 'authorization' ),
-			$request->get_header( 'x-agentgate-token' )
+			$request->get_header( 'x-counterhand-token' )
 		);
 
 		$response = new \WP_REST_Response( $result['body'], $result['status'] );

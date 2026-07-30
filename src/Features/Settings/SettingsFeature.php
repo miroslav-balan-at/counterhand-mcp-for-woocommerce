@@ -2,41 +2,42 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
-use AgentGateMcp\Features\ActionLog\ActionLogFeature;
-use AgentGateMcp\Features\Playground\PlaygroundFeature;
-use AgentGateMcp\Features\Tokens\Admin\ConnectionsAdmin;
-use AgentGateMcp\Shared\FeatureInterface;
-use AgentGateMcp\Shared\StoreMark;
-use AgentGateMcp\Shared\Tool\ToolSection;
+use Counterhand\Shared\CanonicalUri;
+use Counterhand\Shared\FeatureInterface;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Admin shell: the plugin's menu and screens, the Settings API registration,
- * per-screen assets, and the Connect screen's readiness and connection checks.
+ * and the Connect screen's readiness and connection checks.
  */
 final readonly class SettingsFeature implements FeatureInterface {
 
 	private const CAPABILITY = 'manage_woocommerce';
 
+	private ScreenAssets $assets;
+
 	public function __construct(
 		private PluginSettings $settings,
-		private ConnectionsAdmin $connections_admin,
-		private ActionLogFeature $action_log,
-		private PlaygroundFeature $playground,
+		private SettingsTabInterface $connections_tab,
+		private SettingsTabInterface $log_tab,
+		private SettingsTabInterface $chat_tab,
 		private ConnectReadiness $readiness,
 		private ConnectionMatcher $matcher,
 		private SettingSanitizer $sanitizer,
-	) {}
+	) {
+		$this->assets = new ScreenAssets();
+	}
 
 	public function register(): void {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'wp_ajax_agmcp_preflight', [ $this, 'handle_preflight' ] );
-		add_action( 'wp_ajax_agmcp_connection_status', [ $this, 'handle_connection_status' ] );
+		add_action( 'admin_enqueue_scripts', [ $this->assets, 'enqueue' ] );
+		add_action( 'wp_ajax_ctrh_preflight', [ $this, 'handle_preflight' ] );
+		add_action( 'wp_ajax_ctrh_connection_status', [ $this, 'handle_connection_status' ] );
 	}
 
 	/**
@@ -49,7 +50,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 		add_menu_page(
 			$chat->page_title(),
-			__( 'AgentGate MCP', 'agentgate-mcp-for-woocommerce' ),
+			__( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
 			$chat->value,
 			[ $this, 'render_chat' ],
@@ -78,14 +79,14 @@ final readonly class SettingsFeature implements FeatureInterface {
 		add_submenu_page(
 			'woocommerce',
 			$chat->page_title(),
-			__( 'AI Chat', 'agentgate-mcp-for-woocommerce' ),
+			__( 'AI Chat', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
 			$chat->value
 		);
 	}
 
 	public function render_chat(): void {
-		$this->render( AdminScreen::Chat, fn () => $this->playground->render_tab() );
+		$this->render( AdminScreen::Chat, fn () => $this->chat_tab->render_tab() );
 	}
 
 	public function render_connect(): void {
@@ -93,18 +94,18 @@ final readonly class SettingsFeature implements FeatureInterface {
 			AdminScreen::Connect,
 			function (): void {
 				$active = ConnectTab::current();
-				$counts = [ ConnectTab::Connections->value => $this->connections_admin->active_count() ];
+				$counts = [ ConnectTab::Connections->value => $this->matcher->live_count() ];
 
 				require __DIR__ . '/views/connect-tabs.php';
 
 				if ( ConnectTab::Connections === $active ) {
-					$this->connections_admin->render_tab();
+					$this->connections_tab->render_tab();
 
 					return;
 				}
 
-				$endpoint_url      = home_url( '/mcp' );
-				$fallback_url      = rest_url( 'agentgate/v1/mcp' );
+				$endpoint_url      = CanonicalUri::mcp();
+				$fallback_url      = rest_url( 'counterhand/v1/mcp' );
 				$connect_clients   = McpClient::all( $endpoint_url );
 				$connected_clients = $this->matcher->connected( $connect_clients );
 
@@ -126,14 +127,14 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	public function render_log(): void {
-		$this->render( AdminScreen::Log, fn () => $this->action_log->render_tab() );
+		$this->render( AdminScreen::Log, fn () => $this->log_tab->render_tab() );
 	}
 
 	/** Shared page chrome: heading, subtitle, then the screen's own body. */
 	private function render( AdminScreen $screen, callable $body ): void {
 		printf(
-			'<div class="wrap agmcp-wrap%s"><h1>%s</h1><p class="agmcp-subtitle">%s</p>',
-			$screen->is_full_bleed() ? ' agmcp-wrap--chat' : '',
+			'<div class="wrap ctrh-wrap%s"><h1>%s</h1><p class="ctrh-subtitle">%s</p>',
+			$screen->is_full_bleed() ? ' ctrh-wrap--chat' : '',
 			esc_html( $screen->page_title() ),
 			esc_html( $screen->subtitle() )
 		);
@@ -145,7 +146,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	public function register_settings(): void {
 		register_setting(
-			'agmcp_settings_group',
+			'ctrh_settings_group',
 			PluginSettings::OPTION,
 			[
 				'type'              => 'array',
@@ -160,128 +161,6 @@ final readonly class SettingsFeature implements FeatureInterface {
 		return $this->sanitizer->sanitize( $raw );
 	}
 
-	public function enqueue_assets(): void {
-		$screen = $this->current_screen();
-
-		if ( null === $screen ) {
-			return;
-		}
-
-		$base_url  = plugins_url( '', AGMCP_PLUGIN_FILE );
-		$base_path = AGMCP_PLUGIN_DIR;
-
-		// Design tokens load first; every other sheet reads its custom properties.
-		wp_enqueue_style(
-			'agmcp-tokens',
-			$base_url . '/assets/shared/tokens.css',
-			[],
-			(string) filemtime( $base_path . '/assets/shared/tokens.css' )
-		);
-
-		wp_enqueue_style(
-			'agmcp-admin',
-			$base_url . '/assets/admin/settings.css',
-			[ 'agmcp-tokens' ],
-			(string) filemtime( $base_path . '/assets/admin/settings.css' )
-		);
-
-		wp_enqueue_script(
-			'agmcp-admin',
-			$base_url . '/assets/admin/tokens.js',
-			[],
-			(string) filemtime( $base_path . '/assets/admin/tokens.js' ),
-			true
-		);
-
-		if ( AdminScreen::Connect === $screen ) {
-			if ( ConnectTab::Apps === ConnectTab::current() ) {
-				$this->enqueue_connect( $base_url, $base_path );
-			}
-
-			return;
-		}
-
-		if ( AdminScreen::Chat === $screen ) {
-			$this->enqueue_chat( $base_url, $base_path );
-		}
-	}
-
-	/** Which of our screens is being rendered, or null when it is not ours. */
-	private function current_screen(): ?AdminScreen {
-		$page = sanitize_key( $_GET['page'] ?? '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- screen routing only.
-
-		return AdminScreen::tryFrom( $page );
-	}
-
-	private function enqueue_connect( string $base_url, string $base_path ): void {
-		wp_enqueue_script(
-			'agmcp-connect',
-			$base_url . '/assets/admin/connect.js',
-			[ 'agmcp-admin' ],
-			(string) filemtime( $base_path . '/assets/admin/connect.js' ),
-			true
-		);
-
-		wp_localize_script(
-			'agmcp-connect',
-			'agmcpConnect',
-			[
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'agmcp_connect' ),
-				'i18n'    => [
-					'checking'    => __( 'Checking the store…', 'agentgate-mcp-for-woocommerce' ),
-					'checkFailed' => __( 'The check could not be run.', 'agentgate-mcp-for-woocommerce' ),
-					'waiting'     => __( 'Waiting for the app to connect…', 'agentgate-mcp-for-woocommerce' ),
-					'connected'   => __( 'Connected', 'agentgate-mcp-for-woocommerce' ),
-				],
-			]
-		);
-	}
-
-	private function enqueue_chat( string $base_url, string $base_path ): void {
-		wp_enqueue_style(
-			'agmcp-chat',
-			$base_url . '/assets/admin/chat.css',
-			[ 'agmcp-admin' ],
-			(string) filemtime( $base_path . '/assets/admin/chat.css' )
-		);
-
-		wp_enqueue_script(
-			'agmcp-chat',
-			$base_url . '/assets/admin/chat.js',
-			[],
-			(string) filemtime( $base_path . '/assets/admin/chat.js' ),
-			true
-		);
-
-		wp_localize_script(
-			'agmcp-chat',
-			'agmcpChat',
-			[
-				// The assistant speaks as the store, so it wears the store's
-				// mark — the same one the OAuth consent screen shows.
-				'avatar' => [
-					'url'    => StoreMark::url() ?? '',
-					'letter' => StoreMark::letter(),
-				],
-				'i18n'   => [
-					'you'           => __( 'You', 'agentgate-mcp-for-woocommerce' ),
-					'assistant'     => __( 'Assistant', 'agentgate-mcp-for-woocommerce' ),
-					'thinking'      => __( 'Thinking…', 'agentgate-mcp-for-woocommerce' ),
-					'failed'        => __( 'The request failed.', 'agentgate-mcp-for-woocommerce' ),
-					'arguments'     => __( 'Arguments', 'agentgate-mcp-for-woocommerce' ),
-					'result'        => __( 'Result', 'agentgate-mcp-for-woocommerce' ),
-					'toolRan'       => __( 'ran', 'agentgate-mcp-for-woocommerce' ),
-					'toolFailed'    => __( 'failed', 'agentgate-mcp-for-woocommerce' ),
-					'tokens'        => __( 'Tokens', 'agentgate-mcp-for-woocommerce' ),
-					'installing'    => __( 'Installing…', 'agentgate-mcp-for-woocommerce' ),
-					'installed'     => __( 'Installed', 'agentgate-mcp-for-woocommerce' ),
-					'installFailed' => __( 'The install failed.', 'agentgate-mcp-for-woocommerce' ),
-				],
-			]
-		);
-	}
-
 	/**
 	 * Readiness check for the Connect tab, run automatically on load.
 	 *
@@ -290,10 +169,10 @@ final readonly class SettingsFeature implements FeatureInterface {
 	 */
 	public function handle_preflight(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'agentgate-mcp-for-woocommerce' ) ], 403 );
+			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		check_ajax_referer( 'agmcp_connect' );
+		check_ajax_referer( 'ctrh_connect' );
 
 		wp_send_json_success( $this->readiness->check()->to_array() );
 	}
@@ -304,10 +183,10 @@ final readonly class SettingsFeature implements FeatureInterface {
 	 */
 	public function handle_connection_status(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'agentgate-mcp-for-woocommerce' ) ], 403 );
+			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		check_ajax_referer( 'agmcp_connect' );
+		check_ajax_referer( 'ctrh_connect' );
 
 		$since = absint( $_POST['since'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 		$token = $this->matcher->newest_since( $since );

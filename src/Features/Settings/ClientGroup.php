@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,15 +26,15 @@ enum ClientGroup: string {
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Cloud => __( 'Apps that connect from the cloud', 'agentgate-mcp-for-woocommerce' ),
-			self::Local => __( 'Tools on your own machine', 'agentgate-mcp-for-woocommerce' ),
+			self::Cloud => __( 'Apps that connect from the cloud', 'counterhand-mcp-for-woocommerce' ),
+			self::Local => __( 'Tools on your own machine', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	public function hint(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Cloud => __( 'Web, mobile and desktop assistants. These need your store to be reachable from the internet.', 'agentgate-mcp-for-woocommerce' ),
-			self::Local => __( 'Terminal tools and code editors. These connect from your computer, so a local store works too.', 'agentgate-mcp-for-woocommerce' ),
+			self::Cloud => __( 'Web, mobile and desktop assistants. These need your store to be reachable from the internet.', 'counterhand-mcp-for-woocommerce' ),
+			self::Local => __( 'Terminal tools and code editors. These connect from your computer, so a local store works too.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

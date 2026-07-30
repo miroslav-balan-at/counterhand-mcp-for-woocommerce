@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth;
+namespace Counterhand\Features\OAuth;
 
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Shared\FeatureInterface;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Shared\FeatureInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class OAuthFeature implements FeatureInterface {
 
-	private const WELL_KNOWN_QUERY_VAR = 'agmcp_well_known';
+	private const WELL_KNOWN_QUERY_VAR = 'ctrh_well_known';
 
 	private DiscoveryController $discovery;
 	private AuthorizeEndpoint $authorize;

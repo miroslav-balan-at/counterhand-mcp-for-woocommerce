@@ -2,19 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp;
+namespace Counterhand;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Minimal PSR-4 autoloader for the AgentGateMcp namespace.
+ * Minimal PSR-4 autoloader for the Counterhand namespace.
  *
  * Deliberately dependency-free: the plugin ships no Composer runtime
  * vendor directory to avoid cross-plugin dependency collisions.
  */
 final class Autoloader {
 
-	private const PREFIX = 'AgentGateMcp\\';
+	private const PREFIX = 'Counterhand\\';
 
 	public static function register(): void {
 		spl_autoload_register( [ self::class, 'load' ] );

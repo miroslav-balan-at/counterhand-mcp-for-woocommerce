@@ -2,13 +2,13 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Doubles;
+namespace Counterhand\Tests\Doubles;
 
-use AgentGateMcp\Features\Tokens\Authentication\AuthenticatedAgent;
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
 
 /**
  * Builds an AuthenticatedAgent granting exactly the given scopes.

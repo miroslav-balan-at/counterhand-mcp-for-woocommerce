@@ -1,5 +1,5 @@
 {
-    "name": "miroslavbalan/agentgate-mcp-for-woocommerce",
+    "name": "miroslavbalan/counterhand-mcp-for-woocommerce",
     "description": "Turn your WooCommerce store into a secure MCP server for AI assistants — scoped, revocable API tokens included.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "AgentGateMcp\\": "src/"
+            "Counterhand\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AgentGateMcp\\Tests\\": "tests/"
+            "Counterhand\\Tests\\": "tests/"
         }
     },
     "scripts": {

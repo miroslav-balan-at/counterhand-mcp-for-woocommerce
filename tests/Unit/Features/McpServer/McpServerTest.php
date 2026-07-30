@@ -2,19 +2,20 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\McpServer;
+namespace Counterhand\Tests\Unit\Features\McpServer;
 
-use AgentGateMcp\Features\McpServer\McpServer;
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcErrorCode;
-use AgentGateMcp\Shared\JsonRpc\JsonRpcRequest;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Doubles\AgentFactory;
-use AgentGateMcp\Tests\Doubles\StubTool;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\McpServer\McpServer;
+use Counterhand\Features\McpServer\ToolDispatcher;
+use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Shared\JsonRpc\JsonRpcErrorCode;
+use Counterhand\Shared\JsonRpc\JsonRpcRequest;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Doubles\AgentFactory;
+use Counterhand\Tests\Doubles\StubTool;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
@@ -42,7 +43,7 @@ final class McpServerTest extends TestCase {
 
 		Functions\when( 'do_action' )->alias(
 			function ( string $hook, ...$args ): void {
-				if ( 'agmcp_tool_called' === $hook ) {
+				if ( 'ctrh_tool_called' === $hook ) {
 					$this->logged[] = $args;
 				}
 			}
@@ -63,7 +64,7 @@ final class McpServerTest extends TestCase {
 	}
 
 	private function server( ToolRegistry $registry ): McpServer {
-		return new McpServer( $registry );
+		return new McpServer( new ToolDispatcher( $registry ) );
 	}
 
 	private function registry_with( StubTool ...$tools ): ToolRegistry {

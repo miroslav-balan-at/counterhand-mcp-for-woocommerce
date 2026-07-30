@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground\Provider;
+namespace Counterhand\Features\Playground\Provider;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -43,7 +43,7 @@ final readonly class ProviderRegistry {
 		 *
 		 * @param list<ProviderInterface> $providers Provider adapters.
 		 */
-		$providers = apply_filters( 'agmcp_chat_providers', $providers );
+		$providers = apply_filters( 'ctrh_chat_providers', $providers );
 
 		$keyed = [];
 		foreach ( $providers as $provider ) {
@@ -67,5 +67,18 @@ final readonly class ProviderRegistry {
 	/** @return array<string, ProviderInterface> */
 	public function all(): array {
 		return $this->providers;
+	}
+
+	/**
+	 * Providers the admin connects with their own account — what the chooser's
+	 * bring-your-own-key card offers. Core-managed ones are offered separately.
+	 *
+	 * @return array<string, ProviderInterface>
+	 */
+	public function user_configured(): array {
+		return array_filter(
+			$this->providers,
+			static fn ( ProviderInterface $provider ): bool => $provider->is_user_configured()
+		);
 	}
 }

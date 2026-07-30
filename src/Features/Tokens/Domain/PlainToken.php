@@ -2,17 +2,17 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Domain;
+namespace Counterhand\Features\Tokens\Domain;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * The full token string shown to the user exactly once at creation.
- * Format: agmcp_{token_id}_{secret} — greppable prefix for secret scanners.
+ * Format: ctrh_{token_id}_{secret} — greppable prefix for secret scanners.
  */
 final readonly class PlainToken {
 
-	public const PREFIX = 'agmcp';
+	public const PREFIX = 'ctrh';
 
 	private function __construct(
 		public TokenId $token_id,
@@ -29,7 +29,7 @@ final readonly class PlainToken {
 
 	/** @return array{0: TokenId, 1: TokenSecret}|null */
 	public static function parse( string $raw ): ?array {
-		if ( 1 !== preg_match( '/^agmcp_([a-z0-9]{16})_([A-Za-z0-9_-]{43})$/', $raw, $matches ) ) {
+		if ( 1 !== preg_match( '/^ctrh_([a-z0-9]{16})_([A-Za-z0-9_-]{43})$/', $raw, $matches ) ) {
 			return null;
 		}
 

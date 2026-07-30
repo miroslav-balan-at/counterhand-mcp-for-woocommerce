@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Domain;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Domain;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolIntent;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * Knowing the operation is enough to know the HTTP method, the route and

@@ -14,38 +14,38 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="agmcp-card__body agmcp-card__body--centered">
-	<span class="agmcp-status-icon agmcp-status-icon--success" aria-hidden="true">
+<div class="ctrh-card__body ctrh-card__body--centered">
+	<span class="ctrh-status-icon ctrh-status-icon--success" aria-hidden="true">
 		<svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
 			<path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>
 	</span>
 
-	<h1 class="agmcp-title"><?php esc_html_e( 'Access approved', 'agentgate-mcp-for-woocommerce' ); ?></h1>
+	<h1 class="ctrh-title"><?php esc_html_e( 'Access approved', 'counterhand-mcp-for-woocommerce' ); ?></h1>
 
-	<p class="agmcp-lede">
+	<p class="ctrh-lede">
 		<?php
 		printf(
 			/* translators: %s: name of the AI application */
-			esc_html__( '%s may now use your store with the permissions below.', 'agentgate-mcp-for-woocommerce' ),
+			esc_html__( '%s may now use your store with the permissions below.', 'counterhand-mcp-for-woocommerce' ),
 			'<strong>' . esc_html( $context['client_name'] ) . '</strong>'
 		);
 		?>
 	</p>
 
 	<?php if ( [] !== $context['scope_labels'] ) : ?>
-		<ul class="agmcp-granted">
-			<?php foreach ( $context['scope_labels'] as $agmcp_label ) : ?>
-				<li><?php echo esc_html( $agmcp_label ); ?></li>
+		<ul class="ctrh-granted">
+			<?php foreach ( $context['scope_labels'] as $ctrh_label ) : ?>
+				<li><?php echo esc_html( $ctrh_label ); ?></li>
 			<?php endforeach; ?>
 		</ul>
 	<?php endif; ?>
 
-	<p class="agmcp-hint"><?php esc_html_e( 'Return to your AI assistant to finish connecting. You can close this tab.', 'agentgate-mcp-for-woocommerce' ); ?></p>
+	<p class="ctrh-hint"><?php esc_html_e( 'Return to your AI assistant to finish connecting. You can close this tab.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
-	<div class="agmcp-actions agmcp-actions--single">
-		<a class="agmcp-button agmcp-button--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=agentgate-mcp-connect&view=connections' ) ); ?>">
-			<?php esc_html_e( 'View connections', 'agentgate-mcp-for-woocommerce' ); ?>
+	<div class="ctrh-actions ctrh-actions--single">
+		<a class="ctrh-button ctrh-button--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=counterhand-mcp-connect&view=connections' ) ); ?>">
+			<?php esc_html_e( 'View connections', 'counterhand-mcp-for-woocommerce' ); ?>
 		</a>
 	</div>
 </div>

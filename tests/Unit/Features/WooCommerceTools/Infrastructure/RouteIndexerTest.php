@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteArgs;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteIndexer;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteArgs;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteIndexer;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * The join between what descriptors declare and what WordPress registered. If

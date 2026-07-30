@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
-use AgentGateMcp\Features\Playground\Provider\CoreAiClientProvider;
-use AgentGateMcp\Features\Playground\Provider\ProviderConfig;
-use AgentGateMcp\Features\Playground\Provider\ProviderRegistry;
-use AgentGateMcp\Shared\Exception\ToolCallException;
+use Counterhand\Features\Playground\Provider\CoreAiClientProvider;
+use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Features\Playground\Provider\ProviderRegistry;
+use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ModelConnect {
 
-	private const RESULT_TRANSIENT = 'agmcp_chat_save_result_';
+	private const RESULT_TRANSIENT = 'ctrh_chat_save_result_';
 
 	public function __construct(
 		private ChatSettings $settings,
@@ -26,10 +26,10 @@ final readonly class ModelConnect {
 	) {}
 
 	public function register(): void {
-		add_action( 'admin_post_agmcp_save_chat', [ $this, 'handle_save' ] );
-		add_action( 'admin_post_agmcp_install_provider', [ $this, 'handle_install_provider' ] );
-		add_action( 'wp_ajax_agmcp_install_provider', [ $this, 'handle_install_provider_ajax' ] );
-		add_action( 'admin_post_agmcp_save_connector_key', [ $this, 'handle_save_connector_key' ] );
+		add_action( 'admin_post_ctrh_save_chat', [ $this, 'handle_save' ] );
+		add_action( 'admin_post_ctrh_install_provider', [ $this, 'handle_install_provider' ] );
+		add_action( 'wp_ajax_ctrh_install_provider', [ $this, 'handle_install_provider_ajax' ] );
+		add_action( 'admin_post_ctrh_save_connector_key', [ $this, 'handle_save_connector_key' ] );
 	}
 
 	/** Which chooser card to show for the WordPress-managed path; null below 7.0. */
@@ -61,22 +61,22 @@ final readonly class ModelConnect {
 	 */
 	public function handle_save_connector_key(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'agentgate-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
-		check_admin_referer( 'agmcp_save_connector_key' );
+		check_admin_referer( 'ctrh_save_connector_key' );
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above.
-		$connector = CoreConnector::find( sanitize_key( wp_unslash( $_POST['agmcp_connector_id'] ?? '' ) ) );
-		$key       = sanitize_text_field( wp_unslash( $_POST['agmcp_connector_key'] ?? '' ) );
+		$connector = CoreConnector::find( sanitize_key( wp_unslash( $_POST['ctrh_connector_id'] ?? '' ) ) );
+		$key       = sanitize_text_field( wp_unslash( $_POST['ctrh_connector_key'] ?? '' ) );
 		// phpcs:enable
 
 		if ( null === $connector ) {
-			$this->redirect_back( new ConnectResult( false, __( 'Unknown provider.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( false, __( 'Unknown provider.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
 		if ( '' === $key ) {
-			$this->redirect_back( new ConnectResult( false, __( 'Paste the API key first.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( false, __( 'Paste the API key first.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
 		$connector->save_key( $key );
@@ -86,7 +86,7 @@ final readonly class ModelConnect {
 				true,
 				sprintf(
 					/* translators: %s: provider name */
-					__( 'Saved your %s key.', 'agentgate-mcp-for-woocommerce' ),
+					__( 'Saved your %s key.', 'counterhand-mcp-for-woocommerce' ),
 					$connector->name
 				)
 			)
@@ -95,14 +95,14 @@ final readonly class ModelConnect {
 
 	/** No-JS fallback for the install buttons; the AJAX path is the primary one. */
 	public function handle_install_provider(): void {
-		check_admin_referer( 'agmcp_install_provider' );
+		check_admin_referer( 'ctrh_install_provider' );
 
 		$this->redirect_back( $this->install_result() );
 	}
 
 	/** AJAX install: the button shows progress and the page confirms on reload. */
 	public function handle_install_provider_ajax(): void {
-		check_ajax_referer( 'agmcp_install_provider' );
+		check_ajax_referer( 'ctrh_install_provider' );
 
 		$result = $this->install_result();
 
@@ -118,21 +118,21 @@ final readonly class ModelConnect {
 
 	private function install_result(): ConnectResult {
 		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
-			return new ConnectResult( false, __( 'You are not allowed to install plugins.', 'agentgate-mcp-for-woocommerce' ) );
+			return new ConnectResult( false, __( 'You are not allowed to install plugins.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		$plugin = ProviderPlugin::tryFrom(
-			sanitize_key( wp_unslash( $_POST['agmcp_provider_slug'] ?? '' ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- both callers verify a nonce first.
+			sanitize_key( wp_unslash( $_POST['ctrh_provider_slug'] ?? '' ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- both callers verify a nonce first.
 		);
 
 		if ( null === $plugin ) {
-			return new ConnectResult( false, __( 'Unknown provider plugin.', 'agentgate-mcp-for-woocommerce' ) );
+			return new ConnectResult( false, __( 'Unknown provider plugin.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		$basename = $plugin->installed_basename() ?? $this->install( $plugin );
 
 		if ( null === $basename ) {
-			return new ConnectResult( false, __( 'The provider plugin could not be installed. Try it from the Plugins screen.', 'agentgate-mcp-for-woocommerce' ) );
+			return new ConnectResult( false, __( 'The provider plugin could not be installed. Try it from the Plugins screen.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		$activated = is_plugin_active( $basename ) ? null : activate_plugin( $basename );
@@ -145,7 +145,7 @@ final readonly class ModelConnect {
 			true,
 			sprintf(
 				/* translators: %s: provider plugin name */
-				__( '%s is installed. Last step: add your API key where WordPress keeps it.', 'agentgate-mcp-for-woocommerce' ),
+				__( '%s is installed. Last step: add your API key where WordPress keeps it.', 'counterhand-mcp-for-woocommerce' ),
 				$plugin->label()
 			)
 		);
@@ -175,34 +175,34 @@ final readonly class ModelConnect {
 
 	public function handle_save(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'agentgate-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
-		check_admin_referer( 'agmcp_save_chat' );
+		check_admin_referer( 'ctrh_save_chat' );
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above.
-		if ( isset( $_POST['agmcp_chat_forget'] ) ) {
+		if ( isset( $_POST['ctrh_chat_forget'] ) ) {
 			$this->settings->forget_key();
-			$this->redirect_back( new ConnectResult( true, __( 'The saved key was removed.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( true, __( 'The saved key was removed.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
-		$provider_id = sanitize_key( wp_unslash( $_POST['agmcp_chat_provider'] ?? '' ) );
-		$model       = sanitize_text_field( wp_unslash( $_POST['agmcp_chat_model'] ?? '' ) );
-		$base_url    = esc_url_raw( wp_unslash( $_POST['agmcp_chat_base_url'] ?? '' ) );
-		$key         = sanitize_text_field( wp_unslash( $_POST['agmcp_chat_key'] ?? '' ) );
+		$provider_id = sanitize_key( wp_unslash( $_POST['ctrh_chat_provider'] ?? '' ) );
+		$model       = sanitize_text_field( wp_unslash( $_POST['ctrh_chat_model'] ?? '' ) );
+		$base_url    = esc_url_raw( wp_unslash( $_POST['ctrh_chat_base_url'] ?? '' ) );
+		$key         = sanitize_text_field( wp_unslash( $_POST['ctrh_chat_key'] ?? '' ) );
 		// phpcs:enable
 
 		$provider = $this->providers->get( $provider_id );
 
 		if ( null === $provider ) {
-			$this->redirect_back( new ConnectResult( false, __( 'Choose a model provider first.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( false, __( 'Choose a model provider first.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
 		// Blank key field means "keep the stored one" — no retyping secrets.
 		$effective_key = '' !== $key ? $key : $this->settings->api_key();
 
 		if ( $provider->needs_key() && '' === $effective_key ) {
-			$this->redirect_back( new ConnectResult( false, __( 'This provider needs an API key.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( false, __( 'This provider needs an API key.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
 		$config = new ProviderConfig(
@@ -217,7 +217,7 @@ final readonly class ModelConnect {
 		} catch ( ToolCallException $exception ) {
 			$this->redirect_back( new ConnectResult( false, $exception->getMessage() ) );
 		} catch ( \Throwable ) {
-			$this->redirect_back( new ConnectResult( false, __( 'The model could not be reached. Check the details and try again.', 'agentgate-mcp-for-woocommerce' ) ) );
+			$this->redirect_back( new ConnectResult( false, __( 'The model could not be reached. Check the details and try again.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
 		$this->settings->save( $provider_id, $model, $config->base_url, $key );
@@ -227,7 +227,7 @@ final readonly class ModelConnect {
 				true,
 				sprintf(
 					/* translators: 1: provider name, 2: model name */
-					__( 'Connected to %1$s%2$s.', 'agentgate-mcp-for-woocommerce' ),
+					__( 'Connected to %1$s%2$s.', 'counterhand-mcp-for-woocommerce' ),
 					$provider->label(),
 					'' !== $model ? ' · ' . $model : ''
 				)
@@ -252,7 +252,7 @@ final readonly class ModelConnect {
 
 		wp_safe_redirect(
 			add_query_arg(
-				[ 'page' => 'agentgate-mcp' ],
+				[ 'page' => 'counterhand-mcp' ],
 				admin_url( 'admin.php' )
 			)
 		);

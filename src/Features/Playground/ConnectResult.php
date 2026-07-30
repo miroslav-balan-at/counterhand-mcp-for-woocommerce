@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
 defined( 'ABSPATH' ) || exit;
 

@@ -2,19 +2,19 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Descriptors;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Descriptors;
 
-use AgentGateMcp\Features\WooCommerceTools\Descriptors\CouponDescriptors;
-use AgentGateMcp\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Domain\DescriptorProvider;
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolName;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Descriptors\CouponDescriptors;
+use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
+use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

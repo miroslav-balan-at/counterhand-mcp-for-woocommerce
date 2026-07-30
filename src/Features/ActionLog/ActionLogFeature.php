@@ -2,21 +2,22 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\ActionLog;
+namespace Counterhand\Features\ActionLog;
 
-use AgentGateMcp\Features\ActionLog\Persistence\LogSchema;
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Shared\FeatureInterface;
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Features\ActionLog\Persistence\LogSchema;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Shared\FeatureInterface;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Opt-in audit log: subscribes to tool calls, purges by retention, admin tab.
  */
-final readonly class ActionLogFeature implements FeatureInterface {
+final readonly class ActionLogFeature implements FeatureInterface, SettingsTabInterface {
 
-	private const PURGE_HOOK = 'agmcp_purge_log';
+	private const PURGE_HOOK = 'ctrh_purge_log';
 
 	private ActionLogger $logger;
 
@@ -27,11 +28,11 @@ final readonly class ActionLogFeature implements FeatureInterface {
 	public function register(): void {
 		add_action( 'admin_init', [ LogSchema::class, 'maybe_upgrade' ] );
 		add_action( self::PURGE_HOOK, [ $this, 'purge_expired' ] );
-		add_action( 'admin_post_agmcp_clear_log', [ $this, 'handle_clear' ] );
+		add_action( 'admin_post_ctrh_clear_log', [ $this, 'handle_clear' ] );
 
 		// Subscribed whatever the setting says: some groups are logged
 		// unconditionally, and the callback is what decides.
-		add_action( 'agmcp_tool_called', [ $this, 'maybe_log' ], 10, 5 );
+		add_action( 'ctrh_tool_called', [ $this, 'maybe_log' ], 10, 5 );
 
 		if ( ! $this->settings->is_action_log_enabled() ) {
 			return;
@@ -80,10 +81,10 @@ final readonly class ActionLogFeature implements FeatureInterface {
 
 	public function handle_clear(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to clear the log.', 'agentgate-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to clear the log.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
-		check_admin_referer( 'agmcp_clear_log' );
+		check_admin_referer( 'ctrh_clear_log' );
 
 		global $wpdb;
 		$table_name = LogSchema::table_name();
@@ -93,8 +94,8 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'          => 'agentgate-mcp-log',
-					'agmcp_cleared' => '1',
+					'page'         => 'counterhand-mcp-log',
+					'ctrh_cleared' => '1',
 				],
 				admin_url( 'admin.php' )
 			)
@@ -111,7 +112,7 @@ final readonly class ActionLogFeature implements FeatureInterface {
 		$entries = is_array( $entries ) ? $entries : [];
 
 		$is_enabled  = $this->settings->is_action_log_enabled();
-		$clear_nonce = wp_create_nonce( 'agmcp_clear_log' );
+		$clear_nonce = wp_create_nonce( 'ctrh_clear_log' );
 
 		include __DIR__ . '/Admin/views/tab-log.php';
 	}

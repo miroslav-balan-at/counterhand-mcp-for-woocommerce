@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Shared\Tool;
+namespace Counterhand\Shared\Tool;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ApiScope;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * A family of tools the store owner switches on or off as a unit.
  *
  * The value is load-bearing three times over: it prefixes every ApiScope, it
- * prefixes every agmcp_settings option key, and it is what an existing install
+ * prefixes every ctrh_settings option key, and it is what an existing install
  * has already persisted. Renaming a case orphans stored settings.
  *
  * Scopes and option keys are derived from the value rather than restated, so a
@@ -49,44 +49,44 @@ enum ToolGroup: string {
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Products  => __( 'Products', 'agentgate-mcp-for-woocommerce' ),
-			self::Orders    => __( 'Orders', 'agentgate-mcp-for-woocommerce' ),
-			self::Customers => __( 'Customers', 'agentgate-mcp-for-woocommerce' ),
-			self::Reports   => __( 'Reports', 'agentgate-mcp-for-woocommerce' ),
-			self::Coupons    => __( 'Coupons', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxonomy   => __( 'Categories & tags', 'agentgate-mcp-for-woocommerce' ),
-			self::Variations => __( 'Variations', 'agentgate-mcp-for-woocommerce' ),
-			self::Reviews    => __( 'Reviews', 'agentgate-mcp-for-woocommerce' ),
-			self::Refunds    => __( 'Refunds', 'agentgate-mcp-for-woocommerce' ),
-			self::Shipping   => __( 'Shipping', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxes      => __( 'Taxes', 'agentgate-mcp-for-woocommerce' ),
-			self::Data       => __( 'Reference data', 'agentgate-mcp-for-woocommerce' ),
-			self::Gateways   => __( 'Payment gateways', 'agentgate-mcp-for-woocommerce' ),
-			self::Settings   => __( 'Store settings', 'agentgate-mcp-for-woocommerce' ),
-			self::Content    => __( 'Posts & pages', 'agentgate-mcp-for-woocommerce' ),
-			self::System     => __( 'System & maintenance', 'agentgate-mcp-for-woocommerce' ),
+			self::Products  => __( 'Products', 'counterhand-mcp-for-woocommerce' ),
+			self::Orders    => __( 'Orders', 'counterhand-mcp-for-woocommerce' ),
+			self::Customers => __( 'Customers', 'counterhand-mcp-for-woocommerce' ),
+			self::Reports   => __( 'Reports', 'counterhand-mcp-for-woocommerce' ),
+			self::Coupons    => __( 'Coupons', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxonomy   => __( 'Categories & tags', 'counterhand-mcp-for-woocommerce' ),
+			self::Variations => __( 'Variations', 'counterhand-mcp-for-woocommerce' ),
+			self::Reviews    => __( 'Reviews', 'counterhand-mcp-for-woocommerce' ),
+			self::Refunds    => __( 'Refunds', 'counterhand-mcp-for-woocommerce' ),
+			self::Shipping   => __( 'Shipping', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxes      => __( 'Taxes', 'counterhand-mcp-for-woocommerce' ),
+			self::Data       => __( 'Reference data', 'counterhand-mcp-for-woocommerce' ),
+			self::Gateways   => __( 'Payment gateways', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings   => __( 'Store settings', 'counterhand-mcp-for-woocommerce' ),
+			self::Content    => __( 'Posts & pages', 'counterhand-mcp-for-woocommerce' ),
+			self::System     => __( 'System & maintenance', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	/** One line on the settings row explaining what switching the group on exposes. */
 	public function description(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Products  => __( 'Names, prices, stock, categories and images.', 'agentgate-mcp-for-woocommerce' ),
-			self::Orders    => __( 'Orders, totals, line items and customer addresses.', 'agentgate-mcp-for-woocommerce' ),
-			self::Customers => __( 'Registered customers and their addresses. Guest buyers appear under Orders.', 'agentgate-mcp-for-woocommerce' ),
-			self::Reports   => __( 'Sales totals, best sellers and store statistics.', 'agentgate-mcp-for-woocommerce' ),
-			self::Coupons    => __( 'Discount codes, their amounts, limits and expiry dates.', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxonomy   => __( 'How the catalog is organised: categories, tags, brands, attributes and shipping classes.', 'agentgate-mcp-for-woocommerce' ),
-			self::Variations => __( 'The size, colour and other variants of a variable product, each with its own price and stock.', 'agentgate-mcp-for-woocommerce' ),
-			self::Reviews    => __( 'Customer reviews and ratings, including reviewer names and email addresses.', 'agentgate-mcp-for-woocommerce' ),
-			self::Refunds    => __( 'Refunds against orders. Creating one moves money back to the customer.', 'agentgate-mcp-for-woocommerce' ),
-			self::Shipping   => __( 'Shipping zones, the regions they cover and the methods offered in each.', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxes      => __( 'Tax rates by country and region, and the tax classes products are assigned to.', 'agentgate-mcp-for-woocommerce' ),
-			self::Data       => __( 'WooCommerce\'s own reference lists of countries, regions and currencies.', 'agentgate-mcp-for-woocommerce' ),
-			self::Gateways   => __( 'Which payment methods exist and whether each is enabled. Credentials are never returned.', 'agentgate-mcp-for-woocommerce' ),
-			self::Settings   => __( 'Store configuration values, including currency, tax behaviour and checkout options.', 'agentgate-mcp-for-woocommerce' ),
-			self::Content    => __( 'WordPress blog posts and pages. Products and orders are not affected.', 'agentgate-mcp-for-woocommerce' ),
-			self::System     => __( 'Environment report and WooCommerce\'s maintenance tools. The most dangerous group here.', 'agentgate-mcp-for-woocommerce' ),
+			self::Products  => __( 'Names, prices, stock, categories and images.', 'counterhand-mcp-for-woocommerce' ),
+			self::Orders    => __( 'Orders, totals, line items and customer addresses.', 'counterhand-mcp-for-woocommerce' ),
+			self::Customers => __( 'Registered customers and their addresses. Guest buyers appear under Orders.', 'counterhand-mcp-for-woocommerce' ),
+			self::Reports   => __( 'Sales totals, best sellers and store statistics.', 'counterhand-mcp-for-woocommerce' ),
+			self::Coupons    => __( 'Discount codes, their amounts, limits and expiry dates.', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxonomy   => __( 'How the catalog is organised: categories, tags, brands, attributes and shipping classes.', 'counterhand-mcp-for-woocommerce' ),
+			self::Variations => __( 'The size, colour and other variants of a variable product, each with its own price and stock.', 'counterhand-mcp-for-woocommerce' ),
+			self::Reviews    => __( 'Customer reviews and ratings, including reviewer names and email addresses.', 'counterhand-mcp-for-woocommerce' ),
+			self::Refunds    => __( 'Refunds against orders. Creating one moves money back to the customer.', 'counterhand-mcp-for-woocommerce' ),
+			self::Shipping   => __( 'Shipping zones, the regions they cover and the methods offered in each.', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxes      => __( 'Tax rates by country and region, and the tax classes products are assigned to.', 'counterhand-mcp-for-woocommerce' ),
+			self::Data       => __( 'WooCommerce\'s own reference lists of countries, regions and currencies.', 'counterhand-mcp-for-woocommerce' ),
+			self::Gateways   => __( 'Which payment methods exist and whether each is enabled. Credentials are never returned.', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings   => __( 'Store configuration values, including currency, tax behaviour and checkout options.', 'counterhand-mcp-for-woocommerce' ),
+			self::Content    => __( 'WordPress blog posts and pages. Products and orders are not affected.', 'counterhand-mcp-for-woocommerce' ),
+			self::System     => __( 'Environment report and WooCommerce\'s maintenance tools. The most dangerous group here.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
@@ -100,22 +100,22 @@ enum ToolGroup: string {
 	 */
 	public function noun(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Products  => __( 'products', 'agentgate-mcp-for-woocommerce' ),
-			self::Orders    => __( 'orders', 'agentgate-mcp-for-woocommerce' ),
-			self::Customers => __( 'customers', 'agentgate-mcp-for-woocommerce' ),
-			self::Reports   => __( 'reports', 'agentgate-mcp-for-woocommerce' ),
-			self::Coupons    => __( 'coupons', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxonomy   => __( 'categories and tags', 'agentgate-mcp-for-woocommerce' ),
-			self::Variations => __( 'variations', 'agentgate-mcp-for-woocommerce' ),
-			self::Reviews    => __( 'reviews', 'agentgate-mcp-for-woocommerce' ),
-			self::Refunds    => __( 'refunds', 'agentgate-mcp-for-woocommerce' ),
-			self::Shipping   => __( 'shipping', 'agentgate-mcp-for-woocommerce' ),
-			self::Taxes      => __( 'taxes', 'agentgate-mcp-for-woocommerce' ),
-			self::Data       => __( 'reference data', 'agentgate-mcp-for-woocommerce' ),
-			self::Gateways   => __( 'payment gateways', 'agentgate-mcp-for-woocommerce' ),
-			self::Settings   => __( 'store settings', 'agentgate-mcp-for-woocommerce' ),
-			self::Content    => __( 'posts and pages', 'agentgate-mcp-for-woocommerce' ),
-			self::System     => __( 'system tools', 'agentgate-mcp-for-woocommerce' ),
+			self::Products  => __( 'products', 'counterhand-mcp-for-woocommerce' ),
+			self::Orders    => __( 'orders', 'counterhand-mcp-for-woocommerce' ),
+			self::Customers => __( 'customers', 'counterhand-mcp-for-woocommerce' ),
+			self::Reports   => __( 'reports', 'counterhand-mcp-for-woocommerce' ),
+			self::Coupons    => __( 'coupons', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxonomy   => __( 'categories and tags', 'counterhand-mcp-for-woocommerce' ),
+			self::Variations => __( 'variations', 'counterhand-mcp-for-woocommerce' ),
+			self::Reviews    => __( 'reviews', 'counterhand-mcp-for-woocommerce' ),
+			self::Refunds    => __( 'refunds', 'counterhand-mcp-for-woocommerce' ),
+			self::Shipping   => __( 'shipping', 'counterhand-mcp-for-woocommerce' ),
+			self::Taxes      => __( 'taxes', 'counterhand-mcp-for-woocommerce' ),
+			self::Data       => __( 'reference data', 'counterhand-mcp-for-woocommerce' ),
+			self::Gateways   => __( 'payment gateways', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings   => __( 'store settings', 'counterhand-mcp-for-woocommerce' ),
+			self::Content    => __( 'posts and pages', 'counterhand-mcp-for-woocommerce' ),
+			self::System     => __( 'system tools', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

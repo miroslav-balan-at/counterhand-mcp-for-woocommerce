@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Domain;
+namespace Counterhand\Features\Tokens\Domain;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 

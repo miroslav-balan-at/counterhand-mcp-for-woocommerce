@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Shared\Tool;
+namespace Counterhand\Tests\Unit\Shared\Tool;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolSection;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * Sections decide how the settings tab and the OAuth consent screen are laid

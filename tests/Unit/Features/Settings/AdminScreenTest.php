@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Settings;
+namespace Counterhand\Tests\Unit\Features\Settings;
 
-use AgentGateMcp\Features\Settings\AdminScreen;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\AdminScreen;
+use Counterhand\Tests\Unit\TestCase;
 
 final class AdminScreenTest extends TestCase {
 
@@ -14,9 +14,9 @@ final class AdminScreenTest extends TestCase {
 	 * the OAuth flow pages all keep working after the move off tabs.
 	 */
 	public function test_slugs_are_stable(): void {
-		self::assertSame( 'agentgate-mcp', AdminScreen::Chat->value );
+		self::assertSame( 'counterhand-mcp', AdminScreen::Chat->value );
 		self::assertSame(
-			[ 'agentgate-mcp', 'agentgate-mcp-connect', 'agentgate-mcp-settings', 'agentgate-mcp-log' ],
+			[ 'counterhand-mcp', 'counterhand-mcp-connect', 'counterhand-mcp-settings', 'counterhand-mcp-log' ],
 			array_column( AdminScreen::cases(), 'value' )
 		);
 	}

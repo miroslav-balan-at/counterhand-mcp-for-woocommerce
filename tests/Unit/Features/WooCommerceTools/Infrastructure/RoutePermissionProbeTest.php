@@ -2,14 +2,14 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
-use AgentGateMcp\Tests\Doubles\FakeRestServer;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
+use Counterhand\Tests\Doubles\FakeRestServer;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

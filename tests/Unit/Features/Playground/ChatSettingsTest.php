@@ -2,11 +2,11 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Playground;
+namespace Counterhand\Tests\Unit\Features\Playground;
 
-use AgentGateMcp\Features\Playground\ChatSettings;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Playground\ChatSettings;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

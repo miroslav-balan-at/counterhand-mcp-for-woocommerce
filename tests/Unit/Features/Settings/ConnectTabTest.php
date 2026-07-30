@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Settings;
+namespace Counterhand\Tests\Unit\Features\Settings;
 
-use AgentGateMcp\Features\Settings\ConnectTab;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Settings\ConnectTab;
+use Counterhand\Tests\Unit\TestCase;
 
 final class ConnectTabTest extends TestCase {
 

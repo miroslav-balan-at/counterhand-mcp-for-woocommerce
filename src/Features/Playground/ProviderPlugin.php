@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,9 +19,9 @@ enum ProviderPlugin: string {
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Anthropic => __( 'Claude (Anthropic)', 'agentgate-mcp-for-woocommerce' ),
-			self::OpenAi    => __( 'ChatGPT (OpenAI)', 'agentgate-mcp-for-woocommerce' ),
-			self::Google    => __( 'Gemini (Google)', 'agentgate-mcp-for-woocommerce' ),
+			self::Anthropic => __( 'Claude (Anthropic)', 'counterhand-mcp-for-woocommerce' ),
+			self::OpenAi    => __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
+			self::Google    => __( 'Gemini (Google)', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

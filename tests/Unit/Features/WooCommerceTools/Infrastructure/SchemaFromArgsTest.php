@@ -2,13 +2,13 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteArgs;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaFromArgs;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteArgs;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaFromArgs;
+use Counterhand\Tests\Unit\TestCase;
 
 /**
  * This is what every MCP client sees. A wrong schema is not a crash — it is a
@@ -31,10 +31,15 @@ final class SchemaFromArgsTest extends TestCase {
 		$this->assertSame( [ 'code' => [ 'type' => 'string' ] ], $built['properties'] );
 	}
 
-	public function test_an_argless_route_publishes_an_empty_property_set(): void {
+	/**
+	 * Asserts the encoded form, not the PHP type: one tool sending properties as
+	 * [] fails the whole request, taking every other tool down with it.
+	 */
+	public function test_an_argless_route_publishes_an_empty_property_object(): void {
 		$built = $this->build( [] );
 
-		$this->assertSame( [], $built['properties'] );
+		$this->assertEquals( new \stdClass(), $built['properties'] );
+		$this->assertSame( '{}', json_encode( $built['properties'] ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- asserting the wire form itself.
 		$this->assertArrayNotHasKey( 'required', $built );
 	}
 

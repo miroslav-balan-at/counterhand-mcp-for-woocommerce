@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Authentication;
+namespace Counterhand\Features\Tokens\Authentication;
 
-use AgentGateMcp\Features\Settings\PluginSettings;
-use AgentGateMcp\Shared\Exception\RateLimitExceededException;
+use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Shared\Exception\RateLimitExceededException;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,9 +28,9 @@ final readonly class RateLimiter {
 		 * @param int    $limit    Requests allowed per window.
 		 * @param string $token_id Public token id being limited.
 		 */
-		$limit = (int) apply_filters( 'agmcp_rate_limit', $this->settings->rate_limit_per_minute(), $token_id );
+		$limit = (int) apply_filters( 'ctrh_rate_limit', $this->settings->rate_limit_per_minute(), $token_id );
 
-		$transient_key = 'agmcp_rl_' . $token_id;
+		$transient_key = 'ctrh_rl_' . $token_id;
 		$current_count = (int) get_transient( $transient_key );
 
 		if ( $current_count >= $limit ) {

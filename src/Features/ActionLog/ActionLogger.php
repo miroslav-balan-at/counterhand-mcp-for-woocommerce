@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\ActionLog;
+namespace Counterhand\Features\ActionLog;
 
-use AgentGateMcp\Features\ActionLog\Persistence\LogSchema;
+use Counterhand\Features\ActionLog\Persistence\LogSchema;
 
 defined( 'ABSPATH' ) || exit;
 

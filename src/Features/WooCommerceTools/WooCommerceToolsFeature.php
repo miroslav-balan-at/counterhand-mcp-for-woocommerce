@@ -2,15 +2,15 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools;
+namespace Counterhand\Features\WooCommerceTools;
 
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\WooCommerceTools\Application\DescribeFieldsTool;
-use AgentGateMcp\Features\WooCommerceTools\Application\StoreOverviewTool;
-use AgentGateMcp\Features\WooCommerceTools\Application\ToolFactory;
-use AgentGateMcp\Features\WooCommerceTools\Domain\DescriptorProvider;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Shared\FeatureInterface;
+use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\WooCommerceTools\Application\DescribeFieldsTool;
+use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
+use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
+use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Shared\FeatureInterface;
 
 defined( 'ABSPATH' ) || exit;
 

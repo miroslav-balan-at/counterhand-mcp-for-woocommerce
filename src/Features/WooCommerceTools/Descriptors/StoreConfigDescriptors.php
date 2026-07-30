@@ -2,17 +2,17 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Descriptors;
+namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\DescriptorProvider;
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\SecretSettingPolicy;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolName;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\SecretSettingPolicy;
+use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 

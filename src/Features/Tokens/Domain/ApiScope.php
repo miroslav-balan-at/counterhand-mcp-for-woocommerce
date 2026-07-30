@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Domain;
+namespace Counterhand\Features\Tokens\Domain;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolSection;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -130,47 +130,47 @@ enum ApiScope: string {
 	 */
 	private static function curated_labels(): array {
 		return [
-			self::OrdersWrite->value => __( 'Update orders', 'agentgate-mcp-for-woocommerce' ),
+			self::OrdersWrite->value => __( 'Update orders', 'counterhand-mcp-for-woocommerce' ),
 		];
 	}
 
 	/** @return array<string, string> */
 	private static function curated_descriptions(): array {
 		return [
-			self::ProductsRead->value    => __( 'See product names, prices, stock and categories.', 'agentgate-mcp-for-woocommerce' ),
-			self::ProductsWrite->value   => __( 'Create, edit and trash products. New products start as drafts.', 'agentgate-mcp-for-woocommerce' ),
-			self::OrdersRead->value      => __( 'See orders, totals and customer addresses.', 'agentgate-mcp-for-woocommerce' ),
-			self::OrdersWrite->value     => __( 'Change order status and add order notes. May send customer emails.', 'agentgate-mcp-for-woocommerce' ),
-			self::CustomersRead->value   => __( 'See registered customers and their addresses.', 'agentgate-mcp-for-woocommerce' ),
-			self::ReportsRead->value     => __( 'See sales totals, best sellers and store statistics.', 'agentgate-mcp-for-woocommerce' ),
-			self::CouponsRead->value     => __( 'See discount codes, their amounts, limits and expiry dates.', 'agentgate-mcp-for-woocommerce' ),
-			self::CouponsWrite->value    => __( 'Create, edit and trash discount codes. A new coupon can be redeemed at checkout immediately.', 'agentgate-mcp-for-woocommerce' ),
+			self::ProductsRead->value    => __( 'See product names, prices, stock and categories.', 'counterhand-mcp-for-woocommerce' ),
+			self::ProductsWrite->value   => __( 'Create, edit and trash products. New products start as drafts.', 'counterhand-mcp-for-woocommerce' ),
+			self::OrdersRead->value      => __( 'See orders, totals and customer addresses.', 'counterhand-mcp-for-woocommerce' ),
+			self::OrdersWrite->value     => __( 'Change order status and add order notes. May send customer emails.', 'counterhand-mcp-for-woocommerce' ),
+			self::CustomersRead->value   => __( 'See registered customers and their addresses.', 'counterhand-mcp-for-woocommerce' ),
+			self::ReportsRead->value     => __( 'See sales totals, best sellers and store statistics.', 'counterhand-mcp-for-woocommerce' ),
+			self::CouponsRead->value     => __( 'See discount codes, their amounts, limits and expiry dates.', 'counterhand-mcp-for-woocommerce' ),
+			self::CouponsWrite->value    => __( 'Create, edit and trash discount codes. A new coupon can be redeemed at checkout immediately.', 'counterhand-mcp-for-woocommerce' ),
 
 			// The consequence of each of these is money, personal data or the
 			// shape of the storefront — none of which "Manage <noun>" conveys.
-			self::RefundsWrite->value    => __( 'Issue refunds against orders. Depending on the gateway this returns money to the customer immediately and cannot be undone here.', 'agentgate-mcp-for-woocommerce' ),
-			self::ReviewsRead->value     => __( 'See customer reviews, including reviewer names and email addresses.', 'agentgate-mcp-for-woocommerce' ),
-			self::ReviewsWrite->value    => __( 'Publish, edit, hold and delete customer reviews. Approving a review makes it public on the storefront.', 'agentgate-mcp-for-woocommerce' ),
-			self::TaxonomyWrite->value   => __( 'Create, rename and delete categories, tags, brands and attributes. Deleting one detaches it from every product using it.', 'agentgate-mcp-for-woocommerce' ),
-			self::VariationsWrite->value => __( 'Create, edit and delete the variants of a variable product, including their prices and stock.', 'agentgate-mcp-for-woocommerce' ),
-			self::TaxesWrite->value      => __( 'Add, edit and delete tax rates. This changes what customers are charged at checkout.', 'agentgate-mcp-for-woocommerce' ),
-			self::ShippingWrite->value   => __( 'Add, edit and delete shipping zones and methods. This changes the delivery options and rates offered at checkout.', 'agentgate-mcp-for-woocommerce' ),
-			self::GatewaysRead->value    => __( 'See which payment methods exist and whether each is enabled. API keys and secrets are never returned.', 'agentgate-mcp-for-woocommerce' ),
-			self::SettingsRead->value    => __( 'Read store configuration such as currency, tax behaviour and checkout options. Values that look like keys, secrets or passwords are withheld.', 'agentgate-mcp-for-woocommerce' ),
-			self::SettingsWrite->value   => __( 'Change store configuration, including currency and tax behaviour. Settings named like API keys, secrets or passwords stay off limits, and every change needs explicit confirmation.', 'agentgate-mcp-for-woocommerce' ),
-			self::GatewaysWrite->value   => __( 'Enable, disable and reorder payment methods. This decides how customers can pay, and every change needs explicit confirmation.', 'agentgate-mcp-for-woocommerce' ),
-			self::ContentRead->value     => __( 'See blog posts and pages, including drafts.', 'agentgate-mcp-for-woocommerce' ),
-			self::ContentWrite->value    => __( 'Create, edit and trash blog posts and pages. New ones start as drafts.', 'agentgate-mcp-for-woocommerce' ),
-			self::SystemRead->value      => __( 'See the environment report: versions, server settings and active plugins.', 'agentgate-mcp-for-woocommerce' ),
-			self::SystemWrite->value     => __( 'Run WooCommerce\'s maintenance tools. The ones that cannot be undone are refused outright; the rest need explicit confirmation.', 'agentgate-mcp-for-woocommerce' ),
+			self::RefundsWrite->value    => __( 'Issue refunds against orders. Depending on the gateway this returns money to the customer immediately and cannot be undone here.', 'counterhand-mcp-for-woocommerce' ),
+			self::ReviewsRead->value     => __( 'See customer reviews, including reviewer names and email addresses.', 'counterhand-mcp-for-woocommerce' ),
+			self::ReviewsWrite->value    => __( 'Publish, edit, hold and delete customer reviews. Approving a review makes it public on the storefront.', 'counterhand-mcp-for-woocommerce' ),
+			self::TaxonomyWrite->value   => __( 'Create, rename and delete categories, tags, brands and attributes. Deleting one detaches it from every product using it.', 'counterhand-mcp-for-woocommerce' ),
+			self::VariationsWrite->value => __( 'Create, edit and delete the variants of a variable product, including their prices and stock.', 'counterhand-mcp-for-woocommerce' ),
+			self::TaxesWrite->value      => __( 'Add, edit and delete tax rates. This changes what customers are charged at checkout.', 'counterhand-mcp-for-woocommerce' ),
+			self::ShippingWrite->value   => __( 'Add, edit and delete shipping zones and methods. This changes the delivery options and rates offered at checkout.', 'counterhand-mcp-for-woocommerce' ),
+			self::GatewaysRead->value    => __( 'See which payment methods exist and whether each is enabled. API keys and secrets are never returned.', 'counterhand-mcp-for-woocommerce' ),
+			self::SettingsRead->value    => __( 'Read store configuration such as currency, tax behaviour and checkout options. Values that look like keys, secrets or passwords are withheld.', 'counterhand-mcp-for-woocommerce' ),
+			self::SettingsWrite->value   => __( 'Change store configuration, including currency and tax behaviour. Settings named like API keys, secrets or passwords stay off limits, and every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
+			self::GatewaysWrite->value   => __( 'Enable, disable and reorder payment methods. This decides how customers can pay, and every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
+			self::ContentRead->value     => __( 'See blog posts and pages, including drafts.', 'counterhand-mcp-for-woocommerce' ),
+			self::ContentWrite->value    => __( 'Create, edit and trash blog posts and pages. New ones start as drafts.', 'counterhand-mcp-for-woocommerce' ),
+			self::SystemRead->value      => __( 'See the environment report: versions, server settings and active plugins.', 'counterhand-mcp-for-woocommerce' ),
+			self::SystemWrite->value     => __( 'Run WooCommerce\'s maintenance tools. The ones that cannot be undone are refused outright; the rest need explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
 		];
 	}
 
 	private static function derived_label( ToolGroup $group, bool $is_write ): string {
 		return $is_write
 			/* translators: %s: tool group name mid-sentence, e.g. "products". */
-			? sprintf( __( 'Manage %s', 'agentgate-mcp-for-woocommerce' ), $group->noun() )
+			? sprintf( __( 'Manage %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() )
 			/* translators: %s: tool group name mid-sentence, e.g. "products". */
-			: sprintf( __( 'Read %s', 'agentgate-mcp-for-woocommerce' ), $group->noun() );
+			: sprintf( __( 'Read %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() );
 	}
 }

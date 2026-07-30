@@ -2,21 +2,22 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Playground;
+namespace Counterhand\Features\Playground;
 
-use AgentGateMcp\Features\McpServer\ToolRegistry;
-use AgentGateMcp\Features\Playground\Provider\ProviderConfig;
-use AgentGateMcp\Features\Playground\Provider\ProviderRegistry;
-use AgentGateMcp\Features\Settings\AdminScreen;
-use AgentGateMcp\Features\Tokens\Authentication\AuthenticatedAgent;
-use AgentGateMcp\Features\Tokens\Domain\ApiToken;
-use AgentGateMcp\Features\Tokens\Domain\GrantedScopeSet;
-use AgentGateMcp\Features\Tokens\Domain\TokenId;
-use AgentGateMcp\Features\Tokens\Domain\TokenStatus;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Shared\FeatureInterface;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolSection;
+use Counterhand\Features\McpServer\ToolDispatcherInterface;
+use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Features\Playground\Provider\ProviderRegistry;
+use Counterhand\Features\Settings\AdminScreen;
+use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Features\Tokens\Domain\ApiToken;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\TokenId;
+use Counterhand\Features\Tokens\Domain\TokenStatus;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Shared\FeatureInterface;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,21 +29,22 @@ defined( 'ABSPATH' ) || exit;
  * authenticated administrator, so we build a synthetic in-memory agent scoped
  * to their own capabilities.
  */
-final readonly class PlaygroundFeature implements FeatureInterface {
+final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabInterface {
 
-	private const NONCE       = 'agmcp_chat_send';
-	private const TOOLS_NONCE = 'agmcp_save_chat_tools';
+	private const NONCE       = 'ctrh_chat_send';
+	private const TOOLS_NONCE = 'ctrh_save_chat_tools';
 
 	public function __construct(
-		private ToolRegistry $tool_registry,
+		private ToolDispatcherInterface $tools,
 		private AgentLoop $loop,
 		private ChatSettings $settings,
 		private ProviderRegistry $providers,
 		private ModelConnect $model_connect,
+		private ChatToolPolicy $store_policy,
 	) {}
 
 	public function register(): void {
-		add_action( 'wp_ajax_agmcp_chat_send', [ $this, 'handle_send' ] );
+		add_action( 'wp_ajax_ctrh_chat_send', [ $this, 'handle_send' ] );
 		add_action( 'admin_post_' . self::TOOLS_NONCE, [ $this, 'handle_save_tools' ] );
 		$this->model_connect->register();
 	}
@@ -57,38 +59,44 @@ final readonly class PlaygroundFeature implements FeatureInterface {
 	public function render_tab(): void {
 		// "Change" in the chat footer reopens the chooser without disconnecting
 		// anything, so switching models never means leaving the tab.
-		$changing = isset( $_GET['agmcp_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
+		$changing = isset( $_GET['ctrh_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
 
-		$tools           = $this->tool_registry->visible_for( $this->synthetic_agent() );
-		$chat_groups     = $this->settings->groups();
-		$tool_sections   = ToolSection::populated();
-		$is_ready        = ! $changing && $this->is_ready();
-		$send_nonce      = wp_create_nonce( self::NONCE );
-		$chat_settings   = $this->settings;
-		$chat_providers  = $this->providers->all();
-		$active_id       = '' !== $this->settings->provider_id() ? $this->settings->provider_id() : $this->providers->default_id();
-		$save_result     = $this->model_connect->take_result();
-		$core_state      = $this->model_connect->core_state();
-		$core_connectors = $this->model_connect->connectors();
+		$tools              = $this->tools->visible_for( $this->synthetic_agent() );
+		$chat_groups        = $this->settings->groups();
+		$tool_sections      = ToolSection::populated();
+		$chat_areas         = $this->areas( $chat_groups );
+		$store_settings_url = $this->store_policy->settings_url();
+		// Null when the connected model can search a deferred catalogue, in
+		// which case there is no count for the panel to warn about.
+		$tool_limit         = $this->providers->get( $this->settings->provider_id() )?->max_eager_tools();
+		$is_ready           = ! $changing && $this->is_ready();
+		$send_nonce         = wp_create_nonce( self::NONCE );
+		$chat_settings      = $this->settings;
+		$chat_providers     = $this->providers->all();
+		$chat_own_providers = $this->providers->user_configured();
+		$active_id          = '' !== $this->settings->provider_id() ? $this->settings->provider_id() : $this->providers->default_id();
+		$save_result        = $this->model_connect->take_result();
+		$core_state         = $this->model_connect->core_state();
+		$core_connectors    = $this->model_connect->connectors();
 
 		include __DIR__ . '/views/tab-chat.php';
 	}
 
 	public function handle_send(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'agentgate-mcp-for-woocommerce' ) ], 403 );
+			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
 
 		check_ajax_referer( self::NONCE );
 
 		$provider = $this->providers->get( $this->settings->provider_id() );
 		if ( null === $provider ) {
-			wp_send_json_error( [ 'message' => __( 'No model is connected yet. Pick one at the top of this tab.', 'agentgate-mcp-for-woocommerce' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No model is connected yet. Pick one at the top of this tab.', 'counterhand-mcp-for-woocommerce' ) ] );
 		}
 
 		$message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
 		if ( '' === trim( $message ) ) {
-			wp_send_json_error( [ 'message' => __( 'Type a message first.', 'agentgate-mcp-for-woocommerce' ) ] );
+			wp_send_json_error( [ 'message' => __( 'Type a message first.', 'counterhand-mcp-for-woocommerce' ) ] );
 		}
 
 		$history = json_decode( wp_unslash( $_POST['history'] ?? '[]' ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- provider-format JSON validated below, never output as HTML.
@@ -102,30 +110,30 @@ final readonly class PlaygroundFeature implements FeatureInterface {
 			wp_send_json_error( [ 'message' => $exception->getMessage() ] );
 		} catch ( \Throwable $throwable ) {
 			if ( function_exists( 'wc_get_logger' ) ) {
-				wc_get_logger()->error( 'Chat request failed: ' . $throwable->getMessage(), [ 'source' => 'agentgate-mcp' ] );
+				wc_get_logger()->error( 'Chat request failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );
 			}
 
-			wp_send_json_error( [ 'message' => __( 'The chat request failed unexpectedly. Check the WooCommerce logs for details.', 'agentgate-mcp-for-woocommerce' ) ] );
+			wp_send_json_error( [ 'message' => __( 'The chat request failed unexpectedly. Check the WooCommerce logs for details.', 'counterhand-mcp-for-woocommerce' ) ] );
 		}
 
 		wp_send_json_success(
 			[
-				'transcript' => $result['transcript'],
-				'history'    => $result['messages'],
-				'usage'      => $result['usage'],
+				'transcript' => $result->transcript,
+				'history'    => $result->messages,
+				'usage'      => $result->usage->to_array(),
 			]
 		);
 	}
 
 	public function handle_save_tools(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'agentgate-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		check_admin_referer( self::TOOLS_NONCE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
-		$posted = map_deep( wp_unslash( $_POST['agmcp_chat_groups'] ?? [] ), 'sanitize_key' );
+		$posted = map_deep( wp_unslash( $_POST['ctrh_chat_groups'] ?? [] ), 'sanitize_key' );
 
 		// Unticking every box posts nothing at all, which is a real choice and
 		// saved as one — save_groups() drops anything that is not a live group.
@@ -134,6 +142,29 @@ final readonly class PlaygroundFeature implements FeatureInterface {
 		// Post-redirect-get, so a refresh cannot resubmit the selection.
 		wp_safe_redirect( AdminScreen::Chat->url() );
 		exit;
+	}
+
+	/**
+	 * Every area with both facts the picker needs: whether chat wants it, and
+	 * whether the store exposes it at all.
+	 *
+	 * @param  list<ToolGroup> $selected
+	 * @return array<string, ChatArea>
+	 */
+	private function areas( array $selected ): array {
+		$counts = $this->tools->tool_counts_by_group();
+		$areas  = [];
+
+		foreach ( ToolGroup::cases() as $group ) {
+			$areas[ $group->value ] = ChatArea::of(
+				$group,
+				$selected,
+				$this->store_policy,
+				$counts[ $group->value ] ?? 0
+			);
+		}
+
+		return $areas;
 	}
 
 	private function config(): ProviderConfig {
@@ -162,10 +193,10 @@ final readonly class PlaygroundFeature implements FeatureInterface {
 
 		return sprintf(
 			/* translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders" */
-			__( 'You are a WooCommerce store assistant for "%1$s". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched.', 'agentgate-mcp-for-woocommerce' ),
+			__( 'You are a WooCommerce store assistant for "%1$s". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched.', 'counterhand-mcp-for-woocommerce' ),
 			get_bloginfo( 'name' ),
 			function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EUR',
-			[] !== $areas ? implode( ', ', $areas ) : __( 'none — no tool groups are selected for chat', 'agentgate-mcp-for-woocommerce' )
+			[] !== $areas ? implode( ', ', $areas ) : __( 'none — no tool groups are selected for chat', 'counterhand-mcp-for-woocommerce' )
 		);
 	}
 
@@ -186,7 +217,7 @@ final readonly class PlaygroundFeature implements FeatureInterface {
 			new ApiToken(
 				id: 0,
 				token_id: TokenId::try_from_string( 'playground000000' ) ?? throw new \RuntimeException( 'Invalid playground token id.' ),
-				label: __( 'Admin chat', 'agentgate-mcp-for-woocommerce' ),
+				label: __( 'Admin chat', 'counterhand-mcp-for-woocommerce' ),
 				scopes: GrantedScopeSet::from_values( $this->chat_scopes() ),
 				status: TokenStatus::Active,
 				owner_user_id: get_current_user_id(),

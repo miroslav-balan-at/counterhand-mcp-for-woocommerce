@@ -2,21 +2,21 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Application;
+namespace Counterhand\Features\WooCommerceTools\Application;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\WooCommerceTools\Domain\OperationDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestResult;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaProvider;
-use AgentGateMcp\Shared\Exception\ToolCallException;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Shared\Tool\ToolInterface;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestResult;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -193,10 +193,15 @@ final readonly class GeneratedTool implements ToolInterface {
 			return $schema;
 		}
 
-		$schema['properties']['confirm'] = [
+		// An argument-less route publishes properties as stdClass; adding a key
+		// to that would throw, and `confirm` makes it non-empty anyway.
+		$properties            = (array) ( $schema['properties'] ?? [] );
+		$properties['confirm'] = [
 			'type'        => 'boolean',
 			'description' => 'Must be true. Set it only after telling the user what this will change and getting their agreement.',
 		];
+
+		$schema['properties'] = $properties;
 
 		$schema['required']             = [ ...( $schema['required'] ?? [] ), 'confirm' ];
 		$schema['additionalProperties'] = false;

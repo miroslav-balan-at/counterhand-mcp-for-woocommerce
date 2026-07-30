@@ -2,18 +2,18 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Descriptors;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Descriptors;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Features\WooCommerceTools\Application\DescribeFieldsTool;
-use AgentGateMcp\Features\WooCommerceTools\Application\StoreOverviewTool;
-use AgentGateMcp\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Domain\MetaOperation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\Operation;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ToolIntent;
-use AgentGateMcp\Shared\Tool\ToolGroup;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\WooCommerceTools\Application\DescribeFieldsTool;
+use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
+use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
+use Counterhand\Features\WooCommerceTools\Domain\MetaOperation;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
+use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**

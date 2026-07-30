@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Settings;
+namespace Counterhand\Features\Settings;
 
-use AgentGateMcp\Shared\CanonicalUri;
+use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,36 +49,36 @@ final readonly class ConnectReadiness {
 		if ( null !== $reachable ) {
 			return new ReadinessReport(
 				ReadinessStatus::Local,
-				__( 'Local site — only tools on your own machine can connect', 'agentgate-mcp-for-woocommerce' ),
+				__( 'Local site — only tools on your own machine can connect', 'counterhand-mcp-for-woocommerce' ),
 				$reachable
 			);
 		}
 
 		return new ReadinessReport(
 			ReadinessStatus::Ok,
-			__( 'Ready for every AI app', 'agentgate-mcp-for-woocommerce' ),
-			__( 'The endpoint is live and advertising OAuth discovery.', 'agentgate-mcp-for-woocommerce' )
+			__( 'Ready for every AI app', 'counterhand-mcp-for-woocommerce' ),
+			__( 'The endpoint is live and advertising OAuth discovery.', 'counterhand-mcp-for-woocommerce' )
 		);
 	}
 
 	/**
 	 * TLS is not verified on a local site's loopback self-checks: dev certs are
 	 * routinely unverifiable and would mask the real "this store is local"
-	 * answer. Public sites verify; agmcp_verify_sslverify overrides both.
+	 * answer. Public sites verify; ctrh_verify_sslverify overrides both.
 	 *
 	 * @return array{timeout: int, sslverify: bool}
 	 */
 	private function http_args( ?string $local_problem ): array {
 		return [
 			'timeout'   => 15,
-			'sslverify' => (bool) apply_filters( 'agmcp_verify_sslverify', null === $local_problem ),
+			'sslverify' => (bool) apply_filters( 'ctrh_verify_sslverify', null === $local_problem ),
 		];
 	}
 
 	/** @return string|null Problem description, or null when the endpoint is fine. */
 	private function check_endpoint( ?string $local_problem ): ?string {
 		$response = wp_remote_post(
-			home_url( '/mcp' ),
+			CanonicalUri::mcp(),
 			[
 				'headers' => [ 'Content-Type' => 'application/json' ],
 				'body'    => (string) wp_json_encode(
@@ -95,7 +95,7 @@ final readonly class ConnectReadiness {
 		if ( is_wp_error( $response ) ) {
 			return sprintf(
 				/* translators: %s: error message */
-				__( 'The endpoint could not be reached: %s', 'agentgate-mcp-for-woocommerce' ),
+				__( 'The endpoint could not be reached: %s', 'counterhand-mcp-for-woocommerce' ),
 				$response->get_error_message()
 			);
 		}
@@ -109,7 +109,7 @@ final readonly class ConnectReadiness {
 
 		return sprintf(
 			/* translators: %d: HTTP status code */
-			__( 'The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work.', 'agentgate-mcp-for-woocommerce' ),
+			__( 'The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work.', 'counterhand-mcp-for-woocommerce' ),
 			$status
 		);
 	}
@@ -123,7 +123,7 @@ final readonly class ConnectReadiness {
 		if ( is_wp_error( $response ) ) {
 			return sprintf(
 				/* translators: %s: error message */
-				__( 'The discovery document could not be fetched: %s', 'agentgate-mcp-for-woocommerce' ),
+				__( 'The discovery document could not be fetched: %s', 'counterhand-mcp-for-woocommerce' ),
 				$response->get_error_message()
 			);
 		}
@@ -134,13 +134,13 @@ final readonly class ConnectReadiness {
 		if ( 200 !== $status || ! is_array( $payload ) ) {
 			return sprintf(
 				/* translators: %s: discovery URL */
-				__( 'The server does not serve %s. Some hosts block paths starting with a dot — allow that path in your server configuration.', 'agentgate-mcp-for-woocommerce' ),
+				__( 'The server does not serve %s. Some hosts block paths starting with a dot — allow that path in your server configuration.', 'counterhand-mcp-for-woocommerce' ),
 				$url
 			);
 		}
 
 		if ( CanonicalUri::mcp() !== ( $payload['resource'] ?? '' ) ) {
-			return __( 'The discovery document points at a different address than this store. Check for a stale cache or a URL rewrite.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The discovery document points at a different address than this store. Check for a stale cache or a URL rewrite.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		return null;
@@ -158,22 +158,22 @@ final readonly class ConnectReadiness {
 		$host   = strtolower( (string) ( $parts['host'] ?? '' ) );
 
 		if ( '' === $host ) {
-			return __( 'The site address could not be read.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The site address could not be read.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		if ( 'https' !== $scheme ) {
-			return __( 'The store is served over HTTP. Cloud assistants require HTTPS.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The store is served over HTTP. Cloud assistants require HTTPS.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		if ( in_array( $host, self::LOOPBACK_HOSTS, true ) ) {
-			return __( 'The store address points at this machine, which no outside service can reach.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The store address points at this machine, which no outside service can reach.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		foreach ( self::LOCAL_SUFFIXES as $suffix ) {
 			if ( str_ends_with( $host, $suffix ) ) {
 				return sprintf(
 					/* translators: %s: hostname suffix, e.g. .test */
-					__( 'The %s suffix is reserved for local development and does not resolve on the internet.', 'agentgate-mcp-for-woocommerce' ),
+					__( 'The %s suffix is reserved for local development and does not resolve on the internet.', 'counterhand-mcp-for-woocommerce' ),
 					$suffix
 				);
 			}
@@ -187,11 +187,11 @@ final readonly class ConnectReadiness {
 		 * for a site URL, and not worth hand-rolling a range table for.
 		 */
 		if ( filter_var( $host, FILTER_VALIDATE_IP ) && ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
-			return __( 'The store address is a private or reserved IP address, which is not routable from the internet.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The store address is a private or reserved IP address, which is not routable from the internet.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		if ( ! str_contains( $host, '.' ) ) {
-			return __( 'The store hostname has no public domain suffix, so it cannot be resolved from outside your network.', 'agentgate-mcp-for-woocommerce' );
+			return __( 'The store hostname has no public domain suffix, so it cannot be resolved from outside your network.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		return null;

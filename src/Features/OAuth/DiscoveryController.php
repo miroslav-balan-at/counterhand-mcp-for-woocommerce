@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth;
+namespace Counterhand\Features\OAuth;
 
-use AgentGateMcp\Features\Tokens\Domain\ApiScope;
-use AgentGateMcp\Shared\CanonicalUri;
+use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +17,7 @@ final readonly class DiscoveryController {
 
 	public function register_routes(): void {
 		register_rest_route(
-			'agentgate/v1',
+			'counterhand/v1',
 			'/oauth-protected-resource',
 			[
 				[
@@ -29,7 +29,7 @@ final readonly class DiscoveryController {
 		);
 
 		register_rest_route(
-			'agentgate/v1',
+			'counterhand/v1',
 			'/oauth-authorization-server',
 			[
 				[
@@ -60,7 +60,7 @@ final readonly class DiscoveryController {
 			[
 				'issuer'                                => home_url(),
 				'authorization_endpoint'                => home_url( '/mcp-authorize' ),
-				'token_endpoint'                        => rest_url( 'agentgate/v1/oauth/token' ),
+				'token_endpoint'                        => rest_url( 'counterhand/v1/oauth/token' ),
 				'scopes_supported'                      => ApiScope::values(),
 				'response_types_supported'              => [ 'code' ],
 				'grant_types_supported'                 => [ 'authorization_code' ],

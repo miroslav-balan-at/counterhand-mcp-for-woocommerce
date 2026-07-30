@@ -1,5 +1,5 @@
 /*
- * AgentGate MCP — OAuth flow pages (consent, denied, error, connected).
+ * Counterhand MCP — OAuth flow pages (consent, denied, error, connected).
  *
  * Colours and dimensions come from ../shared/tokens.css, which the page shell
  * links first. That sheet is shared with the wp-admin screens so the consent
@@ -12,7 +12,7 @@
 	box-sizing: border-box;
 }
 
-body.agmcp-flow {
+body.ctrh-flow {
 	margin: 0;
 	padding: clamp(16px, 5vh, 56px) clamp(16px, 4vw, 40px);
 	min-height: 100vh;
@@ -20,8 +20,8 @@ body.agmcp-flow {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background: var(--agmcp-gray-0);
-	color: var(--agmcp-gray-100);
+	background: var(--ctrh-gray-0);
+	color: var(--ctrh-gray-100);
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
@@ -32,7 +32,7 @@ body.agmcp-flow {
    mistaken for a phishing screen. Deliberately no menus/cart/search: a consent
    screen must not offer wander-off paths mid-authorization. */
 
-.agmcp-siteheader {
+.ctrh-siteheader {
 	width: 100%;
 	max-width: 720px;
 	display: flex;
@@ -41,18 +41,18 @@ body.agmcp-flow {
 	margin-bottom: 16px;
 }
 
-.agmcp-siteheader__logo {
+.ctrh-siteheader__logo {
 	width: 48px;
 	height: 48px;
 	border-radius: 8px;
 	object-fit: contain;
 	background: #fff;
-	border: 1px solid var(--agmcp-gray-5);
+	border: 1px solid var(--ctrh-gray-5);
 	padding: 4px;
 	flex: 0 0 auto;
 }
 
-.agmcp-siteheader__mark {
+.ctrh-siteheader__mark {
 	width: 48px;
 	height: 48px;
 	flex: 0 0 auto;
@@ -60,45 +60,45 @@ body.agmcp-flow {
 	align-items: center;
 	justify-content: center;
 	border-radius: 8px;
-	background: var(--agmcp-blue-50);
+	background: var(--ctrh-blue-50);
 	color: #fff;
 	font-size: 22px;
 	font-weight: 700;
 }
 
-.agmcp-siteheader__text {
+.ctrh-siteheader__text {
 	display: flex;
 	flex-direction: column;
 	gap: 1px;
 	min-width: 0;
 }
 
-.agmcp-siteheader__name {
+.ctrh-siteheader__name {
 	font-size: 16px;
 	font-weight: 600;
-	color: var(--agmcp-gray-100);
+	color: var(--ctrh-gray-100);
 }
 
-.agmcp-siteheader__host {
+.ctrh-siteheader__host {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-lock {
-	color: var(--agmcp-green-50);
+.ctrh-lock {
+	color: var(--ctrh-green-50);
 	flex: 0 0 auto;
 }
 
 /* Card ------------------------------------------------------------------- */
 
-.agmcp-card {
+.ctrh-card {
 	width: 100%;
 	max-width: 720px;
 	background: #fff;
-	border: 1px solid var(--agmcp-gray-5);
+	border: 1px solid var(--ctrh-gray-5);
 	border-radius: 6px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
 	overflow: hidden;
@@ -106,19 +106,19 @@ body.agmcp-flow {
 
 /* Identity — who is about to approve. Prominent, not fine print. */
 
-.agmcp-identity {
+.ctrh-identity {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin: 0 0 20px;
 	padding: 10px 12px;
-	border: 1px solid var(--agmcp-gray-5);
-	border-radius: var(--agmcp-radius);
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: var(--ctrh-radius);
 	background: #fff;
 }
 
 /* Initial-based mark: no external avatar request, so nothing can fail to load. */
-.agmcp-identity__avatar {
+.ctrh-identity__avatar {
 	width: 36px;
 	height: 36px;
 	flex: 0 0 auto;
@@ -127,113 +127,113 @@ body.agmcp-flow {
 	justify-content: center;
 	border-radius: 50%;
 	background: #e0e7ec;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
 }
 
-.agmcp-identity__text {
+.ctrh-identity__text {
 	display: flex;
 	flex-direction: column;
 	line-height: 1.35;
 	min-width: 0;
 }
 
-.agmcp-identity__label {
+.ctrh-identity__label {
 	font-size: 11px;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-identity__name {
+.ctrh-identity__name {
 	font-weight: 600;
 }
 
-.agmcp-card__body {
+.ctrh-card__body {
 	padding: 28px clamp(20px, 4vw, 36px);
 }
 
-.agmcp-card__body--centered {
+.ctrh-card__body--centered {
 	text-align: center;
 }
 
-.agmcp-card__foot {
+.ctrh-card__foot {
 	padding: 14px clamp(20px, 4vw, 36px);
-	border-top: 1px solid var(--agmcp-gray-5);
-	background: var(--agmcp-gray-0);
+	border-top: 1px solid var(--ctrh-gray-5);
+	background: var(--ctrh-gray-0);
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
 /* Typography ------------------------------------------------------------- */
 
-.agmcp-title {
+.ctrh-title {
 	margin: 0 0 8px;
 	font-size: 20px;
 	font-weight: 600;
 	line-height: 1.3;
 }
 
-.agmcp-lede {
+.ctrh-lede {
 	margin: 0 0 16px;
-	color: var(--agmcp-gray-100);
+	color: var(--ctrh-gray-100);
 }
 
-.agmcp-hint {
+.ctrh-hint {
 	margin: 16px 0 0;
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
 /* Verified origin -------------------------------------------------------- */
 
-.agmcp-origin {
+.ctrh-origin {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 8px;
 	margin: 0 0 20px;
 	padding: 10px 12px;
-	background: var(--agmcp-gray-0);
-	border: 1px solid var(--agmcp-gray-5);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-gray-0);
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: var(--ctrh-radius);
 }
 
-.agmcp-origin__label {
+.ctrh-origin__label {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-origin code {
+.ctrh-origin code {
 	font-size: 12px;
 	word-break: break-all;
-	color: var(--agmcp-gray-100);
+	color: var(--ctrh-gray-100);
 }
 
 /* Scopes ----------------------------------------------------------------- */
 
-.agmcp-scopes {
+.ctrh-scopes {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	min-width: 0;
 }
 
-.agmcp-scopes__legend {
+.ctrh-scopes__legend {
 	padding: 0 0 10px;
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-scopes__section {
+.ctrh-scopes__section {
 	margin: 0 0 18px;
 }
 
@@ -241,15 +241,15 @@ body.agmcp-flow {
  * Advanced sections ship collapsed: the groups inside can change how the store
  * charges money or run maintenance routines, so opening one is a deliberate act.
  */
-.agmcp-scopes__section--advanced > .agmcp-scopes__heading {
+.ctrh-scopes__section--advanced > .ctrh-scopes__heading {
 	cursor: pointer;
 }
 
-.agmcp-scopes__section--advanced[open] > .agmcp-scopes__heading {
+.ctrh-scopes__section--advanced[open] > .ctrh-scopes__heading {
 	margin-bottom: 10px;
 }
 
-.agmcp-scopes__heading {
+.ctrh-scopes__heading {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -257,13 +257,13 @@ body.agmcp-flow {
 	font-weight: 600;
 }
 
-.agmcp-scopes__heading-desc {
+.ctrh-scopes__heading-desc {
 	font-size: 12px;
 	font-weight: 400;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-scope-group {
+.ctrh-scope-group {
 	margin-bottom: 8px;
 }
 
@@ -271,7 +271,7 @@ body.agmcp-flow {
  * The group name is an eyebrow above its own scopes rather than a heading in
  * its own right — it orients, the scope rows below carry the real consequence.
  */
-.agmcp-scope-group__name {
+.ctrh-scope-group__name {
 	display: block;
 	padding-left: 2px;
 	margin-bottom: 4px;
@@ -279,39 +279,39 @@ body.agmcp-flow {
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-scope {
+.ctrh-scope {
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
 	padding: 12px 14px;
-	border: 1px solid var(--agmcp-gray-5);
-	border-radius: var(--agmcp-radius);
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: var(--ctrh-radius);
 	margin-bottom: 8px;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease;
 }
 
-.agmcp-scope:hover {
-	border-color: var(--agmcp-blue-50);
+.ctrh-scope:hover {
+	border-color: var(--ctrh-blue-50);
 	background: #f0f6fc;
 }
 
-.agmcp-scope--write {
-	border-left: 3px solid var(--agmcp-yellow-40);
+.ctrh-scope--write {
+	border-left: 3px solid var(--ctrh-yellow-40);
 }
 
-.agmcp-scope input[type="checkbox"] {
+.ctrh-scope input[type="checkbox"] {
 	margin: 2px 0 0;
 	width: 16px;
 	height: 16px;
-	accent-color: var(--agmcp-blue-50);
+	accent-color: var(--ctrh-blue-50);
 	flex: 0 0 auto;
 }
 
-.agmcp-scope__text {
+.ctrh-scope__text {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -319,16 +319,16 @@ body.agmcp-flow {
 	min-width: 0;
 }
 
-.agmcp-scope__name {
+.ctrh-scope__name {
 	font-weight: 600;
 }
 
-.agmcp-scope__desc {
+.ctrh-scope__desc {
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 }
 
-.agmcp-tag {
+.ctrh-tag {
 	flex: 0 0 auto;
 	align-self: center;
 	padding: 2px 8px;
@@ -338,47 +338,47 @@ body.agmcp-flow {
 	white-space: nowrap;
 }
 
-.agmcp-tag--write {
-	background: var(--agmcp-yellow-5);
+.ctrh-tag--write {
+	background: var(--ctrh-yellow-5);
 	color: #7d5a00;
-	border: 1px solid var(--agmcp-yellow-40);
+	border: 1px solid var(--ctrh-yellow-40);
 }
 
 /* Notices ---------------------------------------------------------------- */
 
-.agmcp-notice {
+.ctrh-notice {
 	margin: 16px 0 0;
 	padding: 10px 12px;
-	border-radius: var(--agmcp-radius);
+	border-radius: var(--ctrh-radius);
 	font-size: 12px;
 }
 
-.agmcp-notice--warning {
-	background: var(--agmcp-yellow-5);
-	border-left: 4px solid var(--agmcp-yellow-40);
+.ctrh-notice--warning {
+	background: var(--ctrh-yellow-5);
+	border-left: 4px solid var(--ctrh-yellow-40);
 	color: #614a00;
 }
 
 /* Actions ---------------------------------------------------------------- */
 
-.agmcp-actions {
+.ctrh-actions {
 	display: flex;
 	gap: 12px;
 	margin-top: 24px;
 }
 
-.agmcp-actions--single {
+.ctrh-actions--single {
 	justify-content: center;
 	margin-top: 20px;
 }
 
-.agmcp-button {
+.ctrh-button {
 	flex: 1 1 auto;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	padding: 10px 16px;
-	border-radius: var(--agmcp-radius);
+	border-radius: var(--ctrh-radius);
 	border: 1px solid transparent;
 	font-size: 14px;
 	font-weight: 600;
@@ -389,45 +389,45 @@ body.agmcp-flow {
 	transition: background-color .15s ease, border-color .15s ease;
 }
 
-.agmcp-actions--single .agmcp-button {
+.ctrh-actions--single .ctrh-button {
 	flex: 0 0 auto;
 	min-width: 200px;
 }
 
-.agmcp-button--primary {
-	background: var(--agmcp-blue-50);
-	border-color: var(--agmcp-blue-60);
+.ctrh-button--primary {
+	background: var(--ctrh-blue-50);
+	border-color: var(--ctrh-blue-60);
 	color: #fff;
 }
 
-.agmcp-button--primary:hover,
-.agmcp-button--primary:focus {
-	background: var(--agmcp-blue-70);
-	border-color: var(--agmcp-blue-70);
+.ctrh-button--primary:hover,
+.ctrh-button--primary:focus {
+	background: var(--ctrh-blue-70);
+	border-color: var(--ctrh-blue-70);
 	color: #fff;
 }
 
-.agmcp-button--secondary {
+.ctrh-button--secondary {
 	background: #f6f7f7;
-	border-color: var(--agmcp-gray-20);
-	color: var(--agmcp-blue-50);
+	border-color: var(--ctrh-gray-20);
+	color: var(--ctrh-blue-50);
 }
 
-.agmcp-button--secondary:hover,
-.agmcp-button--secondary:focus {
+.ctrh-button--secondary:hover,
+.ctrh-button--secondary:focus {
 	background: #f0f0f1;
-	border-color: var(--agmcp-blue-50);
-	color: var(--agmcp-blue-70);
+	border-color: var(--ctrh-blue-50);
+	color: var(--ctrh-blue-70);
 }
 
-.agmcp-button:focus-visible {
-	outline: 2px solid var(--agmcp-blue-50);
+.ctrh-button:focus-visible {
+	outline: 2px solid var(--ctrh-blue-50);
 	outline-offset: 1px;
 }
 
 /* Status icons ----------------------------------------------------------- */
 
-.agmcp-status-icon {
+.ctrh-status-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -437,40 +437,40 @@ body.agmcp-flow {
 	border-radius: 50%;
 }
 
-.agmcp-status-icon--success {
+.ctrh-status-icon--success {
 	background: #edfaef;
-	color: var(--agmcp-green-50);
+	color: var(--ctrh-green-50);
 }
 
-.agmcp-status-icon--error {
+.ctrh-status-icon--error {
 	background: #fcf0f1;
-	color: var(--agmcp-red-50);
+	color: var(--ctrh-red-50);
 }
 
-.agmcp-status-icon--neutral {
-	background: var(--agmcp-gray-0);
-	color: var(--agmcp-gray-60);
+.ctrh-status-icon--neutral {
+	background: var(--ctrh-gray-0);
+	color: var(--ctrh-gray-60);
 }
 
 /* Granted list ----------------------------------------------------------- */
 
-.agmcp-granted {
+.ctrh-granted {
 	list-style: none;
 	margin: 0 0 4px;
 	padding: 12px 14px;
 	text-align: left;
-	background: var(--agmcp-gray-0);
-	border: 1px solid var(--agmcp-gray-5);
-	border-radius: var(--agmcp-radius);
+	background: var(--ctrh-gray-0);
+	border: 1px solid var(--ctrh-gray-5);
+	border-radius: var(--ctrh-radius);
 	font-size: 13px;
 }
 
-.agmcp-granted li {
+.ctrh-granted li {
 	padding: 3px 0 3px 20px;
 	position: relative;
 }
 
-.agmcp-granted li::before {
+.ctrh-granted li::before {
 	content: "";
 	position: absolute;
 	left: 4px;
@@ -478,12 +478,12 @@ body.agmcp-flow {
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: var(--agmcp-green-50);
+	background: var(--ctrh-green-50);
 }
 
 /* Site footer ------------------------------------------------------------ */
 
-.agmcp-sitefooter {
+.ctrh-sitefooter {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -491,74 +491,74 @@ body.agmcp-flow {
 	gap: 8px;
 	margin-top: 18px;
 	font-size: 12px;
-	color: var(--agmcp-gray-60);
+	color: var(--ctrh-gray-60);
 	text-align: center;
 }
 
-.agmcp-sitefooter__link {
-	color: var(--agmcp-blue-50);
+.ctrh-sitefooter__link {
+	color: var(--ctrh-blue-50);
 	text-decoration: none;
 }
 
-.agmcp-sitefooter__link:hover,
-.agmcp-sitefooter__link:focus {
-	color: var(--agmcp-blue-70);
+.ctrh-sitefooter__link:hover,
+.ctrh-sitefooter__link:focus {
+	color: var(--ctrh-blue-70);
 	text-decoration: underline;
 }
 
-.agmcp-sitefooter__sep,
-.agmcp-sitefooter__note {
-	color: var(--agmcp-gray-20);
+.ctrh-sitefooter__sep,
+.ctrh-sitefooter__note {
+	color: var(--ctrh-gray-20);
 }
 
 /* Small screens ---------------------------------------------------------- */
 
 @media screen and (max-width: 600px) {
-	body.agmcp-flow {
+	body.ctrh-flow {
 		/* Top-align on short viewports so the card is never cut off. */
 		justify-content: flex-start;
 	}
 
-	.agmcp-card {
+	.ctrh-card {
 		border-radius: 4px;
 	}
 
-	.agmcp-siteheader {
+	.ctrh-siteheader {
 		gap: 10px;
 		margin-bottom: 14px;
 	}
 
-	.agmcp-siteheader__logo,
-	.agmcp-siteheader__mark {
+	.ctrh-siteheader__logo,
+	.ctrh-siteheader__mark {
 		width: 40px;
 		height: 40px;
 	}
 
-	.agmcp-siteheader__name {
+	.ctrh-siteheader__name {
 		font-size: 15px;
 	}
 
 	/* Stack the buttons, keeping Approve as the top (primary) target. */
-	.agmcp-actions {
+	.ctrh-actions {
 		flex-direction: column-reverse;
 	}
 
-	.agmcp-actions--single .agmcp-button {
+	.ctrh-actions--single .ctrh-button {
 		width: 100%;
 		min-width: 0;
 	}
 
 	/* No room for the tag beside the text — move it inside the text column so
 	   the checkbox always stays on the first line next to the title. */
-	.agmcp-scope {
+	.ctrh-scope {
 		flex-wrap: wrap;
 	}
 
-	.agmcp-scope__text {
+	.ctrh-scope__text {
 		flex-basis: 0;
 	}
 
-	.agmcp-tag {
+	.ctrh-tag {
 		align-self: flex-start;
 		margin: 2px 0 0 26px;
 	}

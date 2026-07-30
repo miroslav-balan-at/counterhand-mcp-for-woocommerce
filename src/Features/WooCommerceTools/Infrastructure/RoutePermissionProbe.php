@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Features\WooCommerceTools\Infrastructure;
 
 defined( 'ABSPATH' ) || exit;
 

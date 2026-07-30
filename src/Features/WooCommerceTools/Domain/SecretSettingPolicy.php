@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Domain;
+namespace Counterhand\Features\WooCommerceTools\Domain;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -54,7 +54,7 @@ final readonly class SecretSettingPolicy implements ArgumentPolicy {
 		 * @param string $id       The setting id being written.
 		 */
 		$writable = (bool) apply_filters(
-			'agmcp_setting_writable',
+			'ctrh_setting_writable',
 			1 !== preg_match( self::SECRET_SHAPED, $id ),
 			$id
 		);

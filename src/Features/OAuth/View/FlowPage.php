@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\OAuth\View;
+namespace Counterhand\Features\OAuth\View;
 
-use AgentGateMcp\Shared\StoreMark;
+use Counterhand\Shared\StoreMark;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -52,7 +52,7 @@ final readonly class FlowPage {
 
 		$this->render(
 			self::STATE_ERROR,
-			__( 'Connection problem', 'agentgate-mcp-for-woocommerce' ),
+			__( 'Connection problem', 'counterhand-mcp-for-woocommerce' ),
 			[
 				'headline' => $headline,
 				'detail'   => $detail,

@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -56,7 +56,7 @@ final readonly class SchemaProvider {
 	private function empty_schema(): array {
 		return [
 			'type'                 => 'object',
-			'properties'           => [],
+			'properties'           => new \stdClass(),
 			'additionalProperties' => false,
 		];
 	}

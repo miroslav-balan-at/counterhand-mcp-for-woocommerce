@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Domain;
+namespace Counterhand\Features\Tokens\Domain;
 
-use AgentGateMcp\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,6 +38,6 @@ final readonly class ScopeGrant {
 		}
 
 		/* translators: %s: tool group name, e.g. "Orders". Marks a grant that includes writes. */
-		return sprintf( __( '%s ·W', 'agentgate-mcp-for-woocommerce' ), $this->label() );
+		return sprintf( __( '%s ·W', 'counterhand-mcp-for-woocommerce' ), $this->label() );
 	}
 }

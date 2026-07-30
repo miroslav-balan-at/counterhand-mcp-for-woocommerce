@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Descriptors;
+namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
-use AgentGateMcp\Features\WooCommerceTools\Domain\DescriptorProvider;
-use AgentGateMcp\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -44,7 +44,7 @@ final readonly class StaticDescriptorCatalog implements DescriptorProvider {
 		 *
 		 * @param list<ResourceDescriptor> $resources
 		 */
-		$filtered = apply_filters( 'agmcp_tool_descriptors', $resources );
+		$filtered = apply_filters( 'ctrh_tool_descriptors', $resources );
 
 		return array_values( array_filter( $filtered, static fn ( mixed $r ): bool => $r instanceof ResourceDescriptor ) );
 	}

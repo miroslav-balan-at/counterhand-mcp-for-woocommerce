@@ -2,9 +2,9 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Shared\Exception\ToolCallException;
+use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
 

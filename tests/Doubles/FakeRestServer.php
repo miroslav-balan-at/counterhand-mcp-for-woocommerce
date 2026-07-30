@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Doubles;
+namespace Counterhand\Tests\Doubles;
 
 /**
  * Stands in for WP_REST_Server so RouteCatalog can be pointed at a route table

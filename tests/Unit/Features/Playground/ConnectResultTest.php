@@ -2,10 +2,10 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\Playground;
+namespace Counterhand\Tests\Unit\Features\Playground;
 
-use AgentGateMcp\Features\Playground\ConnectResult;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\Playground\ConnectResult;
+use Counterhand\Tests\Unit\TestCase;
 
 final class ConnectResultTest extends TestCase {
 

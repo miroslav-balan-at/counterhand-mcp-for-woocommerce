@@ -2,14 +2,14 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Unit\Features\WooCommerceTools\Infrastructure;
+namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use AgentGateMcp\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
-use AgentGateMcp\Features\WooCommerceTools\Domain\FieldProfile;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RouteArgs;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\SchemaFromArgs;
-use AgentGateMcp\Tests\Unit\TestCase;
+use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RouteArgs;
+use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaFromArgs;
+use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
@@ -108,8 +108,9 @@ final class WcRouteArgsFixtureTest extends TestCase {
 	public function test_no_envelope_or_callback_survives_conversion( string $slug ): void {
 		$schema = $this->convert( $slug );
 
+		// Cast: system-status-get has no arguments, so properties is stdClass.
 		foreach ( [ 'context', '_fields', '_embed', '_envelope', '_method' ] as $envelope ) {
-			$this->assertArrayNotHasKey( $envelope, $schema['properties'], $slug );
+			$this->assertArrayNotHasKey( $envelope, (array) $schema['properties'], $slug );
 		}
 
 		$json = (string) wp_json_encode( $schema );

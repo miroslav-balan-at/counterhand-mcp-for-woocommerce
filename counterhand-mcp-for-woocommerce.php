@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       AgentGate MCP for WooCommerce
- * Plugin URI:        https://github.com/miroslavbalan/agentgate-mcp-for-woocommerce
+ * Plugin Name:       Counterhand MCP for WooCommerce
+ * Plugin URI:        https://github.com/miroslavbalan/counterhand-mcp-for-woocommerce
  * Description:       Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens.
  * Version:           0.2.0
  * Requires at least: 6.5
@@ -10,7 +10,7 @@
  * Author:            Miroslav Balan
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       agentgate-mcp-for-woocommerce
+ * Text Domain:       counterhand-mcp-for-woocommerce
  * Domain Path:       /languages
  *
  * WC requires at least: 8.0
@@ -21,12 +21,12 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AGMCP_VERSION', '0.2.0' );
-define( 'AGMCP_PLUGIN_FILE', __FILE__ );
-define( 'AGMCP_PLUGIN_DIR', __DIR__ );
+define( 'CTRH_VERSION', '0.2.0' );
+define( 'CTRH_PLUGIN_FILE', __FILE__ );
+define( 'CTRH_PLUGIN_DIR', __DIR__ );
 
 require_once __DIR__ . '/src/Autoloader.php';
-AgentGateMcp\Autoloader::register();
+Counterhand\Autoloader::register();
 
 // HPOS (custom order tables) compatibility.
 add_action(
@@ -38,8 +38,8 @@ add_action(
 	}
 );
 
-register_activation_hook( __FILE__, [ AgentGateMcp\Plugin::class, 'activate' ] );
-register_deactivation_hook( __FILE__, [ AgentGateMcp\Plugin::class, 'deactivate' ] );
+register_activation_hook( __FILE__, [ Counterhand\Plugin::class, 'activate' ] );
+register_deactivation_hook( __FILE__, [ Counterhand\Plugin::class, 'deactivate' ] );
 
 add_action(
 	'plugins_loaded',
@@ -49,13 +49,13 @@ add_action(
 				'admin_notices',
 				static function (): void {
 					echo '<div class="notice notice-error"><p>';
-					echo esc_html__( 'AgentGate MCP for WooCommerce requires WooCommerce to be installed and active.', 'agentgate-mcp-for-woocommerce' );
+					echo esc_html__( 'Counterhand MCP for WooCommerce requires WooCommerce to be installed and active.', 'counterhand-mcp-for-woocommerce' );
 					echo '</p></div>';
 				}
 			);
 			return;
 		}
 
-		AgentGateMcp\Plugin::boot();
+		Counterhand\Plugin::boot();
 	}
 );

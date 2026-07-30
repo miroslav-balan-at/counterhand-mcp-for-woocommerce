@@ -2,12 +2,12 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Tests\Doubles;
+namespace Counterhand\Tests\Doubles;
 
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestMethod;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestResult;
-use AgentGateMcp\Features\WooCommerceTools\Infrastructure\RestRoute;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestResult;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
 
 /**
  * Records what a tool asked WooCommerce for and replays canned results.

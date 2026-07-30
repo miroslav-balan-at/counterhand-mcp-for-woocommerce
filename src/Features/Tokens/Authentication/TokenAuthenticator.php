@@ -2,13 +2,13 @@
 
 declare( strict_types=1 );
 
-namespace AgentGateMcp\Features\Tokens\Authentication;
+namespace Counterhand\Features\Tokens\Authentication;
 
-use AgentGateMcp\Features\Tokens\Domain\PlainToken;
-use AgentGateMcp\Features\Tokens\Domain\TokenRepositoryInterface;
-use AgentGateMcp\Shared\CanonicalUri;
-use AgentGateMcp\Shared\Exception\AuthenticationFailedException;
-use AgentGateMcp\Shared\Exception\RateLimitExceededException;
+use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Shared\CanonicalUri;
+use Counterhand\Shared\Exception\AuthenticationFailedException;
+use Counterhand\Shared\Exception\RateLimitExceededException;
 
 defined( 'ABSPATH' ) || exit;
 

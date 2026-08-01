@@ -9,6 +9,9 @@ use Counterhand\Features\McpServer\McpServer;
 use Counterhand\Features\McpServer\McpServerFeature;
 use Counterhand\Features\McpServer\ToolDispatcher;
 use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\Licensing\FreemiusLicence;
+use Counterhand\Features\Licensing\Licence;
+use Counterhand\Features\Licensing\UnlicensedFallback;
 use Counterhand\Features\OAuth\OAuthFeature;
 use Counterhand\Features\Playground\AgentLoop;
 use Counterhand\Features\Playground\ChatSettings;
@@ -102,6 +105,10 @@ final class Plugin {
 			new MetaKeyPolicy( $wpdb->prefix )
 		);
 
+		// Asked once and passed down, so no feature reaches for the vendor
+		// itself and a licensing fault degrades in exactly one place.
+		$licence = FreemiusLicence::detect() ?? new UnlicensedFallback();
+
 		$this->tool_registry = new ToolRegistry( $settings );
 
 		// One pipeline shared by the HTTP endpoint and the admin playground, so
@@ -137,7 +144,7 @@ final class Plugin {
 				new ConnectionMatcher( $repository ),
 				new SettingSanitizer()
 			),
-			new McpServerFeature( $settings, $authenticator, $mcp_server ),
+			new McpServerFeature( $settings, $authenticator, $mcp_server, $licence ),
 			new OAuthFeature( $settings, $repository ),
 			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, new StaticDescriptorCatalog(), $schema_provider ),
 		];

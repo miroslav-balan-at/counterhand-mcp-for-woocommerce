@@ -25,6 +25,65 @@ define( 'CTRH_VERSION', '0.2.0' );
 define( 'CTRH_PLUGIN_FILE', __FILE__ );
 define( 'CTRH_PLUGIN_DIR', __DIR__ );
 
+/*
+ * Freemius: licensing, checkout and the update server.
+ *
+ * It has to load here rather than on plugins_loaded — the SDK registers its own
+ * hooks during this file and expects to be the first thing the plugin does. It
+ * is also the one place a vendor library is allowed in (see src/Autoloader.php
+ * on why): the SDK negotiates with every other Freemius-powered plugin on the
+ * site and the newest copy serves them all, so bundling it cannot collide the
+ * way an ordinary vendored library would.
+ *
+ * A missing SDK is survivable. The plugin degrades to UnlicensedFallback rather
+ * than dying, because a licensing fault must never take a live store's MCP
+ * endpoint down with it.
+ */
+if ( ! function_exists( 'counterhand_freemius' ) && file_exists( __DIR__ . '/freemius/start.php' ) ) {
+	/**
+	 * The Freemius instance for this plugin.
+	 *
+	 * @return \Freemius
+	 */
+	function counterhand_freemius() {
+		global $counterhand_freemius;
+
+		if ( ! isset( $counterhand_freemius ) ) {
+			require_once __DIR__ . '/freemius/start.php';
+
+			$counterhand_freemius = fs_dynamic_init(
+				[
+					// TODO: replace id and public_key with the values the
+					// Freemius dashboard issues for this product.
+					'id'                  => '00000',
+					'slug'                => 'counterhand-mcp-for-woocommerce',
+					'premium_slug'        => 'counterhand-mcp-for-woocommerce-premium',
+					'type'                => 'plugin',
+					'public_key'          => 'pk_0000000000000000000000000',
+					'is_premium'          => true,
+					'has_premium_version' => true,
+					'has_paid_plans'      => true,
+					'has_addons'          => false,
+					// Not listed on wordpress.org, so the .org-compliance rules
+					// (no premium code in the free build) do not constrain us.
+					'is_org_compliant'    => false,
+					'menu'                => [
+						'slug'    => 'counterhand-mcp',
+						'account' => true,
+						'contact' => false,
+						'support' => false,
+					],
+				]
+			);
+		}
+
+		return $counterhand_freemius;
+	}
+
+	counterhand_freemius();
+	do_action( 'counterhand_freemius_loaded' );
+}
+
 require_once __DIR__ . '/src/Autoloader.php';
 Counterhand\Autoloader::register();
 

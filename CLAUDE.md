@@ -41,6 +41,9 @@ Tools are **declared, not written**. `GeneratedTool` serves the whole wc/v3 and 
 ## Verifying against a real store
 Unit tests run without WordPress, so they cannot tell you whether a field name is real, whether a route exists, or whether a probe answers true. Every bug found in the tool expansion was found this way and could not have been found any other way. The store, how to drive it, and the findings so far are in memory (`local-woocommerce-store`, `wc-schema-derivation-verified`, `wc-meta-security-findings`, `wc-risky-write-gating`). Run `wp eval-file` scripts that build the real tool set and check: every profile name is a declared route arg, every tool is available to an administrator, and a sample of each group dispatches.
 
+## Naming
+- **Full words, never abbreviations.** `counterhand_freemius()`, not `ctrh_fs()`; `$licence`, not `$lic`. The `ctrh_` / `CTRH_` prefix on hooks, options, CSS classes and constants is the one exception — it is a namespace claim WordPress forces on us, not a shortened word.
+
 ## PHP
 - **PHP 8.2+**, not 8.1: `final readonly class` is an 8.2 feature (readonly *properties* are 8.1) and 86 files use it. `composer.json`, `phpcs.xml.dist` (`testVersion 8.2-`) and `readme.txt` all agree; keep them that way, because WordPress.org enforces the readme value and a mismatch blocks installs on stores that would otherwise be fine.
 - Use: `final readonly` classes, constructor promotion, backed enums, `match`, named arguments, `never` return type where applicable.

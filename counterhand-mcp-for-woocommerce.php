@@ -53,13 +53,11 @@ if ( ! function_exists( 'counterhand_freemius' ) && file_exists( __DIR__ . '/fre
 
 			$counterhand_freemius = fs_dynamic_init(
 				[
-					// TODO: replace id and public_key with the values the
-					// Freemius dashboard issues for this product.
-					'id'                  => '00000',
+					'id'                  => '36351',
 					'slug'                => 'counterhand-mcp-for-woocommerce',
 					'premium_slug'        => 'counterhand-mcp-for-woocommerce-premium',
 					'type'                => 'plugin',
-					'public_key'          => 'pk_0000000000000000000000000',
+					'public_key'          => 'pk_121fd111ca8b163d827efd34af66a',
 					'is_premium'          => true,
 					'has_premium_version' => true,
 					'has_paid_plans'      => true,

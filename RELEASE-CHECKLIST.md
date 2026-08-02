@@ -67,6 +67,23 @@ The build refuses to run when tracked files have uncommitted changes, or when
 the plugin header and `readme.txt` stable tag disagree, and it asserts the five
 files the plugin cannot boot without.
 
+### Why not `wp dist-archive`
+
+It is the closest thing to an official tool, and the `.distignore` here is kept
+accurate so it stays usable. But it walks the filesystem with
+`RecursiveDirectoryIterator` and only consults `.distignore`, so an untracked
+file that nobody thought to name still ships. Delicious Brains' `plugin-build`
+has the same shape (`rsync --filter`). Either would have packaged the subscriber
+CSV that sat in this directory until 2026-08-01.
+
+The denylist also has to be right at the moment it runs: dist-archive's own
+folder exclusion was silently broken in main by PR #61, reported as a security
+risk in <https://github.com/wp-cli/dist-archive-command/issues/67> and not
+covered by its tests.
+
+Both tools remain fine for plugins whose working directory only ever contains
+committed files. This one demonstrably does not.
+
 - [ ] Upload the zip to Freemius (Deployment → Add version).
 
 ## Known-good state

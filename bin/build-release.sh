@@ -26,11 +26,37 @@ command -v zip >/dev/null || { echo 'build: zip is required' >&2; exit 1; }
 version="$( grep -m1 -E '^[[:space:]]*\*[[:space:]]*Version:' "$SLUG.php" | tr -d '[:space:]' | cut -d: -f2 )"
 [ -n "$version" ] || { echo "build: no Version header in $SLUG.php" >&2; exit 1; }
 
-readme_version="$( grep -m1 -i '^Stable tag:' readme.txt | tr -d '[:space:]' | cut -d: -f2 )"
-if [ "$version" != "$readme_version" ]; then
-	echo "build: plugin header ($version) and readme.txt Stable tag ($readme_version) disagree" >&2
-	exit 1
-fi
+# A WordPress plugin carries its version in several places and nothing keeps
+# them in step. The header is what WordPress and Freemius read for update
+# checks, so a stale CTRH_VERSION or Stable tag is a silent bug rather than a
+# loud one — check every surface against the header.
+check_version() {
+	local label="$1" found="$2"
+
+	if [ -z "$found" ]; then
+		echo "build: could not read the version from $label" >&2
+		exit 1
+	fi
+
+	if [ "$found" != "$version" ]; then
+		echo "build: $label says $found but the plugin header says $version" >&2
+		exit 1
+	fi
+}
+
+check_version 'readme.txt Stable tag' \
+	"$( grep -m1 -i '^Stable tag:' readme.txt | tr -d '[:space:]' | cut -d: -f2 )"
+
+check_version 'the CTRH_VERSION constant' \
+	"$( grep -m1 -E "define\(\s*'CTRH_VERSION'" "$SLUG.php" | sed -E "s/.*'CTRH_VERSION'[^']*'([^']+)'.*/\1/" )"
+
+# Scoped to the Changelog section: readme.txt uses `= ... =` for FAQ and feature
+# headings too, and the first one in the file is prose.
+check_version 'the readme.txt changelog' \
+	"$( sed -n '/^== Changelog ==/,$p' readme.txt | grep -m1 -E '^= [0-9]' | tr -d '[:space:]=' )"
+
+check_version 'the .pot header' \
+	"$( grep -m1 'Project-Id-Version:' "languages/$SLUG.pot" | sed -E 's/.* ([0-9][^\\ ]*)\\n.*/\1/' )"
 
 # An uncommitted change cannot appear in `git ls-files`, so it would be silently
 # missing from the zip. Refuse rather than ship a build that does not match HEAD.

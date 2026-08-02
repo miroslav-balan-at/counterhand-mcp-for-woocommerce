@@ -56,13 +56,18 @@ Freemius's servers. This is the last untested part of the product.
 
 ## 4. Release zip
 
-Not solved. `.distignore` is a denylist, so a hand-made zip currently ships
-`CLAUDE.md`, `.gitattributes`, `.idea/`, `.claude/`, and anything else new in
-the directory. A subscriber CSV sat one zip away from customers until 2026-08-01.
+Done — build with `./bin/build-release.sh`, which writes
+`build/counterhand-mcp-for-woocommerce-<version>.zip` (372 files, 1.3 MB).
 
-Build from `git ls-files` (allowlist) intersected with `.distignore`, or install
-`wp dist-archive` and keep `.distignore` exhaustive. Verify the zip contents
-before the first upload.
+The file list comes from `git ls-files` with `.distignore` applied on top, so an
+untracked file cannot be packaged even if `.distignore` never names it. Verified
+by dropping a stray `.csv` in the plugin root and confirming it stayed out.
+
+The build refuses to run when tracked files have uncommitted changes, or when
+the plugin header and `readme.txt` stable tag disagree, and it asserts the five
+files the plugin cannot boot without.
+
+- [ ] Upload the zip to Freemius (Deployment → Add version).
 
 ## Known-good state
 

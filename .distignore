@@ -1,15 +1,37 @@
+# Files that must not reach a customer's plugins directory.
+#
+# This is a denylist, so it only excludes what someone thought to name here.
+# bin/build-release.sh therefore builds from git's tracked files and applies
+# this on top: anything untracked cannot ship even if it is missing below.
+
+# Version control and editor state
 .git
 .gitignore
+.gitattributes
 .distignore
+.idea
+.vscode
+.claude
 .DS_Store
-.phpunit.cache
+
+# Dependencies and build output
 vendor
 node_modules
+build
+dist
+
+# Development tooling and tests
 tests
+bin
 composer.json
 composer.lock
 phpcs.xml.dist
 phpstan.neon.dist
 phpunit.xml.dist
-build
-dist
+.phpunit.cache
+.phpunit.result.cache
+freemius/composer.json
+
+# Internal documentation; readme.txt is the customer-facing one
+CLAUDE.md
+RELEASE-CHECKLIST.md

@@ -16,9 +16,10 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class OpenAiCompatibleProvider extends HttpProvider {
 
+	/** @param \Closure(): string $label */
 	public function __construct(
 		private string $id,
-		private string $label,
+		private \Closure $label,
 		private string $default_base_url,
 		private array $models,
 		private bool $base_url_required,
@@ -29,7 +30,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 	public static function openai(): self {
 		return new self(
 			id: 'openai',
-			label: __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
+			label: static fn (): string => __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'https://api.openai.com/v1',
 			models: [
 				'gpt-5'      => 'GPT-5',
@@ -48,7 +49,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 	public static function google(): self {
 		return new self(
 			id: 'google',
-			label: __( 'Gemini (Google)', 'counterhand-mcp-for-woocommerce' ),
+			label: static fn (): string => __( 'Gemini (Google)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/',
 			// Google renames models often; the picker is a starting point and
 			// the field accepts whatever the account actually offers.
@@ -65,7 +66,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 	public static function ollama(): self {
 		return new self(
 			id: 'ollama',
-			label: __( 'Ollama (on this server)', 'counterhand-mcp-for-woocommerce' ),
+			label: static fn (): string => __( 'Ollama (on this server)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'http://localhost:11434/v1',
 			models: [],
 			base_url_required: false,
@@ -77,7 +78,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 	public static function compatible(): self {
 		return new self(
 			id: 'openai_compatible',
-			label: __( 'Custom OpenAI-compatible endpoint', 'counterhand-mcp-for-woocommerce' ),
+			label: static fn (): string => __( 'Custom OpenAI-compatible endpoint', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: '',
 			models: [],
 			base_url_required: true,
@@ -90,7 +91,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 	}
 
 	public function label(): string {
-		return $this->label;
+		return ( $this->label )();
 	}
 
 	public function default_models(): array {

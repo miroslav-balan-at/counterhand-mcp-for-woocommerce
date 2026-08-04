@@ -39,7 +39,25 @@ Turn `WP_FS__DEV_MODE` **off** when finished: it switches on SDK logging, which
 writes to the database and the console log.
 <https://freemius.com/help/documentation/wordpress-sdk/testing/>
 
-## 3. Activation test
+## 3. Activation test — the last untested path
+
+Verified so far on a real store, unlicensed:
+
+- The plugin activates with no fatal; the SDK accepts product `36351`.
+- `has_paid_plan()` is true, so plan `60358` is visible to the plugin.
+- `can_use_premium_code()` is false, the MCP route is never registered, and
+  `/wp-json/counterhand/v1/mcp` answers `404 rest_no_route`.
+- WordPress and the SDK both report version 1.0.0.
+
+Not yet verified, and all of it waits on one licence:
+
+- **Updates.** While `is_registered()` is false the SDK attaches no updater, so
+  an update check contacts only `api.wordpress.org` and the plugin appears in
+  neither `response` nor `no_update`. Nothing serves its updates yet. That is
+  expected before opt-in, but it means the update path has never once run —
+  and this slug is not on wordpress.org, so if Freemius ever fails to attach,
+  the failure is silent rather than loud.
+- The licensed side of the gate: nobody has seen the endpoint answer.
 
 The licence gate and updater have unit tests but have never run against
 Freemius's servers. This is the last untested part of the product.

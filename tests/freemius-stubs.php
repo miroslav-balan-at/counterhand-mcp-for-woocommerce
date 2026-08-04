@@ -1,6 +1,6 @@
 <?php
 /**
- * Minimal declarations for the bundled Freemius SDK.
+ * Minimal declarations for the bundled Freemius SDK, for both tests and PHPStan.
  *
  * The SDK ships in /freemius, which is outside the analysed paths — it is
  * vendor code we neither wrote nor lint, and pulling it into the baseline would

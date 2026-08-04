@@ -35,3 +35,6 @@ freemius/composer.json
 # Internal documentation; readme.txt is the customer-facing one
 CLAUDE.md
 RELEASE-CHECKLIST.md
+
+# Generated for the marketing site; customers have no use for it
+tool-surface.json

@@ -1,0 +1,104 @@
+{
+    "groups": [
+        {
+            "slug": "taxonomy",
+            "label": "Categories & tags",
+            "description": "How the catalog is organised: categories, tags, brands, attributes and shipping classes.",
+            "tools": 25
+        },
+        {
+            "slug": "shipping",
+            "label": "Shipping",
+            "description": "Shipping zones, the regions they cover and the methods offered in each.",
+            "tools": 14
+        },
+        {
+            "slug": "orders",
+            "label": "Orders",
+            "description": "Orders, totals, line items and customer addresses.",
+            "tools": 10
+        },
+        {
+            "slug": "content",
+            "label": "Posts & pages",
+            "description": "WordPress blog posts and pages. Products and orders are not affected.",
+            "tools": 10
+        },
+        {
+            "slug": "products",
+            "label": "Products",
+            "description": "Names, prices, stock, categories and images.",
+            "tools": 9
+        },
+        {
+            "slug": "reports",
+            "label": "Reports",
+            "description": "Sales totals, best sellers and store statistics.",
+            "tools": 8
+        },
+        {
+            "slug": "coupons",
+            "label": "Coupons",
+            "description": "Discount codes, their amounts, limits and expiry dates.",
+            "tools": 8
+        },
+        {
+            "slug": "taxes",
+            "label": "Taxes",
+            "description": "Tax rates by country and region, and the tax classes products are assigned to.",
+            "tools": 8
+        },
+        {
+            "slug": "data",
+            "label": "Reference data",
+            "description": "WooCommerce's own reference lists of countries, regions and currencies.",
+            "tools": 7
+        },
+        {
+            "slug": "variations",
+            "label": "Variations",
+            "description": "The size, colour and other variants of a variable product, each with its own price and stock.",
+            "tools": 5
+        },
+        {
+            "slug": "reviews",
+            "label": "Reviews",
+            "description": "Customer reviews and ratings, including reviewer names and email addresses.",
+            "tools": 5
+        },
+        {
+            "slug": "refunds",
+            "label": "Refunds",
+            "description": "Refunds against orders. Creating one moves money back to the customer.",
+            "tools": 4
+        },
+        {
+            "slug": "settings",
+            "label": "Store settings",
+            "description": "Store configuration values, including currency, tax behaviour and checkout options.",
+            "tools": 4
+        },
+        {
+            "slug": "system",
+            "label": "System & maintenance",
+            "description": "Environment report and WooCommerce's maintenance tools. The most dangerous group here.",
+            "tools": 4
+        },
+        {
+            "slug": "customers",
+            "label": "Customers",
+            "description": "Registered customers and their addresses. Guest buyers appear under Orders.",
+            "tools": 3
+        },
+        {
+            "slug": "gateways",
+            "label": "Payment gateways",
+            "description": "Which payment methods exist and whether each is enabled. Credentials are never returned.",
+            "tools": 3
+        }
+    ],
+    "totals": {
+        "groups": 16,
+        "tools": 127
+    }
+}

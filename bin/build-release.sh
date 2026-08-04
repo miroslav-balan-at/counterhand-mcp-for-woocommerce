@@ -65,6 +65,13 @@ if [ -n "$( git status --porcelain --untracked-files=no )" ]; then
 	exit 1
 fi
 
+# The marketing site reads tool-surface.json, so a stale one advertises a tool
+# count the plugin no longer has.
+if ! diff -q <( php bin/tool-surface.php ) tool-surface.json >/dev/null 2>&1; then
+	echo 'build: tool-surface.json is stale — run `php bin/tool-surface.php > tool-surface.json`' >&2
+	exit 1
+fi
+
 readonly BUILD="$ROOT/build"
 readonly STAGE="$BUILD/$SLUG"
 

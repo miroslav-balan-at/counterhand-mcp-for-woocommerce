@@ -163,15 +163,11 @@ final readonly class AuthorizeEndpoint {
 	}
 
 	private function render_consent( AuthorizationRequest $request, ClientMetadata $client ): void {
-		/*
-		 * Offered = requested ∩ published. The remainder is shown to the admin
-		 * as switched off — with where to switch it on — rather than dropped
-		 * silently: an admin who approves a request that quietly lost half its
-		 * scopes would meet the gap later as missing tools with no explanation.
-		 */
+		// The screen gets everything the client asked for — withheld scopes
+		// render as disabled rows — while the replay field below carries only
+		// what the store can actually grant.
 		$requested = $request->offered_scopes();
 		$scopes    = $this->published->grantable( $requested );
-		$withheld  = $this->published->withheld( $requested );
 
 		$this->page->render(
 			FlowPage::STATE_CONSENT,
@@ -179,8 +175,7 @@ final readonly class AuthorizeEndpoint {
 			[
 				'client_name'  => $client->client_name,
 				'client_host'  => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'       => ConsentScopes::from( $scopes ),
-				'withheld'     => $withheld,
+				'scopes'       => ConsentScopes::from( $requested, $this->published ),
 				'settings_url' => AdminScreen::Settings->url(),
 				'hidden'       => [
 					'client_id'             => $request->client_id,

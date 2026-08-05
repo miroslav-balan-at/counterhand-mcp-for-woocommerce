@@ -344,6 +344,32 @@ body.counterhand-flow {
 	border: 1px solid var(--counterhand-yellow-40);
 }
 
+/*
+ * A withheld scope stays visible but reads as inert: no hover invitation, no
+ * accent, and the row explains itself in place of the checkbox doing anything.
+ */
+.counterhand-scope--off {
+	cursor: default;
+	opacity: .65;
+}
+
+.counterhand-scope--off:hover {
+	border-color: var(--counterhand-gray-5);
+	background: transparent;
+}
+
+.counterhand-scope__off-hint {
+	font-size: 12px;
+	color: var(--counterhand-gray-60);
+	font-style: italic;
+}
+
+.counterhand-tag--off {
+	background: var(--counterhand-gray-0);
+	color: var(--counterhand-gray-60);
+	border: 1px solid var(--counterhand-gray-5);
+}
+
 /* Notices ---------------------------------------------------------------- */
 
 .counterhand-notice {

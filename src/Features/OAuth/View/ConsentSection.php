@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth\View;
 
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolSection;
 
@@ -27,13 +28,13 @@ final readonly class ConsentSection {
 	 * Null when nothing the client asked for falls in this section, which is
 	 * how the screen shows only the sections that are actually in play.
 	 *
-	 * @param  list<ApiScope> $offered
+	 * @param  list<ApiScope> $requested
 	 */
-	public static function from( ToolSection $section, array $offered ): ?self {
+	public static function from( ToolSection $section, array $requested, PublishedScopes $published ): ?self {
 		$groups = array_values(
 			array_filter(
 				array_map(
-					static fn ( $group ): ?ConsentGroup => ConsentGroup::from( $group, $offered ),
+					static fn ( $group ): ?ConsentGroup => ConsentGroup::from( $group, $requested, $published ),
 					$section->groups()
 				)
 			)

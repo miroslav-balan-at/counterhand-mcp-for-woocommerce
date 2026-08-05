@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth\View;
 
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolSection;
 
@@ -23,18 +24,48 @@ final readonly class ConsentScopes {
 		public array $sections,
 	) {}
 
-	/** @param list<ApiScope> $offered */
-	public static function from( array $offered ): self {
+	/** @param list<ApiScope> $requested */
+	public static function from( array $requested, PublishedScopes $published ): self {
 		return new self(
 			array_values(
 				array_filter(
 					array_map(
-						static fn ( ToolSection $section ): ?ConsentSection => ConsentSection::from( $section, $offered ),
+						static fn ( ToolSection $section ): ?ConsentSection => ConsentSection::from( $section, $requested, $published ),
 						ToolSection::cases()
 					)
 				)
 			)
 		);
+	}
+
+	/** False when the store withholds everything the client asked for. */
+	public function has_grantable(): bool {
+		foreach ( $this->sections as $section ) {
+			foreach ( $section->groups as $group ) {
+				foreach ( $group->scopes as $scope ) {
+					if ( $scope->available ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/** Whether any row carries a disabled box, so the hint under the legend earns its place. */
+	public function has_withheld(): bool {
+		foreach ( $this->sections as $section ) {
+			foreach ( $section->groups as $group ) {
+				foreach ( $group->scopes as $scope ) {
+					if ( ! $scope->available ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/** Drives the "this app can change your store" warning above the buttons. */

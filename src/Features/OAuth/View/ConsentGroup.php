@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth\View;
 
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolGroup;
 
@@ -20,44 +21,52 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ConsentGroup {
 
+	/** @param list<ConsentScope> $scopes */
 	private function __construct(
 		public ToolGroup $group,
-		public ?ApiScope $read,
-		public ?ApiScope $write,
+		public array $scopes,
 	) {}
 
 	/**
 	 * Null when the client asked for neither of this group's scopes — the row
 	 * is then absent rather than rendered empty.
 	 *
-	 * @param  list<ApiScope> $offered
+	 * @param  list<ApiScope> $requested
 	 */
-	public static function from( ToolGroup $group, array $offered ): ?self {
-		$write = $group->write_scope();
+	public static function from( ToolGroup $group, array $requested, PublishedScopes $published ): ?self {
+		$scopes = [];
 
-		$read  = in_array( $group->read_scope(), $offered, true ) ? $group->read_scope() : null;
-		$write = null !== $write && in_array( $write, $offered, true ) ? $write : null;
+		foreach ( [ $group->read_scope(), $group->write_scope() ] as $scope ) {
+			if ( null === $scope || ! in_array( $scope, $requested, true ) ) {
+				continue;
+			}
 
-		if ( null === $read && null === $write ) {
+			$available = $published->includes( $scope );
+
+			$scopes[] = new ConsentScope(
+				scope: $scope,
+				available: $available,
+				// Advanced groups never start ticked: granting one should take
+				// a deliberate click, not the absence of an untick.
+				pre_checked: $available && ! $group->section()->is_advanced(),
+			);
+		}
+
+		if ( [] === $scopes ) {
 			return null;
 		}
 
-		return new self( $group, $read, $write );
+		return new self( $group, $scopes );
 	}
 
-	/**
-	 * Whether the boxes on this row start ticked.
-	 *
-	 * Advanced groups never do, even when the client explicitly requested them:
-	 * they change how the store charges money or run maintenance routines, so
-	 * granting one should take a deliberate click rather than the absence of an
-	 * untick.
-	 */
-	public function pre_checked(): bool {
-		return ! $this->group->section()->is_advanced();
-	}
-
+	/** Only a grantable write warrants the "can change your store" warning. */
 	public function has_write(): bool {
-		return null !== $this->write;
+		foreach ( $this->scopes as $scope ) {
+			if ( $scope->available && $scope->scope->is_write() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -6,7 +6,6 @@
  *     @type string                                              $client_name
  *     @type string                                              $client_host
  *     @type \Counterhand\Features\OAuth\View\ConsentScopes      $scopes
- *     @type list<\Counterhand\Features\Tokens\Domain\ApiScope>    $withheld
  *     @type string                                              $settings_url
  *     @type array<string, string>                               $hidden
  * }
@@ -50,31 +49,6 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 		<code><?php echo esc_html( $context['client_host'] ); ?></code>
 	</p>
 
-	<?php if ( [] !== $counterhand_withheld ) : ?>
-		<div class="counterhand-notice counterhand-notice--muted">
-			<p>
-				<?php
-				printf(
-					/* translators: 1: name of the AI application, 2: list of permissions it asked for that the store has switched off */
-					esc_html__( '%1$s also asked for: %2$s. Those areas are switched off for this store, so they are not part of this approval.', 'counterhand-mcp-for-woocommerce' ),
-					esc_html( $counterhand_client_name ),
-					esc_html( implode( ', ', array_map( static fn ( $counterhand_scope ) => $counterhand_scope->label(), $counterhand_withheld ) ) )
-				);
-				?>
-			</p>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag */
-					esc_html__( 'To offer them, switch the areas on under %1$sCounterhand MCP → Settings%2$s — then connect the app again, because a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
-					'<a href="' . esc_url( $counterhand_settings_url ) . '" target="_blank" rel="noopener">',
-					'</a>'
-				);
-				?>
-			</p>
-		</div>
-	<?php endif; ?>
-
 	<form method="post" class="counterhand-form">
 		<?php
 		wp_nonce_field( 'counterhand_authorize' );
@@ -85,9 +59,10 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 
 		<?php if ( $counterhand_offers_nothing ) : ?>
 			<p class="counterhand-notice counterhand-notice--warning">
-				<?php esc_html_e( 'Nothing this app asked for is currently switched on for this store, so there is nothing to approve.', 'counterhand-mcp-for-woocommerce' ); ?>
+				<?php esc_html_e( 'Nothing this app asked for is currently switched on for this store, so there is nothing to approve yet.', 'counterhand-mcp-for-woocommerce' ); ?>
 			</p>
-		<?php else : ?>
+		<?php endif; ?>
+
 		<fieldset class="counterhand-scopes">
 			<legend class="counterhand-scopes__legend"><?php esc_html_e( 'Choose what it may do', 'counterhand-mcp-for-woocommerce' ); ?></legend>
 
@@ -114,11 +89,23 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 
 		<p class="counterhand-hint"><?php esc_html_e( 'Uncheck anything you would rather not grant. You can revoke the whole connection later.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
+		<?php if ( $counterhand_scopes->has_withheld() ) : ?>
+			<p class="counterhand-hint">
+				<?php
+				printf(
+					/* translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag */
+					esc_html__( 'Grayed-out areas are switched off for this store. Enable them under %1$sCounterhand MCP → Settings%2$s, then connect the app again — a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
+					'<a href="' . esc_url( $counterhand_settings_url ) . '" target="_blank" rel="noopener">',
+					'</a>'
+				);
+				?>
+			</p>
+		<?php endif; ?>
+
 			<?php if ( $counterhand_has_write ) : ?>
 			<p class="counterhand-notice counterhand-notice--warning">
 				<?php esc_html_e( 'This request includes permission to change store data. New products are always created as drafts for you to review.', 'counterhand-mcp-for-woocommerce' ); ?>
 			</p>
-		<?php endif; ?>
 		<?php endif; ?>
 
 		<?php

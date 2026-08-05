@@ -28,8 +28,8 @@ version="$( grep -m1 -E '^[[:space:]]*\*[[:space:]]*Version:' "$SLUG.php" | tr -
 
 # A WordPress plugin carries its version in several places and nothing keeps
 # them in step. The header is what WordPress and Freemius read for update
-# checks, so a stale CTRH_VERSION or Stable tag is a silent bug rather than a
-# loud one — check every surface against the header.
+# checks, so a stale constant or Stable tag is a silent bug rather than a loud
+# one — check every surface against the header.
 check_version() {
 	local label="$1" found="$2"
 
@@ -47,8 +47,8 @@ check_version() {
 check_version 'readme.txt Stable tag' \
 	"$( grep -m1 -i '^Stable tag:' readme.txt | tr -d '[:space:]' | cut -d: -f2 )"
 
-check_version 'the CTRH_VERSION constant' \
-	"$( grep -m1 -E "define\(\s*'CTRH_VERSION'" "$SLUG.php" | sed -E "s/.*'CTRH_VERSION'[^']*'([^']+)'.*/\1/" )"
+check_version 'the COUNTERHAND_VERSION constant' \
+	"$( grep -m1 -E "define\(\s*'COUNTERHAND_VERSION'" "$SLUG.php" | sed -E "s/.*'COUNTERHAND_VERSION'[^']*'([^']+)'.*/\1/" )"
 
 # Scoped to the Changelog section: readme.txt uses `= ... =` for FAQ and feature
 # headings too, and the first one in the file is prose.

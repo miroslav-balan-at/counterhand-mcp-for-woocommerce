@@ -10,16 +10,16 @@
  */
 
 return array(
-  'context' => 
-  array(
-    'description' => 'Geltungsbereich der Anfrage; ermittelt in der Antwort vorhandene Felder.',
-    'type' => 'string',
-    'sanitize_callback' => 'sanitize_key',
-    'validate_callback' => 'rest_validate_request_arg',
-    'enum' => 
-    array(
-      0 => 'view',
-    ),
-    'default' => 'view',
-  ),
+	'context' =>
+	array(
+		'description'       => 'Geltungsbereich der Anfrage; ermittelt in der Antwort vorhandene Felder.',
+		'type'              => 'string',
+		'sanitize_callback' => 'sanitize_key',
+		'validate_callback' => 'rest_validate_request_arg',
+		'enum'              =>
+		array(
+			0 => 'view',
+		),
+		'default'           => 'view',
+	),
 );

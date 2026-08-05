@@ -62,7 +62,7 @@ final class ScopeSummaryTest extends TestCase {
 	 * Catalogue order, not grant order, so the same token never reads two
 	 * different ways and a reissued token does not look like it changed.
 	 */
-	public function test_grants_come_back_in_catalogue_order( ): void {
+	public function test_grants_come_back_in_catalogue_order(): void {
 		$summary = $this->summary( 'coupons:read', 'products:read', 'orders:read' );
 
 		$this->assertSame(

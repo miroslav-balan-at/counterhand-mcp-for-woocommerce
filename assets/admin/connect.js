@@ -11,12 +11,12 @@
 ( function () {
 	'use strict';
 
-	var config = window.ctrhConnect || {};
+	var config = window.counterhandConnect || {};
 	var i18n = config.i18n || {};
 
-	var chip = document.getElementById( 'ctrh-readiness' );
-	var detail = document.getElementById( 'ctrh-readiness-detail' );
-	var recheck = document.getElementById( 'ctrh-recheck' );
+	var chip = document.getElementById( 'counterhand-readiness' );
+	var detail = document.getElementById( 'counterhand-readiness-detail' );
+	var recheck = document.getElementById( 'counterhand-recheck' );
 
 	function post( action, extra ) {
 		var body = new URLSearchParams();
@@ -44,8 +44,8 @@
 			return;
 		}
 
-		chip.className = 'ctrh-chip' + ( state ? ' ctrh-chip--' + state : '' );
-		chip.querySelector( '.ctrh-chip__text' ).textContent = text;
+		chip.className = 'counterhand-chip' + ( state ? ' counterhand-chip--' + state : '' );
+		chip.querySelector( '.counterhand-chip__text' ).textContent = text;
 	}
 
 	/**
@@ -55,21 +55,21 @@
 	 */
 	function markCloudUnavailable( reason ) {
 		document.querySelectorAll( '[data-needs-public="1"]' ).forEach( function ( group ) {
-			group.querySelectorAll( '.ctrh-card--collapsible' ).forEach( function ( card ) {
-				if ( card.querySelector( '.ctrh-unavailable' ) ) {
+			group.querySelectorAll( '.counterhand-card--collapsible' ).forEach( function ( card ) {
+				if ( card.querySelector( '.counterhand-unavailable' ) ) {
 					return;
 				}
 
 				var note = document.createElement( 'p' );
-				note.className = 'ctrh-field__hint ctrh-unavailable';
+				note.className = 'counterhand-field__hint counterhand-unavailable';
 				note.textContent = reason;
 
-				var body = card.querySelector( '.ctrh-card__body' );
+				var body = card.querySelector( '.counterhand-card__body' );
 				if ( body ) {
 					body.insertBefore( note, body.firstChild );
 				}
 
-				card.classList.add( 'ctrh-card--muted' );
+				card.classList.add( 'counterhand-card--muted' );
 			} );
 		} );
 	}
@@ -81,7 +81,7 @@
 
 		setChip( 'pending', i18n.checking || 'Checking the store…' );
 
-		post( 'ctrh_preflight' )
+		post( 'counterhand_preflight' )
 			.then( function ( payload ) {
 				var data = ( payload && payload.data ) || {};
 				var status = data.status || 'error';
@@ -107,21 +107,21 @@
 	var watchUntil = 0;
 
 	function cardFor( clientId ) {
-		return document.querySelector( '.ctrh-card--collapsible[data-client="' + clientId + '"]' );
+		return document.querySelector( '.counterhand-card--collapsible[data-client="' + clientId + '"]' );
 	}
 
 	function showConnected( clientId, label ) {
 		var card = cardFor( clientId );
-		if ( ! card || card.querySelector( '.ctrh-connected' ) ) {
+		if ( ! card || card.querySelector( '.counterhand-connected' ) ) {
 			return;
 		}
 
 		var badge = document.createElement( 'span' );
-		badge.className = 'ctrh-connected';
+		badge.className = 'counterhand-connected';
 		badge.textContent = '✓ ' + ( i18n.connected || 'Connected' );
 		badge.title = label || '';
 
-		var head = card.querySelector( '.ctrh-card__head' );
+		var head = card.querySelector( '.counterhand-card__head' );
 		if ( head ) {
 			head.appendChild( badge );
 		}
@@ -133,7 +133,7 @@
 			return;
 		}
 
-		var existing = card.querySelector( '.ctrh-waiting' );
+		var existing = card.querySelector( '.counterhand-waiting' );
 
 		if ( ! waiting ) {
 			if ( existing ) {
@@ -147,16 +147,16 @@
 		}
 
 		var note = document.createElement( 'span' );
-		note.className = 'ctrh-chip ctrh-chip--pending ctrh-waiting';
-		note.innerHTML = '<span class="ctrh-chip__dot" aria-hidden="true"></span>';
+		note.className = 'counterhand-chip counterhand-chip--pending counterhand-waiting';
+		note.innerHTML = '<span class="counterhand-chip__dot" aria-hidden="true"></span>';
 
 		var text = document.createElement( 'span' );
-		text.className = 'ctrh-chip__text';
+		text.className = 'counterhand-chip__text';
 		text.setAttribute( 'role', 'status' );
 		text.textContent = i18n.waiting || 'Waiting for the app to connect…';
 		note.appendChild( text );
 
-		var body = card.querySelector( '.ctrh-card__body' );
+		var body = card.querySelector( '.counterhand-card__body' );
 		if ( body ) {
 			body.insertBefore( note, body.firstChild );
 		}
@@ -191,7 +191,7 @@
 				return;
 			}
 
-			post( 'ctrh_connection_status', { since: String( since ) } )
+			post( 'counterhand_connection_status', { since: String( since ) } )
 				.then( function ( payload ) {
 					var data = ( payload && payload.data ) || {};
 
@@ -208,7 +208,7 @@
 	}
 
 	document.addEventListener( 'click', function ( event ) {
-		var trigger = event.target.closest( '.ctrh-copy-open' );
+		var trigger = event.target.closest( '.counterhand-copy-open' );
 		if ( ! trigger ) {
 			return;
 		}
@@ -216,8 +216,8 @@
 		// The shared copy helper in tokens.js already handles the clipboard,
 		// including the non-secure-context fallback; the link then follows
 		// normally, so the endpoint is on the clipboard when the page lands.
-		if ( window.ctrhCopyText ) {
-			window.ctrhCopyText( trigger.dataset.copy || '' );
+		if ( window.counterhandCopyText ) {
+			window.counterhandCopyText( trigger.dataset.copy || '' );
 		}
 
 		watchForConnection( trigger.dataset.client, Math.floor( Date.now() / 1000 ) );

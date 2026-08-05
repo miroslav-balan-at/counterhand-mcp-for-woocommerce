@@ -64,14 +64,14 @@ final readonly class ConnectReadiness {
 	/**
 	 * TLS is not verified on a local site's loopback self-checks: dev certs are
 	 * routinely unverifiable and would mask the real "this store is local"
-	 * answer. Public sites verify; ctrh_verify_sslverify overrides both.
+	 * answer. Public sites verify; counterhand_verify_sslverify overrides both.
 	 *
 	 * @return array{timeout: int, sslverify: bool}
 	 */
 	private function http_args( ?string $local_problem ): array {
 		return [
 			'timeout'   => 15,
-			'sslverify' => (bool) apply_filters( 'ctrh_verify_sslverify', null === $local_problem ),
+			'sslverify' => (bool) apply_filters( 'counterhand_verify_sslverify', null === $local_problem ),
 		];
 	}
 

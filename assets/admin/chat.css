@@ -7,7 +7,7 @@
  * chat is the page rather than a widget sitting on it.
  */
 
-.ctrh-chat {
+.counterhand-chat {
 	max-width: 1100px;
 }
 
@@ -15,7 +15,7 @@
  * The chat owns the viewport: the wrap loses WordPress's bottom padding so the
  * panel can be sized against the window instead of stretching the page.
  */
-.ctrh-wrap--chat {
+.counterhand-wrap--chat {
 	margin-right: 20px;
 	padding-bottom: 0;
 }
@@ -27,16 +27,16 @@
  * and the composer is always in reach. Everything inside flexes against this
  * height rather than adding to it.
  */
-.ctrh-chat__panel {
+.counterhand-chat__panel {
 	display: flex;
 	flex-direction: column;
 	height: calc(100vh - 210px);
 	min-height: 420px;
-	margin-top: var(--ctrh-gap);
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
-	border-radius: var(--ctrh-radius-card);
-	box-shadow: var(--ctrh-shadow-card);
+	margin-top: var(--counterhand-gap);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius-card);
+	box-shadow: var(--counterhand-shadow-card);
 	overflow: hidden;
 }
 
@@ -45,96 +45,96 @@
  * min-height:auto, which refuses to shrink below its content, so the log grew
  * past the panel and the page scrolled instead of the messages.
  */
-.ctrh-chat__log {
+.counterhand-chat__log {
 	flex: 1 1 auto;
 	min-height: 0;
 	overflow-y: auto;
 	overscroll-behavior: contain;
-	padding: var(--ctrh-pad) clamp(16px, 3vw, 28px);
-	background: var(--ctrh-surface-neutral);
+	padding: var(--counterhand-pad) clamp(16px, 3vw, 28px);
+	background: var(--counterhand-surface-neutral);
 	display: flex;
 	flex-direction: column;
-	gap: var(--ctrh-gap);
+	gap: var(--counterhand-gap);
 }
 
 /* Empty state ------------------------------------------------------------ */
 
-.ctrh-chat__empty {
+.counterhand-chat__empty {
 	margin: auto;
 	text-align: center;
 	max-width: 620px;
 }
 
-.ctrh-chat__empty-title {
+.counterhand-chat__empty-title {
 	font-size: 20px;
 	font-weight: 600;
-	color: var(--ctrh-text);
+	color: var(--counterhand-text);
 	margin: 0 0 6px;
 }
 
-.ctrh-chat__empty-hint {
+.counterhand-chat__empty-hint {
 	font-size: 14px;
-	color: var(--ctrh-text-muted);
-	margin: 0 0 var(--ctrh-gap-large);
+	color: var(--counterhand-text-muted);
+	margin: 0 0 var(--counterhand-gap-large);
 }
 
-.ctrh-chat__suggestions {
+.counterhand-chat__suggestions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 10px;
 	text-align: left;
 }
 
-.ctrh-chat__suggestion {
+.counterhand-chat__suggestion {
 	padding: 14px 16px;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
-	border-radius: var(--ctrh-radius-card);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius-card);
 	font-size: 14px;
 	line-height: 1.45;
-	color: var(--ctrh-text);
+	color: var(--counterhand-text);
 	text-align: left;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease, transform .15s ease;
 }
 
-.ctrh-chat__suggestion:hover {
-	border-color: var(--ctrh-accent);
-	background: var(--ctrh-accent-surface);
+.counterhand-chat__suggestion:hover {
+	border-color: var(--counterhand-accent);
+	background: var(--counterhand-accent-surface);
 	transform: translateY(-1px);
 }
 
-.ctrh-chat__suggestion:focus-visible {
-	outline: 2px solid var(--ctrh-accent);
+.counterhand-chat__suggestion:focus-visible {
+	outline: 2px solid var(--counterhand-accent);
 	outline-offset: 1px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.ctrh-chat__suggestion {
+	.counterhand-chat__suggestion {
 		transition: none;
 	}
 
-	.ctrh-chat__suggestion:hover {
+	.counterhand-chat__suggestion:hover {
 		transform: none;
 	}
 }
 
 /* Messages --------------------------------------------------------------- */
 
-.ctrh-msg {
+.counterhand-msg {
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
 	max-width: 78%;
 }
 
-.ctrh-msg--user {
+.counterhand-msg--user {
 	align-self: flex-end;
 	max-width: 72%;
 }
 
 /* The store's own mark, matching the avatar on the consent screen. */
-.ctrh-msg__avatar {
+.counterhand-msg__avatar {
 	width: 32px;
 	height: 32px;
 	flex: 0 0 auto;
@@ -144,40 +144,40 @@
 	justify-content: center;
 	border-radius: 8px;
 	overflow: hidden;
-	background: var(--ctrh-accent);
-	color: var(--ctrh-text-inverse);
+	background: var(--counterhand-accent);
+	color: var(--counterhand-text-inverse);
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
 }
 
-.ctrh-msg__avatar img {
+.counterhand-msg__avatar img {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
-	background: var(--ctrh-surface);
+	background: var(--counterhand-surface);
 }
 
-.ctrh-msg__main {
+.counterhand-msg__main {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 	min-width: 0;
 }
 
-.ctrh-msg--user .ctrh-msg__main {
+.counterhand-msg--user .counterhand-msg__main {
 	align-items: flex-end;
 }
 
-.ctrh-msg__role {
+.counterhand-msg__role {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-text-subtle);
+	color: var(--counterhand-text-subtle);
 }
 
-.ctrh-msg__body {
+.counterhand-msg__body {
 	padding: 14px 18px;
 	border-radius: 14px;
 	font-size: 15px;
@@ -185,72 +185,72 @@
 	word-break: break-word;
 }
 
-.ctrh-msg--user .ctrh-msg__body {
-	background: var(--ctrh-accent);
-	color: var(--ctrh-text-inverse);
+.counterhand-msg--user .counterhand-msg__body {
+	background: var(--counterhand-accent);
+	color: var(--counterhand-text-inverse);
 	border-bottom-right-radius: 4px;
 }
 
-.ctrh-msg--assistant .ctrh-msg__body {
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
-	color: var(--ctrh-text);
+.counterhand-msg--assistant .counterhand-msg__body {
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	color: var(--counterhand-text);
 	border-bottom-left-radius: 4px;
 }
 
-.ctrh-msg--error .ctrh-msg__body {
-	background: var(--ctrh-error-surface);
-	border-color: var(--ctrh-error);
-	color: var(--ctrh-error-text);
+.counterhand-msg--error .counterhand-msg__body {
+	background: var(--counterhand-error-surface);
+	border-color: var(--counterhand-error);
+	color: var(--counterhand-error-text);
 }
 
 /* Formatted answer content ----------------------------------------------- */
 
-.ctrh-msg__body p {
+.counterhand-msg__body p {
 	margin: 0 0 10px;
 }
 
-.ctrh-msg__body p:last-child,
-.ctrh-msg__body ul:last-child,
-.ctrh-msg__body ol:last-child,
-.ctrh-msg__body pre:last-child {
+.counterhand-msg__body p:last-child,
+.counterhand-msg__body ul:last-child,
+.counterhand-msg__body ol:last-child,
+.counterhand-msg__body pre:last-child {
 	margin-bottom: 0;
 }
 
-.ctrh-msg__body ul,
-.ctrh-msg__body ol {
+.counterhand-msg__body ul,
+.counterhand-msg__body ol {
 	margin: 0 0 10px;
 	padding-left: 22px;
 }
 
-.ctrh-msg__body li {
+.counterhand-msg__body li {
 	margin: 0 0 4px;
 }
 
-.ctrh-msg__body code {
+.counterhand-msg__body code {
 	padding: 1px 5px;
 	border-radius: 3px;
-	background: var(--ctrh-surface-sunken);
+	background: var(--counterhand-surface-sunken);
 	font-size: 13px;
 }
 
-.ctrh-msg--user .ctrh-msg__body code {
+.counterhand-msg--user .counterhand-msg__body code {
 	background: rgba(255, 255, 255, .2);
 	color: inherit;
 }
 
-.ctrh-msg__body pre {
+.counterhand-msg__body pre {
 	margin: 0 0 10px;
 	padding: 12px 14px;
 	overflow-x: auto;
-	background: var(--ctrh-surface-inverse);
-	color: var(--ctrh-text-inverse);
-	border-radius: var(--ctrh-radius);
+	background: var(--counterhand-surface-inverse);
+	color: var(--counterhand-text-inverse);
+	border-radius: var(--counterhand-radius);
 	font-size: 13px;
 	line-height: 1.5;
 }
 
-.ctrh-msg__body pre code {
+.counterhand-msg__body pre code {
 	padding: 0;
 	background: none;
 	color: inherit;
@@ -259,35 +259,35 @@
 
 /* Typing indicator ------------------------------------------------------- */
 
-.ctrh-typing {
+.counterhand-typing {
 	display: inline-flex;
 	gap: 5px;
 	padding: 18px;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
 	border-radius: 14px;
 	border-bottom-left-radius: 4px;
 	width: fit-content;
 }
 
-.ctrh-typing span {
+.counterhand-typing span {
 	width: 7px;
 	height: 7px;
 	border-radius: 50%;
-	background: var(--ctrh-border-strong);
-	animation: ctrh-bounce 1.2s infinite ease-in-out;
+	background: var(--counterhand-border-strong);
+	animation: counterhand-bounce 1.2s infinite ease-in-out;
 }
 
-.ctrh-typing span:nth-child(2) { animation-delay: .15s; }
-.ctrh-typing span:nth-child(3) { animation-delay: .3s; }
+.counterhand-typing span:nth-child(2) { animation-delay: .15s; }
+.counterhand-typing span:nth-child(3) { animation-delay: .3s; }
 
-@keyframes ctrh-bounce {
+@keyframes counterhand-bounce {
 	0%, 60%, 100% { transform: translateY(0); opacity: .5; }
 	30%           { transform: translateY(-4px); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.ctrh-typing span { animation: none; }
+	.counterhand-typing span { animation: none; }
 }
 
 /* Tool cards ------------------------------------------------------------- */
@@ -296,84 +296,84 @@
  * Deliberately quiet: a tool call is supporting evidence for the answer above
  * it, not a peer of the conversation, so it stays narrow, small and collapsed.
  */
-.ctrh-tool {
+.counterhand-tool {
 	align-self: flex-start;
 	max-width: 78%;
 	margin-left: 42px;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
-	border-left: 3px solid var(--ctrh-border-strong);
-	border-radius: var(--ctrh-radius);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-left: 3px solid var(--counterhand-border-strong);
+	border-radius: var(--counterhand-radius);
 	font-size: 13px;
 }
 
-.ctrh-tool--error {
-	border-left-color: var(--ctrh-error);
+.counterhand-tool--error {
+	border-left-color: var(--counterhand-error);
 }
 
-.ctrh-tool__summary {
+.counterhand-tool__summary {
 	display: flex;
 	align-items: center;
-	gap: var(--ctrh-gap-small);
+	gap: var(--counterhand-gap-small);
 	padding: 8px 12px;
 	cursor: pointer;
 	list-style: none;
-	color: var(--ctrh-text-muted);
+	color: var(--counterhand-text-muted);
 }
 
-.ctrh-tool__summary::-webkit-details-marker {
+.counterhand-tool__summary::-webkit-details-marker {
 	display: none;
 }
 
-.ctrh-tool__summary:focus-visible {
-	outline: 2px solid var(--ctrh-accent);
+.counterhand-tool__summary:focus-visible {
+	outline: 2px solid var(--counterhand-accent);
 	outline-offset: -2px;
 }
 
-.ctrh-tool__icon {
-	color: var(--ctrh-success);
+.counterhand-tool__icon {
+	color: var(--counterhand-success);
 	font-weight: 700;
 }
 
-.ctrh-tool--error .ctrh-tool__icon {
-	color: var(--ctrh-error);
+.counterhand-tool--error .counterhand-tool__icon {
+	color: var(--counterhand-error);
 }
 
-.ctrh-tool__name {
+.counterhand-tool__name {
 	font-size: 12px;
-	background: var(--ctrh-surface-sunken);
-	color: var(--ctrh-text);
+	background: var(--counterhand-surface-sunken);
+	color: var(--counterhand-text);
 	padding: 2px 6px;
 	border-radius: 3px;
 }
 
-.ctrh-tool__hint {
-	color: var(--ctrh-text-subtle);
+.counterhand-tool__hint {
+	color: var(--counterhand-text-subtle);
 	font-size: 12px;
 }
 
-.ctrh-tool__body {
+.counterhand-tool__body {
 	padding: 0 12px 12px;
-	border-top: 1px solid var(--ctrh-surface-sunken);
+	border-top: 1px solid var(--counterhand-surface-sunken);
 }
 
-.ctrh-tool__label {
+.counterhand-tool__label {
 	margin: 10px 0 4px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-text-subtle);
+	color: var(--counterhand-text-subtle);
 }
 
-.ctrh-tool__code {
+.counterhand-tool__code {
 	margin: 0;
 	padding: 10px 12px;
 	max-height: 260px;
 	overflow: auto;
-	background: var(--ctrh-surface-inverse);
-	color: var(--ctrh-text-inverse);
-	border-radius: var(--ctrh-radius);
+	background: var(--counterhand-surface-inverse);
+	color: var(--counterhand-text-inverse);
+	border-radius: var(--counterhand-radius);
 	font-size: 12px;
 	line-height: 1.5;
 	white-space: pre-wrap;
@@ -382,16 +382,16 @@
 
 /* Composer --------------------------------------------------------------- */
 
-.ctrh-chat__composer {
+.counterhand-chat__composer {
 	display: flex;
 	gap: 10px;
 	align-items: flex-end;
-	padding: var(--ctrh-pad-small);
-	border-top: 1px solid var(--ctrh-border);
-	background: var(--ctrh-surface);
+	padding: var(--counterhand-pad-small);
+	border-top: 1px solid var(--counterhand-border);
+	background: var(--counterhand-surface);
 }
 
-.ctrh-chat__input {
+.counterhand-chat__input {
 	flex: 1 1 auto;
 	resize: none;
 	/* Height comes from rows + padding so a wrapped placeholder is never cut. */
@@ -400,10 +400,10 @@
 	padding: 14px 18px;
 	font-size: 15px;
 	line-height: 1.6;
-	color: var(--ctrh-text);
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border-field);
-	border-radius: var(--ctrh-radius-card);
+	color: var(--counterhand-text);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border-field);
+	border-radius: var(--counterhand-radius-card);
 }
 
 /*
@@ -411,75 +411,75 @@
  * forced-colors mode — a transparent outline is what the system palette then
  * paints, so the field never ends up with no focus indicator at all.
  */
-.ctrh-chat__input:focus-visible {
-	border-color: var(--ctrh-accent);
-	box-shadow: 0 0 0 1px var(--ctrh-accent);
+.counterhand-chat__input:focus-visible {
+	border-color: var(--counterhand-accent);
+	box-shadow: 0 0 0 1px var(--counterhand-accent);
 	outline: 2px solid transparent;
 }
 
-.ctrh-chat__input:disabled {
-	background: var(--ctrh-surface-neutral);
+.counterhand-chat__input:disabled {
+	background: var(--counterhand-surface-neutral);
 }
 
-.ctrh-chat__send.button {
+.counterhand-chat__send.button {
 	flex: 0 0 auto;
 	align-self: stretch;
 	padding: 0 24px;
 	font-size: 14px;
-	border-radius: var(--ctrh-radius-card);
+	border-radius: var(--counterhand-radius-card);
 }
 
-.ctrh-chat__foot {
+.counterhand-chat__foot {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	gap: var(--ctrh-gap-small);
+	gap: var(--counterhand-gap-small);
 	flex-wrap: wrap;
 	margin: 0;
 	padding: 10px 14px;
-	border-top: 1px solid var(--ctrh-surface-sunken);
-	background: var(--ctrh-surface-neutral);
+	border-top: 1px solid var(--counterhand-surface-sunken);
+	background: var(--counterhand-surface-neutral);
 	font-size: 12px;
-	color: var(--ctrh-text-subtle);
+	color: var(--counterhand-text-subtle);
 }
 
-.ctrh-chat__foot-group {
+.counterhand-chat__foot-group {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
 }
 
-.ctrh-chat__hint {
-	color: var(--ctrh-text-subtle);
+.counterhand-chat__hint {
+	color: var(--counterhand-text-subtle);
 }
 
-.ctrh-chat__hint kbd {
+.counterhand-chat__hint kbd {
 	padding: 1px 5px;
-	border: 1px solid var(--ctrh-border);
+	border: 1px solid var(--counterhand-border);
 	border-bottom-width: 2px;
 	border-radius: 3px;
-	background: var(--ctrh-surface);
+	background: var(--counterhand-surface);
 	font-size: 11px;
 	font-family: inherit;
 }
 
 /* Model selector in the footer — switching never means leaving the tab. */
-.ctrh-chat__model {
+.counterhand-chat__model {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.ctrh-chat__model select {
+.counterhand-chat__model select {
 	font-size: 12px;
 	min-height: 28px;
 	max-width: 220px;
 }
 
-.ctrh-chat__note {
+.counterhand-chat__note {
 	max-width: 1100px;
-	margin-top: var(--ctrh-gap-small);
+	margin-top: var(--counterhand-gap-small);
 }
 
 /* Tool areas ------------------------------------------------------------- */
@@ -489,41 +489,41 @@
  * summary carries the tool count because that number is the only reason to open
  * it — everything else here is a checkbox list nobody needs twice.
  */
-.ctrh-chat-tools {
+.counterhand-chat-tools {
 	max-width: 1100px;
-	margin-top: var(--ctrh-gap-small);
+	margin-top: var(--counterhand-gap-small);
 }
 
-.ctrh-chat-tools__summary {
+.counterhand-chat-tools__summary {
 	display: flex;
 	align-items: center;
-	gap: var(--ctrh-gap-small);
+	gap: var(--counterhand-gap-small);
 	cursor: pointer;
 	padding: 10px 12px;
-	border: 1px solid var(--ctrh-gray-5);
-	border-radius: var(--ctrh-radius-card);
-	background: var(--ctrh-gray-0);
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius-card);
+	background: var(--counterhand-gray-0);
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 	transition: border-color .15s ease, background .15s ease;
 }
 
-.ctrh-chat-tools__summary:hover {
-	border-color: var(--ctrh-gray-20);
+.counterhand-chat-tools__summary:hover {
+	border-color: var(--counterhand-gray-20);
 }
 
-.ctrh-chat-tools[open] .ctrh-chat-tools__summary {
+.counterhand-chat-tools[open] .counterhand-chat-tools__summary {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
 
-.ctrh-chat-tools__count {
+.counterhand-chat-tools__count {
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--ctrh-gray-100);
+	color: var(--counterhand-gray-100);
 }
 
-.ctrh-chat-tools__summary-label {
+.counterhand-chat-tools__summary-label {
 	margin-right: auto;
 }
 
@@ -531,7 +531,7 @@
  * Pill, not a WP notice: it rides inside the summary line, so it has to read as
  * a status on that line rather than as a block interrupting it.
  */
-.ctrh-pill {
+.counterhand-pill {
 	display: inline-flex;
 	align-items: center;
 	padding: 2px 10px;
@@ -542,31 +542,31 @@
 	white-space: nowrap;
 }
 
-.ctrh-pill--warn {
-	background: var(--ctrh-warning-surface);
-	border-color: var(--ctrh-warning);
-	color: var(--ctrh-warning-text);
+.counterhand-pill--warn {
+	background: var(--counterhand-warning-surface);
+	border-color: var(--counterhand-warning);
+	color: var(--counterhand-warning-text);
 }
 
-.ctrh-pill--error {
-	background: var(--ctrh-error-surface);
-	border-color: var(--ctrh-error);
-	color: var(--ctrh-error-text);
+.counterhand-pill--error {
+	background: var(--counterhand-error-surface);
+	border-color: var(--counterhand-error);
+	color: var(--counterhand-error-text);
 }
 
-.ctrh-chat-tools__form {
-	padding: var(--ctrh-gap);
-	border: 1px solid var(--ctrh-gray-5);
+.counterhand-chat-tools__form {
+	padding: var(--counterhand-gap);
+	border: 1px solid var(--counterhand-gray-5);
 	border-top: 0;
-	border-radius: 0 0 var(--ctrh-radius-card) var(--ctrh-radius-card);
-	background: var(--ctrh-surface);
+	border-radius: 0 0 var(--counterhand-radius-card) var(--counterhand-radius-card);
+	background: var(--counterhand-surface);
 }
 
-.ctrh-chat-tools__lede {
+.counterhand-chat-tools__lede {
 	max-width: 640px;
-	margin: 0 0 var(--ctrh-gap);
+	margin: 0 0 var(--counterhand-gap);
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
 /*
@@ -574,27 +574,27 @@
  * the other option and a worse one: it would state the refusal without the
  * reason or the way out, so this carries both and keeps the box usable.
  */
-.ctrh-callout {
+.counterhand-callout {
 	display: flex;
-	gap: var(--ctrh-gap-small);
-	margin: 0 0 var(--ctrh-gap);
+	gap: var(--counterhand-gap-small);
+	margin: 0 0 var(--counterhand-gap);
 	padding: 12px 14px;
-	border-radius: var(--ctrh-radius-card);
+	border-radius: var(--counterhand-radius-card);
 }
 
-.ctrh-callout--warn {
-	background: var(--ctrh-warning-surface);
-	border-left: 3px solid var(--ctrh-warning);
-	color: var(--ctrh-warning-text);
+.counterhand-callout--warn {
+	background: var(--counterhand-warning-surface);
+	border-left: 3px solid var(--counterhand-warning);
+	color: var(--counterhand-warning-text);
 }
 
-.ctrh-callout--error {
-	background: var(--ctrh-error-surface);
-	border-left: 3px solid var(--ctrh-error);
-	color: var(--ctrh-error-text);
+.counterhand-callout--error {
+	background: var(--counterhand-error-surface);
+	border-left: 3px solid var(--counterhand-error);
+	color: var(--counterhand-error-text);
 }
 
-.ctrh-callout__icon {
+.counterhand-callout__icon {
 	flex: 0 0 18px;
 	display: flex;
 	align-items: center;
@@ -609,22 +609,22 @@
 	line-height: 1;
 }
 
-.ctrh-callout__body {
+.counterhand-callout__body {
 	min-width: 0;
 }
 
-.ctrh-callout__title {
+.counterhand-callout__title {
 	display: block;
 	font-size: 13px;
 }
 
-.ctrh-callout__text {
+.counterhand-callout__text {
 	margin: 4px 0 8px;
 	font-size: 12px;
 	line-height: 1.5;
 }
 
-.ctrh-callout__action {
+.counterhand-callout__action {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
@@ -633,32 +633,32 @@
 	text-decoration: none;
 }
 
-.ctrh-callout__action:hover {
+.counterhand-callout__action:hover {
 	text-decoration: underline;
 }
 
-.ctrh-chat-tools__hint {
-	margin: 0 0 var(--ctrh-gap);
+.counterhand-chat-tools__hint {
+	margin: 0 0 var(--counterhand-gap);
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-chat-tools__section {
-	margin: 0 0 var(--ctrh-gap);
+.counterhand-chat-tools__section {
+	margin: 0 0 var(--counterhand-gap);
 	border: 0;
 	padding: 0;
 }
 
-.ctrh-chat-tools__legend {
+.counterhand-chat-tools__legend {
 	padding: 0 0 6px;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-chat-tools__grid {
+.counterhand-chat-tools__grid {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
@@ -668,60 +668,60 @@
  * Each area is a pill the whole of which is the hit target — a bare checkbox in
  * a wrapping row gives a 13px target and no room to say anything beside it.
  */
-.ctrh-area {
+.counterhand-area {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	padding: 6px 12px 6px 10px;
-	border: 1px solid var(--ctrh-gray-5);
+	border: 1px solid var(--counterhand-gray-5);
 	border-radius: 999px;
-	background: var(--ctrh-gray-0);
+	background: var(--counterhand-gray-0);
 	font-size: 12px;
 	cursor: pointer;
 	transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
 }
 
-.ctrh-area:hover {
-	border-color: var(--ctrh-accent);
-	background: var(--ctrh-accent-surface);
+.counterhand-area:hover {
+	border-color: var(--counterhand-accent);
+	background: var(--counterhand-accent-surface);
 }
 
-.ctrh-area:focus-within {
-	border-color: var(--ctrh-accent);
-	box-shadow: 0 0 0 2px var(--ctrh-accent);
+.counterhand-area:focus-within {
+	border-color: var(--counterhand-accent);
+	box-shadow: 0 0 0 2px var(--counterhand-accent);
 }
 
-.ctrh-area__input {
+.counterhand-area__input {
 	margin: 0;
 }
 
-.ctrh-area:has(.ctrh-area__input:checked) {
-	border-color: var(--ctrh-accent);
-	background: var(--ctrh-accent-surface);
+.counterhand-area:has(.counterhand-area__input:checked) {
+	border-color: var(--counterhand-accent);
+	background: var(--counterhand-accent-surface);
 }
 
-.ctrh-area__name {
+.counterhand-area__name {
 	font-weight: 500;
-	color: var(--ctrh-gray-100);
+	color: var(--counterhand-gray-100);
 }
 
 /*
  * Withheld reads muted but stays interactive, and says the cost in tools so the
  * number in the summary can be reconciled with what is on screen.
  */
-.ctrh-area--withheld {
+.counterhand-area--withheld {
 	border-style: dashed;
 }
 
-.ctrh-area--withheld .ctrh-area__name {
-	color: var(--ctrh-gray-60);
+.counterhand-area--withheld .counterhand-area__name {
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-area__badge {
+.counterhand-area__badge {
 	padding: 1px 7px;
 	border-radius: 999px;
-	background: var(--ctrh-warning-surface);
-	color: var(--ctrh-warning-text);
+	background: var(--counterhand-warning-surface);
+	color: var(--counterhand-warning-text);
 	font-size: 10px;
 	font-weight: 600;
 	white-space: nowrap;
@@ -736,95 +736,95 @@
  */
 /* Setup sits where the conversation will appear, so the frame is there from
    the first visit. Block flow so the card stacks normally while it scrolls. */
-.ctrh-chat__log--setup {
+.counterhand-chat__log--setup {
 	display: block;
 }
 
-.ctrh-chooser {
+.counterhand-chooser {
 	max-width: 640px;
 	margin: 0 auto;
-	padding: var(--ctrh-gap) 0;
+	padding: var(--counterhand-gap) 0;
 }
 
-.ctrh-chooser__title {
+.counterhand-chooser__title {
 	margin: 0 0 4px;
 	font-size: 18px;
 	font-weight: 600;
-	color: var(--ctrh-text);
+	color: var(--counterhand-text);
 	text-align: center;
 }
 
-.ctrh-chooser__lede {
-	margin: 0 0 var(--ctrh-gap);
-	color: var(--ctrh-text-muted);
+.counterhand-chooser__lede {
+	margin: 0 0 var(--counterhand-gap);
+	color: var(--counterhand-text-muted);
 	font-size: 14px;
 	text-align: center;
 }
 
-.ctrh-chooser .ctrh-card {
+.counterhand-chooser .counterhand-card {
 	max-width: none;
 }
 
-.ctrh-chooser__grid {
+.counterhand-chooser__grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 	gap: 10px;
-	margin: 0 0 var(--ctrh-gap);
+	margin: 0 0 var(--counterhand-gap);
 }
 
 /* One provider tile: name, who runs it, and what it needs. */
-.ctrh-provider {
+.counterhand-provider {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
 	padding: 14px 16px;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-border);
-	border-radius: var(--ctrh-radius-card);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius-card);
 	text-align: left;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease;
 }
 
-.ctrh-provider:hover {
-	border-color: var(--ctrh-accent);
-	background: var(--ctrh-accent-surface);
+.counterhand-provider:hover {
+	border-color: var(--counterhand-accent);
+	background: var(--counterhand-accent-surface);
 }
 
-.ctrh-provider:focus-within {
-	outline: 2px solid var(--ctrh-accent);
+.counterhand-provider:focus-within {
+	outline: 2px solid var(--counterhand-accent);
 	outline-offset: 1px;
 }
 
 
-.ctrh-provider__name {
+.counterhand-provider__name {
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--ctrh-text);
+	color: var(--counterhand-text);
 }
 
-.ctrh-provider__meta {
+.counterhand-provider__meta {
 	font-size: 12px;
-	color: var(--ctrh-text-muted);
+	color: var(--counterhand-text-muted);
 }
 
-.ctrh-chooser__result {
-	margin: var(--ctrh-gap-small) 0 0;
+.counterhand-chooser__result {
+	margin: var(--counterhand-gap-small) 0 0;
 	font-size: 13px;
 }
 
-.ctrh-chooser__result.ctrh-ok {
-	color: var(--ctrh-success-text);
+.counterhand-chooser__result.counterhand-ok {
+	color: var(--counterhand-success-text);
 	font-weight: 600;
 }
 
-.ctrh-chooser__result.ctrh-fail {
-	color: var(--ctrh-error);
+.counterhand-chooser__result.counterhand-fail {
+	color: var(--counterhand-error);
 	font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.ctrh-provider {
+	.counterhand-provider {
 		transition: none;
 	}
 }
@@ -832,33 +832,33 @@
 /* Small screens ---------------------------------------------------------- */
 
 @media screen and (max-width: 782px) {
-	.ctrh-msg,
-	.ctrh-msg--user,
-	.ctrh-tool {
+	.counterhand-msg,
+	.counterhand-msg--user,
+	.counterhand-tool {
 		max-width: 100%;
 	}
 
-	.ctrh-tool {
+	.counterhand-tool {
 		margin-left: 0;
 	}
 
-	.ctrh-chat__panel {
+	.counterhand-chat__panel {
 		height: calc(100vh - 260px);
 	}
 
-	.ctrh-chat__log {
-		padding: var(--ctrh-gap-small);
+	.counterhand-chat__log {
+		padding: var(--counterhand-gap-small);
 	}
 
-	.ctrh-chat__suggestions {
+	.counterhand-chat__suggestions {
 		grid-template-columns: 1fr;
 	}
 
-	.ctrh-chat__composer {
-		gap: var(--ctrh-gap-small);
+	.counterhand-chat__composer {
+		gap: var(--counterhand-gap-small);
 	}
 
-	.ctrh-chat__send.button {
+	.counterhand-chat__send.button {
 		padding: 0 16px;
 	}
 }

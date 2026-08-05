@@ -74,7 +74,7 @@ final readonly class SystemToolPolicy implements ArgumentPolicy {
 		 * @param string $id     The system tool id.
 		 */
 		$denied = (bool) apply_filters(
-			'ctrh_system_tool_denied',
+			'counterhand_system_tool_denied',
 			in_array( $id, self::IRREVERSIBLE, true ),
 			$id
 		);

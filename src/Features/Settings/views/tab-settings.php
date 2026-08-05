@@ -18,36 +18,36 @@ use Counterhand\Features\Settings\PluginSettings;
 
 defined( 'ABSPATH' ) || exit;
 
-$ctrh_values = $settings->all();
-$ctrh_option = PluginSettings::OPTION;
+$counterhand_values = $settings->all();
+$counterhand_option = PluginSettings::OPTION;
 ?>
-<form method="post" action="options.php" class="ctrh-settings-form">
-	<?php settings_fields( 'ctrh_settings_group' ); ?>
+<form method="post" action="options.php" class="counterhand-settings-form">
+	<?php settings_fields( 'counterhand_settings_group' ); ?>
 
-	<div class="ctrh-card">
-		<div class="ctrh-card__head">
-			<span class="ctrh-card__heading">
-				<h3 class="ctrh-card__title"><?php esc_html_e( 'Connector', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-				<span class="ctrh-card__desc"><?php esc_html_e( 'When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+	<div class="counterhand-card">
+		<div class="counterhand-card__head">
+			<span class="counterhand-card__heading">
+				<h3 class="counterhand-card__title"><?php esc_html_e( 'Connector', 'counterhand-mcp-for-woocommerce' ); ?></h3>
+				<span class="counterhand-card__desc"><?php esc_html_e( 'When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="ctrh-card__body">
-			<label class="ctrh-master-switch">
-				<input type="checkbox" name="<?php echo esc_attr( $ctrh_option ); ?>[enabled]" value="1" <?php checked( (bool) $ctrh_values['enabled'] ); ?>>
+		<div class="counterhand-card__body">
+			<label class="counterhand-master-switch">
+				<input type="checkbox" name="<?php echo esc_attr( $counterhand_option ); ?>[enabled]" value="1" <?php checked( (bool) $counterhand_values['enabled'] ); ?>>
 				<strong><?php esc_html_e( 'Enable the MCP connector', 'counterhand-mcp-for-woocommerce' ); ?></strong>
 			</label>
 		</div>
 	</div>
 
-	<div class="ctrh-card">
-		<div class="ctrh-card__head">
-			<span class="ctrh-card__heading">
-				<h3 class="ctrh-card__title"><?php esc_html_e( 'Tool groups', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-				<span class="ctrh-card__desc"><?php esc_html_e( 'Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+	<div class="counterhand-card">
+		<div class="counterhand-card__head">
+			<span class="counterhand-card__heading">
+				<h3 class="counterhand-card__title"><?php esc_html_e( 'Tool groups', 'counterhand-mcp-for-woocommerce' ); ?></h3>
+				<span class="counterhand-card__desc"><?php esc_html_e( 'Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="ctrh-card__body">
-			<table class="widefat ctrh-groups-table">
+		<div class="counterhand-card__body">
+			<table class="widefat counterhand-groups-table">
 				<thead>
 					<tr>
 						<th scope="col"><?php esc_html_e( 'Group', 'counterhand-mcp-for-woocommerce' ); ?></th>
@@ -55,53 +55,53 @@ $ctrh_option = PluginSettings::OPTION;
 						<th scope="col"><?php esc_html_e( 'Write', 'counterhand-mcp-for-woocommerce' ); ?></th>
 					</tr>
 				</thead>
-				<?php foreach ( $tool_sections as $ctrh_section ) : ?>
+				<?php foreach ( $tool_sections as $counterhand_section ) : ?>
 					<tbody>
-						<tr class="ctrh-groups-table__section">
+						<tr class="counterhand-groups-table__section">
 							<th colspan="3" scope="colgroup">
-								<span class="ctrh-groups-table__section-title"><?php echo esc_html( $ctrh_section->label() ); ?></span>
-								<span class="ctrh-muted"><?php echo esc_html( $ctrh_section->description() ); ?></span>
+								<span class="counterhand-groups-table__section-title"><?php echo esc_html( $counterhand_section->label() ); ?></span>
+								<span class="counterhand-muted"><?php echo esc_html( $counterhand_section->description() ); ?></span>
 							</th>
 						</tr>
-						<?php foreach ( $ctrh_section->groups() as $ctrh_group ) : ?>
+						<?php foreach ( $counterhand_section->groups() as $counterhand_group ) : ?>
 							<tr>
 								<th scope="row">
-									<strong><?php echo esc_html( $ctrh_group->label() ); ?></strong>
-									<span class="ctrh-muted"><?php echo esc_html( $ctrh_group->description() ); ?></span>
+									<strong><?php echo esc_html( $counterhand_group->label() ); ?></strong>
+									<span class="counterhand-muted"><?php echo esc_html( $counterhand_group->description() ); ?></span>
 								</th>
 								<td>
-									<label class="screen-reader-text" for="ctrh-<?php echo esc_attr( $ctrh_group->read_option_key() ); ?>">
+									<label class="screen-reader-text" for="counterhand-<?php echo esc_attr( $counterhand_group->read_option_key() ); ?>">
 										<?php
 										printf(
 											/* translators: %s: name of a tool group, e.g. "Products". */
 											esc_html__( 'Allow reading %s', 'counterhand-mcp-for-woocommerce' ),
-											esc_html( $ctrh_group->label() )
+											esc_html( $counterhand_group->label() )
 										);
 										?>
 									</label>
 									<input type="checkbox"
-										id="ctrh-<?php echo esc_attr( $ctrh_group->read_option_key() ); ?>"
-										name="<?php echo esc_attr( $ctrh_option ); ?>[<?php echo esc_attr( $ctrh_group->read_option_key() ); ?>]"
-										value="1" <?php checked( (bool) ( $ctrh_values[ $ctrh_group->read_option_key() ] ?? false ) ); ?>>
+										id="counterhand-<?php echo esc_attr( $counterhand_group->read_option_key() ); ?>"
+										name="<?php echo esc_attr( $counterhand_option ); ?>[<?php echo esc_attr( $counterhand_group->read_option_key() ); ?>]"
+										value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->read_option_key() ] ?? false ) ); ?>>
 								</td>
 								<td>
-									<?php if ( ! $ctrh_group->has_write() ) : ?>
-										<span class="ctrh-muted" aria-hidden="true">—</span>
+									<?php if ( ! $counterhand_group->has_write() ) : ?>
+										<span class="counterhand-muted" aria-hidden="true">—</span>
 										<span class="screen-reader-text"><?php esc_html_e( 'This area is read-only and cannot be changed by an AI client.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 									<?php else : ?>
-										<label class="screen-reader-text" for="ctrh-<?php echo esc_attr( $ctrh_group->write_option_key() ); ?>">
+										<label class="screen-reader-text" for="counterhand-<?php echo esc_attr( $counterhand_group->write_option_key() ); ?>">
 											<?php
 											printf(
 												/* translators: %s: name of a tool group, e.g. "Products". */
 												esc_html__( 'Allow changing %s', 'counterhand-mcp-for-woocommerce' ),
-												esc_html( $ctrh_group->label() )
+												esc_html( $counterhand_group->label() )
 											);
 											?>
 										</label>
 										<input type="checkbox"
-											id="ctrh-<?php echo esc_attr( $ctrh_group->write_option_key() ); ?>"
-											name="<?php echo esc_attr( $ctrh_option ); ?>[<?php echo esc_attr( $ctrh_group->write_option_key() ); ?>]"
-											value="1" <?php checked( (bool) ( $ctrh_values[ $ctrh_group->write_option_key() ] ?? false ) ); ?>>
+											id="counterhand-<?php echo esc_attr( $counterhand_group->write_option_key() ); ?>"
+											name="<?php echo esc_attr( $counterhand_option ); ?>[<?php echo esc_attr( $counterhand_group->write_option_key() ); ?>]"
+											value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->write_option_key() ] ?? false ) ); ?>>
 									<?php endif; ?>
 								</td>
 							</tr>
@@ -112,44 +112,44 @@ $ctrh_option = PluginSettings::OPTION;
 		</div>
 	</div>
 
-	<div class="ctrh-card">
-		<div class="ctrh-card__head">
-			<span class="ctrh-card__heading">
-				<h3 class="ctrh-card__title"><?php esc_html_e( 'Limits', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-				<span class="ctrh-card__desc"><?php esc_html_e( 'Caps how fast a single connection can call the store.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+	<div class="counterhand-card">
+		<div class="counterhand-card__head">
+			<span class="counterhand-card__heading">
+				<h3 class="counterhand-card__title"><?php esc_html_e( 'Limits', 'counterhand-mcp-for-woocommerce' ); ?></h3>
+				<span class="counterhand-card__desc"><?php esc_html_e( 'Caps how fast a single connection can call the store.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="ctrh-card__body">
-			<div class="ctrh-field">
-				<label class="ctrh-label" for="ctrh-rate-limit"><?php esc_html_e( 'Requests per minute per connection', 'counterhand-mcp-for-woocommerce' ); ?></label>
-				<input type="number" id="ctrh-rate-limit" min="1" max="1000"
-					name="<?php echo esc_attr( $ctrh_option ); ?>[rate_limit_per_minute]"
-					value="<?php echo esc_attr( (string) $ctrh_values['rate_limit_per_minute'] ); ?>">
+		<div class="counterhand-card__body">
+			<div class="counterhand-field">
+				<label class="counterhand-label" for="counterhand-rate-limit"><?php esc_html_e( 'Requests per minute per connection', 'counterhand-mcp-for-woocommerce' ); ?></label>
+				<input type="number" id="counterhand-rate-limit" min="1" max="1000"
+					name="<?php echo esc_attr( $counterhand_option ); ?>[rate_limit_per_minute]"
+					value="<?php echo esc_attr( (string) $counterhand_values['rate_limit_per_minute'] ); ?>">
 			</div>
 		</div>
 	</div>
 
-	<div class="ctrh-card">
-		<div class="ctrh-card__head">
-			<span class="ctrh-card__heading">
-				<h3 class="ctrh-card__title"><?php esc_html_e( 'Action log', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-				<span class="ctrh-card__desc"><?php esc_html_e( 'Records what each connection did. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+	<div class="counterhand-card">
+		<div class="counterhand-card__head">
+			<span class="counterhand-card__heading">
+				<h3 class="counterhand-card__title"><?php esc_html_e( 'Action log', 'counterhand-mcp-for-woocommerce' ); ?></h3>
+				<span class="counterhand-card__desc"><?php esc_html_e( 'Records what each connection did. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
-		<div class="ctrh-card__body">
-			<div class="ctrh-field">
+		<div class="counterhand-card__body">
+			<div class="counterhand-field">
 				<label>
-					<input type="checkbox" name="<?php echo esc_attr( $ctrh_option ); ?>[action_log_enabled]" value="1"
-						<?php checked( (bool) ( $ctrh_values['action_log_enabled'] ?? false ) ); ?>>
+					<input type="checkbox" name="<?php echo esc_attr( $counterhand_option ); ?>[action_log_enabled]" value="1"
+						<?php checked( (bool) ( $counterhand_values['action_log_enabled'] ?? false ) ); ?>>
 					<?php esc_html_e( 'Record every tool call', 'counterhand-mcp-for-woocommerce' ); ?>
 				</label>
 			</div>
 
-			<div class="ctrh-field">
-				<label class="ctrh-label" for="ctrh-retention"><?php esc_html_e( 'Keep log entries for (days)', 'counterhand-mcp-for-woocommerce' ); ?></label>
-				<input type="number" id="ctrh-retention" min="1" max="365"
-					name="<?php echo esc_attr( $ctrh_option ); ?>[log_retention_days]"
-					value="<?php echo esc_attr( (string) ( $ctrh_values['log_retention_days'] ?? 30 ) ); ?>">
+			<div class="counterhand-field">
+				<label class="counterhand-label" for="counterhand-retention"><?php esc_html_e( 'Keep log entries for (days)', 'counterhand-mcp-for-woocommerce' ); ?></label>
+				<input type="number" id="counterhand-retention" min="1" max="365"
+					name="<?php echo esc_attr( $counterhand_option ); ?>[log_retention_days]"
+					value="<?php echo esc_attr( (string) ( $counterhand_values['log_retention_days'] ?? 30 ) ); ?>">
 			</div>
 		</div>
 	</div>

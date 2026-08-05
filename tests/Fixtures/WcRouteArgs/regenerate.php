@@ -28,26 +28,26 @@
  * A variable rather than a const: wp eval-file includes this inside a function,
  * and PHP will not declare a const in function scope.
  *
- * @var array<string, array{string, string}> $ctrh_fixture_routes
+ * @var array<string, array{string, string}> $counterhand_fixture_routes
  */
-$ctrh_fixture_routes = [
+$counterhand_fixture_routes = [
 	// The resource Phase 5 validates end to end.
-	'coupons-collection-get' => [ '/wc/v3/coupons', 'GET' ],
-	'coupons-collection-post' => [ '/wc/v3/coupons', 'POST' ],
-	'coupons-item-put'       => [ '/wc/v3/coupons/{id}', 'PUT' ],
-	'coupons-item-delete'    => [ '/wc/v3/coupons/{id}', 'DELETE' ],
+	'coupons-collection-get'     => [ '/wc/v3/coupons', 'GET' ],
+	'coupons-collection-post'    => [ '/wc/v3/coupons', 'POST' ],
+	'coupons-item-put'           => [ '/wc/v3/coupons/{id}', 'PUT' ],
+	'coupons-item-delete'        => [ '/wc/v3/coupons/{id}', 'DELETE' ],
 	// The ~100-field schema a FieldProfile exists to prune.
-	'products-collection-get' => [ '/wc/v3/products', 'GET' ],
-	'products-collection-post' => [ '/wc/v3/products', 'POST' ],
+	'products-collection-get'    => [ '/wc/v3/products', 'GET' ],
+	'products-collection-post'   => [ '/wc/v3/products', 'POST' ],
 	// 'type' => 'mixed' at several depths.
-	'orders-collection-post' => [ '/wc/v3/orders', 'POST' ],
+	'orders-collection-post'     => [ '/wc/v3/orders', 'POST' ],
 	// Nested resource whose collection permission check ignores the parent id.
 	'order-notes-collection-get' => [ '/wc/v3/orders/{order_id}/notes', 'GET' ],
 	// The customer meta path that MetaKeyPolicy has to defend.
-	'customers-collection-post' => [ '/wc/v3/customers', 'POST' ],
+	'customers-collection-post'  => [ '/wc/v3/customers', 'POST' ],
 	// Resources with no id-free collection route.
-	'system-status-get'      => [ '/wc/v3/system_status', 'GET' ],
-	'settings-group-get'     => [ '/wc/v3/settings/{group_id}', 'GET' ],
+	'system-status-get'          => [ '/wc/v3/system_status', 'GET' ],
+	'settings-group-get'         => [ '/wc/v3/settings/{group_id}', 'GET' ],
 ];
 
 /**
@@ -58,9 +58,9 @@ $ctrh_fixture_routes = [
  * the fixture honest about the key being present without pretending to
  * serialize the callable.
  */
-function ctrh_exportable( mixed $value ): mixed {
+function counterhand_exportable( mixed $value ): mixed {
 	if ( is_array( $value ) ) {
-		return array_map( 'ctrh_exportable', $value );
+		return array_map( 'counterhand_exportable', $value );
 	}
 
 	if ( $value instanceof Closure ) {
@@ -105,13 +105,13 @@ foreach ( rest_get_server()->get_routes() as $pattern => $handlers ) {
 $wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : 'unknown';
 $wp_version = get_bloginfo( 'version' );
 
-foreach ( $ctrh_fixture_routes as $slug => [ $template, $verb ] ) {
+foreach ( $counterhand_fixture_routes as $slug => [ $template, $verb ] ) {
 	if ( ! isset( $index[ $template ][ $verb ] ) ) {
 		WP_CLI::warning( sprintf( 'Not registered on this store: %s %s', $verb, $template ) );
 		continue;
 	}
 
-	$route_args = ctrh_exportable( $index[ $template ][ $verb ] );
+	$route_args = counterhand_exportable( $index[ $template ][ $verb ] );
 	$export     = preg_replace( '/^(\s*)array \(/m', '$1array(', var_export( $route_args, true ) );
 
 	$contents = <<<PHP

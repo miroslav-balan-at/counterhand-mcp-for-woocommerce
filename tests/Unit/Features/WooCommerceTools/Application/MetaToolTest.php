@@ -84,7 +84,16 @@ final class MetaToolTest extends TestCase {
 	 */
 	public function test_meta_entries_that_arrive_as_objects_are_still_read(): void {
 		$this->gateway->will_return(
-			new RestResult( [ 'meta_data' => [ (object) [ 'key' => 'supplier_ref', 'value' => 'ACME-1' ] ] ] )
+			new RestResult(
+				[
+					'meta_data' => [
+						(object) [
+							'key'   => 'supplier_ref',
+							'value' => 'ACME-1',
+						],
+					],
+				]
+			)
 		);
 
 		$result = $this->tool( MetaOperation::Get )->execute( [ 'id' => 7 ] );
@@ -100,10 +109,22 @@ final class MetaToolTest extends TestCase {
 			new RestResult(
 				[
 					'meta_data' => [
-						[ 'key' => 'supplier_ref', 'value' => 'ok' ],
-						[ 'key' => '_internal', 'value' => 'hidden' ],
-						[ 'key' => 'hms_capabilities', 'value' => [ 'administrator' => true ] ],
-						[ 'key' => 'session_tokens', 'value' => 'x' ],
+						[
+							'key'   => 'supplier_ref',
+							'value' => 'ok',
+						],
+						[
+							'key'   => '_internal',
+							'value' => 'hidden',
+						],
+						[
+							'key'   => 'hms_capabilities',
+							'value' => [ 'administrator' => true ],
+						],
+						[
+							'key'   => 'session_tokens',
+							'value' => 'x',
+						],
 					],
 				]
 			)
@@ -144,7 +165,12 @@ final class MetaToolTest extends TestCase {
 
 		$this->assertSame( RestMethod::Put, $call['method'] );
 		$this->assertSame(
-			[ [ 'key' => 'supplier_ref', 'value' => 'ACME-2' ] ],
+			[
+				[
+					'key'   => 'supplier_ref',
+					'value' => 'ACME-2',
+				],
+			],
 			$call['params']['meta_data']
 		);
 	}

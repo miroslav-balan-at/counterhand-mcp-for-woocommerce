@@ -39,16 +39,16 @@ final class JsonRpcRequestTest extends TestCase {
 
 	public static function invalid_bodies(): array {
 		return [
-			'malformed json'   => [ '{broken', JsonRpcErrorCode::ParseError ],
-			'empty body'       => [ '', JsonRpcErrorCode::ParseError ],
-			'json scalar'      => [ '"hello"', JsonRpcErrorCode::ParseError ],
-			'batch request'    => [ '[{"jsonrpc":"2.0","id":1,"method":"ping"}]', JsonRpcErrorCode::InvalidRequest ],
-			'wrong version'    => [ '{"jsonrpc":"1.0","id":1,"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
-			'missing version'  => [ '{"id":1,"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
-			'missing method'   => [ '{"jsonrpc":"2.0","id":1}', JsonRpcErrorCode::InvalidRequest ],
+			'malformed json'    => [ '{broken', JsonRpcErrorCode::ParseError ],
+			'empty body'        => [ '', JsonRpcErrorCode::ParseError ],
+			'json scalar'       => [ '"hello"', JsonRpcErrorCode::ParseError ],
+			'batch request'     => [ '[{"jsonrpc":"2.0","id":1,"method":"ping"}]', JsonRpcErrorCode::InvalidRequest ],
+			'wrong version'     => [ '{"jsonrpc":"1.0","id":1,"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
+			'missing version'   => [ '{"id":1,"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
+			'missing method'    => [ '{"jsonrpc":"2.0","id":1}', JsonRpcErrorCode::InvalidRequest ],
 			'non-string method' => [ '{"jsonrpc":"2.0","id":1,"method":42}', JsonRpcErrorCode::InvalidRequest ],
-			'scalar params'    => [ '{"jsonrpc":"2.0","id":1,"method":"ping","params":"x"}', JsonRpcErrorCode::InvalidRequest ],
-			'object id'        => [ '{"jsonrpc":"2.0","id":{},"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
+			'scalar params'     => [ '{"jsonrpc":"2.0","id":1,"method":"ping","params":"x"}', JsonRpcErrorCode::InvalidRequest ],
+			'object id'         => [ '{"jsonrpc":"2.0","id":{},"method":"ping"}', JsonRpcErrorCode::InvalidRequest ],
 		];
 	}
 }

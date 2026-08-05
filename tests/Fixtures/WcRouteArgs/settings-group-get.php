@@ -10,9 +10,9 @@
  */
 
 return array(
-  'group' => 
-  array(
-    'description' => 'Einstellungen Gruppen ID.',
-    'type' => 'string',
-  ),
+	'group' =>
+	array(
+		'description' => 'Einstellungen Gruppen ID.',
+		'type'        => 'string',
+	),
 );

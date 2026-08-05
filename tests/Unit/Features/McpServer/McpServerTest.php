@@ -43,7 +43,7 @@ final class McpServerTest extends TestCase {
 
 		Functions\when( 'do_action' )->alias(
 			function ( string $hook, ...$args ): void {
-				if ( 'ctrh_tool_called' === $hook ) {
+				if ( 'counterhand_tool_called' === $hook ) {
 					$this->logged[] = $args;
 				}
 			}

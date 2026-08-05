@@ -43,7 +43,7 @@ final readonly class ProviderRegistry {
 		 *
 		 * @param list<ProviderInterface> $providers Provider adapters.
 		 */
-		$providers = apply_filters( 'ctrh_chat_providers', $providers );
+		$providers = apply_filters( 'counterhand_chat_providers', $providers );
 
 		$keyed = [];
 		foreach ( $providers as $provider ) {

@@ -9,7 +9,7 @@ use Counterhand\Tests\Unit\TestCase;
 
 /**
  * ToolGroup values are not cosmetic: they are the prefix of every ApiScope and
- * of every ctrh_settings option key, so renaming a case silently orphans
+ * of every counterhand_settings option key, so renaming a case silently orphans
  * stored settings on existing installs.
  */
 final class ToolGroupTest extends TestCase {

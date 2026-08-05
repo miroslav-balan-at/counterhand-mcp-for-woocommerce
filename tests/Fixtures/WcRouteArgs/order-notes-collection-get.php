@@ -10,36 +10,36 @@
  */
 
 return array(
-  'order_id' => 
-  array(
-    'description' => 'Die Bestellnummer.',
-    'type' => 'integer',
-  ),
-  'context' => 
-  array(
-    'description' => 'Geltungsbereich der Anfrage; ermittelt in der Antwort vorhandene Felder.',
-    'type' => 'string',
-    'sanitize_callback' => 'sanitize_key',
-    'validate_callback' => 'rest_validate_request_arg',
-    'enum' => 
-    array(
-      0 => 'view',
-      1 => 'edit',
-    ),
-    'default' => 'view',
-  ),
-  'type' => 
-  array(
-    'default' => 'any',
-    'description' => 'Ergebnis auf Kunden oder interne Hinweise beschränken.',
-    'type' => 'string',
-    'enum' => 
-    array(
-      0 => 'any',
-      1 => 'customer',
-      2 => 'internal',
-    ),
-    'sanitize_callback' => 'sanitize_key',
-    'validate_callback' => 'rest_validate_request_arg',
-  ),
+	'order_id' =>
+	array(
+		'description' => 'Die Bestellnummer.',
+		'type'        => 'integer',
+	),
+	'context'  =>
+	array(
+		'description'       => 'Geltungsbereich der Anfrage; ermittelt in der Antwort vorhandene Felder.',
+		'type'              => 'string',
+		'sanitize_callback' => 'sanitize_key',
+		'validate_callback' => 'rest_validate_request_arg',
+		'enum'              =>
+		array(
+			0 => 'view',
+			1 => 'edit',
+		),
+		'default'           => 'view',
+	),
+	'type'     =>
+	array(
+		'default'           => 'any',
+		'description'       => 'Ergebnis auf Kunden oder interne Hinweise beschränken.',
+		'type'              => 'string',
+		'enum'              =>
+		array(
+			0 => 'any',
+			1 => 'customer',
+			2 => 'internal',
+		),
+		'sanitize_callback' => 'sanitize_key',
+		'validate_callback' => 'rest_validate_request_arg',
+	),
 );

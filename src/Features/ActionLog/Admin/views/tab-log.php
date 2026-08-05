@@ -10,20 +10,20 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="ctrh-log">
+<div class="counterhand-log">
 	<?php if ( ! $is_enabled ) : ?>
 		<div class="notice notice-info inline"><p>
 			<?php esc_html_e( 'The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage.', 'counterhand-mcp-for-woocommerce' ); ?>
 		</p></div>
 	<?php endif; ?>
 
-	<?php if ( isset( $_GET['ctrh_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+	<?php if ( isset( $_GET['counterhand_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 		<div class="notice notice-success inline"><p><?php esc_html_e( 'Log cleared.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 	<?php endif; ?>
 
-	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ctrh-log-clear">
-		<input type="hidden" name="action" value="ctrh_clear_log">
-		<?php wp_nonce_field( 'ctrh_clear_log' ); ?>
+	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-log-clear">
+		<input type="hidden" name="action" value="counterhand_clear_log">
+		<?php wp_nonce_field( 'counterhand_clear_log' ); ?>
 		<button type="submit" class="button"><?php esc_html_e( 'Clear log', 'counterhand-mcp-for-woocommerce' ); ?></button>
 	</form>
 
@@ -41,22 +41,22 @@ defined( 'ABSPATH' ) || exit;
 			<?php if ( [] === $entries ) : ?>
 				<tr><td colspan="5"><?php esc_html_e( 'No entries yet.', 'counterhand-mcp-for-woocommerce' ); ?></td></tr>
 			<?php endif; ?>
-			<?php foreach ( $entries as $ctrh_entry ) : ?>
+			<?php foreach ( $entries as $counterhand_entry ) : ?>
 				<tr>
-					<td><?php echo esc_html( $ctrh_entry['created_at'] ); ?></td>
-					<td><code><?php echo esc_html( $ctrh_entry['tool_name'] ); ?></code></td>
-					<td><?php echo esc_html( $ctrh_entry['token_label'] ); ?></td>
-					<?php $ctrh_failed = 'error' === $ctrh_entry['outcome']; ?>
+					<td><?php echo esc_html( $counterhand_entry['created_at'] ); ?></td>
+					<td><code><?php echo esc_html( $counterhand_entry['tool_name'] ); ?></code></td>
+					<td><?php echo esc_html( $counterhand_entry['token_label'] ); ?></td>
+					<?php $counterhand_failed = 'error' === $counterhand_entry['outcome']; ?>
 					<td>
-						<span class="<?php echo $ctrh_failed ? 'ctrh-status--revoked' : 'ctrh-status--active'; ?>">
+						<span class="<?php echo $counterhand_failed ? 'counterhand-status--revoked' : 'counterhand-status--active'; ?>">
 							<?php
-							echo $ctrh_failed
+							echo $counterhand_failed
 								? esc_html__( 'Failed', 'counterhand-mcp-for-woocommerce' )
 								: esc_html__( 'Succeeded', 'counterhand-mcp-for-woocommerce' );
 							?>
 						</span>
 					</td>
-					<td><code class="ctrh-log-args"><?php echo esc_html( $ctrh_entry['summary'] ); ?></code></td>
+					<td><code class="counterhand-log-args"><?php echo esc_html( $counterhand_entry['summary'] ); ?></code></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

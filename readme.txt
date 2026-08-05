@@ -80,7 +80,7 @@ The things that could are gated separately. Store settings, payment gateways and
 
 = Can I connect a client that only supports bearer headers? =
 
-The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `ctrh_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
+The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
 
 == Changelog ==
 

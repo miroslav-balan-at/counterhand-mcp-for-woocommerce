@@ -23,10 +23,10 @@ final class ProviderPluginTest extends TestCase {
 
 	public static function hostile_slugs(): array {
 		return [
-			'random plugin'   => [ 'hello-dolly' ],
-			'path traversal'  => [ '../../evil' ],
-			'lookalike'       => [ 'ai-provider-for-anthropic-pro' ],
-			'empty'           => [ '' ],
+			'random plugin'  => [ 'hello-dolly' ],
+			'path traversal' => [ '../../evil' ],
+			'lookalike'      => [ 'ai-provider-for-anthropic-pro' ],
+			'empty'          => [ '' ],
 		];
 	}
 

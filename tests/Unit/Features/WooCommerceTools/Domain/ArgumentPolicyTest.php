@@ -68,7 +68,7 @@ final class ArgumentPolicyTest extends TestCase {
 	public function test_a_store_can_widen_or_narrow_the_setting_rule(): void {
 		Functions\when( 'apply_filters' )->alias(
 			static fn ( string $hook, mixed $value, mixed $id = null ): mixed =>
-				'ctrh_setting_writable' === $hook && 'our_key_visual' === $id ? true : $value
+				'counterhand_setting_writable' === $hook && 'our_key_visual' === $id ? true : $value
 		);
 
 		$this->assertTrue( ( new SecretSettingPolicy() )->verdict( [ 'id' => 'our_key_visual' ] )->allowed );
@@ -115,7 +115,7 @@ final class ArgumentPolicyTest extends TestCase {
 	public function test_a_store_can_deny_a_maintenance_tool_of_its_own(): void {
 		Functions\when( 'apply_filters' )->alias(
 			static fn ( string $hook, mixed $value, mixed $id = null ): mixed =>
-				'ctrh_system_tool_denied' === $hook && 'sv_wc_background_job_test' === $id ? true : $value
+				'counterhand_system_tool_denied' === $hook && 'sv_wc_background_job_test' === $id ? true : $value
 		);
 
 		$this->assertFalse( ( new SystemToolPolicy() )->verdict( [ 'id' => 'sv_wc_background_job_test' ] )->allowed );

@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * A tool's name, checked at the moment a descriptor states it.
  *
- * The 64-character ceiling is not style: ctrh_log.tool_name is VARCHAR(64), so
+ * The 64-character ceiling is not style: counterhand_action_log.tool_name is VARCHAR(64), so
  * a longer name would be silently truncated in the audit trail — the one record
  * that has to be exact. The character class matches what MCP clients accept
  * without quoting and what a model can reproduce reliably.

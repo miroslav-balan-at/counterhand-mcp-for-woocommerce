@@ -283,12 +283,22 @@ final class GeneratedToolTest extends TestCase {
 		$this->expectException( ToolCallException::class );
 
 		$this->tool( Operation::CreateItem, requires_confirmation: true )
-			->execute( [ 'code' => 'x', 'confirm' => 'yes' ] );
+			->execute(
+				[
+					'code'    => 'x',
+					'confirm' => 'yes',
+				]
+			);
 	}
 
 	public function test_a_confirmed_call_goes_through_without_sending_confirm_on(): void {
 		$this->tool( Operation::CreateItem, requires_confirmation: true )
-			->execute( [ 'code' => 'x', 'confirm' => true ] );
+			->execute(
+				[
+					'code'    => 'x',
+					'confirm' => true,
+				]
+			);
 
 		$params = $this->gateway->call()['params'];
 

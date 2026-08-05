@@ -42,11 +42,11 @@ final class PlainTokenTest extends TestCase {
 		return [
 			'empty'            => [ '' ],
 			'wrong prefix'     => [ 'wcmcp_' . substr( $valid, 6 ) ],
-			'short id'         => [ 'ctrh_abc_' . str_repeat( 'A', 43 ) ],
-			'short secret'     => [ 'ctrh_' . str_repeat( 'a', 16 ) . '_short' ],
-			'uppercase id'     => [ 'ctrh_' . str_repeat( 'A', 16 ) . '_' . str_repeat( 'a', 43 ) ],
+			'short id'         => [ 'counterhand_abc_' . str_repeat( 'A', 43 ) ],
+			'short secret'     => [ 'counterhand_' . str_repeat( 'a', 16 ) . '_short' ],
+			'uppercase id'     => [ 'counterhand_' . str_repeat( 'A', 16 ) . '_' . str_repeat( 'a', 43 ) ],
 			'trailing garbage' => [ $valid . 'x' ],
-			'sql injection'    => [ "ctrh_' OR '1'='1_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ],
+			'sql injection'    => [ "counterhand_' OR '1'='1_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ],
 		];
 	}
 

@@ -24,26 +24,26 @@ final readonly class ScreenAssets {
 			return;
 		}
 
-		$base_url  = plugins_url( '', CTRH_PLUGIN_FILE );
-		$base_path = CTRH_PLUGIN_DIR;
+		$base_url  = plugins_url( '', COUNTERHAND_PLUGIN_FILE );
+		$base_path = COUNTERHAND_PLUGIN_DIR;
 
 		// Design tokens load first; every other sheet reads its custom properties.
 		wp_enqueue_style(
-			'ctrh-tokens',
+			'counterhand-tokens',
 			$base_url . '/assets/shared/tokens.css',
 			[],
 			(string) filemtime( $base_path . '/assets/shared/tokens.css' )
 		);
 
 		wp_enqueue_style(
-			'ctrh-admin',
+			'counterhand-admin',
 			$base_url . '/assets/admin/settings.css',
-			[ 'ctrh-tokens' ],
+			[ 'counterhand-tokens' ],
 			(string) filemtime( $base_path . '/assets/admin/settings.css' )
 		);
 
 		wp_enqueue_script(
-			'ctrh-admin',
+			'counterhand-admin',
 			$base_url . '/assets/admin/tokens.js',
 			[],
 			(string) filemtime( $base_path . '/assets/admin/tokens.js' ),
@@ -72,19 +72,19 @@ final readonly class ScreenAssets {
 
 	private function enqueue_connect( string $base_url, string $base_path ): void {
 		wp_enqueue_script(
-			'ctrh-connect',
+			'counterhand-connect',
 			$base_url . '/assets/admin/connect.js',
-			[ 'ctrh-admin' ],
+			[ 'counterhand-admin' ],
 			(string) filemtime( $base_path . '/assets/admin/connect.js' ),
 			true
 		);
 
 		wp_localize_script(
-			'ctrh-connect',
-			'ctrhConnect',
+			'counterhand-connect',
+			'counterhandConnect',
 			[
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'ctrh_connect' ),
+				'nonce'   => wp_create_nonce( 'counterhand_connect' ),
 				'i18n'    => [
 					'checking'    => __( 'Checking the store…', 'counterhand-mcp-for-woocommerce' ),
 					'checkFailed' => __( 'The check could not be run.', 'counterhand-mcp-for-woocommerce' ),
@@ -97,14 +97,14 @@ final readonly class ScreenAssets {
 
 	private function enqueue_chat( string $base_url, string $base_path ): void {
 		wp_enqueue_style(
-			'ctrh-chat',
+			'counterhand-chat',
 			$base_url . '/assets/admin/chat.css',
-			[ 'ctrh-admin' ],
+			[ 'counterhand-admin' ],
 			(string) filemtime( $base_path . '/assets/admin/chat.css' )
 		);
 
 		wp_enqueue_script(
-			'ctrh-chat',
+			'counterhand-chat',
 			$base_url . '/assets/admin/chat.js',
 			[],
 			(string) filemtime( $base_path . '/assets/admin/chat.js' ),
@@ -112,8 +112,8 @@ final readonly class ScreenAssets {
 		);
 
 		wp_localize_script(
-			'ctrh-chat',
-			'ctrhChat',
+			'counterhand-chat',
+			'counterhandChat',
 			[
 				// The assistant speaks as the store, so it wears the store's
 				// mark — the same one the OAuth consent screen shows.

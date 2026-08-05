@@ -44,7 +44,7 @@ final readonly class StaticDescriptorCatalog implements DescriptorProvider {
 		 *
 		 * @param list<ResourceDescriptor> $resources
 		 */
-		$filtered = apply_filters( 'ctrh_tool_descriptors', $resources );
+		$filtered = apply_filters( 'counterhand_tool_descriptors', $resources );
 
 		return array_values( array_filter( $filtered, static fn ( mixed $r ): bool => $r instanceof ResourceDescriptor ) );
 	}

@@ -36,8 +36,8 @@ final readonly class SettingsFeature implements FeatureInterface {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_enqueue_scripts', [ $this->assets, 'enqueue' ] );
-		add_action( 'wp_ajax_ctrh_preflight', [ $this, 'handle_preflight' ] );
-		add_action( 'wp_ajax_ctrh_connection_status', [ $this, 'handle_connection_status' ] );
+		add_action( 'wp_ajax_counterhand_preflight', [ $this, 'handle_preflight' ] );
+		add_action( 'wp_ajax_counterhand_connection_status', [ $this, 'handle_connection_status' ] );
 	}
 
 	/**
@@ -133,8 +133,8 @@ final readonly class SettingsFeature implements FeatureInterface {
 	/** Shared page chrome: heading, subtitle, then the screen's own body. */
 	private function render( AdminScreen $screen, callable $body ): void {
 		printf(
-			'<div class="wrap ctrh-wrap%s"><h1>%s</h1><p class="ctrh-subtitle">%s</p>',
-			$screen->is_full_bleed() ? ' ctrh-wrap--chat' : '',
+			'<div class="wrap counterhand-wrap%s"><h1>%s</h1><p class="counterhand-subtitle">%s</p>',
+			$screen->is_full_bleed() ? ' counterhand-wrap--chat' : '',
 			esc_html( $screen->page_title() ),
 			esc_html( $screen->subtitle() )
 		);
@@ -146,7 +146,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	public function register_settings(): void {
 		register_setting(
-			'ctrh_settings_group',
+			'counterhand_settings_group',
 			PluginSettings::OPTION,
 			[
 				'type'              => 'array',
@@ -172,7 +172,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		check_ajax_referer( 'ctrh_connect' );
+		check_ajax_referer( 'counterhand_connect' );
 
 		wp_send_json_success( $this->readiness->check()->to_array() );
 	}
@@ -186,7 +186,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
 
-		check_ajax_referer( 'ctrh_connect' );
+		check_ajax_referer( 'counterhand_connect' );
 
 		$since = absint( $_POST['since'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 		$token = $this->matcher->newest_since( $since );

@@ -24,10 +24,10 @@ final class ConnectResultTest extends TestCase {
 
 	public static function invalid_payloads(): array {
 		return [
-			'expired transient'   => [ false ],
-			'null'                => [ null ],
-			'string'              => [ 'ok' ],
-			'array, no message'   => [ [ 'ok' => true ] ],
+			'expired transient' => [ false ],
+			'null'              => [ null ],
+			'string'            => [ 'ok' ],
+			'array, no message' => [ [ 'ok' => true ] ],
 		];
 	}
 }

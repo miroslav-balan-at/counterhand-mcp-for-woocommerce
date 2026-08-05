@@ -21,58 +21,58 @@
 
 :root {
 	/* Surfaces ----------------------------------------------------------- */
-	--ctrh-surface: var(--wpds-color-background-surface, #fff);
-	--ctrh-surface-neutral: var(--wpds-color-background-surface-neutral, #f6f7f7);
-	--ctrh-surface-sunken: var(--wpds-color-background-surface-sunken, #f0f0f1);
-	--ctrh-surface-inverse: var(--wpds-color-background-surface-inverse, #1d2327);
+	--counterhand-surface: var(--wpds-color-background-surface, #fff);
+	--counterhand-surface-neutral: var(--wpds-color-background-surface-neutral, #f6f7f7);
+	--counterhand-surface-sunken: var(--wpds-color-background-surface-sunken, #f0f0f1);
+	--counterhand-surface-inverse: var(--wpds-color-background-surface-inverse, #1d2327);
 
 	/* Text --------------------------------------------------------------- */
-	--ctrh-text: var(--wpds-color-text-primary, #1d2327);
-	--ctrh-text-muted: var(--wpds-color-text-secondary, #50575e);
-	--ctrh-text-subtle: var(--wpds-color-text-tertiary, #6a6e73);
-	--ctrh-text-inverse: var(--wpds-color-text-inverse, #f0f0f1);
+	--counterhand-text: var(--wpds-color-text-primary, #1d2327);
+	--counterhand-text-muted: var(--wpds-color-text-secondary, #50575e);
+	--counterhand-text-subtle: var(--wpds-color-text-tertiary, #6a6e73);
+	--counterhand-text-inverse: var(--wpds-color-text-inverse, #f0f0f1);
 
 	/* Borders ------------------------------------------------------------ */
-	--ctrh-border: var(--wpds-color-stroke-subtle, #dcdcde);
-	--ctrh-border-strong: var(--wpds-color-stroke, #a7aaad);
-	--ctrh-border-field: var(--wpds-color-stroke-field, #8c8f94);
+	--counterhand-border: var(--wpds-color-stroke-subtle, #dcdcde);
+	--counterhand-border-strong: var(--wpds-color-stroke, #a7aaad);
+	--counterhand-border-field: var(--wpds-color-stroke-field, #8c8f94);
 
 	/* Accent / interactive ----------------------------------------------- */
-	--ctrh-accent: var(--wpds-color-brand, #2271b1);
-	--ctrh-accent-hover: var(--wpds-color-brand-hover, #135e96);
-	--ctrh-accent-active: var(--wpds-color-brand-active, #0a4b78);
-	--ctrh-accent-surface: var(--wpds-color-background-brand-subtle, #f0f6fc);
+	--counterhand-accent: var(--wpds-color-brand, #2271b1);
+	--counterhand-accent-hover: var(--wpds-color-brand-hover, #135e96);
+	--counterhand-accent-active: var(--wpds-color-brand-active, #0a4b78);
+	--counterhand-accent-surface: var(--wpds-color-background-brand-subtle, #f0f6fc);
 
 	/* Status triplets: surface / stroke / foreground ---------------------- */
-	--ctrh-success: var(--wpds-color-text-success, #00a32a);
-	--ctrh-success-surface: var(--wpds-color-background-success-subtle, #edfaef);
-	/* --ctrh-success is 3.4:1 on white: a fill colour, not a text colour. Small
+	--counterhand-success: var(--wpds-color-text-success, #00a32a);
+	--counterhand-success-surface: var(--wpds-color-background-success-subtle, #edfaef);
+	/* --counterhand-success is 3.4:1 on white: a fill colour, not a text colour. Small
 	   text says "active"/"connected" in this instead, as warning and error do. */
-	--ctrh-success-text: var(--wpds-color-text-success-strong, #005c12);
+	--counterhand-success-text: var(--wpds-color-text-success-strong, #005c12);
 
-	--ctrh-warning: var(--wpds-color-stroke-warning, #dba617);
-	--ctrh-warning-surface: var(--wpds-color-background-warning-subtle, #fcf9e8);
-	--ctrh-warning-text: var(--wpds-color-text-warning, #614a00);
+	--counterhand-warning: var(--wpds-color-stroke-warning, #dba617);
+	--counterhand-warning-surface: var(--wpds-color-background-warning-subtle, #fcf9e8);
+	--counterhand-warning-text: var(--wpds-color-text-warning, #614a00);
 
-	--ctrh-error: var(--wpds-color-text-error, #d63638);
-	--ctrh-error-surface: var(--wpds-color-background-error-subtle, #fcf0f1);
-	--ctrh-error-text: var(--wpds-color-text-error-strong, #8a1f21);
+	--counterhand-error: var(--wpds-color-text-error, #d63638);
+	--counterhand-error-surface: var(--wpds-color-background-error-subtle, #fcf0f1);
+	--counterhand-error-text: var(--wpds-color-text-error-strong, #8a1f21);
 
 	/* Dimensions --------------------------------------------------------- */
 	/* 720px is WooCommerce's settings measure — one centred column so every
 	   extension lines up at the same width. */
-	--ctrh-measure: var(--wpds-dimension-surface-width-xl, 720px);
-	--ctrh-radius: var(--wpds-dimension-radius-small, 4px);
-	--ctrh-radius-card: var(--wpds-dimension-radius-medium, 6px);
-	--ctrh-gap-small: var(--wpds-dimension-gap-small, 8px);
-	--ctrh-gap: var(--wpds-dimension-gap-medium, 16px);
-	--ctrh-gap-large: var(--wpds-dimension-gap-large, 24px);
-	--ctrh-pad: var(--wpds-dimension-padding-large, 24px);
-	--ctrh-pad-small: var(--wpds-dimension-padding-small, 12px);
+	--counterhand-measure: var(--wpds-dimension-surface-width-xl, 720px);
+	--counterhand-radius: var(--wpds-dimension-radius-small, 4px);
+	--counterhand-radius-card: var(--wpds-dimension-radius-medium, 6px);
+	--counterhand-gap-small: var(--wpds-dimension-gap-small, 8px);
+	--counterhand-gap: var(--wpds-dimension-gap-medium, 16px);
+	--counterhand-gap-large: var(--wpds-dimension-gap-large, 24px);
+	--counterhand-pad: var(--wpds-dimension-padding-large, 24px);
+	--counterhand-pad-small: var(--wpds-dimension-padding-small, 12px);
 
 	/* Elevation: two layers so cards lift off the neutral background without
 	   a hard edge. Not tokenised upstream, so these stay literal. */
-	--ctrh-shadow-card: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
+	--counterhand-shadow-card: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
 
 	/*
 	 * Legacy palette aliases.
@@ -82,16 +82,16 @@
 	 * rules inherit theming for free without rewriting 500 lines of working,
 	 * shipped CSS. New rules should use the semantic names above.
 	 */
-	--ctrh-blue-50: var(--ctrh-accent);
-	--ctrh-blue-60: var(--ctrh-accent-hover);
-	--ctrh-blue-70: var(--ctrh-accent-active);
-	--ctrh-gray-0: var(--ctrh-surface-neutral);
-	--ctrh-gray-5: var(--ctrh-border);
-	--ctrh-gray-20: var(--ctrh-border-strong);
-	--ctrh-gray-60: var(--ctrh-text-muted);
-	--ctrh-gray-100: var(--ctrh-text);
-	--ctrh-red-50: var(--ctrh-error);
-	--ctrh-green-50: var(--ctrh-success);
-	--ctrh-yellow-5: var(--ctrh-warning-surface);
-	--ctrh-yellow-40: var(--ctrh-warning);
+	--counterhand-blue-50: var(--counterhand-accent);
+	--counterhand-blue-60: var(--counterhand-accent-hover);
+	--counterhand-blue-70: var(--counterhand-accent-active);
+	--counterhand-gray-0: var(--counterhand-surface-neutral);
+	--counterhand-gray-5: var(--counterhand-border);
+	--counterhand-gray-20: var(--counterhand-border-strong);
+	--counterhand-gray-60: var(--counterhand-text-muted);
+	--counterhand-gray-100: var(--counterhand-text);
+	--counterhand-red-50: var(--counterhand-error);
+	--counterhand-green-50: var(--counterhand-success);
+	--counterhand-yellow-5: var(--counterhand-warning-surface);
+	--counterhand-yellow-40: var(--counterhand-warning);
 }

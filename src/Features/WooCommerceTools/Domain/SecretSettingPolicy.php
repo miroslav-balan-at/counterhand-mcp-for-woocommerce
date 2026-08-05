@@ -54,7 +54,7 @@ final readonly class SecretSettingPolicy implements ArgumentPolicy {
 		 * @param string $id       The setting id being written.
 		 */
 		$writable = (bool) apply_filters(
-			'ctrh_setting_writable',
+			'counterhand_setting_writable',
 			1 !== preg_match( self::SECRET_SHAPED, $id ),
 			$id
 		);

@@ -15,14 +15,14 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 /** Cache-busted asset URL; these pages render outside the wp_enqueue pipeline. */
-$ctrh_asset_url = static function ( string $relative_path ): string {
-	return plugins_url( $relative_path, CTRH_PLUGIN_FILE )
-		. '?v=' . rawurlencode( (string) filemtime( CTRH_PLUGIN_DIR . '/' . $relative_path ) );
+$counterhand_asset_url = static function ( string $relative_path ): string {
+	return plugins_url( $relative_path, COUNTERHAND_PLUGIN_FILE )
+		. '?v=' . rawurlencode( (string) filemtime( COUNTERHAND_PLUGIN_DIR . '/' . $relative_path ) );
 };
 
 // Tokens first — flow.css consumes the custom properties it defines.
-$ctrh_tokens_url = $ctrh_asset_url( 'assets/shared/tokens.css' );
-$ctrh_css_url    = $ctrh_asset_url( 'assets/oauth/flow.css' );
+$counterhand_tokens_url = $counterhand_asset_url( 'assets/shared/tokens.css' );
+$counterhand_css_url    = $counterhand_asset_url( 'assets/oauth/flow.css' );
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -32,23 +32,23 @@ $ctrh_css_url    = $ctrh_asset_url( 'assets/oauth/flow.css' );
 	<meta name="robots" content="noindex,nofollow">
 	<title><?php echo esc_html( $page_title . ' — ' . $store_name ); ?></title>
 	<?php // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- Standalone OAuth pages render their own document outside the wp_enqueue pipeline. ?>
-	<link rel="stylesheet" href="<?php echo esc_url( $ctrh_tokens_url ); ?>">
-	<link rel="stylesheet" href="<?php echo esc_url( $ctrh_css_url ); ?>">
+	<link rel="stylesheet" href="<?php echo esc_url( $counterhand_tokens_url ); ?>">
+	<link rel="stylesheet" href="<?php echo esc_url( $counterhand_css_url ); ?>">
 	<?php // phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet ?>
 </head>
-<body class="ctrh-flow">
-	<header class="ctrh-siteheader">
+<body class="counterhand-flow">
+	<header class="counterhand-siteheader">
 		<?php if ( null !== $store_logo ) : ?>
-			<img class="ctrh-siteheader__logo" src="<?php echo esc_url( $store_logo ); ?>"
+			<img class="counterhand-siteheader__logo" src="<?php echo esc_url( $store_logo ); ?>"
 				alt="<?php echo esc_attr( $store_name ); ?>" width="48" height="48">
 		<?php else : ?>
-			<span class="ctrh-siteheader__mark" aria-hidden="true"><?php echo esc_html( mb_strtoupper( mb_substr( $store_name, 0, 1 ) ) ); ?></span>
+			<span class="counterhand-siteheader__mark" aria-hidden="true"><?php echo esc_html( mb_strtoupper( mb_substr( $store_name, 0, 1 ) ) ); ?></span>
 		<?php endif; ?>
 
-		<span class="ctrh-siteheader__text">
-			<span class="ctrh-siteheader__name"><?php echo esc_html( $store_name ); ?></span>
-			<span class="ctrh-siteheader__host">
-				<svg class="ctrh-lock" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false">
+		<span class="counterhand-siteheader__text">
+			<span class="counterhand-siteheader__name"><?php echo esc_html( $store_name ); ?></span>
+			<span class="counterhand-siteheader__host">
+				<svg class="counterhand-lock" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false">
 					<path d="M7 10V7a5 5 0 0110 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 					<rect x="4.5" y="10" width="15" height="10" rx="2" fill="currentColor"/>
 				</svg>
@@ -57,15 +57,15 @@ $ctrh_css_url    = $ctrh_asset_url( 'assets/oauth/flow.css' );
 		</span>
 	</header>
 
-	<main class="ctrh-card" role="main">
+	<main class="counterhand-card" role="main">
 		<?php
 		// The state partial renders the card body.
 		require $body_template;
 		?>
 	</main>
 
-	<footer class="ctrh-sitefooter">
-		<a class="ctrh-sitefooter__link" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+	<footer class="counterhand-sitefooter">
+		<a class="counterhand-sitefooter__link" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<?php
 			printf(
 				/* translators: %s: store name */
@@ -74,8 +74,8 @@ $ctrh_css_url    = $ctrh_asset_url( 'assets/oauth/flow.css' );
 			);
 			?>
 		</a>
-		<span class="ctrh-sitefooter__sep" aria-hidden="true">·</span>
-		<span class="ctrh-sitefooter__note"><?php esc_html_e( 'Secured by Counterhand MCP', 'counterhand-mcp-for-woocommerce' ); ?></span>
+		<span class="counterhand-sitefooter__sep" aria-hidden="true">·</span>
+		<span class="counterhand-sitefooter__note"><?php esc_html_e( 'Secured by Counterhand MCP', 'counterhand-mcp-for-woocommerce' ); ?></span>
 	</footer>
 </body>
 </html>

@@ -21,9 +21,9 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'CTRH_VERSION', '1.0.0' );
-define( 'CTRH_PLUGIN_FILE', __FILE__ );
-define( 'CTRH_PLUGIN_DIR', __DIR__ );
+define( 'COUNTERHAND_VERSION', '1.0.0' );
+define( 'COUNTERHAND_PLUGIN_FILE', __FILE__ );
+define( 'COUNTERHAND_PLUGIN_DIR', __DIR__ );
 
 /*
  * Freemius: licensing, checkout and the update server.

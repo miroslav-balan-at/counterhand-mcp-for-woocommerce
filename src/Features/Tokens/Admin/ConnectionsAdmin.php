@@ -18,12 +18,12 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ConnectionsAdmin implements SettingsTabInterface {
 
-	private const NONCE_REVOKE = 'ctrh_revoke_connection';
+	private const NONCE_REVOKE = 'counterhand_revoke_connection';
 
 	public function __construct( private TokenRepositoryInterface $repository ) {}
 
 	public function register(): void {
-		add_action( 'admin_post_ctrh_revoke_connection', [ $this, 'handle_revoke' ] );
+		add_action( 'admin_post_counterhand_revoke_connection', [ $this, 'handle_revoke' ] );
 	}
 
 	public function render_tab(): void {
@@ -40,7 +40,7 @@ final readonly class ConnectionsAdmin implements SettingsTabInterface {
 
 		check_admin_referer( self::NONCE_REVOKE );
 
-		$token_row_id = (int) ( $_POST['ctrh_token_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified above; (int) cast sanitizes.
+		$token_row_id = (int) ( $_POST['counterhand_token_id'] ?? 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput -- nonce verified above; (int) cast sanitizes.
 		if ( $token_row_id > 0 ) {
 			$this->repository->revoke( $token_row_id );
 		}
@@ -48,9 +48,9 @@ final readonly class ConnectionsAdmin implements SettingsTabInterface {
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'         => 'counterhand-mcp-connect',
-					'view'         => 'connections',
-					'ctrh_revoked' => '1',
+					'page'                => 'counterhand-mcp-connect',
+					'view'                => 'connections',
+					'counterhand_revoked' => '1',
 				],
 				admin_url( 'admin.php' )
 			)

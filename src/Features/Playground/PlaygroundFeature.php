@@ -31,8 +31,8 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabInterface {
 
-	private const NONCE       = 'ctrh_chat_send';
-	private const TOOLS_NONCE = 'ctrh_save_chat_tools';
+	private const NONCE       = 'counterhand_chat_send';
+	private const TOOLS_NONCE = 'counterhand_save_chat_tools';
 
 	public function __construct(
 		private ToolDispatcherInterface $tools,
@@ -44,7 +44,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	) {}
 
 	public function register(): void {
-		add_action( 'wp_ajax_ctrh_chat_send', [ $this, 'handle_send' ] );
+		add_action( 'wp_ajax_counterhand_chat_send', [ $this, 'handle_send' ] );
 		add_action( 'admin_post_' . self::TOOLS_NONCE, [ $this, 'handle_save_tools' ] );
 		$this->model_connect->register();
 	}
@@ -59,7 +59,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	public function render_tab(): void {
 		// "Change" in the chat footer reopens the chooser without disconnecting
 		// anything, so switching models never means leaving the tab.
-		$changing = isset( $_GET['ctrh_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
+		$changing = isset( $_GET['counterhand_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
 
 		$tools              = $this->tools->visible_for( $this->synthetic_agent() );
 		$chat_groups        = $this->settings->groups();
@@ -133,7 +133,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		check_admin_referer( self::TOOLS_NONCE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
-		$posted = map_deep( wp_unslash( $_POST['ctrh_chat_groups'] ?? [] ), 'sanitize_key' );
+		$posted = map_deep( wp_unslash( $_POST['counterhand_chat_groups'] ?? [] ), 'sanitize_key' );
 
 		// Unticking every box posts nothing at all, which is a real choice and
 		// saved as one — save_groups() drops anything that is not a live group.

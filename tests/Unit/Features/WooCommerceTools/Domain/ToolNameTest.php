@@ -9,7 +9,7 @@ use Counterhand\Tests\Unit\TestCase;
 
 /**
  * The name is a published identifier an MCP client stores, and it is also what
- * lands in ctrh_log.tool_name — a VARCHAR(64). A name that does not fit is not
+ * lands in counterhand_action_log.tool_name — a VARCHAR(64). A name that does not fit is not
  * a validation error at the edge, it is a silently truncated audit trail.
  */
 final class ToolNameTest extends TestCase {

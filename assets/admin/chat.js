@@ -2,11 +2,11 @@
 ( function () {
 	'use strict';
 
-	var i18n = ( window.ctrhChat && window.ctrhChat.i18n ) || {};
+	var i18n = ( window.counterhandChat && window.counterhandChat.i18n ) || {};
 
 	// Provider install: intercept the chooser's install form so the button can
 	// show progress; the form itself stays as the no-JS fallback.
-	var installForm = document.getElementById( 'ctrh-install-form' );
+	var installForm = document.getElementById( 'counterhand-install-form' );
 
 	if ( installForm ) {
 		installForm.addEventListener( 'submit', function ( event ) {
@@ -23,8 +23,8 @@
 			clicked.textContent = i18n.installing || 'Installing…';
 
 			var body = new URLSearchParams( new FormData( installForm ) );
-			body.set( 'action', 'ctrh_install_provider' );
-			body.set( 'ctrh_provider_slug', clicked.value );
+			body.set( 'action', 'counterhand_install_provider' );
+			body.set( 'counterhand_provider_slug', clicked.value );
 
 			fetch( installForm.dataset.ajaxUrl, {
 				method: 'POST',
@@ -49,7 +49,7 @@
 						delete button.dataset.clicked;
 					} );
 
-					var note = document.getElementById( 'ctrh-install-error' );
+					var note = document.getElementById( 'counterhand-install-error' );
 					if ( note ) {
 						note.textContent = '✕ ' + ( error.message || i18n.installFailed || 'The install failed.' );
 					}
@@ -63,13 +63,13 @@
 		} );
 	}
 
-	var form = document.getElementById( 'ctrh-chat-form' );
-	var input = document.getElementById( 'ctrh-chat-input' );
-	var log = document.getElementById( 'ctrh-chat-log' );
-	var empty = document.getElementById( 'ctrh-chat-empty' );
-	var status = document.getElementById( 'ctrh-chat-status' );
-	var sendButton = document.getElementById( 'ctrh-chat-send' );
-	var resetButton = document.getElementById( 'ctrh-chat-reset' );
+	var form = document.getElementById( 'counterhand-chat-form' );
+	var input = document.getElementById( 'counterhand-chat-input' );
+	var log = document.getElementById( 'counterhand-chat-log' );
+	var empty = document.getElementById( 'counterhand-chat-empty' );
+	var status = document.getElementById( 'counterhand-chat-status' );
+	var sendButton = document.getElementById( 'counterhand-chat-send' );
+	var resetButton = document.getElementById( 'counterhand-chat-reset' );
 
 	if ( ! form || ! input || ! log ) {
 		return;
@@ -185,8 +185,8 @@
 
 	/** The store's own mark, matching the avatar on the OAuth consent screen. */
 	function avatar() {
-		var mark = ( window.ctrhChat && window.ctrhChat.avatar ) || {};
-		var node = el( 'span', 'ctrh-msg__avatar' );
+		var mark = ( window.counterhandChat && window.counterhandChat.avatar ) || {};
+		var node = el( 'span', 'counterhand-msg__avatar' );
 		node.setAttribute( 'aria-hidden', 'true' );
 
 		if ( mark.url ) {
@@ -203,16 +203,16 @@
 
 	/** A message row; assistant rows carry the store mark, user rows do not. */
 	function messageRow( role ) {
-		var row = el( 'div', 'ctrh-msg ctrh-msg--' + role );
+		var row = el( 'div', 'counterhand-msg counterhand-msg--' + role );
 
 		if ( role !== 'user' ) {
 			row.appendChild( avatar() );
 		}
 
-		var main = el( 'div', 'ctrh-msg__main' );
+		var main = el( 'div', 'counterhand-msg__main' );
 		main.appendChild( el(
 			'div',
-			'ctrh-msg__role',
+			'counterhand-msg__role',
 			role === 'user' ? ( i18n.you || 'You' ) : ( i18n.assistant || 'Assistant' )
 		) );
 		row.appendChild( main );
@@ -240,7 +240,7 @@
 		hideEmptyState();
 
 		var parts = messageRow( role );
-		var body = el( 'div', 'ctrh-msg__body' );
+		var body = el( 'div', 'counterhand-msg__body' );
 
 		if ( role === 'user' ) {
 			body.textContent = text;
@@ -259,27 +259,27 @@
 	function addToolCard( entry ) {
 		hideEmptyState();
 
-		var details = el( 'details', 'ctrh-tool' + ( entry.is_error ? ' ctrh-tool--error' : '' ) );
-		var summary = el( 'summary', 'ctrh-tool__summary' );
+		var details = el( 'details', 'counterhand-tool' + ( entry.is_error ? ' counterhand-tool--error' : '' ) );
+		var summary = el( 'summary', 'counterhand-tool__summary' );
 
-		summary.appendChild( el( 'span', 'ctrh-tool__icon', entry.is_error ? '✕' : '✓' ) );
-		summary.appendChild( el( 'code', 'ctrh-tool__name', entry.name ) );
+		summary.appendChild( el( 'span', 'counterhand-tool__icon', entry.is_error ? '✕' : '✓' ) );
+		summary.appendChild( el( 'code', 'counterhand-tool__name', entry.name ) );
 		summary.appendChild( el(
 			'span',
-			'ctrh-tool__hint',
+			'counterhand-tool__hint',
 			entry.is_error ? ( i18n.toolFailed || 'failed' ) : ( i18n.toolRan || 'ran' )
 		) );
 		details.appendChild( summary );
 
-		var body = el( 'div', 'ctrh-tool__body' );
+		var body = el( 'div', 'counterhand-tool__body' );
 
 		if ( entry.arguments && Object.keys( entry.arguments ).length ) {
-			body.appendChild( el( 'div', 'ctrh-tool__label', i18n.arguments || 'Arguments' ) );
-			body.appendChild( el( 'pre', 'ctrh-tool__code', JSON.stringify( entry.arguments, null, 2 ) ) );
+			body.appendChild( el( 'div', 'counterhand-tool__label', i18n.arguments || 'Arguments' ) );
+			body.appendChild( el( 'pre', 'counterhand-tool__code', JSON.stringify( entry.arguments, null, 2 ) ) );
 		}
 
-		body.appendChild( el( 'div', 'ctrh-tool__label', i18n.result || 'Result' ) );
-		body.appendChild( el( 'pre', 'ctrh-tool__code', JSON.stringify( entry.result, null, 2 ) ) );
+		body.appendChild( el( 'div', 'counterhand-tool__label', i18n.result || 'Result' ) );
+		body.appendChild( el( 'pre', 'counterhand-tool__code', JSON.stringify( entry.result, null, 2 ) ) );
 
 		details.appendChild( body );
 		log.appendChild( details );
@@ -289,7 +289,7 @@
 	function setBusy( busy ) {
 		sendButton.disabled = busy;
 		input.disabled = busy;
-		status.className = 'ctrh-chat__status';
+		status.className = 'counterhand-chat__status';
 		status.textContent = busy ? ( i18n.thinking || 'Thinking…' ) : '';
 	}
 
@@ -302,9 +302,9 @@
 		addBubble( 'user', text );
 
 		var parts = messageRow( 'assistant' );
-		parts.row.classList.add( 'ctrh-msg--pending' );
+		parts.row.classList.add( 'counterhand-msg--pending' );
 
-		var typing = el( 'div', 'ctrh-typing' );
+		var typing = el( 'div', 'counterhand-typing' );
 		for ( var dot = 0; dot < 3; dot++ ) {
 			typing.appendChild( el( 'span' ) );
 		}
@@ -316,7 +316,7 @@
 		setBusy( true );
 
 		var body = new URLSearchParams();
-		body.set( 'action', 'ctrh_chat_send' );
+		body.set( 'action', 'counterhand_chat_send' );
 		body.set( '_ajax_nonce', form.dataset.nonce );
 		body.set( 'message', text );
 		body.set( 'history', JSON.stringify( history ) );
@@ -337,7 +337,7 @@
 
 				if ( ! payload.success ) {
 					var failure = addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ) );
-					failure.classList.add( 'ctrh-msg--error' );
+					failure.classList.add( 'counterhand-msg--error' );
 					return;
 				}
 
@@ -358,7 +358,7 @@
 			} )
 			.catch( function ( error ) {
 				parts.row.remove();
-				addBubble( 'assistant', String( error ) ).classList.add( 'ctrh-msg--error' );
+				addBubble( 'assistant', String( error ) ).classList.add( 'counterhand-msg--error' );
 			} )
 			.finally( function () {
 				setBusy( false );
@@ -389,7 +389,7 @@
 	autoGrow();
 
 	document.addEventListener( 'click', function ( event ) {
-		if ( event.target.classList.contains( 'ctrh-chat__suggestion' ) ) {
+		if ( event.target.classList.contains( 'counterhand-chat__suggestion' ) ) {
 			input.value = event.target.textContent.trim();
 			autoGrow();
 			form.dispatchEvent( new Event( 'submit' ) );

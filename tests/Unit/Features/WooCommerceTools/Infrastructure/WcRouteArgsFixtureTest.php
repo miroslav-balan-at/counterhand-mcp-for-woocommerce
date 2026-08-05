@@ -39,13 +39,13 @@ final class WcRouteArgsFixtureTest extends TestCase {
 	 * thinking fails here instead of quietly dropping out of the check.
 	 */
 	private const COVERS = [
-		'coupons-collection-get'   => 'get_coupons',
-		'coupons-collection-post'  => 'create_coupon',
-		'coupons-item-put'         => 'update_coupon',
-		'coupons-item-delete'      => 'delete_coupon',
-		'products-collection-get'  => 'list_products',
-		'products-collection-post' => 'create_product',
-		'orders-collection-post'   => null,
+		'coupons-collection-get'     => 'get_coupons',
+		'coupons-collection-post'    => 'create_coupon',
+		'coupons-item-put'           => 'update_coupon',
+		'coupons-item-delete'        => 'delete_coupon',
+		'products-collection-get'    => 'list_products',
+		'products-collection-post'   => 'create_product',
+		'orders-collection-post'     => null,
 		'order-notes-collection-get' => 'get_order_notes',
 		'customers-collection-post'  => null,
 		'system-status-get'          => 'get_system_status',

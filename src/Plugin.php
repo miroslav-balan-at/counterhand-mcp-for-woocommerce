@@ -71,7 +71,7 @@ final class Plugin {
 
 	public static function deactivate(): void {
 		flush_rewrite_rules();
-		wp_clear_scheduled_hook( 'ctrh_purge_log' );
+		wp_clear_scheduled_hook( 'counterhand_purge_log' );
 	}
 
 	public function tool_registry(): ?ToolRegistry {

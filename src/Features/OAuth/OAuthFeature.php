@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class OAuthFeature implements FeatureInterface {
 
-	private const WELL_KNOWN_QUERY_VAR = 'ctrh_well_known';
+	private const WELL_KNOWN_QUERY_VAR = 'counterhand_well_known';
 
 	private DiscoveryController $discovery;
 	private AuthorizeEndpoint $authorize;

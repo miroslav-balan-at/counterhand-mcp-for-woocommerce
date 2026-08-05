@@ -29,12 +29,12 @@ final class PkceTest extends TestCase {
 
 	public static function challenge_lengths(): array {
 		return [
-			'too short (42)'   => [ str_repeat( 'a', 42 ), false ],
-			'minimum (43)'     => [ str_repeat( 'a', 43 ), true ],
-			'maximum (128)'    => [ str_repeat( 'a', 128 ), true ],
-			'too long (129)'   => [ str_repeat( 'a', 129 ), false ],
-			'illegal char'     => [ str_repeat( 'a', 42 ) . '!', false ],
-			'empty'            => [ '', false ],
+			'too short (42)' => [ str_repeat( 'a', 42 ), false ],
+			'minimum (43)'   => [ str_repeat( 'a', 43 ), true ],
+			'maximum (128)'  => [ str_repeat( 'a', 128 ), true ],
+			'too long (129)' => [ str_repeat( 'a', 129 ), false ],
+			'illegal char'   => [ str_repeat( 'a', 42 ) . '!', false ],
+			'empty'          => [ '', false ],
 		];
 	}
 }

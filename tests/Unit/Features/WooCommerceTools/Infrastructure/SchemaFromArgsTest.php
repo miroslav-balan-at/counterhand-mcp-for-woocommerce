@@ -444,7 +444,7 @@ final class SchemaFromArgsTest extends TestCase {
 	 * tools/list, taking the whole surface down rather than one tool.
 	 */
 	public function test_a_self_referential_arg_spec_does_not_exhaust_the_stack(): void {
-		$spec           = [ 'type' => 'object' ];
+		$spec               = [ 'type' => 'object' ];
 		$spec['properties'] = [ 'self' => &$spec ];
 
 		$built = $this->build( [ 'recursive' => $spec ] );

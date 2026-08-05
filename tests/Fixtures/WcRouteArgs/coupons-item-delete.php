@@ -10,15 +10,15 @@
  */
 
 return array(
-  'id' => 
-  array(
-    'description' => 'Eindeutige Kennung für die Ressource.',
-    'type' => 'integer',
-  ),
-  'force' => 
-  array(
-    'default' => false,
-    'type' => 'boolean',
-    'description' => 'Ob der Papierkorb übersprungen und unwiderruflich gelöscht werden soll.',
-  ),
+	'id'    =>
+	array(
+		'description' => 'Eindeutige Kennung für die Ressource.',
+		'type'        => 'integer',
+	),
+	'force' =>
+	array(
+		'default'     => false,
+		'type'        => 'boolean',
+		'description' => 'Ob der Papierkorb übersprungen und unwiderruflich gelöscht werden soll.',
+	),
 );

@@ -12,7 +12,7 @@
 	box-sizing: border-box;
 }
 
-body.ctrh-flow {
+body.counterhand-flow {
 	margin: 0;
 	padding: clamp(16px, 5vh, 56px) clamp(16px, 4vw, 40px);
 	min-height: 100vh;
@@ -20,8 +20,8 @@ body.ctrh-flow {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background: var(--ctrh-gray-0);
-	color: var(--ctrh-gray-100);
+	background: var(--counterhand-gray-0);
+	color: var(--counterhand-gray-100);
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
@@ -32,7 +32,7 @@ body.ctrh-flow {
    mistaken for a phishing screen. Deliberately no menus/cart/search: a consent
    screen must not offer wander-off paths mid-authorization. */
 
-.ctrh-siteheader {
+.counterhand-siteheader {
 	width: 100%;
 	max-width: 720px;
 	display: flex;
@@ -41,18 +41,18 @@ body.ctrh-flow {
 	margin-bottom: 16px;
 }
 
-.ctrh-siteheader__logo {
+.counterhand-siteheader__logo {
 	width: 48px;
 	height: 48px;
 	border-radius: 8px;
 	object-fit: contain;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-gray-5);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-gray-5);
 	padding: 4px;
 	flex: 0 0 auto;
 }
 
-.ctrh-siteheader__mark {
+.counterhand-siteheader__mark {
 	width: 48px;
 	height: 48px;
 	flex: 0 0 auto;
@@ -60,45 +60,45 @@ body.ctrh-flow {
 	align-items: center;
 	justify-content: center;
 	border-radius: 8px;
-	background: var(--ctrh-blue-50);
-	color: var(--ctrh-text-inverse);
+	background: var(--counterhand-blue-50);
+	color: var(--counterhand-text-inverse);
 	font-size: 22px;
 	font-weight: 700;
 }
 
-.ctrh-siteheader__text {
+.counterhand-siteheader__text {
 	display: flex;
 	flex-direction: column;
 	gap: 1px;
 	min-width: 0;
 }
 
-.ctrh-siteheader__name {
+.counterhand-siteheader__name {
 	font-size: 16px;
 	font-weight: 600;
-	color: var(--ctrh-gray-100);
+	color: var(--counterhand-gray-100);
 }
 
-.ctrh-siteheader__host {
+.counterhand-siteheader__host {
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-lock {
-	color: var(--ctrh-green-50);
+.counterhand-lock {
+	color: var(--counterhand-green-50);
 	flex: 0 0 auto;
 }
 
 /* Card ------------------------------------------------------------------- */
 
-.ctrh-card {
+.counterhand-card {
 	width: 100%;
 	max-width: 720px;
-	background: var(--ctrh-surface);
-	border: 1px solid var(--ctrh-gray-5);
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-gray-5);
 	border-radius: 6px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
 	overflow: hidden;
@@ -106,19 +106,19 @@ body.ctrh-flow {
 
 /* Identity — who is about to approve. Prominent, not fine print. */
 
-.ctrh-identity {
+.counterhand-identity {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin: 0 0 20px;
 	padding: 10px 12px;
-	border: 1px solid var(--ctrh-gray-5);
-	border-radius: var(--ctrh-radius);
-	background: var(--ctrh-surface);
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius);
+	background: var(--counterhand-surface);
 }
 
 /* Initial-based mark: no external avatar request, so nothing can fail to load. */
-.ctrh-identity__avatar {
+.counterhand-identity__avatar {
 	width: 36px;
 	height: 36px;
 	flex: 0 0 auto;
@@ -126,114 +126,114 @@ body.ctrh-flow {
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	background: var(--ctrh-surface-sunken);
-	color: var(--ctrh-gray-60);
+	background: var(--counterhand-surface-sunken);
+	color: var(--counterhand-gray-60);
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
 }
 
-.ctrh-identity__text {
+.counterhand-identity__text {
 	display: flex;
 	flex-direction: column;
 	line-height: 1.35;
 	min-width: 0;
 }
 
-.ctrh-identity__label {
+.counterhand-identity__label {
 	font-size: 11px;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-identity__name {
+.counterhand-identity__name {
 	font-weight: 600;
 }
 
-.ctrh-card__body {
+.counterhand-card__body {
 	padding: 28px clamp(20px, 4vw, 36px);
 }
 
-.ctrh-card__body--centered {
+.counterhand-card__body--centered {
 	text-align: center;
 }
 
-.ctrh-card__foot {
+.counterhand-card__foot {
 	padding: 14px clamp(20px, 4vw, 36px);
-	border-top: 1px solid var(--ctrh-gray-5);
-	background: var(--ctrh-gray-0);
+	border-top: 1px solid var(--counterhand-gray-5);
+	background: var(--counterhand-gray-0);
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
 /* Typography ------------------------------------------------------------- */
 
-.ctrh-title {
+.counterhand-title {
 	margin: 0 0 8px;
 	font-size: 20px;
 	font-weight: 600;
 	line-height: 1.3;
 }
 
-.ctrh-lede {
+.counterhand-lede {
 	margin: 0 0 16px;
-	color: var(--ctrh-gray-100);
+	color: var(--counterhand-gray-100);
 }
 
-.ctrh-hint {
+.counterhand-hint {
 	margin: 16px 0 0;
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
 /* Verified origin -------------------------------------------------------- */
 
-.ctrh-origin {
+.counterhand-origin {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 8px;
 	margin: 0 0 20px;
 	padding: 10px 12px;
-	background: var(--ctrh-gray-0);
-	border: 1px solid var(--ctrh-gray-5);
-	border-radius: var(--ctrh-radius);
+	background: var(--counterhand-gray-0);
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius);
 }
 
-.ctrh-origin__label {
+.counterhand-origin__label {
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-origin code {
+.counterhand-origin code {
 	font-size: 12px;
 	word-break: break-all;
-	color: var(--ctrh-gray-100);
+	color: var(--counterhand-gray-100);
 }
 
 /* Scopes ----------------------------------------------------------------- */
 
-.ctrh-scopes {
+.counterhand-scopes {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	min-width: 0;
 }
 
-.ctrh-scopes__legend {
+.counterhand-scopes__legend {
 	padding: 0 0 10px;
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-scopes__section {
+.counterhand-scopes__section {
 	margin: 0 0 18px;
 }
 
@@ -241,15 +241,15 @@ body.ctrh-flow {
  * Advanced sections ship collapsed: the groups inside can change how the store
  * charges money or run maintenance routines, so opening one is a deliberate act.
  */
-.ctrh-scopes__section--advanced > .ctrh-scopes__heading {
+.counterhand-scopes__section--advanced > .counterhand-scopes__heading {
 	cursor: pointer;
 }
 
-.ctrh-scopes__section--advanced[open] > .ctrh-scopes__heading {
+.counterhand-scopes__section--advanced[open] > .counterhand-scopes__heading {
 	margin-bottom: 10px;
 }
 
-.ctrh-scopes__heading {
+.counterhand-scopes__heading {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -257,13 +257,13 @@ body.ctrh-flow {
 	font-weight: 600;
 }
 
-.ctrh-scopes__heading-desc {
+.counterhand-scopes__heading-desc {
 	font-size: 12px;
 	font-weight: 400;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-scope-group {
+.counterhand-scope-group {
 	margin-bottom: 8px;
 }
 
@@ -271,7 +271,7 @@ body.ctrh-flow {
  * The group name is an eyebrow above its own scopes rather than a heading in
  * its own right — it orients, the scope rows below carry the real consequence.
  */
-.ctrh-scope-group__name {
+.counterhand-scope-group__name {
 	display: block;
 	padding-left: 2px;
 	margin-bottom: 4px;
@@ -279,39 +279,39 @@ body.ctrh-flow {
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-scope {
+.counterhand-scope {
 	display: flex;
 	align-items: flex-start;
 	gap: 10px;
 	padding: 12px 14px;
-	border: 1px solid var(--ctrh-gray-5);
-	border-radius: var(--ctrh-radius);
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius);
 	margin-bottom: 8px;
 	cursor: pointer;
 	transition: border-color .15s ease, background-color .15s ease;
 }
 
-.ctrh-scope:hover {
-	border-color: var(--ctrh-blue-50);
-	background: var(--ctrh-accent-surface);
+.counterhand-scope:hover {
+	border-color: var(--counterhand-blue-50);
+	background: var(--counterhand-accent-surface);
 }
 
-.ctrh-scope--write {
-	border-left: 3px solid var(--ctrh-yellow-40);
+.counterhand-scope--write {
+	border-left: 3px solid var(--counterhand-yellow-40);
 }
 
-.ctrh-scope input[type="checkbox"] {
+.counterhand-scope input[type="checkbox"] {
 	margin: 2px 0 0;
 	width: 16px;
 	height: 16px;
-	accent-color: var(--ctrh-blue-50);
+	accent-color: var(--counterhand-blue-50);
 	flex: 0 0 auto;
 }
 
-.ctrh-scope__text {
+.counterhand-scope__text {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -319,16 +319,16 @@ body.ctrh-flow {
 	min-width: 0;
 }
 
-.ctrh-scope__name {
+.counterhand-scope__name {
 	font-weight: 600;
 }
 
-.ctrh-scope__desc {
+.counterhand-scope__desc {
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 }
 
-.ctrh-tag {
+.counterhand-tag {
 	flex: 0 0 auto;
 	align-self: center;
 	padding: 2px 8px;
@@ -338,30 +338,30 @@ body.ctrh-flow {
 	white-space: nowrap;
 }
 
-.ctrh-tag--write {
-	background: var(--ctrh-yellow-5);
-	color: var(--ctrh-warning-text);
-	border: 1px solid var(--ctrh-yellow-40);
+.counterhand-tag--write {
+	background: var(--counterhand-yellow-5);
+	color: var(--counterhand-warning-text);
+	border: 1px solid var(--counterhand-yellow-40);
 }
 
 /* Notices ---------------------------------------------------------------- */
 
-.ctrh-notice {
+.counterhand-notice {
 	margin: 16px 0 0;
 	padding: 10px 12px;
-	border-radius: var(--ctrh-radius);
+	border-radius: var(--counterhand-radius);
 	font-size: 12px;
 }
 
-.ctrh-notice--warning {
-	background: var(--ctrh-yellow-5);
-	border-left: 4px solid var(--ctrh-yellow-40);
-	color: var(--ctrh-warning-text);
+.counterhand-notice--warning {
+	background: var(--counterhand-yellow-5);
+	border-left: 4px solid var(--counterhand-yellow-40);
+	color: var(--counterhand-warning-text);
 }
 
 /* Actions ---------------------------------------------------------------- */
 
-.ctrh-actions {
+.counterhand-actions {
 	display: flex;
 	flex-direction: row-reverse;
 	justify-content: flex-end;
@@ -369,18 +369,18 @@ body.ctrh-flow {
 	margin-top: 24px;
 }
 
-.ctrh-actions--single {
+.counterhand-actions--single {
 	justify-content: center;
 	margin-top: 20px;
 }
 
-.ctrh-button {
+.counterhand-button {
 	flex: 1 1 auto;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	padding: 10px 16px;
-	border-radius: var(--ctrh-radius);
+	border-radius: var(--counterhand-radius);
 	border: 1px solid transparent;
 	font-size: 14px;
 	font-weight: 600;
@@ -391,45 +391,45 @@ body.ctrh-flow {
 	transition: background-color .15s ease, border-color .15s ease;
 }
 
-.ctrh-actions--single .ctrh-button {
+.counterhand-actions--single .counterhand-button {
 	flex: 0 0 auto;
 	min-width: 200px;
 }
 
-.ctrh-button--primary {
-	background: var(--ctrh-blue-50);
-	border-color: var(--ctrh-blue-60);
-	color: var(--ctrh-text-inverse);
+.counterhand-button--primary {
+	background: var(--counterhand-blue-50);
+	border-color: var(--counterhand-blue-60);
+	color: var(--counterhand-text-inverse);
 }
 
-.ctrh-button--primary:hover,
-.ctrh-button--primary:focus {
-	background: var(--ctrh-blue-70);
-	border-color: var(--ctrh-blue-70);
-	color: var(--ctrh-text-inverse);
+.counterhand-button--primary:hover,
+.counterhand-button--primary:focus {
+	background: var(--counterhand-blue-70);
+	border-color: var(--counterhand-blue-70);
+	color: var(--counterhand-text-inverse);
 }
 
-.ctrh-button--secondary {
-	background: var(--ctrh-surface-neutral);
-	border-color: var(--ctrh-gray-20);
-	color: var(--ctrh-blue-50);
+.counterhand-button--secondary {
+	background: var(--counterhand-surface-neutral);
+	border-color: var(--counterhand-gray-20);
+	color: var(--counterhand-blue-50);
 }
 
-.ctrh-button--secondary:hover,
-.ctrh-button--secondary:focus {
-	background: var(--ctrh-surface-sunken);
-	border-color: var(--ctrh-blue-50);
-	color: var(--ctrh-blue-70);
+.counterhand-button--secondary:hover,
+.counterhand-button--secondary:focus {
+	background: var(--counterhand-surface-sunken);
+	border-color: var(--counterhand-blue-50);
+	color: var(--counterhand-blue-70);
 }
 
-.ctrh-button:focus-visible {
-	outline: 2px solid var(--ctrh-blue-50);
+.counterhand-button:focus-visible {
+	outline: 2px solid var(--counterhand-blue-50);
 	outline-offset: 1px;
 }
 
 /* Status icons ----------------------------------------------------------- */
 
-.ctrh-status-icon {
+.counterhand-status-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -439,40 +439,40 @@ body.ctrh-flow {
 	border-radius: 50%;
 }
 
-.ctrh-status-icon--success {
-	background: var(--ctrh-success-surface);
-	color: var(--ctrh-green-50);
+.counterhand-status-icon--success {
+	background: var(--counterhand-success-surface);
+	color: var(--counterhand-green-50);
 }
 
-.ctrh-status-icon--error {
-	background: var(--ctrh-error-surface);
-	color: var(--ctrh-red-50);
+.counterhand-status-icon--error {
+	background: var(--counterhand-error-surface);
+	color: var(--counterhand-red-50);
 }
 
-.ctrh-status-icon--neutral {
-	background: var(--ctrh-gray-0);
-	color: var(--ctrh-gray-60);
+.counterhand-status-icon--neutral {
+	background: var(--counterhand-gray-0);
+	color: var(--counterhand-gray-60);
 }
 
 /* Granted list ----------------------------------------------------------- */
 
-.ctrh-granted {
+.counterhand-granted {
 	list-style: none;
 	margin: 0 0 4px;
 	padding: 12px 14px;
 	text-align: left;
-	background: var(--ctrh-gray-0);
-	border: 1px solid var(--ctrh-gray-5);
-	border-radius: var(--ctrh-radius);
+	background: var(--counterhand-gray-0);
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius);
 	font-size: 13px;
 }
 
-.ctrh-granted li {
+.counterhand-granted li {
 	padding: 3px 0 3px 20px;
 	position: relative;
 }
 
-.ctrh-granted li::before {
+.counterhand-granted li::before {
 	content: "";
 	position: absolute;
 	left: 4px;
@@ -480,12 +480,12 @@ body.ctrh-flow {
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: var(--ctrh-green-50);
+	background: var(--counterhand-green-50);
 }
 
 /* Site footer ------------------------------------------------------------ */
 
-.ctrh-sitefooter {
+.counterhand-sitefooter {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -493,74 +493,74 @@ body.ctrh-flow {
 	gap: 8px;
 	margin-top: 18px;
 	font-size: 12px;
-	color: var(--ctrh-gray-60);
+	color: var(--counterhand-gray-60);
 	text-align: center;
 }
 
-.ctrh-sitefooter__link {
-	color: var(--ctrh-blue-50);
+.counterhand-sitefooter__link {
+	color: var(--counterhand-blue-50);
 	text-decoration: none;
 }
 
-.ctrh-sitefooter__link:hover,
-.ctrh-sitefooter__link:focus {
-	color: var(--ctrh-blue-70);
+.counterhand-sitefooter__link:hover,
+.counterhand-sitefooter__link:focus {
+	color: var(--counterhand-blue-70);
 	text-decoration: underline;
 }
 
-.ctrh-sitefooter__sep,
-.ctrh-sitefooter__note {
-	color: var(--ctrh-gray-60);
+.counterhand-sitefooter__sep,
+.counterhand-sitefooter__note {
+	color: var(--counterhand-gray-60);
 }
 
 /* Small screens ---------------------------------------------------------- */
 
 @media screen and (max-width: 600px) {
-	body.ctrh-flow {
+	body.counterhand-flow {
 		/* Top-align on short viewports so the card is never cut off. */
 		justify-content: flex-start;
 	}
 
-	.ctrh-card {
+	.counterhand-card {
 		border-radius: 4px;
 	}
 
-	.ctrh-siteheader {
+	.counterhand-siteheader {
 		gap: 10px;
 		margin-bottom: 14px;
 	}
 
-	.ctrh-siteheader__logo,
-	.ctrh-siteheader__mark {
+	.counterhand-siteheader__logo,
+	.counterhand-siteheader__mark {
 		width: 40px;
 		height: 40px;
 	}
 
-	.ctrh-siteheader__name {
+	.counterhand-siteheader__name {
 		font-size: 15px;
 	}
 
 	/* Approve is first in the DOM, so plain column keeps it the top target. */
-	.ctrh-actions {
+	.counterhand-actions {
 		flex-direction: column;
 	}
 
-	.ctrh-actions--single .ctrh-button {
+	.counterhand-actions--single .counterhand-button {
 		width: 100%;
 		min-width: 0;
 	}
 
 	/* No room for the tag beside the text — move it inside the text column so
 	   the checkbox always stays on the first line next to the title. */
-	.ctrh-scope {
+	.counterhand-scope {
 		flex-wrap: wrap;
 	}
 
-	.ctrh-scope__text {
+	.counterhand-scope__text {
 		flex-basis: 0;
 	}
 
-	.ctrh-tag {
+	.counterhand-tag {
 		align-self: flex-start;
 		margin: 2px 0 0 26px;
 	}

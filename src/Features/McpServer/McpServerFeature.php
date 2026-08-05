@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class McpServerFeature implements FeatureInterface {
 
-	private const QUERY_VAR = 'ctrh_mcp';
+	private const QUERY_VAR = 'counterhand_mcp';
 
 	private McpEndpoint $endpoint;
 

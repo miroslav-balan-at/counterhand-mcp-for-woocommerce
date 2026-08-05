@@ -12,13 +12,13 @@ use Counterhand\Features\Settings\ConnectTab;
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<nav class="nav-tab-wrapper ctrh-connect-tabs">
-	<?php foreach ( ConnectTab::cases() as $ctrh_tab ) : ?>
-		<a href="<?php echo esc_url( $ctrh_tab->url() ); ?>"
-			class="nav-tab <?php echo $active === $ctrh_tab ? 'nav-tab-active' : ''; ?>">
-			<?php echo esc_html( $ctrh_tab->label() ); ?>
-			<?php if ( ! empty( $counts[ $ctrh_tab->value ] ) ) : ?>
-				<span class="ctrh-tab-count"><?php echo esc_html( (string) $counts[ $ctrh_tab->value ] ); ?></span>
+<nav class="nav-tab-wrapper counterhand-connect-tabs">
+	<?php foreach ( ConnectTab::cases() as $counterhand_tab ) : ?>
+		<a href="<?php echo esc_url( $counterhand_tab->url() ); ?>"
+			class="nav-tab <?php echo $active === $counterhand_tab ? 'nav-tab-active' : ''; ?>">
+			<?php echo esc_html( $counterhand_tab->label() ); ?>
+			<?php if ( ! empty( $counts[ $counterhand_tab->value ] ) ) : ?>
+				<span class="counterhand-tab-count"><?php echo esc_html( (string) $counts[ $counterhand_tab->value ] ); ?></span>
 			<?php endif; ?>
 		</a>
 	<?php endforeach; ?>

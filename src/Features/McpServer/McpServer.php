@@ -57,7 +57,7 @@ final readonly class McpServer {
 				'capabilities'    => [ 'tools' => [ 'listChanged' => false ] ],
 				'serverInfo'      => [
 					'name'    => 'Counterhand MCP for WooCommerce',
-					'version' => CTRH_VERSION,
+					'version' => COUNTERHAND_VERSION,
 				],
 				'instructions'    => sprintf(
 					'WooCommerce store MCP server for %s. Your token can reach: %s. The tools you were given are the whole of what you may do — anything else is out of reach, not merely discouraged. Product creation defaults to draft status. List tools are paginated (per_page, page).',

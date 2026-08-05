@@ -52,11 +52,11 @@ final class ConnectReadinessTest extends TestCase {
 
 	public static function reachable_urls(): array {
 		return [
-			'apex domain'  => [ 'https://hygienemitsystem.at' ],
-			'subdomain'    => [ 'https://shop.example.co.uk' ],
-			'with a path'  => [ 'https://example.com/store' ],
-			'public ipv4'  => [ 'https://93.184.216.34' ],
-			'with a port'  => [ 'https://example.com:8443' ],
+			'apex domain' => [ 'https://hygienemitsystem.at' ],
+			'subdomain'   => [ 'https://shop.example.co.uk' ],
+			'with a path' => [ 'https://example.com/store' ],
+			'public ipv4' => [ 'https://93.184.216.34' ],
+			'with a port' => [ 'https://example.com:8443' ],
 		];
 	}
 }

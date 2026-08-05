@@ -9,12 +9,12 @@ use Counterhand\Shared\Tool\ToolGroup;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Typed reader for the single ctrh_settings option.
+ * Typed reader for the single counterhand_settings option.
  * The admin UI (Settings slice) writes it; every other slice only reads.
  */
 final class PluginSettings {
 
-	public const OPTION = 'ctrh_settings';
+	public const OPTION = 'counterhand_settings';
 
 	private ?array $cached = null;
 

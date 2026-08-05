@@ -24,8 +24,8 @@ final class ConnectionsListTable extends \WP_List_Table {
 	public function __construct( private readonly TokenRepositoryInterface $repository ) {
 		parent::__construct(
 			[
-				'singular' => 'ctrh_connection',
-				'plural'   => 'ctrh_connections',
+				'singular' => 'counterhand_connection',
+				'plural'   => 'counterhand_connections',
 				'ajax'     => false,
 			]
 		);
@@ -60,7 +60,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 			'created_at'   => esc_html( wp_date( get_option( 'date_format', 'Y-m-d' ), $item->created_at->getTimestamp() ) ),
 			'last_used_at' => null !== $item->last_used_at
 				? esc_html( human_time_diff( $item->last_used_at->getTimestamp() ) . ' ' . __( 'ago', 'counterhand-mcp-for-woocommerce' ) )
-				: '<span class="ctrh-muted">' . esc_html__( 'never', 'counterhand-mcp-for-woocommerce' ) . '</span>',
+				: '<span class="counterhand-muted">' . esc_html__( 'never', 'counterhand-mcp-for-woocommerce' ) . '</span>',
 			'actions'      => $this->render_actions( $item ),
 			default        => '',
 		};
@@ -71,7 +71,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 
 		if ( null !== $item->client_id ) {
 			return sprintf(
-				'<strong>%s</strong><br><span class="ctrh-muted">%s</span>',
+				'<strong>%s</strong><br><span class="counterhand-muted">%s</span>',
 				esc_html( $name ),
 				esc_html( $item->client_id )
 			);
@@ -88,7 +88,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 		$badges  = '';
 
 		foreach ( $summary->shown( self::BADGE_LIMIT ) as $grant ) {
-			$class   = $grant->writable ? 'ctrh-badge ctrh-badge--write' : 'ctrh-badge';
+			$class   = $grant->writable ? 'counterhand-badge counterhand-badge--write' : 'counterhand-badge';
 			$badges .= '<span class="' . esc_attr( $class ) . '">' . esc_html( $grant->badge() ) . '</span> ';
 		}
 
@@ -98,7 +98,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 			return $badges;
 		}
 
-		return $badges . '<span class="ctrh-muted">' . esc_html(
+		return $badges . '<span class="counterhand-muted">' . esc_html(
 			sprintf(
 				/* translators: %d: number of further tool groups this token can reach. */
 				_n( '+%d more', '+%d more', $hidden, 'counterhand-mcp-for-woocommerce' ),
@@ -109,9 +109,9 @@ final class ConnectionsListTable extends \WP_List_Table {
 
 	private function render_status( ApiToken $item ): string {
 		$class = match ( $item->status ) {
-			TokenStatus::Active  => 'ctrh-status ctrh-status--active',
-			TokenStatus::Revoked => 'ctrh-status ctrh-status--revoked',
-			TokenStatus::Expired => 'ctrh-status ctrh-status--expired',
+			TokenStatus::Active  => 'counterhand-status counterhand-status--active',
+			TokenStatus::Revoked => 'counterhand-status counterhand-status--revoked',
+			TokenStatus::Expired => 'counterhand-status counterhand-status--expired',
 		};
 
 		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $item->status->label() ) . '</span>';
@@ -122,10 +122,10 @@ final class ConnectionsListTable extends \WP_List_Table {
 			return '';
 		}
 
-		$form  = '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="ctrh-revoke-form">';
-		$form .= '<input type="hidden" name="action" value="ctrh_revoke_connection">';
-		$form .= '<input type="hidden" name="ctrh_token_id" value="' . esc_attr( (string) $item->id ) . '">';
-		$form .= wp_nonce_field( 'ctrh_revoke_connection', '_wpnonce', true, false );
+		$form  = '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="counterhand-revoke-form">';
+		$form .= '<input type="hidden" name="action" value="counterhand_revoke_connection">';
+		$form .= '<input type="hidden" name="counterhand_token_id" value="' . esc_attr( (string) $item->id ) . '">';
+		$form .= wp_nonce_field( 'counterhand_revoke_connection', '_wpnonce', true, false );
 		$form .= '<button type="submit" class="button button-small">' . esc_html__( 'Revoke', 'counterhand-mcp-for-woocommerce' ) . '</button>';
 		$form .= '</form>';
 

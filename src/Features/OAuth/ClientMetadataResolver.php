@@ -23,7 +23,7 @@ final readonly class ClientMetadataResolver {
 			return null;
 		}
 
-		$cache_key = 'ctrh_cimd_' . md5( $client_id_url );
+		$cache_key = 'counterhand_cimd_' . md5( $client_id_url );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return new ClientMetadata( $client_id_url, $cached['client_name'], $cached['redirect_uris'] );
@@ -37,7 +37,7 @@ final readonly class ClientMetadataResolver {
 				'headers'     => [ 'Accept' => 'application/json' ],
 				// Defaults to true (secure). A filter allows self-signed certs in
 				// local development only — never relax this in production.
-				'sslverify'   => apply_filters( 'ctrh_cimd_sslverify', true, $client_id_url ),
+				'sslverify'   => apply_filters( 'counterhand_cimd_sslverify', true, $client_id_url ),
 			]
 		);
 

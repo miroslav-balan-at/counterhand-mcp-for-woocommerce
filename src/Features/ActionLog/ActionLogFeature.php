@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ActionLogFeature implements FeatureInterface, SettingsTabInterface {
 
-	private const PURGE_HOOK = 'ctrh_purge_log';
+	private const PURGE_HOOK = 'counterhand_purge_log';
 
 	private ActionLogger $logger;
 
@@ -28,11 +28,11 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 	public function register(): void {
 		add_action( 'admin_init', [ LogSchema::class, 'maybe_upgrade' ] );
 		add_action( self::PURGE_HOOK, [ $this, 'purge_expired' ] );
-		add_action( 'admin_post_ctrh_clear_log', [ $this, 'handle_clear' ] );
+		add_action( 'admin_post_counterhand_clear_log', [ $this, 'handle_clear' ] );
 
 		// Subscribed whatever the setting says: some groups are logged
 		// unconditionally, and the callback is what decides.
-		add_action( 'ctrh_tool_called', [ $this, 'maybe_log' ], 10, 5 );
+		add_action( 'counterhand_tool_called', [ $this, 'maybe_log' ], 10, 5 );
 
 		if ( ! $this->settings->is_action_log_enabled() ) {
 			return;
@@ -84,7 +84,7 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 			wp_die( esc_html__( 'You are not allowed to clear the log.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
-		check_admin_referer( 'ctrh_clear_log' );
+		check_admin_referer( 'counterhand_clear_log' );
 
 		global $wpdb;
 		$table_name = LogSchema::table_name();
@@ -94,8 +94,8 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'         => 'counterhand-mcp-log',
-					'ctrh_cleared' => '1',
+					'page'                => 'counterhand-mcp-log',
+					'counterhand_cleared' => '1',
 				],
 				admin_url( 'admin.php' )
 			)
@@ -112,7 +112,7 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		$entries = is_array( $entries ) ? $entries : [];
 
 		$is_enabled  = $this->settings->is_action_log_enabled();
-		$clear_nonce = wp_create_nonce( 'ctrh_clear_log' );
+		$clear_nonce = wp_create_nonce( 'counterhand_clear_log' );
 
 		include __DIR__ . '/Admin/views/tab-log.php';
 	}

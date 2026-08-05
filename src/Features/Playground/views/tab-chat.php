@@ -26,11 +26,11 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-$ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
+$counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 ?>
-<div class="ctrh-chat">
+<div class="counterhand-chat">
 	<?php if ( null !== $save_result ) : ?>
-		<p class="ctrh-chooser__result <?php echo $save_result->ok ? 'ctrh-ok' : 'ctrh-fail'; ?>" role="status">
+		<p class="counterhand-chooser__result <?php echo $save_result->ok ? 'counterhand-ok' : 'counterhand-fail'; ?>" role="status">
 			<?php echo esc_html( ( $save_result->ok ? '✓ ' : '✕ ' ) . $save_result->message ); ?>
 		</p>
 	<?php endif; ?>
@@ -41,43 +41,43 @@ $ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 		</p></div>
 	<?php endif; ?>
 
-	<div class="ctrh-chat__panel">
+	<div class="counterhand-chat__panel">
 		<?php
 		// The live-region attributes are on the conversation branch only: the
 		// model chooser is a form, and announcing every field it contains as a
 		// log entry is what breaks a screen reader on this screen.
 		?>
-		<div class="ctrh-chat__log <?php echo $is_ready ? '' : 'ctrh-chat__log--setup'; ?>"
-			id="ctrh-chat-log" <?php echo $is_ready ? 'role="log" aria-live="polite"' : ''; ?>>
+		<div class="counterhand-chat__log <?php echo $is_ready ? '' : 'counterhand-chat__log--setup'; ?>"
+			id="counterhand-chat-log" <?php echo $is_ready ? 'role="log" aria-live="polite"' : ''; ?>>
 
 			<?php if ( ! $is_ready ) : ?>
 				<?php require __DIR__ . '/partial-model-chooser.php'; ?>
 			<?php else : ?>
-				<div class="ctrh-chat__empty" id="ctrh-chat-empty">
-					<p class="ctrh-chat__empty-title"><?php esc_html_e( 'Ask about your store', 'counterhand-mcp-for-woocommerce' ); ?></p>
-					<p class="ctrh-chat__empty-hint"><?php esc_html_e( 'Plain language works — the assistant looks the answer up with the same tools an outside AI app would use.', 'counterhand-mcp-for-woocommerce' ); ?></p>
-					<div class="ctrh-chat__suggestions">
+				<div class="counterhand-chat__empty" id="counterhand-chat-empty">
+					<p class="counterhand-chat__empty-title"><?php esc_html_e( 'Ask about your store', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p class="counterhand-chat__empty-hint"><?php esc_html_e( 'Plain language works — the assistant looks the answer up with the same tools an outside AI app would use.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<div class="counterhand-chat__suggestions">
 						<?php
-						$ctrh_suggestions = [
+						$counterhand_suggestions = [
 							__( 'How many orders are waiting to be processed?', 'counterhand-mcp-for-woocommerce' ),
 							__( 'Show me my 5 best selling products this month', 'counterhand-mcp-for-woocommerce' ),
 							__( 'Which products are out of stock?', 'counterhand-mcp-for-woocommerce' ),
 							__( 'What were my sales last week?', 'counterhand-mcp-for-woocommerce' ),
 						];
-						foreach ( $ctrh_suggestions as $ctrh_suggestion ) :
+						foreach ( $counterhand_suggestions as $counterhand_suggestion ) :
 							?>
-							<button type="button" class="ctrh-chat__suggestion"><?php echo esc_html( $ctrh_suggestion ); ?></button>
+							<button type="button" class="counterhand-chat__suggestion"><?php echo esc_html( $counterhand_suggestion ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</div>
 			<?php endif; ?>
 		</div>
 
-		<form class="ctrh-chat__composer" id="ctrh-chat-form"
+		<form class="counterhand-chat__composer" id="counterhand-chat-form"
 			data-nonce="<?php echo esc_attr( $send_nonce ); ?>"
 			data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
-			<label class="screen-reader-text" for="ctrh-chat-input"><?php esc_html_e( 'Message', 'counterhand-mcp-for-woocommerce' ); ?></label>
-			<textarea id="ctrh-chat-input" class="ctrh-chat__input" rows="1"
+			<label class="screen-reader-text" for="counterhand-chat-input"><?php esc_html_e( 'Message', 'counterhand-mcp-for-woocommerce' ); ?></label>
+			<textarea id="counterhand-chat-input" class="counterhand-chat__input" rows="1"
 				placeholder="
 				<?php
 				echo esc_attr(
@@ -87,15 +87,15 @@ $ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 				);
 				?>
 				" <?php disabled( ! $is_ready ); ?>></textarea>
-			<button type="submit" class="button button-primary ctrh-chat__send" id="ctrh-chat-send" <?php disabled( ! $is_ready ); ?>>
+			<button type="submit" class="button button-primary counterhand-chat__send" id="counterhand-chat-send" <?php disabled( ! $is_ready ); ?>>
 				<?php esc_html_e( 'Send', 'counterhand-mcp-for-woocommerce' ); ?>
 			</button>
 		</form>
 
-		<p class="ctrh-chat__foot">
-			<span class="ctrh-chat__foot-group">
-				<span id="ctrh-chat-status" class="ctrh-chat__status" role="status"></span>
-				<span class="ctrh-chat__hint">
+		<p class="counterhand-chat__foot">
+			<span class="counterhand-chat__foot-group">
+				<span id="counterhand-chat-status" class="counterhand-chat__status" role="status"></span>
+				<span class="counterhand-chat__hint">
 					<?php
 					printf(
 						/* translators: 1: Enter key name, 2: Shift+Enter key combination */
@@ -107,20 +107,20 @@ $ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 				</span>
 			</span>
 
-			<span class="ctrh-chat__foot-group">
-				<?php if ( $is_ready && null !== $ctrh_active ) : ?>
-					<span class="ctrh-chat__model">
+			<span class="counterhand-chat__foot-group">
+				<?php if ( $is_ready && null !== $counterhand_active ) : ?>
+					<span class="counterhand-chat__model">
 						<?php
 						// The core provider carries no model name, so this reads
 						// as just the provider label for it.
-						echo esc_html( rtrim( $ctrh_active->label() . ' · ' . $chat_settings->model(), ' ·' ) );
+						echo esc_html( rtrim( $counterhand_active->label() . ' · ' . $chat_settings->model(), ' ·' ) );
 						?>
-						<a href="<?php echo esc_url( add_query_arg( 'ctrh_change_model', '1' ) ); ?>">
+						<a href="<?php echo esc_url( add_query_arg( 'counterhand_change_model', '1' ) ); ?>">
 							<?php esc_html_e( 'Change', 'counterhand-mcp-for-woocommerce' ); ?>
 						</a>
 					</span>
 				<?php endif; ?>
-				<button type="button" class="button-link ctrh-chat__reset" id="ctrh-chat-reset" <?php disabled( ! $is_ready ); ?>>
+				<button type="button" class="button-link counterhand-chat__reset" id="counterhand-chat-reset" <?php disabled( ! $is_ready ); ?>>
 					<?php esc_html_e( 'Clear conversation', 'counterhand-mcp-for-woocommerce' ); ?>
 				</button>
 			</span>
@@ -129,7 +129,7 @@ $ctrh_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 
 	<?php require __DIR__ . '/partial-chat-tools.php'; ?>
 
-	<p class="description ctrh-chat__note">
+	<p class="description counterhand-chat__note">
 		<?php esc_html_e( 'The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Your store data is sent to the model provider you configured.', 'counterhand-mcp-for-woocommerce' ); ?>
 	</p>
 </div>

@@ -26,7 +26,7 @@
 		return Promise.resolve();
 	}
 
-	window.ctrhCopyText = copyText;
+	window.counterhandCopyText = copyText;
 
 	/*
 	 * Swapping the button's own text says nothing to a screen reader: the label
@@ -35,7 +35,7 @@
 	 * it is not reverted.
 	 */
 	function announce( message ) {
-		var region = document.getElementById( 'ctrh-copy-status' );
+		var region = document.getElementById( 'counterhand-copy-status' );
 
 		if ( region ) {
 			region.textContent = message;
@@ -56,7 +56,7 @@
 	}
 
 	document.addEventListener( 'click', function ( event ) {
-		var copyButton = event.target.closest( '.ctrh-copy' );
+		var copyButton = event.target.closest( '.counterhand-copy' );
 
 		if ( copyButton ) {
 			copyFromButton( copyButton );

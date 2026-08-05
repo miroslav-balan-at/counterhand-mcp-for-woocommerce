@@ -9,12 +9,12 @@ defined( 'ABSPATH' ) || exit;
 final class LogSchema {
 
 	private const VERSION        = '1';
-	private const VERSION_OPTION = 'ctrh_log_schema_version';
+	private const VERSION_OPTION = 'counterhand_action_log_schema_version';
 
 	public static function table_name(): string {
 		global $wpdb;
 
-		return $wpdb->prefix . 'ctrh_log';
+		return $wpdb->prefix . 'counterhand_action_log';
 	}
 
 	public static function install(): void {

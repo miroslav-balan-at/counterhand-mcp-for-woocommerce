@@ -122,14 +122,14 @@ final class ApiScopeTest extends TestCase {
 	public function test_labels_are_the_wording_shown_on_the_consent_screen(): void {
 		$this->assertSame(
 			[
-				'products:read'  => 'Read products',
-				'products:write' => 'Manage products',
-				'orders:read'    => 'Read orders',
-				'orders:write'   => 'Update orders',
-				'customers:read' => 'Read customers',
-				'reports:read'   => 'Read reports',
-				'coupons:read'   => 'Read coupons',
-				'coupons:write'  => 'Manage coupons',
+				'products:read'    => 'Read products',
+				'products:write'   => 'Manage products',
+				'orders:read'      => 'Read orders',
+				'orders:write'     => 'Update orders',
+				'customers:read'   => 'Read customers',
+				'reports:read'     => 'Read reports',
+				'coupons:read'     => 'Read coupons',
+				'coupons:write'    => 'Manage coupons',
 
 				// Everything below is derived, which is the point: adding a
 				// group costs no wording unless the derived phrasing misleads.

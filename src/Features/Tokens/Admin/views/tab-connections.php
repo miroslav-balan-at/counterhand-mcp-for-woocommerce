@@ -12,7 +12,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<?php if ( isset( $_GET['ctrh_revoked'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+<?php if ( isset( $_GET['counterhand_revoked'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 	<div class="notice notice-success inline"><p><?php esc_html_e( 'Connection revoked.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 <?php endif; ?>
 

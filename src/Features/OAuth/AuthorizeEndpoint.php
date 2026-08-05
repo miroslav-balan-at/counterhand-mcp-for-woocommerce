@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class AuthorizeEndpoint {
 
-	public const QUERY_VAR = 'ctrh_authorize';
+	public const QUERY_VAR = 'counterhand_authorize';
 
 	private FlowPage $page;
 	private AuthorizationRequestParser $parser;
@@ -93,9 +93,9 @@ final readonly class AuthorizeEndpoint {
 	}
 
 	private function handle_decision( AuthorizationRequest $request, ClientMetadata $client ): void {
-		check_admin_referer( 'ctrh_authorize' );
+		check_admin_referer( 'counterhand_authorize' );
 
-		$approved = isset( $_POST['ctrh_approve'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+		$approved = isset( $_POST['counterhand_approve'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 
 		if ( ! $approved ) {
 			// Tell the client (spec: error=access_denied + original state) and, if
@@ -117,7 +117,7 @@ final readonly class AuthorizeEndpoint {
 		$granted = array_values(
 			array_intersect(
 				$request->scopes,
-				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['ctrh_scopes'] ?? [] ) ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['counterhand_scopes'] ?? [] ) ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 			)
 		);
 

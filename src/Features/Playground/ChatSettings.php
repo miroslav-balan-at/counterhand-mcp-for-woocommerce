@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class ChatSettings {
 
-	private const OPTION = 'ctrh_chat';
+	private const OPTION = 'counterhand_chat';
 
 	/**
 	 * Empty provider and model on purpose: which one to offer first depends on

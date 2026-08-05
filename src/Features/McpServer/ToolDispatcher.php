@@ -63,7 +63,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			 * @param string $group       Slug of the tool's group, so a listener can
 			 *                            decide by area without resolving the tool.
 			 */
-			do_action( 'ctrh_tool_called', $tool->name(), $agent->token->label, false, $validated, $tool->group()->value );
+			do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, false, $validated, $tool->group()->value );
 
 			return DispatchOutcome::succeeded( $data );
 		} catch ( ScopeDeniedException | ToolCallException $exception ) {
@@ -93,7 +93,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	 */
 	private function failure( ToolInterface $tool, AuthenticatedAgent $agent, array $arguments, string $message ): DispatchOutcome {
 		/** This hook is documented above. */
-		do_action( 'ctrh_tool_called', $tool->name(), $agent->token->label, true, $arguments, $tool->group()->value );
+		do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, true, $arguments, $tool->group()->value );
 
 		return DispatchOutcome::failed( $message );
 	}

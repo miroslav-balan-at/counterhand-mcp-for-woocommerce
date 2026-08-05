@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * A family of tools the store owner switches on or off as a unit.
  *
  * The value is load-bearing three times over: it prefixes every ApiScope, it
- * prefixes every ctrh_settings option key, and it is what an existing install
+ * prefixes every counterhand_settings option key, and it is what an existing install
  * has already persisted. Renaming a case orphans stored settings.
  *
  * Scopes and option keys are derived from the value rather than restated, so a

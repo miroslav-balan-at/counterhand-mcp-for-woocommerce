@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground;
 
+use Counterhand\Features\Licensing\Licence;
 use Counterhand\Features\McpServer\ToolDispatcherInterface;
 use Counterhand\Features\Playground\Provider\ProviderConfig;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
@@ -41,12 +42,46 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		private ProviderRegistry $providers,
 		private ModelConnect $model_connect,
 		private ChatToolPolicy $store_policy,
+		private Licence $licence,
 	) {}
 
 	public function register(): void {
+		// The chat is the whole product with a friendlier front door: it runs
+		// every tool an external assistant could. Leaving it ungated gave the
+		// plugin away and left the licence guarding only the harder-to-use
+		// half. The trial is what lets someone evaluate it — and
+		// can_use_premium_code() is true throughout one, so no branch here
+		// needs to know about trials.
+		if ( ! $this->licence->is_active() ) {
+			return;
+		}
+
 		add_action( 'wp_ajax_counterhand_chat_send', [ $this, 'handle_send' ] );
 		add_action( 'admin_post_' . self::TOOLS_NONCE, [ $this, 'handle_save_tools' ] );
 		$this->model_connect->register();
+	}
+
+	/**
+	 * Shown in place of the chat when there is no licence or trial.
+	 *
+	 * Says what the plugin does and where to start, rather than only that
+	 * something is locked: a store owner who has just installed this has no
+	 * other way to find out.
+	 */
+	private function render_trial_invitation(): void {
+		?>
+		<div class="counterhand-notice counterhand-notice--info">
+			<h2><?php esc_html_e( 'Start your free trial', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+			<p>
+				<?php esc_html_e( 'Counterhand lets you ask about sales, look up orders and update products in plain language — here in your admin, or from Claude and ChatGPT. You choose what each assistant may reach, and you can revoke it at any time.', 'counterhand-mcp-for-woocommerce' ); ?>
+			</p>
+			<p>
+				<a class="button button-primary" href="<?php echo esc_url( $this->licence->upgrade_url() ); ?>">
+					<?php esc_html_e( 'Start the trial', 'counterhand-mcp-for-woocommerce' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
 	}
 
 	/** Asks the provider itself — readiness is provider knowledge, not a flag. */
@@ -57,6 +92,14 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	}
 
 	public function render_tab(): void {
+		// register() has already withheld the handlers, so without this the tab
+		// would render a chat box that silently does nothing.
+		if ( ! $this->licence->is_active() ) {
+			$this->render_trial_invitation();
+
+			return;
+		}
+
 		// "Change" in the chat footer reopens the chooser without disconnecting
 		// anything, so switching models never means leaving the tab.
 		$changing = isset( $_GET['counterhand_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.

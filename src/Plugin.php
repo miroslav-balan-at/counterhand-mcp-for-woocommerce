@@ -128,7 +128,8 @@ final class Plugin {
 			$chat_settings,
 			$chat_providers,
 			new ModelConnect( $chat_settings, $chat_providers ),
-			new StoreToolPolicy( $settings )
+			new StoreToolPolicy( $settings ),
+			$licence
 		);
 
 		$this->features = [

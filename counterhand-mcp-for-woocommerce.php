@@ -65,6 +65,21 @@ if ( ! function_exists( 'counterhand_freemius' ) && file_exists( __DIR__ . '/fre
 					// Not listed on wordpress.org, so the .org-compliance rules
 					// (no premium code in the free build) do not constrain us.
 					'is_org_compliant'    => false,
+					/*
+					 * There is no free tier to evaluate, so the trial is the
+					 * only way to see the plugin work before paying.
+					 *
+					 * A card is required because Freemius' own figures across
+					 * their catalogue put trials-with-payment at ~70% conversion
+					 * against ~19% without, and ~1.5% for no trial at all — the
+					 * card is what separates someone deciding from someone
+					 * browsing. 14 days is their baseline; longer removes the
+					 * urgency to actually try it.
+					 */
+					'trial'               => [
+						'days'               => 14,
+						'is_require_payment' => true,
+					],
 					'menu'                => [
 						'slug'    => 'counterhand-mcp',
 						'account' => true,

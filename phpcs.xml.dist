@@ -4,7 +4,6 @@
 
 	<file>src</file>
 	<file>counterhand-mcp-for-woocommerce.php</file>
-	<file>uninstall.php</file>
 
 	<arg name="extensions" value="php"/>
 	<arg value="sp"/>

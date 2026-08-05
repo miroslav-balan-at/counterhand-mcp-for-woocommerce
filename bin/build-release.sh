@@ -116,7 +116,9 @@ done < <( git ls-files -c )
 
 # The plugin cannot boot without these, and a silent allowlist miss would only
 # show up on a customer's site.
-for required in "$SLUG.php" 'readme.txt' 'uninstall.php' 'src/Autoloader.php' 'freemius/start.php'; do
+# No uninstall.php on purpose: Freemius rejects a deployment containing one —
+# cleanup rides its after_uninstall hook (src/Uninstall.php).
+for required in "$SLUG.php" 'readme.txt' 'src/Autoloader.php' 'src/Uninstall.php' 'freemius/start.php'; do
 	[ -f "$STAGE/$required" ] || { echo "build: $required missing from the package" >&2; exit 1; }
 done
 

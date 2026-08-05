@@ -100,6 +100,13 @@ if ( ! function_exists( 'counterhand_freemius' ) && file_exists( __DIR__ . '/fre
 require_once __DIR__ . '/src/Autoloader.php';
 Counterhand\Autoloader::register();
 
+// Uninstall cleanup rides Freemius' hook: the SDK owns WordPress' uninstall
+// event (it records the uninstall reason), and their deployment pipeline
+// rejects a zip carrying a root uninstall.php for exactly that reason.
+if ( function_exists( 'counterhand_freemius' ) ) {
+	counterhand_freemius()->add_action( 'after_uninstall', [ Counterhand\Uninstall::class, 'run' ] );
+}
+
 // HPOS (custom order tables) compatibility.
 add_action(
 	'before_woocommerce_init',

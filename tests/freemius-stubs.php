@@ -29,6 +29,12 @@ if ( ! class_exists( 'Freemius' ) ) {
 		public function get_account_url(): string {
 			return '';
 		}
+
+		/**
+		 * @param callable $callback
+		 */
+		public function add_action( string $tag, $callback ): void {
+		}
 	}
 }
 

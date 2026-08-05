@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth;
 
 use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
 use Counterhand\Shared\FeatureInterface;
 
@@ -27,8 +28,9 @@ final readonly class OAuthFeature implements FeatureInterface {
 		TokenRepositoryInterface $repository,
 	) {
 		$code_store      = new AuthorizationCodeStore();
-		$this->discovery = new DiscoveryController();
-		$this->authorize = new AuthorizeEndpoint( new ClientMetadataResolver(), $code_store );
+		$published       = new PublishedScopes( $settings );
+		$this->discovery = new DiscoveryController( $published );
+		$this->authorize = new AuthorizeEndpoint( new ClientMetadataResolver(), $code_store, $published );
 		$this->token     = new TokenEndpoint( $repository, $code_store );
 	}
 

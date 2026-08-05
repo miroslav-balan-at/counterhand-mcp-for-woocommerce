@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
@@ -14,6 +14,8 @@ defined( 'ABSPATH' ) || exit;
  * authorization server, co-hosted, so it publishes both metadata docs.
  */
 final readonly class DiscoveryController {
+
+	public function __construct( private PublishedScopes $published ) {}
 
 	public function register_routes(): void {
 		register_rest_route(
@@ -47,7 +49,7 @@ final readonly class DiscoveryController {
 			[
 				'resource'                 => CanonicalUri::mcp(),
 				'authorization_servers'    => [ home_url() ],
-				'scopes_supported'         => ApiScope::values(),
+				'scopes_supported'         => $this->published->values(),
 				'bearer_methods_supported' => [ 'header' ],
 			],
 			200
@@ -61,7 +63,7 @@ final readonly class DiscoveryController {
 				'issuer'                                => home_url(),
 				'authorization_endpoint'                => home_url( '/mcp-authorize' ),
 				'token_endpoint'                        => rest_url( 'counterhand/v1/oauth/token' ),
-				'scopes_supported'                      => ApiScope::values(),
+				'scopes_supported'                      => $this->published->values(),
 				'response_types_supported'              => [ 'code' ],
 				'grant_types_supported'                 => [ 'authorization_code' ],
 				'code_challenge_methods_supported'      => [ 'S256' ],

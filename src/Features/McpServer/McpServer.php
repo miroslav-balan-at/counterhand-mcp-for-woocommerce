@@ -59,8 +59,14 @@ final readonly class McpServer {
 					'name'    => 'Counterhand MCP for WooCommerce',
 					'version' => COUNTERHAND_VERSION,
 				],
+				/*
+				 * The last sentence is for the person, relayed by the model: a
+				 * missing tool has exactly two causes and one remedy each, and
+				 * this is the only channel that reaches the user at the moment
+				 * they hit the gap.
+				 */
 				'instructions'    => sprintf(
-					'WooCommerce store MCP server for %s. Your token can reach: %s. The tools you were given are the whole of what you may do — anything else is out of reach, not merely discouraged. Product creation defaults to draft status. List tools are paginated (per_page, page).',
+					'WooCommerce store MCP server for %s. Your token can reach: %s. The tools you were given are the whole of what you may do — anything else is out of reach, not merely discouraged. Product creation defaults to draft status. List tools are paginated (per_page, page). If the user asks for something outside these tools, tell them: the area is either switched off for the store (a store admin can enable it under Counterhand MCP → Settings) or was not granted when this app was connected — either way, reconnect the app afterwards, because a connection only ever holds what it was approved with.',
 					get_bloginfo( 'name' ),
 					[] !== $granted ? implode( ', ', $granted ) : 'nothing'
 				),

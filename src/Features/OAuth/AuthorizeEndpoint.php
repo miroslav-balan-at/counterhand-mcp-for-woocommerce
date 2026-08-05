@@ -8,6 +8,8 @@ use Counterhand\Features\OAuth\Domain\AuthorizationGrant;
 use Counterhand\Features\OAuth\Domain\AuthorizationRequest;
 use Counterhand\Features\OAuth\View\ConsentScopes;
 use Counterhand\Features\OAuth\View\FlowPage;
+use Counterhand\Features\Settings\AdminScreen;
+use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 
 defined( 'ABSPATH' ) || exit;
@@ -32,6 +34,7 @@ final readonly class AuthorizeEndpoint {
 	public function __construct(
 		private ClientMetadataResolver $client_resolver,
 		private AuthorizationCodeStore $code_store,
+		private PublishedScopes $published,
 	) {
 		$this->page       = new FlowPage();
 		$this->parser     = new AuthorizationRequestParser();
@@ -113,11 +116,18 @@ final readonly class AuthorizeEndpoint {
 			);
 		}
 
-		// Admin may narrow the requested scopes on the consent screen.
+		/*
+		 * Three-way intersection: what the request carried, what the admin
+		 * ticked, and what the store publishes. The first two arrive from the
+		 * browser and are client-writable, so without the third a crafted POST
+		 * could mint a grant for a group the store has switched off. Settings
+		 * changing between render and approval collapses to the same case.
+		 */
 		$granted = array_values(
 			array_intersect(
 				$request->scopes,
-				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['counterhand_scopes'] ?? [] ) ) ) // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['counterhand_scopes'] ?? [] ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+				$this->published->values()
 			)
 		);
 
@@ -153,16 +163,26 @@ final readonly class AuthorizeEndpoint {
 	}
 
 	private function render_consent( AuthorizationRequest $request, ClientMetadata $client ): void {
-		$scopes = $request->offered_scopes();
+		/*
+		 * Offered = requested ∩ published. The remainder is shown to the admin
+		 * as switched off — with where to switch it on — rather than dropped
+		 * silently: an admin who approves a request that quietly lost half its
+		 * scopes would meet the gap later as missing tools with no explanation.
+		 */
+		$requested = $request->offered_scopes();
+		$scopes    = $this->published->grantable( $requested );
+		$withheld  = $this->published->withheld( $requested );
 
 		$this->page->render(
 			FlowPage::STATE_CONSENT,
 			__( 'Authorize AI access', 'counterhand-mcp-for-woocommerce' ),
 			[
-				'client_name' => $client->client_name,
-				'client_host' => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'      => ConsentScopes::from( $scopes ),
-				'hidden'      => [
+				'client_name'  => $client->client_name,
+				'client_host'  => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
+				'scopes'       => ConsentScopes::from( $scopes ),
+				'withheld'     => $withheld,
+				'settings_url' => AdminScreen::Settings->url(),
+				'hidden'       => [
 					'client_id'             => $request->client_id,
 					'redirect_uri'          => $request->redirect_uri,
 					'code_challenge'        => $request->code_challenge,

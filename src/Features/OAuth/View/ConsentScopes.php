@@ -27,13 +27,9 @@ final readonly class ConsentScopes {
 	/** @param list<ApiScope> $requested */
 	public static function from( array $requested, PublishedScopes $published ): self {
 		return new self(
-			array_values(
-				array_filter(
-					array_map(
-						static fn ( ToolSection $section ): ?ConsentSection => ConsentSection::from( $section, $requested, $published ),
-						ToolSection::cases()
-					)
-				)
+			array_map(
+				static fn ( ToolSection $section ): ConsentSection => ConsentSection::from( $section, $requested, $published ),
+				ToolSection::cases()
 			)
 		);
 	}
@@ -43,7 +39,7 @@ final readonly class ConsentScopes {
 		foreach ( $this->sections as $section ) {
 			foreach ( $section->groups as $group ) {
 				foreach ( $group->scopes as $scope ) {
-					if ( $scope->available ) {
+					if ( $scope->available() ) {
 						return true;
 					}
 				}
@@ -53,12 +49,12 @@ final readonly class ConsentScopes {
 		return false;
 	}
 
-	/** Whether any row carries a disabled box, so the hint under the legend earns its place. */
+	/** The hint under the list is about Settings, so only settings-off rows raise it. */
 	public function has_withheld(): bool {
 		foreach ( $this->sections as $section ) {
 			foreach ( $section->groups as $group ) {
 				foreach ( $group->scopes as $scope ) {
-					if ( ! $scope->available ) {
+					if ( ConsentAvailability::SwitchedOff === $scope->availability ) {
 						return true;
 					}
 				}

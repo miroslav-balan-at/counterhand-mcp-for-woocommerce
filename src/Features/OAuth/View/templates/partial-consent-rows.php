@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
 			<?php
 			$counterhand_scope = $counterhand_row->scope;
 			$counterhand_id    = 'counterhand-scope-' . sanitize_html_class( $counterhand_scope->value );
-			$counterhand_off   = ! $counterhand_row->available;
+			$counterhand_off   = ! $counterhand_row->available();
 			?>
 			<label
 				class="counterhand-scope<?php echo $counterhand_scope->is_write() ? ' counterhand-scope--write' : ''; ?><?php echo $counterhand_off ? ' counterhand-scope--off' : ''; ?>"
@@ -49,7 +49,7 @@ defined( 'ABSPATH' ) || exit;
 					<?php endif; ?>
 				</span>
 				<?php if ( $counterhand_off ) : ?>
-					<span class="counterhand-tag counterhand-tag--off"><?php esc_html_e( 'Off for this store', 'counterhand-mcp-for-woocommerce' ); ?></span>
+					<span class="counterhand-tag counterhand-tag--off"><?php echo esc_html( $counterhand_row->availability->tag() ); ?></span>
 				<?php elseif ( $counterhand_scope->is_write() ) : ?>
 					<span class="counterhand-tag counterhand-tag--write"><?php esc_html_e( 'Can change data', 'counterhand-mcp-for-woocommerce' ); ?></span>
 				<?php endif; ?>

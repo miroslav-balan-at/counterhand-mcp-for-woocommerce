@@ -28,32 +28,32 @@ final readonly class ConsentGroup {
 	) {}
 
 	/**
-	 * Null when the client asked for neither of this group's scopes — the row
-	 * is then absent rather than rendered empty.
+	 * Every scope the group has, whether grantable or not — the screen shows
+	 * the catalogue, and availability says why a box is inert.
 	 *
 	 * @param  list<ApiScope> $requested
 	 */
-	public static function from( ToolGroup $group, array $requested, PublishedScopes $published ): ?self {
+	public static function from( ToolGroup $group, array $requested, PublishedScopes $published ): self {
 		$scopes = [];
 
 		foreach ( [ $group->read_scope(), $group->write_scope() ] as $scope ) {
-			if ( null === $scope || ! in_array( $scope, $requested, true ) ) {
+			if ( null === $scope ) {
 				continue;
 			}
 
-			$available = $published->includes( $scope );
+			$availability = match ( true ) {
+				! $published->includes( $scope )        => ConsentAvailability::SwitchedOff,
+				! in_array( $scope, $requested, true )  => ConsentAvailability::NotRequested,
+				default                                 => ConsentAvailability::Grantable,
+			};
 
 			$scopes[] = new ConsentScope(
 				scope: $scope,
-				available: $available,
+				availability: $availability,
 				// Advanced groups never start ticked: granting one should take
 				// a deliberate click, not the absence of an untick.
-				pre_checked: $available && ! $group->section()->is_advanced(),
+				pre_checked: ConsentAvailability::Grantable === $availability && ! $group->section()->is_advanced(),
 			);
-		}
-
-		if ( [] === $scopes ) {
-			return null;
 		}
 
 		return new self( $group, $scopes );
@@ -62,7 +62,7 @@ final readonly class ConsentGroup {
 	/** Only a grantable write warrants the "can change your store" warning. */
 	public function has_write(): bool {
 		foreach ( $this->scopes as $scope ) {
-			if ( $scope->available && $scope->scope->is_write() ) {
+			if ( $scope->available() && $scope->scope->is_write() ) {
 				return true;
 			}
 		}

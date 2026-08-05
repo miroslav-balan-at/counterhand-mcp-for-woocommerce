@@ -24,27 +24,15 @@ final readonly class ConsentSection {
 		public array $groups,
 	) {}
 
-	/**
-	 * Null when nothing the client asked for falls in this section, which is
-	 * how the screen shows only the sections that are actually in play.
-	 *
-	 * @param  list<ApiScope> $requested
-	 */
-	public static function from( ToolSection $section, array $requested, PublishedScopes $published ): ?self {
-		$groups = array_values(
-			array_filter(
-				array_map(
-					static fn ( $group ): ?ConsentGroup => ConsentGroup::from( $group, $requested, $published ),
-					$section->groups()
-				)
+	/** @param list<ApiScope> $requested */
+	public static function from( ToolSection $section, array $requested, PublishedScopes $published ): self {
+		return new self(
+			$section,
+			array_map(
+				static fn ( $group ): ConsentGroup => ConsentGroup::from( $group, $requested, $published ),
+				$section->groups()
 			)
 		);
-
-		if ( [] === $groups ) {
-			return null;
-		}
-
-		return new self( $section, $groups );
 	}
 
 	/** Advanced sections render inside a collapsed disclosure. */

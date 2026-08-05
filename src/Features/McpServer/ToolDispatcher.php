@@ -124,6 +124,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		// without this, absent args fall through to WooCommerce's own defaults
 		// (e.g. create_product would publish instead of draft).
 		$arguments = $this->apply_schema_defaults( $schema, $arguments );
+		$arguments = $this->parse_encoded_structures( $schema, $arguments );
 
 		$sanitized = rest_sanitize_value_from_schema( $arguments, $schema, 'arguments' );
 		if ( is_wp_error( $sanitized ) ) {
@@ -138,6 +139,44 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		return (array) $sanitized;
 	}
 
+	/**
+	 * Models routinely send a structured argument as a JSON string and clients
+	 * forward it verbatim, so a request whose intent was correct gets rejected.
+	 *
+	 * Coercing only where the schema declares array or object is the guard that
+	 * matters: the MCP Python SDK decoded any JSON-looking string and broke the
+	 * tools that wanted one.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 */
+	private function parse_encoded_structures( array $schema, array $arguments ): array {
+		$properties = $schema['properties'] ?? [];
+
+		if ( ! is_array( $properties ) ) {
+			return $arguments;
+		}
+
+		foreach ( $arguments as $name => $value ) {
+			if ( ! is_string( $value ) || ! is_array( $properties[ $name ] ?? null ) ) {
+				continue;
+			}
+
+			if ( [] === array_intersect( (array) ( $properties[ $name ]['type'] ?? [] ), [ 'array', 'object' ] ) ) {
+				continue;
+			}
+
+			$decoded = json_decode( $value, true );
+
+			if ( is_array( $decoded ) ) {
+				$arguments[ $name ] = $decoded;
+			}
+		}
+
+		return $arguments;
+	}
+
 	private function apply_schema_defaults( array $schema, array $arguments ): array {
 		$properties = $schema['properties'] ?? [];
 		if ( ! is_array( $properties ) ) {
@@ -145,9 +184,17 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		}
 
 		foreach ( $properties as $property_name => $property_schema ) {
-			if ( ! array_key_exists( $property_name, $arguments ) && is_array( $property_schema ) && array_key_exists( 'default', $property_schema ) ) {
-				$arguments[ $property_name ] = $property_schema['default'];
+			if ( array_key_exists( $property_name, $arguments ) || ! is_array( $property_schema ) || ! array_key_exists( 'default', $property_schema ) ) {
+				continue;
 			}
+
+			// A null default means "unset", and sending null fails a format check
+			// that omitting the key passes.
+			if ( null === $property_schema['default'] ) {
+				continue;
+			}
+
+			$arguments[ $property_name ] = $property_schema['default'];
 		}
 
 		return $arguments;

@@ -109,12 +109,39 @@ final readonly class ShippingDescriptors implements DescriptorProvider {
 					'',
 					'The regions one shipping zone covers, identified by the zone id. Each entry is a code and a type: country, state, postcode or continent.'
 				),
+				/*
+				 * The only operation in the surface whose controller reads the raw
+				 * JSON body: it takes a bare array of locations, and a params-only
+				 * request looks to it like an empty list — which it obeys, wiping
+				 * the zone and returning 200.
+				 */
 				new OperationDescriptor(
 					ToolName::from( 'update_shipping_zone_locations' ),
 					Operation::UpdateItem,
-					new FieldProfile( [ 'code', 'type' ], self::LOCATION_FIELDS ),
+					new FieldProfile( [], self::LOCATION_FIELDS ),
 					'',
-					'Replace the regions a zone covers. This is a replacement, not an addition: send the complete list you want the zone to end up with, because anything you leave out stops being covered.'
+					'Replace the regions a zone covers. This is a replacement, not an addition: send the complete list you want the zone to end up with in locations, because anything you leave out stops being covered.',
+					body_argument: 'locations',
+					body_schema: [
+						'type'        => 'array',
+						'description' => 'The complete set of regions this zone should cover.',
+						'items'       => [
+							'type'       => 'object',
+							'properties' => [
+								'code' => [
+									'type'        => 'string',
+									'description' => 'Region code: a country ("AT"), a state ("US:CA"), a continent ("EU") or a postcode.',
+								],
+								'type' => [
+									'type'        => 'string',
+									'enum'        => [ 'country', 'state', 'continent', 'postcode' ],
+									'default'     => 'country',
+									'description' => 'What the code names.',
+								],
+							],
+							'required'   => [ 'code' ],
+						],
+					],
 				),
 			]
 		);

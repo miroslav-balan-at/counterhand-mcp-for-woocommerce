@@ -225,10 +225,18 @@ final readonly class MetaTool implements ToolInterface {
 			]
 		);
 
-		return [
-			'key'     => $key,
-			'deleted' => null === $value,
-		];
+		// One method serves set and delete, but a shared "deleted": false reads
+		// as a failed write to anything skimming the result.
+		return null === $value
+			? [
+				'key'     => $key,
+				'deleted' => true,
+			]
+			: [
+				'key'   => $key,
+				'value' => $value,
+				'saved' => true,
+			];
 	}
 
 	/**

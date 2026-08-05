@@ -18,7 +18,7 @@ use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
  */
 final class FakeRestGateway implements RestGatewayInterface {
 
-	/** @var list<array{route: RestRoute, method: RestMethod, params: array}> */
+	/** @var list<array{route: RestRoute, method: RestMethod, params: array, body: mixed}> */
 	public array $calls = [];
 
 	/** @var list<RestResult> */
@@ -28,17 +28,18 @@ final class FakeRestGateway implements RestGatewayInterface {
 		$this->queue = [ ...$this->queue, ...$results ];
 	}
 
-	public function dispatch( RestRoute $route, RestMethod $method, array $params = [] ): RestResult {
+	public function dispatch( RestRoute $route, RestMethod $method, array $params = [], mixed $body = null ): RestResult {
 		$this->calls[] = [
 			'route'  => $route,
 			'method' => $method,
 			'params' => $params,
+			'body'   => $body,
 		];
 
 		return array_shift( $this->queue ) ?? new RestResult( [] );
 	}
 
-	/** @return array{route: RestRoute, method: RestMethod, params: array} */
+	/** @return array{route: RestRoute, method: RestMethod, params: array, body: mixed} */
 	public function call( int $index = 0 ): array {
 		return $this->calls[ $index ];
 	}

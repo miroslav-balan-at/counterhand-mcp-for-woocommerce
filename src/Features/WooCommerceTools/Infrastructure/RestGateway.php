@@ -20,11 +20,18 @@ final readonly class RestGateway implements RestGatewayInterface {
 	/**
 	 * @throws ToolCallException On any non-2xx response, with an agent-actionable message.
 	 */
-	public function dispatch( RestRoute $route, RestMethod $method, array $params = [] ): RestResult {
+	public function dispatch( RestRoute $route, RestMethod $method, array $params = [], mixed $body = null ): RestResult {
 		$request = new \WP_REST_Request( $method->value, $route->bind( $params ) );
 
 		foreach ( $route->strip_path_params( $params ) as $key => $value ) {
 			$request->set_param( (string) $key, $value );
+		}
+
+		// set_param() is invisible to get_json_params(), so a controller reading
+		// the body sees nothing and treats the request as an empty one.
+		if ( null !== $body ) {
+			$request->set_header( 'Content-Type', 'application/json' );
+			$request->set_body( (string) wp_json_encode( $body ) );
 		}
 
 		$response = rest_do_request( $request );

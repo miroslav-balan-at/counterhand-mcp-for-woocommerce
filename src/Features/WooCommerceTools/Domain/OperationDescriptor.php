@@ -24,6 +24,10 @@ final readonly class OperationDescriptor {
 	 * @param array<string, mixed> $default_params       Params applied before the agent's, overriding WooCommerce's own default.
 	 * @param bool                 $requires_confirmation Whether the tool publishes a required `confirm` argument.
 	 * @param ArgumentPolicy|null  $policy               A rule about what the arguments may say, checked before dispatch.
+	 * @param string|null          $body_argument        Argument whose value is the whole JSON request body, for the
+	 *                                                   controllers that read get_json_params() instead of params.
+	 * @param array<string, mixed>|null $body_schema     JSON Schema for that argument. Hand-written because the route
+	 *                                                   publishes no argument to derive it from.
 	 */
 	public function __construct(
 		public ToolName $name,
@@ -35,6 +39,8 @@ final readonly class OperationDescriptor {
 		public array $default_params = [],
 		public bool $requires_confirmation = false,
 		public ?ArgumentPolicy $policy = null,
+		public ?string $body_argument = null,
+		public ?array $body_schema = null,
 	) {}
 
 	public function describe( string $singular, string $plural ): string {

@@ -114,7 +114,9 @@ final class GeneratedToolTest extends TestCase {
 		bool $permitted = true,
 		array $default_params = [],
 		bool $requires_confirmation = false,
-		?ArgumentPolicy $policy = null
+		?ArgumentPolicy $policy = null,
+		?string $body_argument = null,
+		?array $body_schema = null
 	): GeneratedTool {
 		Functions\when( 'rest_get_server' )->justReturn( new FakeRestServer( $routes ?? $this->routes( $permitted ) ) );
 
@@ -122,13 +124,82 @@ final class GeneratedToolTest extends TestCase {
 
 		return new GeneratedTool(
 			$this->resource(),
-			new OperationDescriptor( ToolName::from( 'a_tool' ), $operation, $fields, $hint, null, $forced_params, $default_params, $requires_confirmation, $policy ),
+			new OperationDescriptor( ToolName::from( 'a_tool' ), $operation, $fields, $hint, null, $forced_params, $default_params, $requires_confirmation, $policy, $body_argument, $body_schema ),
 			ApiScope::CouponsRead,
 			$this->gateway,
 			$catalog,
 			new RoutePermissionProbe( $catalog ),
 			new SchemaProvider( $catalog )
 		);
+	}
+
+	/**
+	 * Some controllers read the raw JSON body rather than request params — the
+	 * shipping zone locations one takes a bare array. Sent as params it saw an
+	 * empty body, obeyed it, and wiped the zone while returning 200.
+	 */
+	public function test_the_body_argument_travels_as_the_json_body(): void {
+		$schema = [
+			'type'  => 'array',
+			'items' => [ 'type' => 'object' ],
+		];
+
+		$tool = $this->tool(
+			Operation::UpdateItem,
+			body_argument: 'locations',
+			body_schema: $schema
+		);
+
+		$tool->execute(
+			[
+				'id'        => 5,
+				'locations' => [
+					[
+						'code' => 'AT',
+						'type' => 'country',
+					],
+				],
+			]
+		);
+
+		$call = $this->gateway->call();
+
+		$this->assertSame(
+			[
+				[
+					'code' => 'AT',
+					'type' => 'country',
+				],
+			],
+			$call['body']
+		);
+		$this->assertArrayNotHasKey(
+			'locations',
+			$call['params'],
+			'Sending it as a param too would leave WooCommerce an unknown argument to reject.'
+		);
+	}
+
+	public function test_the_body_argument_is_published_and_required(): void {
+		$schema = [
+			'type'  => 'array',
+			'items' => [ 'type' => 'object' ],
+		];
+
+		$published = $this->tool(
+			Operation::UpdateItem,
+			body_argument: 'locations',
+			body_schema: $schema
+		)->input_schema();
+
+		$this->assertSame( $schema, $published['properties']['locations'] );
+		$this->assertContains( 'locations', $published['required'] );
+	}
+
+	public function test_an_operation_without_a_body_sends_none(): void {
+		$this->tool( Operation::UpdateItem )->execute( [ 'id' => 5 ] );
+
+		$this->assertNull( $this->gateway->call()['body'] );
 	}
 
 	private function resource(): ResourceDescriptor {

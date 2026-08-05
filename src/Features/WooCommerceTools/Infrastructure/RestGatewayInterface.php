@@ -22,7 +22,9 @@ interface RestGatewayInterface {
 	 *                      $route are bound into the path; the rest travel as
 	 *                      request params. A `_fields` entry prunes the
 	 *                      response through WordPress' own field filter.
+	 * @param mixed $body Sent as the raw JSON body, for controllers that read
+	 *                    get_json_params() rather than request params. Null sends none.
 	 * @throws ToolCallException On any non-2xx response, with an agent-actionable message.
 	 */
-	public function dispatch( RestRoute $route, RestMethod $method, array $params = [] ): RestResult;
+	public function dispatch( RestRoute $route, RestMethod $method, array $params = [], mixed $body = null ): RestResult;
 }

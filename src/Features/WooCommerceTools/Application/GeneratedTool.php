@@ -55,13 +55,15 @@ final readonly class GeneratedTool implements ToolInterface {
 		$route = $this->route();
 
 		return $this->with_confirmation(
-			$this->with_defaults(
-				$this->schemas->schema(
-					$this->name(),
-					$route,
-					$this->method(),
-					$this->operation->fields,
-					$route->parameters()
+			$this->with_body_argument(
+				$this->with_defaults(
+					$this->schemas->schema(
+						$this->name(),
+						$route,
+						$this->method(),
+						$this->operation->fields,
+						$route->parameters()
+					)
 				)
 			)
 		);
@@ -94,9 +96,28 @@ final readonly class GeneratedTool implements ToolInterface {
 	public function execute( array $arguments ): array {
 		$this->guard( $arguments );
 
-		$result = $this->gateway->dispatch( $this->route(), $this->method(), $this->params( $arguments ) );
+		$body = $this->body( $arguments );
+
+		if ( null !== $this->operation->body_argument ) {
+			unset( $arguments[ $this->operation->body_argument ] );
+		}
+
+		$result = $this->gateway->dispatch( $this->route(), $this->method(), $this->params( $arguments ), $body );
 
 		return $this->shape( $result );
+	}
+
+	/**
+	 * The value of the argument this operation sends as its whole JSON body.
+	 *
+	 * @param  array<string, mixed> $arguments
+	 */
+	private function body( array $arguments ): mixed {
+		if ( null === $this->operation->body_argument ) {
+			return null;
+		}
+
+		return $arguments[ $this->operation->body_argument ] ?? null;
 	}
 
 	/**
@@ -173,6 +194,32 @@ final readonly class GeneratedTool implements ToolInterface {
 				$schema['properties'][ $field ]['default'] = $value;
 			}
 		}
+
+		return $schema;
+	}
+
+	/**
+	 * Publishes the argument carrying the whole JSON body.
+	 *
+	 * Declared here rather than in a FieldProfile because it is not one of
+	 * WooCommerce's route fields: the route publishes no argument at all, and
+	 * the controller reads the body directly.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @return array<string, mixed>
+	 */
+	private function with_body_argument( array $schema ): array {
+		$argument = $this->operation->body_argument;
+
+		if ( null === $argument || null === $this->operation->body_schema ) {
+			return $schema;
+		}
+
+		$properties              = (array) ( $schema['properties'] ?? [] );
+		$properties[ $argument ] = $this->operation->body_schema;
+
+		$schema['properties'] = $properties;
+		$schema['required']   = [ ...( $schema['required'] ?? [] ), $argument ];
 
 		return $schema;
 	}

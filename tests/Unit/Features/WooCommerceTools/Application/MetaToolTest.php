@@ -176,6 +176,47 @@ final class MetaToolTest extends TestCase {
 	}
 
 	/**
+	 * A set and a delete are different events, so they do not share a shape: a
+	 * "deleted": false on a successful write reads as a failure to anything
+	 * skimming the result.
+	 */
+	public function test_a_set_reports_what_it_stored(): void {
+		$result = $this->tool( MetaOperation::Set )->execute(
+			[
+				'id'    => 7,
+				'key'   => 'supplier_ref',
+				'value' => 'ACME-2',
+			]
+		);
+
+		$this->assertSame(
+			[
+				'key'   => 'supplier_ref',
+				'value' => 'ACME-2',
+				'saved' => true,
+			],
+			$result
+		);
+	}
+
+	public function test_a_delete_reports_the_deletion(): void {
+		$result = $this->tool( MetaOperation::Delete )->execute(
+			[
+				'id'  => 7,
+				'key' => 'supplier_ref',
+			]
+		);
+
+		$this->assertSame(
+			[
+				'key'     => 'supplier_ref',
+				'deleted' => true,
+			],
+			$result
+		);
+	}
+
+	/**
 	 * WooCommerce's REST documentation says a field is deleted by sending its
 	 * key with the value omitted — not with a null value.
 	 */

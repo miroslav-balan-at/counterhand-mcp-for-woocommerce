@@ -1,0 +1,1669 @@
+# Copyright (C) 2026 Miroslav Balan
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Counterhand MCP for WooCommerce 1.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
+"Last-Translator: Counterhand <support@counterhand.app>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-07T08:29:19+00:00\n"
+"PO-Revision-Date: 2026-08-07 12:00+0200\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: counterhand-mcp-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: counterhand-mcp-for-woocommerce.php
+msgid "Counterhand MCP for WooCommerce"
+msgstr "Counterhand MCP für WooCommerce"
+
+#. Plugin URI of the plugin
+#: counterhand-mcp-for-woocommerce.php
+msgid "https://github.com/miroslavbalan/counterhand-mcp-for-woocommerce"
+msgstr "https://github.com/miroslavbalan/counterhand-mcp-for-woocommerce"
+
+#. Description of the plugin
+#: counterhand-mcp-for-woocommerce.php
+msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
+msgstr "Mache deinen WooCommerce-Shop zu einem sicheren MCP-Server, damit KI-Assistenten wie Claude, ChatGPT und Cursor Produkte, Bestellungen, Kunden und Berichte abfragen und verwalten können — geschützt durch widerrufbare API-Token mit fein abgestuften Berechtigungen."
+
+#. Author of the plugin
+#: counterhand-mcp-for-woocommerce.php
+msgid "Miroslav Balan"
+msgstr "Miroslav Balan"
+
+#: counterhand-mcp-for-woocommerce.php:131
+msgid "Counterhand MCP for WooCommerce requires WooCommerce to be installed and active."
+msgstr "Counterhand MCP für WooCommerce benötigt ein installiertes und aktives WooCommerce."
+
+#: src/Features/ActionLog/ActionLogFeature.php:84
+msgid "You are not allowed to clear the log."
+msgstr "Du darfst das Protokoll nicht leeren."
+
+#: src/Features/ActionLog/ActionLogFeature.php:134
+msgid "‹ Newer"
+msgstr "‹ Neuere"
+
+#: src/Features/ActionLog/ActionLogFeature.php:135
+msgid "Older ›"
+msgstr "Ältere ›"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:21
+msgid "The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage."
+msgstr "Das Aktionsprotokoll ist derzeit deaktiviert. Aktiviere es im Tab „Einstellungen“, um Tool-Aufrufe aufzuzeichnen. Personenbezogene Daten (E-Mail-Adressen, Telefonnummern) werden vor dem Speichern maskiert."
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:26
+msgid "Log cleared."
+msgstr "Protokoll geleert."
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:32
+msgid "Every call, newest first"
+msgstr "Jeder Aufruf, neueste zuerst"
+
+#. translators: %s: number of recorded calls.
+#: src/Features/ActionLog/Admin/views/tab-log.php:37
+#, php-format
+msgid "%s recorded call"
+msgid_plural "%s recorded calls"
+msgstr[0] "%s aufgezeichneter Aufruf"
+msgstr[1] "%s aufgezeichnete Aufrufe"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:47
+msgid "Clear log"
+msgstr "Protokoll leeren"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:55
+msgid "Time (UTC)"
+msgstr "Zeit (UTC)"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:56
+msgid "Tool"
+msgstr "Tool"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:57
+msgid "Connection"
+msgstr "Verbindung"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:58
+msgid "Outcome"
+msgstr "Ergebnis"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:59
+msgid "Arguments (PII masked)"
+msgstr "Argumente (personenbezogene Daten maskiert)"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:68
+msgid "Nothing recorded yet. The next tool call an assistant makes will appear here."
+msgstr "Noch nichts aufgezeichnet. Der nächste Tool-Aufruf eines Assistenten erscheint hier."
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:69
+msgid "Nothing recorded. Switch the log on in Settings to start keeping the record."
+msgstr "Nichts aufgezeichnet. Schalte das Protokoll in den Einstellungen ein, um mit der Aufzeichnung zu beginnen."
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:84
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:85
+msgid "Succeeded"
+msgstr "Erfolgreich"
+
+#. translators: 1: current page number, 2: total number of pages.
+#: src/Features/ActionLog/Admin/views/tab-log.php:102
+#, php-format
+msgid "Page %1$s of %2$s"
+msgstr "Seite %1$s von %2$s"
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:108
+msgid "Log pages"
+msgstr "Protokollseiten"
+
+#: src/Features/McpServer/McpServerFeature.php:72
+msgid "Counterhand needs an active licence before AI apps can connect to this store. The chat in your admin keeps working."
+msgstr "Counterhand braucht eine aktive Lizenz, bevor sich KI-Apps mit diesem Shop verbinden können. Der Chat in deinem Adminbereich funktioniert weiterhin."
+
+#: src/Features/McpServer/McpServerFeature.php:74
+msgid "Activate a licence"
+msgstr "Lizenz aktivieren"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:66
+msgid "Not permitted"
+msgstr "Nicht erlaubt"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:67
+msgid "Your account cannot authorize AI access to this store. Ask a store administrator to approve the connection."
+msgstr "Dein Konto kann keinen KI-Zugriff auf diesen Shop autorisieren. Bitte einen Shop-Administrator, die Verbindung zu genehmigen."
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:75
+msgid "Incomplete request"
+msgstr "Unvollständige Anfrage"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:76
+msgid "This authorization link is missing required details or has expired. Start the connection again from your AI assistant."
+msgstr "Diesem Autorisierungslink fehlen erforderliche Angaben oder er ist abgelaufen. Starte die Verbindung erneut aus deinem KI-Assistenten."
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:84
+msgid "Could not verify the app"
+msgstr "App konnte nicht überprüft werden"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:85
+msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
+msgstr "Die Identität der App, die Zugriff anfordert, konnte nicht bestätigt werden — es wurde daher nichts verbunden. Das kann passieren, wenn die App falsch konfiguriert ist oder der Link verändert wurde."
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:114
+#: src/Features/OAuth/View/templates/denied.php:22
+msgid "Access not granted"
+msgstr "Zugriff nicht gewährt"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:157
+#: src/Features/OAuth/View/templates/connected.php:24
+msgid "Access approved"
+msgstr "Zugriff genehmigt"
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:174
+#: src/Features/OAuth/View/templates/consent.php:26
+msgid "Authorize AI access"
+msgstr "KI-Zugriff autorisieren"
+
+#: src/Features/OAuth/View/ConsentAvailability.php:19
+msgid "Off for this store"
+msgstr "Für diesen Shop ausgeschaltet"
+
+#: src/Features/OAuth/View/ConsentAvailability.php:20
+msgid "Not requested"
+msgstr "Nicht angefragt"
+
+#: src/Features/OAuth/View/ConsentScope.php:32
+msgid "Switched off for this store. Enable the area under Counterhand MCP → Settings, then connect this app again."
+msgstr "Für diesen Shop ausgeschaltet. Aktiviere den Bereich unter Counterhand MCP → Einstellungen und verbinde diese App danach erneut."
+
+#: src/Features/OAuth/View/ConsentScope.php:33
+msgid "The app did not ask for this, so it cannot be granted here. Reconnect the app to request it."
+msgstr "Die App hat das nicht angefragt, daher kann es hier nicht gewährt werden. Verbinde die App erneut, um es anzufragen."
+
+#: src/Features/OAuth/View/FlowPage.php:55
+msgid "Connection problem"
+msgstr "Verbindungsproblem"
+
+#. translators: %s: name of the AI application
+#: src/Features/OAuth/View/templates/connected.php:30
+#, php-format
+msgid "%s may now use your store with the permissions below."
+msgstr "%s darf deinen Shop jetzt mit den unten aufgeführten Berechtigungen nutzen."
+
+#: src/Features/OAuth/View/templates/connected.php:44
+msgid "Return to your AI assistant to finish connecting. You can close this tab."
+msgstr "Kehre zu deinem KI-Assistenten zurück, um die Verbindung abzuschließen. Du kannst diesen Tab schließen."
+
+#: src/Features/OAuth/View/templates/connected.php:48
+msgid "View connections"
+msgstr "Verbindungen anzeigen"
+
+#. translators: %s: name of the AI application requesting access
+#: src/Features/OAuth/View/templates/consent.php:32
+#, php-format
+msgid "%s wants to connect to your store."
+msgstr "%s möchte sich mit deinem Shop verbinden."
+
+#: src/Features/OAuth/View/templates/consent.php:42
+msgid "Approving as"
+msgstr "Genehmigung als"
+
+#: src/Features/OAuth/View/templates/consent.php:48
+msgid "Verified origin"
+msgstr "Verifizierte Herkunft"
+
+#: src/Features/OAuth/View/templates/consent.php:62
+msgid "Nothing this app asked for is currently switched on for this store, so there is nothing to approve yet."
+msgstr "Nichts von dem, was diese App angefragt hat, ist für diesen Shop derzeit eingeschaltet — es gibt also noch nichts zu genehmigen."
+
+#: src/Features/OAuth/View/templates/consent.php:67
+msgid "Choose what it may do"
+msgstr "Wähle, was sie tun darf"
+
+#: src/Features/OAuth/View/templates/consent.php:90
+msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
+msgstr "Entferne den Haken bei allem, was du lieber nicht gewähren möchtest. Du kannst die gesamte Verbindung später widerrufen."
+
+#. translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag
+#: src/Features/OAuth/View/templates/consent.php:97
+#, php-format
+msgid "Grayed-out areas are switched off for this store. Enable them under %1$sCounterhand MCP → Settings%2$s, then connect the app again — a connection only ever holds what it was approved with."
+msgstr "Ausgegraute Bereiche sind für diesen Shop ausgeschaltet. Aktiviere sie unter %1$sCounterhand MCP → Einstellungen%2$s und verbinde die App danach erneut — eine Verbindung enthält immer nur das, womit sie genehmigt wurde."
+
+#: src/Features/OAuth/View/templates/consent.php:107
+msgid "This request includes permission to change store data. New products are always created as drafts for you to review."
+msgstr "Diese Anfrage umfasst die Berechtigung, Shop-Daten zu ändern. Neue Produkte werden immer als Entwürfe angelegt, damit du sie prüfen kannst."
+
+#: src/Features/OAuth/View/templates/consent.php:120
+msgid "Approve access"
+msgstr "Zugriff genehmigen"
+
+#: src/Features/OAuth/View/templates/consent.php:124
+msgid "Return to the app"
+msgstr "Zurück zur App"
+
+#: src/Features/OAuth/View/templates/consent.php:124
+msgid "Deny"
+msgstr "Ablehnen"
+
+#: src/Features/OAuth/View/templates/consent.php:131
+msgid "You can revoke this connection anytime under WooCommerce → Counterhand MCP."
+msgstr "Du kannst diese Verbindung jederzeit unter WooCommerce → Counterhand MCP widerrufen."
+
+#. translators: %s: name of the AI application
+#: src/Features/OAuth/View/templates/denied.php:28
+#, php-format
+msgid "You declined the request from %s. Nothing was shared and no connection was created."
+msgstr "Du hast die Anfrage von %s abgelehnt. Es wurde nichts geteilt und keine Verbindung erstellt."
+
+#: src/Features/OAuth/View/templates/denied.php:34
+msgid "You can close this tab. If you meant to allow it, start the connection again from your AI assistant."
+msgstr "Du kannst diesen Tab schließen. Wenn du den Zugriff eigentlich erlauben wolltest, starte die Verbindung erneut aus deinem KI-Assistenten."
+
+#: src/Features/OAuth/View/templates/denied.php:38
+msgid "Manage connections"
+msgstr "Verbindungen verwalten"
+
+#: src/Features/OAuth/View/templates/error.php:27
+msgid "Nothing was connected. Try starting the connection again from your AI assistant."
+msgstr "Es wurde nichts verbunden. Starte die Verbindung erneut aus deinem KI-Assistenten."
+
+#: src/Features/OAuth/View/templates/error.php:31
+msgid "Connection help"
+msgstr "Hilfe zur Verbindung"
+
+#: src/Features/OAuth/View/templates/partial-consent-rows.php:54
+msgid "Can change data"
+msgstr "Kann Daten ändern"
+
+#. translators: %s: store name
+#: src/Features/OAuth/View/templates/shell.php:72
+#, php-format
+msgid "Back to %s"
+msgstr "Zurück zu %s"
+
+#: src/Features/OAuth/View/templates/shell.php:78
+msgid "Secured by Counterhand MCP"
+msgstr "Gesichert durch Counterhand MCP"
+
+#: src/Features/Playground/AgentLoop.php:97
+msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
+msgstr "Gestoppt: Der Assistent hat über das Sicherheitslimit für eine Nachricht hinaus weiter Tools aufgerufen."
+
+#. translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove.
+#: src/Features/Playground/AgentLoop.php:135
+#, php-format
+msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
+msgstr "Der Chat kann %1$d Tools erreichen — mehr, als dieses Modell in einer Nachricht mitführen kann (%2$d). Öffne unten \"für den Chat verfügbar\" und wähle Bereiche ab, bis mindestens %3$d Tools weniger ausgewählt sind — die abgewählten Bereiche bleiben für deine anderen KI-Apps verfügbar. Verbindest du stattdessen ein Anthropic-Modell, entfällt das Limit, weil Claude die benötigten Tools selbst suchen kann."
+
+#: src/Features/Playground/ModelConnect.php:64
+#: src/Features/Playground/ModelConnect.php:178
+#: src/Features/Playground/PlaygroundFeature.php:173
+msgid "You are not allowed to change these settings."
+msgstr "Du darfst diese Einstellungen nicht ändern."
+
+#: src/Features/Playground/ModelConnect.php:75
+msgid "Unknown provider."
+msgstr "Unbekannter Anbieter."
+
+#: src/Features/Playground/ModelConnect.php:79
+msgid "Paste the API key first."
+msgstr "Füge zuerst den API-Schlüssel ein."
+
+#. translators: %s: provider name
+#: src/Features/Playground/ModelConnect.php:89
+#, php-format
+msgid "Saved your %s key."
+msgstr "Dein %s-Schlüssel wurde gespeichert."
+
+#: src/Features/Playground/ModelConnect.php:121
+msgid "You are not allowed to install plugins."
+msgstr "Du darfst keine Plugins installieren."
+
+#: src/Features/Playground/ModelConnect.php:129
+msgid "Unknown provider plugin."
+msgstr "Unbekanntes Anbieter-Plugin."
+
+#: src/Features/Playground/ModelConnect.php:135
+msgid "The provider plugin could not be installed. Try it from the Plugins screen."
+msgstr "Das Anbieter-Plugin konnte nicht installiert werden. Versuche es über die Plugin-Seite."
+
+#. translators: %s: provider plugin name
+#: src/Features/Playground/ModelConnect.php:148
+#, php-format
+msgid "%s is installed. Last step: add your API key where WordPress keeps it."
+msgstr "%s ist installiert. Letzter Schritt: Hinterlege deinen API-Schlüssel dort, wo WordPress ihn aufbewahrt."
+
+#: src/Features/Playground/ModelConnect.php:186
+msgid "The saved key was removed."
+msgstr "Der gespeicherte Schlüssel wurde entfernt."
+
+#: src/Features/Playground/ModelConnect.php:198
+msgid "Choose a model provider first."
+msgstr "Wähle zuerst einen Modell-Anbieter."
+
+#: src/Features/Playground/ModelConnect.php:205
+msgid "This provider needs an API key."
+msgstr "Dieser Anbieter benötigt einen API-Schlüssel."
+
+#: src/Features/Playground/ModelConnect.php:220
+msgid "The model could not be reached. Check the details and try again."
+msgstr "Das Modell konnte nicht erreicht werden. Prüfe die Angaben und versuche es erneut."
+
+#. translators: 1: provider name, 2: model name
+#: src/Features/Playground/ModelConnect.php:230
+#, php-format
+msgid "Connected to %1$s%2$s."
+msgstr "Verbunden mit %1$s%2$s."
+
+#: src/Features/Playground/PlaygroundFeature.php:74
+msgid "Start your free trial"
+msgstr "Starte deine kostenlose Testphase"
+
+#: src/Features/Playground/PlaygroundFeature.php:76
+msgid "Counterhand lets you ask about sales, look up orders and update products in plain language — here in your admin, or from Claude and ChatGPT. You choose what each assistant may reach, and you can revoke it at any time."
+msgstr "Mit Counterhand kannst du in natürlicher Sprache nach Umsätzen fragen, Bestellungen nachschlagen und Produkte aktualisieren — hier in deinem Adminbereich oder aus Claude und ChatGPT. Du bestimmst, worauf jeder Assistent zugreifen darf, und kannst den Zugriff jederzeit widerrufen."
+
+#: src/Features/Playground/PlaygroundFeature.php:80
+msgid "Start the trial"
+msgstr "Testphase starten"
+
+#: src/Features/Playground/PlaygroundFeature.php:130
+#: src/Features/Settings/SettingsFeature.php:192
+#: src/Features/Settings/SettingsFeature.php:206
+msgid "Not allowed."
+msgstr "Nicht erlaubt."
+
+#: src/Features/Playground/PlaygroundFeature.php:137
+msgid "No model is connected yet. Pick one at the top of this tab."
+msgstr "Es ist noch kein Modell verbunden. Wähle eines oben in diesem Tab aus."
+
+#: src/Features/Playground/PlaygroundFeature.php:142
+msgid "Type a message first."
+msgstr "Gib zuerst eine Nachricht ein."
+
+#: src/Features/Playground/PlaygroundFeature.php:159
+msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
+msgstr "Die Chat-Anfrage ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
+
+#. translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders"
+#: src/Features/Playground/PlaygroundFeature.php:239
+#, php-format
+msgid "You are a WooCommerce store assistant for \"%1$s\". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched."
+msgstr "Du bist ein WooCommerce-Shop-Assistent für \"%1$s\". Preise sind in %2$s. Du kannst folgende Bereiche des Shops erreichen: %3$s. Nutze die verfügbaren Tools, um Fragen zu beantworten und Änderungen vorzunehmen — rate niemals bei Shop-Daten, die du nachschlagen kannst, und sag klar, wenn etwas außerhalb deiner Reichweite liegt. Neue Produkte werden als Entwürfe angelegt, damit der Administrator sie prüfen kann. Bestätige vor jeder destruktiven Aktion. Antworte knapp und nenne die konkreten Datensätze, die du geändert hast."
+
+#: src/Features/Playground/PlaygroundFeature.php:242
+msgid "none — no tool groups are selected for chat"
+msgstr "keine — für den Chat sind keine Tool-Bereiche ausgewählt"
+
+#: src/Features/Playground/PlaygroundFeature.php:263
+msgid "Admin chat"
+msgstr "Admin-Chat"
+
+#: src/Features/Playground/Provider/AnthropicProvider.php:34
+msgid "Anthropic (Claude)"
+msgstr "Anthropic (Claude)"
+
+#. translators: %s: transport error message
+#: src/Features/Playground/Provider/AnthropicProvider.php:204
+#, php-format
+msgid "Could not reach Anthropic: %s"
+msgstr "Anthropic konnte nicht erreicht werden: %s"
+
+#. translators: 1: HTTP status, 2: API error message
+#: src/Features/Playground/Provider/AnthropicProvider.php:209
+#, php-format
+msgid "Anthropic returned %1$d: %2$s"
+msgstr "Anthropic hat %1$d zurückgegeben: %2$s"
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:71
+msgid "WordPress AI (built in)"
+msgstr "WordPress AI (integriert)"
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:126
+msgid "No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins."
+msgstr "Kein installierter KI-Anbieter kann diese Anfrage bedienen. Verbinde einen Anbieter unter Einstellungen → Connectors oder installiere eines der KI-Anbieter-Plugins."
+
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:133
+msgid "Nothing to send to the model."
+msgstr "Es gibt nichts, das an das Modell gesendet werden kann."
+
+#: src/Features/Playground/Provider/HttpProvider.php:64
+msgid "unknown error"
+msgstr "unbekannter Fehler"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:33
+#: src/Features/Playground/ProviderPlugin.php:23
+msgid "ChatGPT (OpenAI)"
+msgstr "ChatGPT (OpenAI)"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:52
+#: src/Features/Playground/ProviderPlugin.php:24
+msgid "Gemini (Google)"
+msgstr "Gemini (Google)"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:69
+msgid "Ollama (on this server)"
+msgstr "Ollama (auf diesem Server)"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:81
+msgid "Custom OpenAI-compatible endpoint"
+msgstr "Eigener OpenAI-kompatibler Endpunkt"
+
+#. translators: %s: transport error message
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:243
+#, php-format
+msgid "Could not reach the model endpoint: %s"
+msgstr "Der Modell-Endpunkt konnte nicht erreicht werden: %s"
+
+#. translators: 1: HTTP status, 2: API error message
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:248
+#, php-format
+msgid "The model endpoint returned %1$d: %2$s"
+msgstr "Der Modell-Endpunkt hat %1$d zurückgegeben: %2$s"
+
+#: src/Features/Playground/ProviderPlugin.php:22
+msgid "Claude (Anthropic)"
+msgstr "Claude (Anthropic)"
+
+#. translators: %d: how many tools the chat can currently call.
+#: src/Features/Playground/views/partial-chat-tools.php:41
+#, php-format
+msgid "%d tool"
+msgid_plural "%d tools"
+msgstr[0] "%d Tool"
+msgstr[1] "%d Tools"
+
+#: src/Features/Playground/views/partial-chat-tools.php:46
+msgid "available to chat"
+msgstr "für den Chat verfügbar"
+
+#. translators: %d: the most tools one message can carry.
+#: src/Features/Playground/views/partial-chat-tools.php:53
+#, php-format
+msgid "over the %d-tool limit"
+msgstr "über dem Limit von %d Tools"
+
+#. translators: %d: how many further tools are waiting on a store setting.
+#: src/Features/Playground/views/partial-chat-tools.php:63
+#, php-format
+msgid "%d more waiting on Settings"
+msgid_plural "%d more waiting on Settings"
+msgstr[0] "%d weiteres wartet auf die Einstellungen"
+msgstr[1] "%d weitere warten auf die Einstellungen"
+
+#: src/Features/Playground/views/partial-chat-tools.php:76
+msgid "Each area you pick is described to the model on every message, so keep it to what you actually ask about."
+msgstr "Jeder Bereich, den du auswählst, wird dem Modell bei jeder Nachricht beschrieben – beschränke dich also auf das, wonach du tatsächlich fragst."
+
+#. translators: 1: how many tools are selected, 2: the per-message maximum.
+#: src/Features/Playground/views/partial-chat-tools.php:87
+#, php-format
+msgid "Too many areas picked: %1$d tools, and one message can carry %2$d."
+msgstr "Zu viele Bereiche ausgewählt: %1$d Tools, aber eine Nachricht kann nur %2$d übertragen."
+
+#. translators: %d: how many tools have to go.
+#: src/Features/Playground/views/partial-chat-tools.php:97
+#, php-format
+msgid "Every message fails until you untick at least %d tool below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
+msgid_plural "Every message fails until you untick at least %d tools below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
+msgstr[0] "Jede Nachricht schlägt fehl, bis du unten mindestens %d Tool abwählst. Ab dieser Menge greift ein Modell ohnehin öfter zum falschen Tool – und die Definitionen kosten mehr als die Unterhaltung selbst. Das Abwählen hier schränkt nur den Chat ein; deine anderen KI-Apps behalten alles."
+msgstr[1] "Jede Nachricht schlägt fehl, bis du unten mindestens %d Tools abwählst. Ab dieser Menge greift ein Modell ohnehin öfter zum falschen Tool – und die Definitionen kosten mehr als die Unterhaltung selbst. Das Abwählen hier schränkt nur den Chat ein; deine anderen KI-Apps behalten alles."
+
+#. translators: %s: comma-separated list of area names.
+#: src/Features/Playground/views/partial-chat-tools.php:114
+#, php-format
+msgid "%s is switched off for the whole store"
+msgstr "%s ist für den gesamten Shop ausgeschaltet"
+
+#: src/Features/Playground/views/partial-chat-tools.php:122
+msgid "Picking it here is remembered, but the chat cannot reach it until the store exposes it. Settings decides what every AI client may touch; this panel only narrows it further for chat."
+msgstr "Deine Auswahl hier wird gespeichert, aber der Chat kann erst darauf zugreifen, wenn der Shop den Bereich freigibt. Die Einstellungen bestimmen, worauf jeder KI-Client überhaupt zugreifen darf; dieses Panel schränkt das für den Chat nur weiter ein."
+
+#: src/Features/Playground/views/partial-chat-tools.php:125
+msgid "Switch it on in Settings"
+msgstr "In den Einstellungen einschalten"
+
+#. translators: %s: comma-separated list of area names.
+#: src/Features/Playground/views/partial-chat-tools.php:137
+#, php-format
+msgid "The chat can read but not change %s — writing is still off for it in Settings."
+msgstr "Der Chat kann %s lesen, aber nicht ändern – das Schreiben ist dafür in den Einstellungen noch ausgeschaltet."
+
+#. translators: %d: how many tools this area would add.
+#: src/Features/Playground/views/partial-chat-tools.php:166
+#, php-format
+msgid "%d tool off"
+msgid_plural "%d tools off"
+msgstr[0] "%d Tool aus"
+msgstr[1] "%d Tools aus"
+
+#: src/Features/Playground/views/partial-chat-tools.php:178
+msgid "Save areas"
+msgstr "Bereiche speichern"
+
+#: src/Features/Playground/views/partial-model-chooser.php:34
+msgid "Connect a model to start chatting"
+msgstr "Verbinde ein Modell, um mit dem Chatten zu beginnen"
+
+#: src/Features/Playground/views/partial-model-chooser.php:36
+msgid "One step, then this becomes your conversation."
+msgstr "Ein Schritt noch, dann wird das hier deine Unterhaltung."
+
+#: src/Features/Playground/views/partial-model-chooser.php:43
+msgid "Let WordPress manage the model"
+msgstr "Lass WordPress das Modell verwalten"
+
+#: src/Features/Playground/views/partial-model-chooser.php:44
+msgid "The recommended way — fewer steps now, nothing to maintain later."
+msgstr "Der empfohlene Weg – jetzt weniger Schritte, später nichts zu pflegen."
+
+#: src/Features/Playground/views/partial-model-chooser.php:49
+msgid "One connection for the whole site — every AI plugin shares it instead of each asking for its own key."
+msgstr "Eine Verbindung für die ganze Website – alle KI-Plugins teilen sie sich, statt jeweils einen eigenen Schlüssel zu verlangen."
+
+#: src/Features/Playground/views/partial-model-chooser.php:50
+msgid "The key stays with WordPress. This plugin never sees or stores it."
+msgstr "Der Schlüssel bleibt bei WordPress. Dieses Plugin sieht oder speichert ihn nie."
+
+#: src/Features/Playground/views/partial-model-chooser.php:51
+msgid "Rotate the key or switch provider in one place, without touching this plugin again."
+msgstr "Tausche den Schlüssel oder wechsle den Anbieter an einer einzigen Stelle, ohne dieses Plugin noch einmal anfassen zu müssen."
+
+#: src/Features/Playground/views/partial-model-chooser.php:62
+msgid "Use WordPress AI"
+msgstr "WordPress AI verwenden"
+
+#. translators: %s: provider name
+#: src/Features/Playground/views/partial-model-chooser.php:77
+#, php-format
+msgid "%s API key"
+msgstr "%s API-Schlüssel"
+
+#: src/Features/Playground/views/partial-model-chooser.php:87
+msgid "A key is saved — paste a new one to replace it"
+msgstr "Ein Schlüssel ist gespeichert – füge einen neuen ein, um ihn zu ersetzen"
+
+#: src/Features/Playground/views/partial-model-chooser.php:87
+msgid "Paste your API key"
+msgstr "Füge deinen API-Schlüssel ein"
+
+#: src/Features/Playground/views/partial-model-chooser.php:88
+msgid "Save key"
+msgstr "Schlüssel speichern"
+
+#. translators: %s: provider name
+#: src/Features/Playground/views/partial-model-chooser.php:97
+#, php-format
+msgid "%s did not accept the stored key. Paste a different one."
+msgstr "%s hat den gespeicherten Schlüssel nicht akzeptiert. Füge einen anderen ein."
+
+#: src/Features/Playground/views/partial-model-chooser.php:104
+msgid "Key accepted."
+msgstr "Schlüssel akzeptiert."
+
+#: src/Features/Playground/views/partial-model-chooser.php:107
+msgid "WordPress stores it, not this plugin."
+msgstr "WordPress speichert ihn, nicht dieses Plugin."
+
+#: src/Features/Playground/views/partial-model-chooser.php:110
+msgid "Get a key"
+msgstr "Schlüssel holen"
+
+#: src/Features/Playground/views/partial-model-chooser.php:117
+msgid "Who do you have an account with? One click installs the official provider for it."
+msgstr "Bei wem hast du ein Konto? Ein Klick installiert den offiziellen Anbieter dafür."
+
+#: src/Features/Playground/views/partial-model-chooser.php:140
+msgid "On WordPress 7.0 or newer, WordPress manages the model and the key for you — this screen offers it automatically after you update."
+msgstr "Ab WordPress 7.0 verwaltet WordPress das Modell und den Schlüssel für dich – dieser Bildschirm bietet das nach dem Update automatisch an."
+
+#: src/Features/Playground/views/partial-model-chooser.php:147
+msgid "Use your own provider account"
+msgstr "Eigenes Anbieterkonto verwenden"
+
+#: src/Features/Playground/views/partial-model-chooser.php:148
+msgid "Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama."
+msgstr "Füge einen API-Schlüssel von Anthropic, OpenAI oder Google ein – oder betreibe ein lokales Modell mit Ollama."
+
+#: src/Features/Playground/views/partial-model-chooser.php:157
+msgid "Provider"
+msgstr "Anbieter"
+
+#: src/Features/Playground/views/partial-model-chooser.php:172
+msgid "Needs an API key"
+msgstr "Benötigt einen API-Schlüssel"
+
+#: src/Features/Playground/views/partial-model-chooser.php:173
+msgid "No key needed"
+msgstr "Kein Schlüssel nötig"
+
+#: src/Features/Playground/views/partial-model-chooser.php:183
+msgid "Model"
+msgstr "Modell"
+
+#: src/Features/Playground/views/partial-model-chooser.php:187
+msgid "e.g. claude-opus-5"
+msgstr "z. B. claude-opus-5"
+
+#: src/Features/Playground/views/partial-model-chooser.php:201
+msgid "Pick from the list or type any model your provider offers."
+msgstr "Wähle aus der Liste oder gib ein beliebiges Modell ein, das dein Anbieter anbietet."
+
+#: src/Features/Playground/views/partial-model-chooser.php:205
+msgid "API key"
+msgstr "API-Schlüssel"
+
+#. translators: %s: masked API key
+#: src/Features/Playground/views/partial-model-chooser.php:209
+#, php-format
+msgid "Saved (%s) — leave blank to keep"
+msgstr "Gespeichert (%s) – leer lassen, um ihn zu behalten"
+
+#: src/Features/Playground/views/partial-model-chooser.php:210
+msgid "Paste your provider API key"
+msgstr "Füge den API-Schlüssel deines Anbieters ein"
+
+#: src/Features/Playground/views/partial-model-chooser.php:216
+msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
+msgstr "Wird in deiner Datenbank gespeichert und nur an den gewählten Anbieter gesendet. Ollama läuft lokal und braucht keinen Schlüssel."
+
+#: src/Features/Playground/views/partial-model-chooser.php:218
+msgid "Get a key:"
+msgstr "Schlüssel holen:"
+
+#: src/Features/Playground/views/partial-model-chooser.php:240
+msgid "Remove the saved key"
+msgstr "Gespeicherten Schlüssel entfernen"
+
+#: src/Features/Playground/views/partial-model-chooser.php:250
+#: src/Shared/Tool/ToolSection.php:33
+msgid "Advanced"
+msgstr "Erweitert"
+
+#: src/Features/Playground/views/partial-model-chooser.php:251
+msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
+msgstr "Nur für einen eigenen OpenAI-kompatiblen Endpunkt. Bei den anderen Anbietern wird das automatisch ausgefüllt."
+
+#: src/Features/Playground/views/partial-model-chooser.php:255
+msgid "Base URL"
+msgstr "Basis-URL"
+
+#: src/Features/Playground/views/partial-model-chooser.php:265
+msgid "Connect model"
+msgstr "Modell verbinden"
+
+#: src/Features/Playground/views/partial-model-chooser.php:268
+msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
+msgstr "Vor dem Speichern senden wir eine winzige Testnachricht – so fällt ein falscher Schlüssel schon hier auf und nicht erst bei deiner ersten Frage."
+
+#: src/Features/Playground/views/tab-chat.php:40
+msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
+msgstr "Es sind keine Tools aktiviert, daher kann der Assistent nichts lesen oder ändern. Schalte im Tab „Einstellungen“ mindestens eine Tool-Gruppe ein."
+
+#: src/Features/Playground/views/tab-chat.php:57
+msgid "Ask about your store"
+msgstr "Frag etwas über deinen Shop"
+
+#: src/Features/Playground/views/tab-chat.php:58
+msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
+msgstr "Ganz normale Sprache genügt – der Assistent schlägt die Antwort mit denselben Tools nach, die auch eine externe KI-App verwenden würde."
+
+#: src/Features/Playground/views/tab-chat.php:62
+msgid "How many orders are waiting to be processed?"
+msgstr "Wie viele Bestellungen warten auf Bearbeitung?"
+
+#: src/Features/Playground/views/tab-chat.php:63
+msgid "Show me my 5 best selling products this month"
+msgstr "Zeig mir meine 5 meistverkauften Produkte in diesem Monat"
+
+#: src/Features/Playground/views/tab-chat.php:64
+msgid "Which products are out of stock?"
+msgstr "Welche Produkte sind nicht mehr auf Lager?"
+
+#: src/Features/Playground/views/tab-chat.php:65
+msgid "What were my sales last week?"
+msgstr "Wie hoch war mein Umsatz letzte Woche?"
+
+#: src/Features/Playground/views/tab-chat.php:79
+msgid "Message"
+msgstr "Nachricht"
+
+#: src/Features/Playground/views/tab-chat.php:85
+msgid "Ask about products, orders, customers or sales…"
+msgstr "Frag nach Produkten, Bestellungen, Kunden oder Verkäufen …"
+
+#: src/Features/Playground/views/tab-chat.php:86
+msgid "Connect a model above, then ask your first question here…"
+msgstr "Verbinde oben ein Modell und stelle dann hier deine erste Frage …"
+
+#: src/Features/Playground/views/tab-chat.php:91
+msgid "Send"
+msgstr "Senden"
+
+#. translators: 1: Enter key name, 2: Shift+Enter key combination
+#: src/Features/Playground/views/tab-chat.php:102
+#, php-format
+msgid "%1$s to send · %2$s for a new line"
+msgstr "%1$s zum Senden · %2$s für eine neue Zeile"
+
+#: src/Features/Playground/views/tab-chat.php:103
+msgid "Enter"
+msgstr "Enter"
+
+#: src/Features/Playground/views/tab-chat.php:104
+msgid "Shift+Enter"
+msgstr "Umschalt+Enter"
+
+#: src/Features/Playground/views/tab-chat.php:119
+msgid "Change"
+msgstr "Ändern"
+
+#: src/Features/Playground/views/tab-chat.php:124
+msgid "Clear conversation"
+msgstr "Unterhaltung löschen"
+
+#: src/Features/Playground/views/tab-chat.php:133
+msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Your store data is sent to the model provider you configured."
+msgstr "Der Assistent führt dieselben Tools aus wie ein externer KI-Client, begrenzt auf die Tool-Gruppen, die du aktiviert hast. Deine Shop-Daten werden an den von dir eingerichteten Modell-Anbieter gesendet."
+
+#: src/Features/Settings/AdminScreen.php:27
+msgid "Chat"
+msgstr "Chat"
+
+#: src/Features/Settings/AdminScreen.php:28
+#: src/Features/Settings/AdminScreen.php:37
+msgid "Connect AI apps"
+msgstr "KI-Apps verbinden"
+
+#: src/Features/Settings/AdminScreen.php:29
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/Features/Settings/AdminScreen.php:30
+#: src/Features/Settings/AdminScreen.php:39
+msgid "Action Log"
+msgstr "Aktionsprotokoll"
+
+#: src/Features/Settings/AdminScreen.php:36
+msgid "Chat with your store"
+msgstr "Chatte mit deinem Shop"
+
+#: src/Features/Settings/AdminScreen.php:38
+msgid "Counterhand MCP settings"
+msgstr "Counterhand MCP-Einstellungen"
+
+#: src/Features/Settings/AdminScreen.php:45
+msgid "Use AI here, inside WooCommerce, on a model you connect."
+msgstr "Nutze KI direkt hier in WooCommerce, mit einem Modell, das du verbindest."
+
+#: src/Features/Settings/AdminScreen.php:46
+msgid "Let AI apps you already use work with this store, and manage what they may do."
+msgstr "Lass KI-Apps, die du bereits nutzt, mit diesem Shop arbeiten – und lege fest, was sie dürfen."
+
+#: src/Features/Settings/AdminScreen.php:47
+msgid "What this store exposes, and how much of it."
+msgstr "Was dieser Shop freigibt – und wie viel davon."
+
+#: src/Features/Settings/AdminScreen.php:48
+msgid "What each connected app actually did."
+msgstr "Was jede verbundene App tatsächlich getan hat."
+
+#: src/Features/Settings/ClientGroup.php:29
+msgid "Apps that connect from the cloud"
+msgstr "Apps, die sich aus der Cloud verbinden"
+
+#: src/Features/Settings/ClientGroup.php:30
+msgid "Tools on your own machine"
+msgstr "Tools auf deinem eigenen Rechner"
+
+#: src/Features/Settings/ClientGroup.php:36
+msgid "Web, mobile and desktop assistants. These need your store to be reachable from the internet."
+msgstr "Web-, Mobil- und Desktop-Assistenten. Dafür muss dein Shop aus dem Internet erreichbar sein."
+
+#: src/Features/Settings/ClientGroup.php:37
+msgid "Terminal tools and code editors. These connect from your computer, so a local store works too."
+msgstr "Terminal-Tools und Code-Editoren. Sie verbinden sich von deinem Computer aus, daher funktioniert auch ein lokaler Shop."
+
+#: src/Features/Settings/ConnectReadiness.php:52
+msgid "Local site — only tools on your own machine can connect"
+msgstr "Lokale Website – nur Tools auf deinem eigenen Rechner können sich verbinden"
+
+#: src/Features/Settings/ConnectReadiness.php:59
+msgid "Ready for every AI app"
+msgstr "Bereit für jede KI-App"
+
+#: src/Features/Settings/ConnectReadiness.php:60
+msgid "The endpoint is live and advertising OAuth discovery."
+msgstr "Der Endpunkt ist erreichbar und stellt die OAuth-Discovery bereit."
+
+#. translators: %s: error message
+#: src/Features/Settings/ConnectReadiness.php:98
+#, php-format
+msgid "The endpoint could not be reached: %s"
+msgstr "Der Endpunkt konnte nicht erreicht werden: %s"
+
+#. translators: %d: HTTP status code
+#: src/Features/Settings/ConnectReadiness.php:112
+#, php-format
+msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work."
+msgstr "Der Endpunkt hat mit Status %d statt einer OAuth-Challenge geantwortet. Prüfe, ob der Connector aktiviert ist und die Permalinks funktionieren."
+
+#. translators: %s: error message
+#: src/Features/Settings/ConnectReadiness.php:126
+#, php-format
+msgid "The discovery document could not be fetched: %s"
+msgstr "Das Discovery-Dokument konnte nicht abgerufen werden: %s"
+
+#. translators: %s: discovery URL
+#: src/Features/Settings/ConnectReadiness.php:137
+#, php-format
+msgid "The server does not serve %s. Some hosts block paths starting with a dot — allow that path in your server configuration."
+msgstr "Der Server liefert %s nicht aus. Manche Hoster blockieren Pfade, die mit einem Punkt beginnen – erlaube diesen Pfad in deiner Serverkonfiguration."
+
+#: src/Features/Settings/ConnectReadiness.php:143
+msgid "The discovery document points at a different address than this store. Check for a stale cache or a URL rewrite."
+msgstr "Das Discovery-Dokument verweist auf eine andere Adresse als diesen Shop. Prüfe, ob ein veralteter Cache oder eine URL-Umschreibung dahintersteckt."
+
+#: src/Features/Settings/ConnectReadiness.php:161
+msgid "The site address could not be read."
+msgstr "Die Website-Adresse konnte nicht gelesen werden."
+
+#: src/Features/Settings/ConnectReadiness.php:165
+msgid "The store is served over HTTP. Cloud assistants require HTTPS."
+msgstr "Der Shop wird über HTTP ausgeliefert. Cloud-Assistenten benötigen HTTPS."
+
+#: src/Features/Settings/ConnectReadiness.php:169
+msgid "The store address points at this machine, which no outside service can reach."
+msgstr "Die Shop-Adresse zeigt auf diesen Rechner, den kein externer Dienst erreichen kann."
+
+#. translators: %s: hostname suffix, e.g. .test
+#: src/Features/Settings/ConnectReadiness.php:176
+#, php-format
+msgid "The %s suffix is reserved for local development and does not resolve on the internet."
+msgstr "Die Endung %s ist für die lokale Entwicklung reserviert und lässt sich im Internet nicht auflösen."
+
+#: src/Features/Settings/ConnectReadiness.php:190
+msgid "The store address is a private or reserved IP address, which is not routable from the internet."
+msgstr "Die Shop-Adresse ist eine private oder reservierte IP-Adresse, die aus dem Internet nicht erreichbar ist."
+
+#: src/Features/Settings/ConnectReadiness.php:194
+msgid "The store hostname has no public domain suffix, so it cannot be resolved from outside your network."
+msgstr "Der Hostname des Shops hat keine öffentliche Domain-Endung und kann daher von außerhalb deines Netzwerks nicht aufgelöst werden."
+
+#: src/Features/Settings/ConnectTab.php:23
+msgid "Add an app"
+msgstr "App hinzufügen"
+
+#: src/Features/Settings/ConnectTab.php:24
+msgid "Connected apps"
+msgstr "Verbundene Apps"
+
+#: src/Features/Settings/McpClient.php:64
+msgid "Claude"
+msgstr "Claude"
+
+#: src/Features/Settings/McpClient.php:65
+msgid "Web, mobile and the desktop app — one connection covers all three, and it shows up in Claude Code too."
+msgstr "Web, mobil und die Desktop-App — eine Verbindung deckt alle drei ab und erscheint auch in Claude Code."
+
+#: src/Features/Settings/McpClient.php:68
+msgid "Open Claude, then go to Customize → Connectors and press the + button."
+msgstr "Öffne Claude, gehe zu Anpassen → Konnektoren und klicke auf die Schaltfläche +."
+
+#: src/Features/Settings/McpClient.php:69
+msgid "Choose \"Add custom connector\", give it a name and paste the store URL."
+msgstr "Wähle \"Benutzerdefinierten Konnektor hinzufügen\", gib ihm einen Namen und füge die Shop-URL ein."
+
+#: src/Features/Settings/McpClient.php:70
+msgid "Press Add, then Connect — your browser opens this store's consent screen."
+msgstr "Klicke auf Hinzufügen und dann auf Verbinden — dein Browser öffnet den Berechtigungsbildschirm dieses Shops."
+
+#: src/Features/Settings/McpClient.php:71
+msgid "Approve the scopes you want to grant. On Team and Enterprise plans an owner has to add the connector first."
+msgstr "Bestätige die Berechtigungen, die du gewähren möchtest. Bei Team- und Enterprise-Tarifen muss zuerst ein Inhaber den Konnektor hinzufügen."
+
+#: src/Features/Settings/McpClient.php:74
+#: src/Features/Settings/McpClient.php:92
+#: src/Features/Settings/McpClient.php:136
+#: src/Features/Settings/McpClient.php:169
+msgid "Server URL"
+msgstr "Server-URL"
+
+#: src/Features/Settings/McpClient.php:76
+msgid "Copy URL & open Claude"
+msgstr "URL kopieren & Claude öffnen"
+
+#: src/Features/Settings/McpClient.php:82
+msgid "ChatGPT"
+msgstr "ChatGPT"
+
+#: src/Features/Settings/McpClient.php:83
+msgid "Add the store as a custom connector. Needs a paid plan with developer mode switched on."
+msgstr "Füge den Shop als benutzerdefinierten Konnektor hinzu. Erfordert einen kostenpflichtigen Tarif mit eingeschaltetem Entwicklermodus."
+
+#: src/Features/Settings/McpClient.php:86
+msgid "In ChatGPT, open Settings → Apps & Connectors → Advanced and turn on Developer mode."
+msgstr "Öffne in ChatGPT Einstellungen → Apps & Konnektoren → Erweitert und aktiviere den Entwicklermodus."
+
+#: src/Features/Settings/McpClient.php:87
+msgid "Back in Connectors, choose \"Add custom connector\" and paste the store URL."
+msgstr "Wähle dann unter Konnektoren \"Benutzerdefinierten Konnektor hinzufügen\" und füge die Shop-URL ein."
+
+#: src/Features/Settings/McpClient.php:88
+msgid "Connect, then approve the scopes on this store's consent screen."
+msgstr "Verbinde dich und bestätige dann die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
+
+#: src/Features/Settings/McpClient.php:89
+msgid "Custom connectors are web only, and are not available on the free plan."
+msgstr "Benutzerdefinierte Konnektoren gibt es nur im Web und nicht im kostenlosen Tarif."
+
+#: src/Features/Settings/McpClient.php:94
+msgid "Copy URL & open ChatGPT"
+msgstr "URL kopieren & ChatGPT öffnen"
+
+#: src/Features/Settings/McpClient.php:100
+msgid "Cursor"
+msgstr "Cursor"
+
+#: src/Features/Settings/McpClient.php:101
+msgid "Use store tools inside the Cursor editor."
+msgstr "Nutze die Shop-Tools direkt im Cursor-Editor."
+
+#: src/Features/Settings/McpClient.php:104
+msgid "Press the button below — Cursor opens and asks you to confirm the server."
+msgstr "Klicke auf die Schaltfläche unten — Cursor öffnet sich und bittet dich, den Server zu bestätigen."
+
+#: src/Features/Settings/McpClient.php:105
+#: src/Features/Settings/McpClient.php:132
+msgid "Confirm, then approve the scopes on this store's consent screen."
+msgstr "Bestätige und genehmige anschließend die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
+
+#: src/Features/Settings/McpClient.php:106
+msgid "If your browser blocks the link, paste the JSON below into your mcp.json instead."
+msgstr "Falls dein Browser den Link blockiert, füge stattdessen das JSON unten in deine mcp.json ein."
+
+#: src/Features/Settings/McpClient.php:119
+msgid "mcp.json"
+msgstr "mcp.json"
+
+#: src/Features/Settings/McpClient.php:121
+msgid "Add to Cursor"
+msgstr "Zu Cursor hinzufügen"
+
+#: src/Features/Settings/McpClient.php:127
+msgid "VS Code"
+msgstr "VS Code"
+
+#: src/Features/Settings/McpClient.php:128
+msgid "Use store tools from Copilot Chat in Visual Studio Code."
+msgstr "Nutze die Shop-Tools über Copilot Chat in Visual Studio Code."
+
+#: src/Features/Settings/McpClient.php:131
+msgid "Press the button below — VS Code opens and asks you to confirm the server."
+msgstr "Klicke auf die Schaltfläche unten — VS Code öffnet sich und bittet dich, den Server zu bestätigen."
+
+#: src/Features/Settings/McpClient.php:133
+msgid "Manage it later with \"MCP: List Servers\" from the Command Palette."
+msgstr "Verwalte ihn später über \"MCP: List Servers\" in der Befehlspalette."
+
+#: src/Features/Settings/McpClient.php:138
+msgid "Add to VS Code"
+msgstr "Zu VS Code hinzufügen"
+
+#: src/Features/Settings/McpClient.php:144
+msgid "Claude Code"
+msgstr "Claude Code"
+
+#: src/Features/Settings/McpClient.php:145
+msgid "Manage the store from your terminal. Already covered if you connected Claude above."
+msgstr "Verwalte den Shop aus deinem Terminal. Bereits abgedeckt, wenn du oben Claude verbunden hast."
+
+#: src/Features/Settings/McpClient.php:148
+msgid "Run the command below in any terminal."
+msgstr "Führe den Befehl unten in einem beliebigen Terminal aus."
+
+#: src/Features/Settings/McpClient.php:149
+msgid "Start Claude Code and run /mcp — it opens the consent screen in your browser."
+msgstr "Starte Claude Code und führe /mcp aus — der Berechtigungsbildschirm öffnet sich in deinem Browser."
+
+#: src/Features/Settings/McpClient.php:150
+msgid "Approve the scopes you want to grant."
+msgstr "Bestätige die Berechtigungen, die du gewähren möchtest."
+
+#: src/Features/Settings/McpClient.php:155
+msgid "Terminal command"
+msgstr "Terminal-Befehl"
+
+#: src/Features/Settings/McpClient.php:160
+msgid "Any other MCP client"
+msgstr "Jeder andere MCP-Client"
+
+#: src/Features/Settings/McpClient.php:161
+msgid "Anything implementing the Model Context Protocol over HTTP."
+msgstr "Alles, was das Model Context Protocol über HTTP implementiert."
+
+#: src/Features/Settings/McpClient.php:164
+msgid "Add the store URL as a streamable HTTP MCP server."
+msgstr "Füge die Shop-URL als MCP-Server vom Typ \"Streamable HTTP\" hinzu."
+
+#: src/Features/Settings/McpClient.php:165
+msgid "The client discovers authorization automatically (OAuth 2.1 with PKCE)."
+msgstr "Der Client erkennt die Autorisierung automatisch (OAuth 2.1 mit PKCE)."
+
+#: src/Features/Settings/McpClient.php:166
+msgid "Approve the scopes on this store's consent screen."
+msgstr "Bestätige die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
+
+#: src/Features/Settings/ScreenAssets.php:89
+#: src/Features/Settings/views/tab-connect.php:57
+msgid "Checking the store…"
+msgstr "Shop wird geprüft…"
+
+#: src/Features/Settings/ScreenAssets.php:90
+msgid "The check could not be run."
+msgstr "Die Prüfung konnte nicht ausgeführt werden."
+
+#: src/Features/Settings/ScreenAssets.php:91
+msgid "Waiting for the app to connect…"
+msgstr "Warte auf die Verbindung der App…"
+
+#: src/Features/Settings/ScreenAssets.php:92
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
+msgid "Connected"
+msgstr "Verbunden"
+
+#: src/Features/Settings/ScreenAssets.php:125
+msgid "You"
+msgstr "Du"
+
+#: src/Features/Settings/ScreenAssets.php:126
+msgid "Assistant"
+msgstr "Assistent"
+
+#: src/Features/Settings/ScreenAssets.php:127
+msgid "Thinking…"
+msgstr "Denkt nach…"
+
+#: src/Features/Settings/ScreenAssets.php:128
+msgid "The request failed."
+msgstr "Die Anfrage ist fehlgeschlagen."
+
+#: src/Features/Settings/ScreenAssets.php:129
+msgid "Arguments"
+msgstr "Argumente"
+
+#: src/Features/Settings/ScreenAssets.php:130
+msgid "Result"
+msgstr "Ergebnis"
+
+#: src/Features/Settings/ScreenAssets.php:131
+msgid "ran"
+msgstr "ausgeführt"
+
+#: src/Features/Settings/ScreenAssets.php:132
+msgid "failed"
+msgstr "fehlgeschlagen"
+
+#: src/Features/Settings/ScreenAssets.php:133
+msgid "Tokens"
+msgstr "Tokens"
+
+#: src/Features/Settings/ScreenAssets.php:134
+msgid "Installing…"
+msgstr "Wird installiert…"
+
+#: src/Features/Settings/ScreenAssets.php:135
+msgid "Installed"
+msgstr "Installiert"
+
+#: src/Features/Settings/ScreenAssets.php:136
+msgid "The install failed."
+msgstr "Die Installation ist fehlgeschlagen."
+
+#: src/Features/Settings/SettingsFeature.php:59
+msgid "Counterhand MCP"
+msgstr "Counterhand MCP"
+
+#: src/Features/Settings/SettingsFeature.php:88
+msgid "AI Chat"
+msgstr "KI-Chat"
+
+#: src/Features/Settings/views/tab-connect.php:38
+msgid "Your store address"
+msgstr "Deine Shop-Adresse"
+
+#: src/Features/Settings/views/tab-connect.php:40
+msgid "Paste this one URL into any AI app. The app identifies itself with its own published address, so there is no token to create and nothing to copy back — you just approve what it may do."
+msgstr "Füge diese eine URL in eine beliebige KI-App ein. Die App identifiziert sich mit ihrer eigenen veröffentlichten Adresse — du musst also keinen Schlüssel erstellen und nichts zurückkopieren. Du bestätigst nur, was sie tun darf."
+
+#: src/Features/Settings/views/tab-connect.php:49
+#: src/Features/Settings/views/tab-connect.php:126
+msgid "Copied!"
+msgstr "Kopiert!"
+
+#: src/Features/Settings/views/tab-connect.php:50
+#: src/Features/Settings/views/tab-connect.php:127
+msgid "Copy"
+msgstr "Kopieren"
+
+#: src/Features/Settings/views/tab-connect.php:59
+msgid "Check again"
+msgstr "Erneut prüfen"
+
+#: src/Features/Settings/views/tab-connect.php:82
+msgid "✓ Connected"
+msgstr "✓ Verbunden"
+
+#: src/Features/Settings/views/tab-connect.php:135
+msgid "Official setup documentation"
+msgstr "Offizielle Einrichtungsdokumentation"
+
+#. translators: %s: fallback REST URL
+#: src/Features/Settings/views/tab-connect.php:149
+#, php-format
+msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
+msgstr "Falls dein Hoster sprechende Permalinks nicht unterstützt, ist derselbe Endpunkt auch unter %s erreichbar."
+
+#: src/Features/Settings/views/tab-connect.php:153
+msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
+msgstr "Genehmigte Apps erscheinen im Tab \"Verbindungen\", wo du jede davon widerrufen kannst."
+
+#: src/Features/Settings/views/tab-settings.php:30
+msgid "Connector"
+msgstr "Konnektor"
+
+#: src/Features/Settings/views/tab-settings.php:31
+msgid "When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant."
+msgstr "Wenn der Konnektor ausgeschaltet ist, existiert der /mcp-Endpunkt nicht — kein Assistent bekommt Tools oder Schlüssel zu sehen."
+
+#: src/Features/Settings/views/tab-settings.php:37
+msgid "Enable the MCP connector"
+msgstr "MCP-Konnektor aktivieren"
+
+#: src/Features/Settings/views/tab-settings.php:45
+msgid "Tool groups"
+msgstr "Tool-Bereiche"
+
+#: src/Features/Settings/views/tab-settings.php:46
+msgid "Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope."
+msgstr "Deaktivierte Bereiche werden jedem KI-Client vorenthalten und bei jeder Tool-Ausführung durchgesetzt — nicht nur aus der Liste ausgeblendet. Eine Verbindung benötigt zusätzlich die passende Berechtigung."
+
+#: src/Features/Settings/views/tab-settings.php:53
+msgid "Group"
+msgstr "Bereich"
+
+#: src/Features/Settings/views/tab-settings.php:54
+msgid "Read"
+msgstr "Lesen"
+
+#: src/Features/Settings/views/tab-settings.php:55
+msgid "Write"
+msgstr "Schreiben"
+
+#. translators: %s: name of a tool group, e.g. "Products".
+#: src/Features/Settings/views/tab-settings.php:77
+#, php-format
+msgid "Allow reading %s"
+msgstr "Lesen von %s erlauben"
+
+#: src/Features/Settings/views/tab-settings.php:90
+msgid "This area is read-only and cannot be changed by an AI client."
+msgstr "Dieser Bereich ist schreibgeschützt und kann von einem KI-Client nicht geändert werden."
+
+#. translators: %s: name of a tool group, e.g. "Products".
+#: src/Features/Settings/views/tab-settings.php:96
+#, php-format
+msgid "Allow changing %s"
+msgstr "Ändern von %s erlauben"
+
+#: src/Features/Settings/views/tab-settings.php:118
+msgid "Limits"
+msgstr "Limits"
+
+#: src/Features/Settings/views/tab-settings.php:119
+msgid "Caps how fast a single connection can call the store."
+msgstr "Begrenzt, wie schnell eine einzelne Verbindung den Shop aufrufen kann."
+
+#: src/Features/Settings/views/tab-settings.php:124
+msgid "Requests per minute per connection"
+msgstr "Anfragen pro Minute und Verbindung"
+
+#: src/Features/Settings/views/tab-settings.php:135
+msgid "Action log"
+msgstr "Aktionsprotokoll"
+
+#: src/Features/Settings/views/tab-settings.php:136
+msgid "Records what each connection did. Emails and phone numbers are masked before anything is stored."
+msgstr "Zeichnet auf, was jede Verbindung getan hat. E-Mail-Adressen und Telefonnummern werden maskiert, bevor etwas gespeichert wird."
+
+#: src/Features/Settings/views/tab-settings.php:144
+msgid "Record every tool call"
+msgstr "Jeden Tool-Aufruf aufzeichnen"
+
+#: src/Features/Settings/views/tab-settings.php:149
+msgid "Keep log entries for (days)"
+msgstr "Protokolleinträge aufbewahren für (Tage)"
+
+#: src/Features/Tokens/Admin/ConnectionsAdmin.php:38
+msgid "You are not allowed to manage connections."
+msgstr "Du darfst keine Verbindungen verwalten."
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:36
+msgid "Client"
+msgstr "Client"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
+msgid "Granted scopes"
+msgstr "Gewährte Berechtigungen"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+msgid "Status"
+msgstr "Status"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:40
+msgid "Last used"
+msgstr "Zuletzt verwendet"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:41
+msgid "Actions"
+msgstr "Aktionen"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:51
+msgid "No connections yet. Connect an AI assistant using the endpoint on the Connect tab."
+msgstr "Noch keine Verbindungen. Verbinde einen KI-Assistenten über den Endpunkt im Tab „Verbinden“."
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:62
+msgid "ago"
+msgstr "her"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:63
+msgid "never"
+msgstr "nie"
+
+#. translators: %d: number of further tool groups this token can reach.
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:104
+#, php-format
+msgid "+%d more"
+msgid_plural "+%d more"
+msgstr[0] "+%d weiterer"
+msgstr[1] "+%d weitere"
+
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:129
+msgid "Revoke"
+msgstr "Widerrufen"
+
+#: src/Features/Tokens/Admin/views/tab-connections.php:16
+msgid "Connection revoked."
+msgstr "Verbindung widerrufen."
+
+#: src/Features/Tokens/Admin/views/tab-connections.php:20
+msgid "Each connection is an AI assistant that completed the browser consent flow. Revoking one immediately cuts off its access."
+msgstr "Jede Verbindung ist ein KI-Assistent, der den Berechtigungsbildschirm im Browser durchlaufen hat. Wenn du eine Verbindung widerrufst, verliert sie sofort ihren Zugriff."
+
+#: src/Features/Tokens/Domain/ApiScope.php:133
+msgid "Update orders"
+msgstr "Bestellungen aktualisieren"
+
+#: src/Features/Tokens/Domain/ApiScope.php:140
+msgid "See product names, prices, stock and categories."
+msgstr "Produktnamen, Preise, Lagerbestand und Kategorien einsehen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:141
+msgid "Create, edit and trash products. New products start as drafts."
+msgstr "Produkte erstellen, bearbeiten und in den Papierkorb legen. Neue Produkte starten als Entwurf."
+
+#: src/Features/Tokens/Domain/ApiScope.php:142
+msgid "See orders, totals and customer addresses."
+msgstr "Bestellungen, Summen und Kundenadressen einsehen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:143
+msgid "Change order status and add order notes. May send customer emails."
+msgstr "Bestellstatus ändern und Bestellnotizen hinzufügen. Kann E-Mails an Kunden auslösen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:144
+msgid "See registered customers and their addresses."
+msgstr "Registrierte Kunden und ihre Adressen einsehen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:145
+msgid "See sales totals, best sellers and store statistics."
+msgstr "Umsätze, Bestseller und Shop-Statistiken einsehen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:146
+msgid "See discount codes, their amounts, limits and expiry dates."
+msgstr "Gutscheincodes, ihre Beträge, Limits und Ablaufdaten einsehen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:147
+msgid "Create, edit and trash discount codes. A new coupon can be redeemed at checkout immediately."
+msgstr "Gutscheincodes erstellen, bearbeiten und in den Papierkorb legen. Ein neuer Gutschein kann sofort an der Kasse eingelöst werden."
+
+#: src/Features/Tokens/Domain/ApiScope.php:151
+msgid "Issue refunds against orders. Depending on the gateway this returns money to the customer immediately and cannot be undone here."
+msgstr "Rückerstattungen zu Bestellungen veranlassen. Je nach Zahlungsanbieter geht das Geld sofort an den Kunden zurück und lässt sich hier nicht rückgängig machen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:152
+msgid "See customer reviews, including reviewer names and email addresses."
+msgstr "Kundenbewertungen einsehen, einschließlich Namen und E-Mail-Adressen der Verfasser."
+
+#: src/Features/Tokens/Domain/ApiScope.php:153
+msgid "Publish, edit, hold and delete customer reviews. Approving a review makes it public on the storefront."
+msgstr "Kundenbewertungen veröffentlichen, bearbeiten, zurückhalten und löschen. Eine freigegebene Bewertung ist öffentlich im Shop sichtbar."
+
+#: src/Features/Tokens/Domain/ApiScope.php:154
+msgid "Create, rename and delete categories, tags, brands and attributes. Deleting one detaches it from every product using it."
+msgstr "Kategorien, Schlagwörter, Marken und Attribute erstellen, umbenennen und löschen. Beim Löschen wird der Eintrag von allen Produkten entfernt, die ihn verwenden."
+
+#: src/Features/Tokens/Domain/ApiScope.php:155
+msgid "Create, edit and delete the variants of a variable product, including their prices and stock."
+msgstr "Die Varianten eines variablen Produkts erstellen, bearbeiten und löschen, einschließlich ihrer Preise und Lagerbestände."
+
+#: src/Features/Tokens/Domain/ApiScope.php:156
+msgid "Add, edit and delete tax rates. This changes what customers are charged at checkout."
+msgstr "Steuersätze hinzufügen, bearbeiten und löschen. Das ändert, was Kunden an der Kasse berechnet wird."
+
+#: src/Features/Tokens/Domain/ApiScope.php:157
+msgid "Add, edit and delete shipping zones and methods. This changes the delivery options and rates offered at checkout."
+msgstr "Versandzonen und Versandmethoden hinzufügen, bearbeiten und löschen. Das ändert die Lieferoptionen und Versandkosten, die an der Kasse angeboten werden."
+
+#: src/Features/Tokens/Domain/ApiScope.php:158
+msgid "See which payment methods exist and whether each is enabled. API keys and secrets are never returned."
+msgstr "Einsehen, welche Zahlungsmethoden es gibt und ob sie jeweils aktiviert sind. API-Schlüssel und Geheimnisse werden niemals zurückgegeben."
+
+#: src/Features/Tokens/Domain/ApiScope.php:159
+msgid "Read store configuration such as currency, tax behaviour and checkout options. Values that look like keys, secrets or passwords are withheld."
+msgstr "Shop-Konfiguration wie Währung, Steuerverhalten und Kassenoptionen lesen. Werte, die wie Schlüssel, Geheimnisse oder Passwörter aussehen, werden zurückgehalten."
+
+#: src/Features/Tokens/Domain/ApiScope.php:160
+msgid "Change store configuration, including currency and tax behaviour. Settings named like API keys, secrets or passwords stay off limits, and every change needs explicit confirmation."
+msgstr "Shop-Konfiguration ändern, einschließlich Währung und Steuerverhalten. Einstellungen, die nach API-Schlüsseln, Geheimnissen oder Passwörtern benannt sind, bleiben tabu, und jede Änderung erfordert eine ausdrückliche Bestätigung."
+
+#: src/Features/Tokens/Domain/ApiScope.php:161
+msgid "Enable, disable and reorder payment methods. This decides how customers can pay, and every change needs explicit confirmation."
+msgstr "Zahlungsmethoden aktivieren, deaktivieren und neu anordnen. Das entscheidet, wie Kunden bezahlen können, und jede Änderung erfordert eine ausdrückliche Bestätigung."
+
+#: src/Features/Tokens/Domain/ApiScope.php:162
+msgid "See blog posts and pages, including drafts."
+msgstr "Blogbeiträge und Seiten einsehen, einschließlich Entwürfen."
+
+#: src/Features/Tokens/Domain/ApiScope.php:163
+msgid "Create, edit and trash blog posts and pages. New ones start as drafts."
+msgstr "Blogbeiträge und Seiten erstellen, bearbeiten und in den Papierkorb legen. Neue starten als Entwurf."
+
+#: src/Features/Tokens/Domain/ApiScope.php:164
+msgid "See the environment report: versions, server settings and active plugins."
+msgstr "Den Umgebungsbericht einsehen: Versionen, Servereinstellungen und aktive Plugins."
+
+#: src/Features/Tokens/Domain/ApiScope.php:165
+msgid "Run WooCommerce's maintenance tools. The ones that cannot be undone are refused outright; the rest need explicit confirmation."
+msgstr "Die Wartungswerkzeuge von WooCommerce ausführen. Werkzeuge, die sich nicht rückgängig machen lassen, werden grundsätzlich abgelehnt; alle übrigen erfordern eine ausdrückliche Bestätigung."
+
+#. translators: %s: tool group name mid-sentence, e.g. "products".
+#: src/Features/Tokens/Domain/ApiScope.php:172
+#, php-format
+msgid "Manage %s"
+msgstr "%s verwalten"
+
+#. translators: %s: tool group name mid-sentence, e.g. "products".
+#: src/Features/Tokens/Domain/ApiScope.php:174
+#, php-format
+msgid "Read %s"
+msgstr "%s lesen"
+
+#. translators: %s: tool group name, e.g. "Orders". Marks a grant that includes writes.
+#: src/Features/Tokens/Domain/ScopeGrant.php:41
+#, php-format
+msgid "%s ·W"
+msgstr "%s ·W"
+
+#: src/Features/Tokens/Domain/TokenStatus.php:17
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/Features/Tokens/Domain/TokenStatus.php:18
+msgid "Revoked"
+msgstr "Widerrufen"
+
+#: src/Features/Tokens/Domain/TokenStatus.php:19
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#: src/Shared/Tool/ToolGroup.php:52
+msgid "Products"
+msgstr "Produkte"
+
+#: src/Shared/Tool/ToolGroup.php:53
+msgid "Orders"
+msgstr "Bestellungen"
+
+#: src/Shared/Tool/ToolGroup.php:54
+msgid "Customers"
+msgstr "Kunden"
+
+#: src/Shared/Tool/ToolGroup.php:55
+msgid "Reports"
+msgstr "Berichte"
+
+#: src/Shared/Tool/ToolGroup.php:56
+msgid "Coupons"
+msgstr "Gutscheine"
+
+#: src/Shared/Tool/ToolGroup.php:57
+msgid "Categories & tags"
+msgstr "Kategorien & Schlagwörter"
+
+#: src/Shared/Tool/ToolGroup.php:58
+msgid "Variations"
+msgstr "Varianten"
+
+#: src/Shared/Tool/ToolGroup.php:59
+msgid "Reviews"
+msgstr "Bewertungen"
+
+#: src/Shared/Tool/ToolGroup.php:60
+msgid "Refunds"
+msgstr "Rückerstattungen"
+
+#: src/Shared/Tool/ToolGroup.php:61
+msgid "Shipping"
+msgstr "Versand"
+
+#: src/Shared/Tool/ToolGroup.php:62
+msgid "Taxes"
+msgstr "Steuern"
+
+#: src/Shared/Tool/ToolGroup.php:63
+msgid "Reference data"
+msgstr "Referenzdaten"
+
+#: src/Shared/Tool/ToolGroup.php:64
+msgid "Payment gateways"
+msgstr "Zahlungsmethoden"
+
+#: src/Shared/Tool/ToolGroup.php:65
+msgid "Store settings"
+msgstr "Shop-Einstellungen"
+
+#: src/Shared/Tool/ToolGroup.php:66
+msgid "Posts & pages"
+msgstr "Beiträge & Seiten"
+
+#: src/Shared/Tool/ToolGroup.php:67
+msgid "System & maintenance"
+msgstr "System & Wartung"
+
+#: src/Shared/Tool/ToolGroup.php:74
+msgid "Names, prices, stock, categories and images."
+msgstr "Namen, Preise, Lagerbestand, Kategorien und Bilder."
+
+#: src/Shared/Tool/ToolGroup.php:75
+msgid "Orders, totals, line items and customer addresses."
+msgstr "Bestellungen, Summen, Positionen und Kundenadressen."
+
+#: src/Shared/Tool/ToolGroup.php:76
+msgid "Registered customers and their addresses. Guest buyers appear under Orders."
+msgstr "Registrierte Kunden und ihre Adressen. Gastkäufer erscheinen unter Bestellungen."
+
+#: src/Shared/Tool/ToolGroup.php:77
+msgid "Sales totals, best sellers and store statistics."
+msgstr "Umsätze, Bestseller und Shop-Statistiken."
+
+#: src/Shared/Tool/ToolGroup.php:78
+msgid "Discount codes, their amounts, limits and expiry dates."
+msgstr "Gutscheincodes, ihre Beträge, Limits und Ablaufdaten."
+
+#: src/Shared/Tool/ToolGroup.php:79
+msgid "How the catalog is organised: categories, tags, brands, attributes and shipping classes."
+msgstr "Wie der Katalog organisiert ist: Kategorien, Schlagwörter, Marken, Attribute und Versandklassen."
+
+#: src/Shared/Tool/ToolGroup.php:80
+msgid "The size, colour and other variants of a variable product, each with its own price and stock."
+msgstr "Die Größen-, Farb- und sonstigen Varianten eines variablen Produkts, jede mit eigenem Preis und Lagerbestand."
+
+#: src/Shared/Tool/ToolGroup.php:81
+msgid "Customer reviews and ratings, including reviewer names and email addresses."
+msgstr "Kundenbewertungen und Sterne-Wertungen, einschließlich Namen und E-Mail-Adressen der Verfasser."
+
+#: src/Shared/Tool/ToolGroup.php:82
+msgid "Refunds against orders. Creating one moves money back to the customer."
+msgstr "Rückerstattungen zu Bestellungen. Beim Erstellen fließt Geld an den Kunden zurück."
+
+#: src/Shared/Tool/ToolGroup.php:83
+msgid "Shipping zones, the regions they cover and the methods offered in each."
+msgstr "Versandzonen, die Regionen, die sie abdecken, und die jeweils angebotenen Versandmethoden."
+
+#: src/Shared/Tool/ToolGroup.php:84
+msgid "Tax rates by country and region, and the tax classes products are assigned to."
+msgstr "Steuersätze nach Land und Region sowie die Steuerklassen, denen Produkte zugeordnet sind."
+
+#: src/Shared/Tool/ToolGroup.php:85
+msgid "WooCommerce's own reference lists of countries, regions and currencies."
+msgstr "Die WooCommerce-eigenen Referenzlisten mit Ländern, Regionen und Währungen."
+
+#: src/Shared/Tool/ToolGroup.php:86
+msgid "Which payment methods exist and whether each is enabled. Credentials are never returned."
+msgstr "Welche Zahlungsmethoden es gibt und ob sie jeweils aktiviert sind. Zugangsdaten werden niemals zurückgegeben."
+
+#: src/Shared/Tool/ToolGroup.php:87
+msgid "Store configuration values, including currency, tax behaviour and checkout options."
+msgstr "Shop-Konfigurationswerte, einschließlich Währung, Steuerverhalten und Kassenoptionen."
+
+#: src/Shared/Tool/ToolGroup.php:88
+msgid "WordPress blog posts and pages. Products and orders are not affected."
+msgstr "WordPress-Blogbeiträge und -Seiten. Produkte und Bestellungen sind nicht betroffen."
+
+#: src/Shared/Tool/ToolGroup.php:89
+msgid "Environment report and WooCommerce's maintenance tools. The most dangerous group here."
+msgstr "Umgebungsbericht und die Wartungswerkzeuge von WooCommerce. Der gefährlichste Bereich hier."
+
+#: src/Shared/Tool/ToolGroup.php:103
+msgid "products"
+msgstr "Produkte"
+
+#: src/Shared/Tool/ToolGroup.php:104
+msgid "orders"
+msgstr "Bestellungen"
+
+#: src/Shared/Tool/ToolGroup.php:105
+msgid "customers"
+msgstr "Kunden"
+
+#: src/Shared/Tool/ToolGroup.php:106
+msgid "reports"
+msgstr "Berichte"
+
+#: src/Shared/Tool/ToolGroup.php:107
+msgid "coupons"
+msgstr "Gutscheine"
+
+#: src/Shared/Tool/ToolGroup.php:108
+msgid "categories and tags"
+msgstr "Kategorien und Schlagwörter"
+
+#: src/Shared/Tool/ToolGroup.php:109
+msgid "variations"
+msgstr "Varianten"
+
+#: src/Shared/Tool/ToolGroup.php:110
+msgid "reviews"
+msgstr "Bewertungen"
+
+#: src/Shared/Tool/ToolGroup.php:111
+msgid "refunds"
+msgstr "Rückerstattungen"
+
+#: src/Shared/Tool/ToolGroup.php:112
+msgid "shipping"
+msgstr "Versand"
+
+#: src/Shared/Tool/ToolGroup.php:113
+msgid "taxes"
+msgstr "Steuern"
+
+#: src/Shared/Tool/ToolGroup.php:114
+msgid "reference data"
+msgstr "Referenzdaten"
+
+#: src/Shared/Tool/ToolGroup.php:115
+msgid "payment gateways"
+msgstr "Zahlungsmethoden"
+
+#: src/Shared/Tool/ToolGroup.php:116
+msgid "store settings"
+msgstr "Shop-Einstellungen"
+
+#: src/Shared/Tool/ToolGroup.php:117
+msgid "posts and pages"
+msgstr "Beiträge und Seiten"
+
+#: src/Shared/Tool/ToolGroup.php:118
+msgid "system tools"
+msgstr "Systemwerkzeuge"
+
+#: src/Shared/Tool/ToolSection.php:28
+msgid "Catalog"
+msgstr "Katalog"
+
+#: src/Shared/Tool/ToolSection.php:29
+msgid "Sales"
+msgstr "Verkauf"
+
+#: src/Shared/Tool/ToolSection.php:30
+msgid "Insights"
+msgstr "Auswertungen"
+
+#: src/Shared/Tool/ToolSection.php:31
+msgid "Content"
+msgstr "Inhalte"
+
+#: src/Shared/Tool/ToolSection.php:32
+msgid "Store setup"
+msgstr "Shop-Einrichtung"
+
+#: src/Shared/Tool/ToolSection.php:39
+msgid "What you sell."
+msgstr "Was du verkaufst."
+
+#: src/Shared/Tool/ToolSection.php:40
+msgid "Who bought what."
+msgstr "Wer was gekauft hat."
+
+#: src/Shared/Tool/ToolSection.php:41
+msgid "Totals and statistics. Read-only."
+msgstr "Summen und Statistiken. Nur lesend."
+
+#: src/Shared/Tool/ToolSection.php:42
+msgid "The blog posts and pages around your store."
+msgstr "Die Blogbeiträge und Seiten rund um deinen Shop."
+
+#: src/Shared/Tool/ToolSection.php:43
+msgid "Shipping, tax and reference data."
+msgstr "Versand, Steuern und Referenzdaten."
+
+#: src/Shared/Tool/ToolSection.php:44
+msgid "Store configuration and maintenance. Enable only if you know why you need it."
+msgstr "Shop-Konfiguration und Wartung. Aktiviere das nur, wenn du weißt, warum du es brauchst."

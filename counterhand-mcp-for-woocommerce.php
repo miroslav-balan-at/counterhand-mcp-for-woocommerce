@@ -107,6 +107,14 @@ if ( function_exists( 'counterhand_freemius' ) ) {
 	counterhand_freemius()->add_action( 'after_uninstall', [ Counterhand\Uninstall::class, 'run' ] );
 }
 
+// Not on wordpress.org, so no language packs — the bundled .mo files load here or not at all.
+add_action(
+	'init',
+	static function (): void {
+		load_plugin_textdomain( 'counterhand-mcp-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+);
+
 // HPOS (custom order tables) compatibility.
 add_action(
 	'before_woocommerce_init',

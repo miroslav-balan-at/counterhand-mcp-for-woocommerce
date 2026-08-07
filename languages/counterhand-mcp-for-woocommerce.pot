@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Counterhand MCP for WooCommerce 1.0.0\n"
+"Project-Id-Version: Counterhand MCP for WooCommerce 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-29T15:00:25+00:00\n"
+"POT-Creation-Date: 2026-08-07T08:29:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -34,87 +34,153 @@ msgstr ""
 msgid "Miroslav Balan"
 msgstr ""
 
-#: counterhand-mcp-for-woocommerce.php:52
+#: counterhand-mcp-for-woocommerce.php:131
 msgid "Counterhand MCP for WooCommerce requires WooCommerce to be installed and active."
 msgstr ""
 
-#: src/Features/ActionLog/ActionLogFeature.php:83
+#: src/Features/ActionLog/ActionLogFeature.php:84
 msgid "You are not allowed to clear the log."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:16
-msgid "The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage."
+#: src/Features/ActionLog/ActionLogFeature.php:134
+msgid "‹ Newer"
+msgstr ""
+
+#: src/Features/ActionLog/ActionLogFeature.php:135
+msgid "Older ›"
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/tab-log.php:21
+msgid "The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage."
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:26
 msgid "Log cleared."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:27
+#: src/Features/ActionLog/Admin/views/tab-log.php:32
+msgid "Every call, newest first"
+msgstr ""
+
+#. translators: %s: number of recorded calls.
+#: src/Features/ActionLog/Admin/views/tab-log.php:37
+#, php-format
+msgid "%s recorded call"
+msgid_plural "%s recorded calls"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:47
 msgid "Clear log"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:33
+#: src/Features/ActionLog/Admin/views/tab-log.php:55
 msgid "Time (UTC)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:34
+#: src/Features/ActionLog/Admin/views/tab-log.php:56
 msgid "Tool"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:35
-msgid "Token"
+#: src/Features/ActionLog/Admin/views/tab-log.php:57
+msgid "Connection"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:36
+#: src/Features/ActionLog/Admin/views/tab-log.php:58
 msgid "Outcome"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:37
+#: src/Features/ActionLog/Admin/views/tab-log.php:59
 msgid "Arguments (PII masked)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:42
-msgid "No entries yet."
+#: src/Features/ActionLog/Admin/views/tab-log.php:68
+msgid "Nothing recorded yet. The next tool call an assistant makes will appear here."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:59
+#: src/Features/ActionLog/Admin/views/tab-log.php:69
+msgid "Nothing recorded. Switch the log on in Settings to start keeping the record."
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:84
+msgid "Failed"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:85
+msgid "Succeeded"
+msgstr ""
+
+#. translators: 1: current page number, 2: total number of pages.
+#: src/Features/ActionLog/Admin/views/tab-log.php:102
+#, php-format
+msgid "Page %1$s of %2$s"
+msgstr ""
+
+#: src/Features/ActionLog/Admin/views/tab-log.php:108
+msgid "Log pages"
+msgstr ""
+
+#: src/Features/McpServer/McpServerFeature.php:72
+msgid "Counterhand needs an active licence before AI apps can connect to this store. The chat in your admin keeps working."
+msgstr ""
+
+#: src/Features/McpServer/McpServerFeature.php:74
+msgid "Activate a licence"
+msgstr ""
+
+#: src/Features/OAuth/AuthorizeEndpoint.php:66
 msgid "Not permitted"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:60
+#: src/Features/OAuth/AuthorizeEndpoint.php:67
 msgid "Your account cannot authorize AI access to this store. Ask a store administrator to approve the connection."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:68
+#: src/Features/OAuth/AuthorizeEndpoint.php:75
 msgid "Incomplete request"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:69
+#: src/Features/OAuth/AuthorizeEndpoint.php:76
 msgid "This authorization link is missing required details or has expired. Start the connection again from your AI assistant."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:77
+#: src/Features/OAuth/AuthorizeEndpoint.php:84
 msgid "Could not verify the app"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:78
+#: src/Features/OAuth/AuthorizeEndpoint.php:85
 msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:145
+#: src/Features/OAuth/AuthorizeEndpoint.php:114
 #: src/Features/OAuth/View/templates/denied.php:22
 msgid "Access not granted"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:179
+#: src/Features/OAuth/AuthorizeEndpoint.php:157
 #: src/Features/OAuth/View/templates/connected.php:24
 msgid "Access approved"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:192
-#: src/Features/OAuth/View/templates/consent.php:22
+#: src/Features/OAuth/AuthorizeEndpoint.php:174
+#: src/Features/OAuth/View/templates/consent.php:26
 msgid "Authorize AI access"
+msgstr ""
+
+#: src/Features/OAuth/View/ConsentAvailability.php:19
+msgid "Off for this store"
+msgstr ""
+
+#: src/Features/OAuth/View/ConsentAvailability.php:20
+msgid "Not requested"
+msgstr ""
+
+#: src/Features/OAuth/View/ConsentScope.php:32
+msgid "Switched off for this store. Enable the area under Counterhand MCP → Settings, then connect this app again."
+msgstr ""
+
+#: src/Features/OAuth/View/ConsentScope.php:33
+msgid "The app did not ask for this, so it cannot be granted here. Reconnect the app to request it."
 msgstr ""
 
 #: src/Features/OAuth/View/FlowPage.php:55
@@ -136,40 +202,54 @@ msgid "View connections"
 msgstr ""
 
 #. translators: %s: name of the AI application requesting access
-#: src/Features/OAuth/View/templates/consent.php:28
+#: src/Features/OAuth/View/templates/consent.php:32
 #, php-format
 msgid "%s wants to connect to your store."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:38
+#: src/Features/OAuth/View/templates/consent.php:42
 msgid "Approving as"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:44
+#: src/Features/OAuth/View/templates/consent.php:48
 msgid "Verified origin"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:57
+#: src/Features/OAuth/View/templates/consent.php:62
+msgid "Nothing this app asked for is currently switched on for this store, so there is nothing to approve yet."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:67
 msgid "Choose what it may do"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:80
+#: src/Features/OAuth/View/templates/consent.php:90
 msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:84
+#. translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag
+#: src/Features/OAuth/View/templates/consent.php:97
+#, php-format
+msgid "Grayed-out areas are switched off for this store. Enable them under %1$sCounterhand MCP → Settings%2$s, then connect the app again — a connection only ever holds what it was approved with."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:107
 msgid "This request includes permission to change store data. New products are always created as drafts for you to review."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:90
-msgid "Deny"
-msgstr ""
-
-#: src/Features/OAuth/View/templates/consent.php:93
+#: src/Features/OAuth/View/templates/consent.php:120
 msgid "Approve access"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:100
+#: src/Features/OAuth/View/templates/consent.php:124
+msgid "Return to the app"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:124
+msgid "Deny"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:131
 msgid "You can revoke this connection anytime under WooCommerce → Counterhand MCP."
 msgstr ""
 
@@ -195,7 +275,7 @@ msgstr ""
 msgid "Connection help"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/partial-consent-rows.php:33
+#: src/Features/OAuth/View/templates/partial-consent-rows.php:54
 msgid "Can change data"
 msgstr ""
 
@@ -209,19 +289,19 @@ msgstr ""
 msgid "Secured by Counterhand MCP"
 msgstr ""
 
-#: src/Features/Playground/AgentLoop.php:110
+#: src/Features/Playground/AgentLoop.php:97
 msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
 msgstr ""
 
-#. translators: 1: number of enabled tools, 2: the supported maximum.
-#: src/Features/Playground/AgentLoop.php:190
+#. translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove.
+#: src/Features/Playground/AgentLoop.php:135
 #, php-format
-msgid "Chat has %1$d tools enabled and can carry %2$d. Untick some areas under \"Chat can use…\" below the conversation."
+msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
 msgstr ""
 
 #: src/Features/Playground/ModelConnect.php:64
 #: src/Features/Playground/ModelConnect.php:178
-#: src/Features/Playground/PlaygroundFeature.php:122
+#: src/Features/Playground/PlaygroundFeature.php:173
 msgid "You are not allowed to change these settings."
 msgstr ""
 
@@ -279,97 +359,108 @@ msgstr ""
 msgid "Connected to %1$s%2$s."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:79
-#: src/Features/Settings/SettingsFeature.php:293
-#: src/Features/Settings/SettingsFeature.php:307
+#: src/Features/Playground/PlaygroundFeature.php:74
+msgid "Start your free trial"
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:76
+msgid "Counterhand lets you ask about sales, look up orders and update products in plain language — here in your admin, or from Claude and ChatGPT. You choose what each assistant may reach, and you can revoke it at any time."
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:80
+msgid "Start the trial"
+msgstr ""
+
+#: src/Features/Playground/PlaygroundFeature.php:130
+#: src/Features/Settings/SettingsFeature.php:192
+#: src/Features/Settings/SettingsFeature.php:206
 msgid "Not allowed."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:86
+#: src/Features/Playground/PlaygroundFeature.php:137
 msgid "No model is connected yet. Pick one at the top of this tab."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:91
+#: src/Features/Playground/PlaygroundFeature.php:142
 msgid "Type a message first."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:108
+#: src/Features/Playground/PlaygroundFeature.php:159
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr ""
 
 #. translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders"
-#: src/Features/Playground/PlaygroundFeature.php:165
+#: src/Features/Playground/PlaygroundFeature.php:239
 #, php-format
 msgid "You are a WooCommerce store assistant for \"%1$s\". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:168
+#: src/Features/Playground/PlaygroundFeature.php:242
 msgid "none — no tool groups are selected for chat"
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:189
+#: src/Features/Playground/PlaygroundFeature.php:263
 msgid "Admin chat"
 msgstr ""
 
-#: src/Features/Playground/Provider/AnthropicProvider.php:28
+#: src/Features/Playground/Provider/AnthropicProvider.php:34
 msgid "Anthropic (Claude)"
 msgstr ""
 
 #. translators: %s: transport error message
-#: src/Features/Playground/Provider/AnthropicProvider.php:180
+#: src/Features/Playground/Provider/AnthropicProvider.php:204
 #, php-format
 msgid "Could not reach Anthropic: %s"
 msgstr ""
 
 #. translators: 1: HTTP status, 2: API error message
-#: src/Features/Playground/Provider/AnthropicProvider.php:193
+#: src/Features/Playground/Provider/AnthropicProvider.php:209
 #, php-format
 msgid "Anthropic returned %1$d: %2$s"
-msgstr ""
-
-#: src/Features/Playground/Provider/AnthropicProvider.php:195
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:270
-msgid "unknown error"
 msgstr ""
 
 #: src/Features/Playground/Provider/CoreAiClientProvider.php:71
 msgid "WordPress AI (built in)"
 msgstr ""
 
-#: src/Features/Playground/Provider/CoreAiClientProvider.php:121
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:126
 msgid "No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins."
 msgstr ""
 
-#: src/Features/Playground/Provider/CoreAiClientProvider.php:128
+#: src/Features/Playground/Provider/CoreAiClientProvider.php:133
 msgid "Nothing to send to the model."
 msgstr ""
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:34
+#: src/Features/Playground/Provider/HttpProvider.php:64
+msgid "unknown error"
+msgstr ""
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:33
 #: src/Features/Playground/ProviderPlugin.php:23
 msgid "ChatGPT (OpenAI)"
 msgstr ""
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:53
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:52
 #: src/Features/Playground/ProviderPlugin.php:24
 msgid "Gemini (Google)"
 msgstr ""
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:70
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:69
 msgid "Ollama (on this server)"
 msgstr ""
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:82
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:81
 msgid "Custom OpenAI-compatible endpoint"
 msgstr ""
 
 #. translators: %s: transport error message
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:255
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:243
 #, php-format
 msgid "Could not reach the model endpoint: %s"
 msgstr ""
 
 #. translators: 1: HTTP status, 2: API error message
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:268
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:248
 #, php-format
 msgid "The model endpoint returned %1$d: %2$s"
 msgstr ""
@@ -379,18 +470,78 @@ msgid "Claude (Anthropic)"
 msgstr ""
 
 #. translators: %d: how many tools the chat can currently call.
-#: src/Features/Playground/views/partial-chat-tools.php:26
+#: src/Features/Playground/views/partial-chat-tools.php:41
 #, php-format
-msgid "Chat can use %d tool"
-msgid_plural "Chat can use %d tools"
+msgid "%d tool"
+msgid_plural "%d tools"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:37
-msgid "Every area you tick here is described to the model on every message, so keep it to what you actually ask about. Areas switched off in Settings stay off here too."
+#: src/Features/Playground/views/partial-chat-tools.php:46
+msgid "available to chat"
 msgstr ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:55
+#. translators: %d: the most tools one message can carry.
+#: src/Features/Playground/views/partial-chat-tools.php:53
+#, php-format
+msgid "over the %d-tool limit"
+msgstr ""
+
+#. translators: %d: how many further tools are waiting on a store setting.
+#: src/Features/Playground/views/partial-chat-tools.php:63
+#, php-format
+msgid "%d more waiting on Settings"
+msgid_plural "%d more waiting on Settings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:76
+msgid "Each area you pick is described to the model on every message, so keep it to what you actually ask about."
+msgstr ""
+
+#. translators: 1: how many tools are selected, 2: the per-message maximum.
+#: src/Features/Playground/views/partial-chat-tools.php:87
+#, php-format
+msgid "Too many areas picked: %1$d tools, and one message can carry %2$d."
+msgstr ""
+
+#. translators: %d: how many tools have to go.
+#: src/Features/Playground/views/partial-chat-tools.php:97
+#, php-format
+msgid "Every message fails until you untick at least %d tool below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
+msgid_plural "Every message fails until you untick at least %d tools below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: comma-separated list of area names.
+#: src/Features/Playground/views/partial-chat-tools.php:114
+#, php-format
+msgid "%s is switched off for the whole store"
+msgstr ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:122
+msgid "Picking it here is remembered, but the chat cannot reach it until the store exposes it. Settings decides what every AI client may touch; this panel only narrows it further for chat."
+msgstr ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:125
+msgid "Switch it on in Settings"
+msgstr ""
+
+#. translators: %s: comma-separated list of area names.
+#: src/Features/Playground/views/partial-chat-tools.php:137
+#, php-format
+msgid "The chat can read but not change %s — writing is still off for it in Settings."
+msgstr ""
+
+#. translators: %d: how many tools this area would add.
+#: src/Features/Playground/views/partial-chat-tools.php:166
+#, php-format
+msgid "%d tool off"
+msgid_plural "%d tools off"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Playground/views/partial-chat-tools.php:178
 msgid "Save areas"
 msgstr ""
 
@@ -482,140 +633,140 @@ msgstr ""
 msgid "Provider"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:177
+#: src/Features/Playground/views/partial-model-chooser.php:172
 msgid "Needs an API key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:178
+#: src/Features/Playground/views/partial-model-chooser.php:173
 msgid "No key needed"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:188
+#: src/Features/Playground/views/partial-model-chooser.php:183
 msgid "Model"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:192
+#: src/Features/Playground/views/partial-model-chooser.php:187
 msgid "e.g. claude-opus-5"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:206
+#: src/Features/Playground/views/partial-model-chooser.php:201
 msgid "Pick from the list or type any model your provider offers."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:210
+#: src/Features/Playground/views/partial-model-chooser.php:205
 msgid "API key"
 msgstr ""
 
 #. translators: %s: masked API key
-#: src/Features/Playground/views/partial-model-chooser.php:214
+#: src/Features/Playground/views/partial-model-chooser.php:209
 #, php-format
 msgid "Saved (%s) — leave blank to keep"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:215
+#: src/Features/Playground/views/partial-model-chooser.php:210
 msgid "Paste your provider API key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:221
+#: src/Features/Playground/views/partial-model-chooser.php:216
 msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:223
+#: src/Features/Playground/views/partial-model-chooser.php:218
 msgid "Get a key:"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:245
+#: src/Features/Playground/views/partial-model-chooser.php:240
 msgid "Remove the saved key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:255
+#: src/Features/Playground/views/partial-model-chooser.php:250
 #: src/Shared/Tool/ToolSection.php:33
 msgid "Advanced"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:256
+#: src/Features/Playground/views/partial-model-chooser.php:251
 msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:260
+#: src/Features/Playground/views/partial-model-chooser.php:255
 msgid "Base URL"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:270
+#: src/Features/Playground/views/partial-model-chooser.php:265
 msgid "Connect model"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:273
+#: src/Features/Playground/views/partial-model-chooser.php:268
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:39
+#: src/Features/Playground/views/tab-chat.php:40
 msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:51
+#: src/Features/Playground/views/tab-chat.php:57
 msgid "Ask about your store"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:52
+#: src/Features/Playground/views/tab-chat.php:58
 msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:56
+#: src/Features/Playground/views/tab-chat.php:62
 msgid "How many orders are waiting to be processed?"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:57
+#: src/Features/Playground/views/tab-chat.php:63
 msgid "Show me my 5 best selling products this month"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:58
+#: src/Features/Playground/views/tab-chat.php:64
 msgid "Which products are out of stock?"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:59
+#: src/Features/Playground/views/tab-chat.php:65
 msgid "What were my sales last week?"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:73
+#: src/Features/Playground/views/tab-chat.php:79
 msgid "Message"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:79
+#: src/Features/Playground/views/tab-chat.php:85
 msgid "Ask about products, orders, customers or sales…"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:80
+#: src/Features/Playground/views/tab-chat.php:86
 msgid "Connect a model above, then ask your first question here…"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:85
+#: src/Features/Playground/views/tab-chat.php:91
 msgid "Send"
 msgstr ""
 
 #. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/tab-chat.php:96
+#: src/Features/Playground/views/tab-chat.php:102
 #, php-format
 msgid "%1$s to send · %2$s for a new line"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:97
+#: src/Features/Playground/views/tab-chat.php:103
 msgid "Enter"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:98
+#: src/Features/Playground/views/tab-chat.php:104
 msgid "Shift+Enter"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:113
+#: src/Features/Playground/views/tab-chat.php:119
 msgid "Change"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:118
+#: src/Features/Playground/views/tab-chat.php:124
 msgid "Clear conversation"
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:127
+#: src/Features/Playground/views/tab-chat.php:133
 msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Your store data is sent to the model provider you configured."
 msgstr ""
 
@@ -907,78 +1058,78 @@ msgstr ""
 msgid "Approve the scopes on this store's consent screen."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:52
-msgid "Counterhand MCP"
-msgstr ""
-
-#: src/Features/Settings/SettingsFeature.php:81
-msgid "AI Chat"
-msgstr ""
-
-#: src/Features/Settings/SettingsFeature.php:232
+#: src/Features/Settings/ScreenAssets.php:89
 #: src/Features/Settings/views/tab-connect.php:57
 msgid "Checking the store…"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:233
+#: src/Features/Settings/ScreenAssets.php:90
 msgid "The check could not be run."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:234
+#: src/Features/Settings/ScreenAssets.php:91
 msgid "Waiting for the app to connect…"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:235
+#: src/Features/Settings/ScreenAssets.php:92
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:39
 msgid "Connected"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:268
+#: src/Features/Settings/ScreenAssets.php:125
 msgid "You"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:269
+#: src/Features/Settings/ScreenAssets.php:126
 msgid "Assistant"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:270
+#: src/Features/Settings/ScreenAssets.php:127
 msgid "Thinking…"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:271
+#: src/Features/Settings/ScreenAssets.php:128
 msgid "The request failed."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:272
+#: src/Features/Settings/ScreenAssets.php:129
 msgid "Arguments"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:273
+#: src/Features/Settings/ScreenAssets.php:130
 msgid "Result"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:274
+#: src/Features/Settings/ScreenAssets.php:131
 msgid "ran"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:275
+#: src/Features/Settings/ScreenAssets.php:132
 msgid "failed"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:276
+#: src/Features/Settings/ScreenAssets.php:133
 msgid "Tokens"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:277
+#: src/Features/Settings/ScreenAssets.php:134
 msgid "Installing…"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:278
+#: src/Features/Settings/ScreenAssets.php:135
 msgid "Installed"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:279
+#: src/Features/Settings/ScreenAssets.php:136
 msgid "The install failed."
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:59
+msgid "Counterhand MCP"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:88
+msgid "AI Chat"
 msgstr ""
 
 #: src/Features/Settings/views/tab-connect.php:38
@@ -1053,35 +1204,51 @@ msgstr ""
 msgid "Write"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:97
+#. translators: %s: name of a tool group, e.g. "Products".
+#: src/Features/Settings/views/tab-settings.php:77
+#, php-format
+msgid "Allow reading %s"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:90
+msgid "This area is read-only and cannot be changed by an AI client."
+msgstr ""
+
+#. translators: %s: name of a tool group, e.g. "Products".
+#: src/Features/Settings/views/tab-settings.php:96
+#, php-format
+msgid "Allow changing %s"
+msgstr ""
+
+#: src/Features/Settings/views/tab-settings.php:118
 msgid "Limits"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:98
+#: src/Features/Settings/views/tab-settings.php:119
 msgid "Caps how fast a single connection can call the store."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:103
+#: src/Features/Settings/views/tab-settings.php:124
 msgid "Requests per minute per connection"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:114
+#: src/Features/Settings/views/tab-settings.php:135
 msgid "Action log"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:115
+#: src/Features/Settings/views/tab-settings.php:136
 msgid "Records what each connection did. Emails and phone numbers are masked before anything is stored."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:123
+#: src/Features/Settings/views/tab-settings.php:144
 msgid "Record every tool call"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:128
+#: src/Features/Settings/views/tab-settings.php:149
 msgid "Keep log entries for (days)"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsAdmin.php:50
+#: src/Features/Tokens/Admin/ConnectionsAdmin.php:38
 msgid "You are not allowed to manage connections."
 msgstr ""
 
@@ -1249,6 +1416,18 @@ msgstr ""
 #: src/Features/Tokens/Domain/ScopeGrant.php:41
 #, php-format
 msgid "%s ·W"
+msgstr ""
+
+#: src/Features/Tokens/Domain/TokenStatus.php:17
+msgid "Active"
+msgstr ""
+
+#: src/Features/Tokens/Domain/TokenStatus.php:18
+msgid "Revoked"
+msgstr ""
+
+#: src/Features/Tokens/Domain/TokenStatus.php:19
+msgid "Expired"
 msgstr ""
 
 #: src/Shared/Tool/ToolGroup.php:52

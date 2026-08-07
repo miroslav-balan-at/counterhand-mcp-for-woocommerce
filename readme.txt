@@ -4,7 +4,7 @@ Tags: woocommerce, mcp, ai, claude, oauth
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,11 @@ The things that could are gated separately. Store settings, payment gateways and
 The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
 
 == Changelog ==
+
+= 1.1.1 =
+* German translation (de_DE) for the whole plugin, and translations now actually load — the plugin is distributed outside wordpress.org, so the bundled language files are read directly.
+* The licence notice no longer claims the chat keeps working without a licence; both the AI-app connection and the chat are off until one is active.
+* Shops with an active paid licence no longer see the Pricing page in the admin menu — there is one plan and nothing to upgrade to. Trials keep it.
 
 = 1.1.0 =
 * The action log is paginated: 25 calls per page with WordPress's own pagination, instead of stopping silently at the newest 100. The tab also shows the total number of recorded calls.

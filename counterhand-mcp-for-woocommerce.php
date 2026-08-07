@@ -3,7 +3,7 @@
  * Plugin Name:       Counterhand MCP for WooCommerce
  * Plugin URI:        https://github.com/miroslavbalan/counterhand-mcp-for-woocommerce
  * Description:       Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.5
  * Requires PHP:      8.2
  * Requires Plugins:  woocommerce
@@ -21,7 +21,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COUNTERHAND_VERSION', '1.1.0' );
+define( 'COUNTERHAND_VERSION', '1.1.1' );
 define( 'COUNTERHAND_PLUGIN_FILE', __FILE__ );
 define( 'COUNTERHAND_PLUGIN_DIR', __DIR__ );
 
@@ -105,6 +105,16 @@ Counterhand\Autoloader::register();
 // rejects a zip carrying a root uninstall.php for exactly that reason.
 if ( function_exists( 'counterhand_freemius' ) ) {
 	counterhand_freemius()->add_action( 'after_uninstall', [ Counterhand\Uninstall::class, 'run' ] );
+
+	// One plan and no add-ons: a paying shop has nothing to upgrade to, so
+	// showing it a pricing page reads as a bill. Trials keep it — that is the
+	// price they are deciding about.
+	counterhand_freemius()->add_filter(
+		'is_submenu_visible',
+		static fn ( bool $visible, string $id ): bool => 'pricing' === $id ? ! counterhand_freemius()->is_paying() : $visible,
+		10,
+		2
+	);
 }
 
 // Not on wordpress.org, so no language packs — the bundled .mo files load here or not at all.

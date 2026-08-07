@@ -38,12 +38,9 @@ final readonly class McpServerFeature implements FeatureInterface {
 		}
 
 		/*
-		 * The external endpoint is the paid surface. Without a licence the
-		 * route is never registered, so an unlicensed store answers 404 rather
-		 * than 401 — there is nothing here to probe or brute-force.
-		 *
-		 * The in-admin chat is deliberately left alone: it needs no endpoint,
-		 * and someone evaluating the plugin should be able to see it work.
+		 * Without a licence the route is never registered, so an unlicensed
+		 * store answers 404 rather than 401 — there is nothing here to probe
+		 * or brute-force. The chat gates itself in PlaygroundFeature.
 		 */
 		if ( ! $this->licence->is_active() ) {
 			add_action( 'admin_notices', [ $this, 'render_licence_notice' ] );
@@ -69,7 +66,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 		printf(
 			'<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
-			esc_html__( 'Counterhand needs an active licence before AI apps can connect to this store. The chat in your admin keeps working.', 'counterhand-mcp-for-woocommerce' ),
+			esc_html__( 'Counterhand needs an active licence: the connection for AI apps and the chat in your admin are switched off until one is activated.', 'counterhand-mcp-for-woocommerce' ),
 			esc_url( $this->licence->upgrade_url() ),
 			esc_html__( 'Activate a licence', 'counterhand-mcp-for-woocommerce' )
 		);

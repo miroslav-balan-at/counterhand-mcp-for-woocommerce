@@ -123,8 +123,8 @@ msgid "Log pages"
 msgstr "Protokollseiten"
 
 #: src/Features/McpServer/McpServerFeature.php:72
-msgid "Counterhand needs an active licence before AI apps can connect to this store. The chat in your admin keeps working."
-msgstr "Counterhand braucht eine aktive Lizenz, bevor sich KI-Apps mit diesem Shop verbinden können. Der Chat in deinem Adminbereich funktioniert weiterhin."
+msgid "Counterhand needs an active licence: the connection for AI apps and the chat in your admin are switched off until one is activated."
+msgstr "Counterhand braucht eine aktive Lizenz: Die Verbindung für KI-Apps und der Chat in deinem Admin-Bereich sind ausgeschaltet, bis eine aktiviert wird."
 
 #: src/Features/McpServer/McpServerFeature.php:74
 msgid "Activate a licence"

@@ -4,7 +4,7 @@ Tags: woocommerce, mcp, ai, claude, oauth
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,6 +83,11 @@ The things that could are gated separately. Store settings, payment gateways and
 The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
 
 == Changelog ==
+
+= 1.1.0 =
+* The action log is paginated: 25 calls per page with WordPress's own pagination, instead of stopping silently at the newest 100. The tab also shows the total number of recorded calls.
+* The plugin's admin screens carry the product's mark, and the admin menu icon is the brand glyph in the standard monochrome form WordPress recolours to your admin scheme.
+* The log table is easier to read: monospace timestamps and tool names, clearer success and failure states, and an empty state that says how to start recording.
 
 = 1.0.0 =
 * 127 tools across 16 switchable groups, covering the catalog, sales, content, store setup and — behind an Advanced heading — configuration and maintenance. Every new group ships disabled: upgrading exposes exactly what it exposed before.

@@ -48,13 +48,19 @@ final readonly class SettingsFeature implements FeatureInterface {
 	public function add_menu(): void {
 		$chat = AdminScreen::Chat;
 
+		// The brand's prompt glyph, filled black as core expects — wp-admin
+		// recolours SVG menu icons to the user's admin scheme itself.
+		$icon = 'data:image/svg+xml;base64,' . base64_encode( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- add_menu_page's documented SVG icon format, not obfuscation.
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M6.2 6.1 8.4 4l7.5 8-7.5 8-2.2-2.1 5.6-5.9z"/><rect fill="black" x="15.6" y="16.8" width="4.6" height="3.6" rx=".6"/></svg>'
+		);
+
 		add_menu_page(
 			$chat->page_title(),
 			__( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
 			$chat->value,
 			[ $this, 'render_chat' ],
-			'dashicons-format-chat',
+			$icon,
 			56
 		);
 
@@ -130,10 +136,24 @@ final readonly class SettingsFeature implements FeatureInterface {
 		$this->render( AdminScreen::Log, fn () => $this->log_tab->render_tab() );
 	}
 
-	/** Shared page chrome: heading, subtitle, then the screen's own body. */
+	/**
+	 * Shared page chrome: the brand mark, heading and subtitle, then the
+	 * screen's own body. The mark is the same prompt tile the product wears
+	 * everywhere — a chevron and a cursor, because you type and the shop
+	 * answers — drawn inline so it needs no asset request.
+	 */
 	private function render( AdminScreen $screen, callable $body ): void {
 		printf(
-			'<div class="wrap counterhand-wrap%s"><h1>%s</h1><p class="counterhand-subtitle">%s</p>',
+			'<div class="wrap counterhand-wrap%s">
+			<header class="counterhand-page-head">
+				<span class="counterhand-page-head__mark" aria-hidden="true">
+					<svg viewBox="0 0 24 24"><path d="M6.5 7.5l5.5 4.5-5.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="14.5" y="14.5" width="4" height="3" rx=".5" fill="currentColor"/></svg>
+				</span>
+				<div class="counterhand-page-head__text">
+					<h1>%s</h1>
+					<p class="counterhand-subtitle">%s</p>
+				</div>
+			</header>',
 			$screen->is_full_bleed() ? ' counterhand-wrap--chat' : '',
 			esc_html( $screen->page_title() ),
 			esc_html( $screen->subtitle() )

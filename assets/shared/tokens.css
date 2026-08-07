@@ -75,6 +75,14 @@
 	--counterhand-shadow-card: 0 1px 3px rgba(0, 0, 0, .04), 0 8px 24px rgba(0, 0, 0, .06);
 
 	/*
+	 * Brand identity — the product's own green, used ONLY for the mark tile.
+	 * Never for text or controls: it fails AA on light surfaces, and controls
+	 * belong to the admin scheme (--counterhand-accent) per the note above.
+	 */
+	--counterhand-brand: #4ade9a;
+	--counterhand-brand-ink: #151a23;
+
+	/*
 	 * Legacy palette aliases.
 	 *
 	 * The OAuth flow stylesheet was written against raw palette names before

@@ -479,3 +479,191 @@
 		flex-basis: 100%;
 	}
 }
+
+/* Page head ---------------------------------------------------------------
+ * The brand lockup every Counterhand screen opens with: the prompt-tile mark
+ * beside the core h1. The tile is the one place the brand colour appears —
+ * everything interactive stays on the admin scheme.
+ */
+
+.counterhand-page-head {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--counterhand-gap);
+	margin: 8px 0 var(--counterhand-gap-large);
+}
+
+.counterhand-page-head__mark {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
+	margin-top: 2px;
+	border-radius: 10px;
+	background: var(--counterhand-brand);
+	color: var(--counterhand-brand-ink);
+}
+
+.counterhand-page-head__mark svg {
+	width: 21px;
+	height: 21px;
+	display: block;
+}
+
+.counterhand-page-head__text h1 {
+	padding: 0;
+	margin: 0;
+	line-height: 1.25;
+}
+
+.counterhand-page-head .counterhand-subtitle {
+	margin: 2px 0 0;
+}
+
+/* Action log --------------------------------------------------------------
+ * The record reads like a console: monospace where a machine wrote the value
+ * (time, tool, arguments), sentence case where a person will read it.
+ */
+
+.counterhand-log__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--counterhand-gap);
+}
+
+.counterhand-log__body {
+	padding: 0;
+	overflow-x: auto;
+}
+
+.counterhand-log__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.counterhand-log__table th {
+	position: sticky;
+	top: 0;
+	padding: 10px var(--counterhand-pad-small);
+	text-align: left;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	color: var(--counterhand-text-subtle);
+	background: var(--counterhand-surface-neutral);
+	border-bottom: 1px solid var(--counterhand-border);
+}
+
+.counterhand-log__table td {
+	padding: 9px var(--counterhand-pad-small);
+	border-bottom: 1px solid var(--counterhand-border);
+	vertical-align: top;
+}
+
+.counterhand-log__table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.counterhand-log__table tbody tr:hover {
+	background: var(--counterhand-surface-neutral);
+}
+
+.counterhand-log__time {
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+	color: var(--counterhand-text-muted);
+	white-space: nowrap;
+}
+
+.counterhand-log__tool {
+	background: none;
+	padding: 0;
+	font-size: 12px;
+	color: var(--counterhand-text);
+}
+
+.counterhand-log__token {
+	color: var(--counterhand-text-muted);
+}
+
+.counterhand-log__pill {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.counterhand-log__pill--ok {
+	background: var(--counterhand-success-surface);
+	color: var(--counterhand-success-text);
+}
+
+.counterhand-log__pill--fail {
+	background: var(--counterhand-error-surface);
+	color: var(--counterhand-error-text);
+}
+
+.counterhand-log__empty {
+	padding: var(--counterhand-pad) var(--counterhand-pad-small);
+	color: var(--counterhand-text-muted);
+}
+
+/* Pagination: core's paginate_links() output, dressed to match the cards. */
+
+.counterhand-log__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--counterhand-gap);
+}
+
+.counterhand-log__count {
+	font-size: 12px;
+	color: var(--counterhand-text-subtle);
+}
+
+.counterhand-log__pager .page-numbers {
+	display: inline-block;
+	min-width: 28px;
+	padding: 4px 9px;
+	margin-left: 4px;
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius);
+	background: var(--counterhand-surface);
+	text-align: center;
+	text-decoration: none;
+	font-size: 12px;
+	color: var(--counterhand-text);
+	transition: border-color .12s ease;
+}
+
+.counterhand-log__pager a.page-numbers:hover {
+	border-color: var(--counterhand-accent);
+	color: var(--counterhand-accent);
+}
+
+.counterhand-log__pager .page-numbers.current {
+	background: var(--counterhand-surface-inverse);
+	border-color: var(--counterhand-surface-inverse);
+	color: var(--counterhand-text-inverse);
+}
+
+.counterhand-log__pager .page-numbers.dots {
+	border: 0;
+	background: none;
+	color: var(--counterhand-text-subtle);
+}
+
+@media (max-width: 782px) {
+	.counterhand-log__head,
+	.counterhand-log__foot {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

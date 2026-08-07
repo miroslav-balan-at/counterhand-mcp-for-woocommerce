@@ -107,9 +107,34 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		global $wpdb;
 
 		$table_name = LogSchema::table_name();
+		$per_page   = 25;
 
-		$entries = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY id DESC LIMIT 100", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
+		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
+		$pages = max( 1, (int) ceil( $total / $per_page ) );
+		$paged = min( max( 1, absint( $_GET['paged'] ?? 1 ) ), $pages ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view state.
+
+		$entries = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table_name} ORDER BY id DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
+				$per_page,
+				( $paged - 1 ) * $per_page
+			),
+			ARRAY_A
+		);
 		$entries = is_array( $entries ) ? $entries : [];
+
+		// Core's pagination, not a reimplementation: URLs, prev/next,
+		// ellipsis and screen-reader labels all come from paginate_links().
+		$pagination = (string) paginate_links(
+			[
+				'base'      => add_query_arg( 'paged', '%#%' ),
+				'format'    => '',
+				'current'   => $paged,
+				'total'     => $pages,
+				'prev_text' => __( '‹ Newer', 'counterhand-mcp-for-woocommerce' ),
+				'next_text' => __( 'Older ›', 'counterhand-mcp-for-woocommerce' ),
+			]
+		);
 
 		$is_enabled  = $this->settings->is_action_log_enabled();
 		$clear_nonce = wp_create_nonce( 'counterhand_clear_log' );

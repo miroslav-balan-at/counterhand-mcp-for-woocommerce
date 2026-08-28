@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy to the plugin directory
+        if: vars.WPORG_DEPLOY == 'true'
         uses: 10up/action-wordpress-plugin-deploy@stable
         id: deploy
         with:
@@ -26,8 +27,14 @@ jobs:
           SLUG: counterhand-mcp-for-woocommerce
           ASSETS_DIR: .wordpress-org
 
+      - name: Build the zip when not deploying to wordpress.org
+        if: vars.WPORG_DEPLOY != 'true'
+        run: ./bin/build-release.sh
+
       - name: Attach the zip to the GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.deploy.outputs.zip-path }}
+          files: |
+            ${{ steps.deploy.outputs.zip-path }}
+            build/*.zip
           generate_release_notes: true

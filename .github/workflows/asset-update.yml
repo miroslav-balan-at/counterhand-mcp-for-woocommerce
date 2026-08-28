@@ -11,6 +11,9 @@ on:
 
 jobs:
   assets:
+    # Set the WPORG_DEPLOY repository variable to 'true' once the plugin is
+    # approved and the SVN secrets exist; until then this job is skipped.
+    if: vars.WPORG_DEPLOY == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

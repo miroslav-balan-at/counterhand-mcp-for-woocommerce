@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="notice notice-success inline"><p><?php esc_html_e( 'Log cleared.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 	<?php endif; ?>
 
-	<section class="counterhand-card counterhand-card--wide">
+	<section class="counterhand-card">
 		<header class="counterhand-card__head counterhand-log__head">
 			<div class="counterhand-card__heading">
 				<h2 class="counterhand-card__title"><?php esc_html_e( 'Every call, newest first', 'counterhand-mcp-for-woocommerce' ); ?></h2>

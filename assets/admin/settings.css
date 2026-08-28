@@ -6,10 +6,12 @@
  * every value is a token, which is what lets the screens follow the user's
  * admin colour scheme.
  *
- * Layout follows WooCommerce's extension guidance — a single column at the
- * shared 720px measure, content grouped into cards, one idea per card. The
- * column is left-aligned rather than centred so it lines up with the WordPress
- * page heading and tab bar directly above it.
+ * Layout uses the whole admin canvas, as core and WooCommerce both do — core
+ * never caps .wrap, and WooCommerce's settings form-table is table-layout:fixed
+ * at full width. Nothing here is centred or boxed. Instead of one narrow
+ * column, card lists reflow into as many columns as the viewport affords, and
+ * only running text carries a measure (--counterhand-prose), so a wide monitor
+ * shows more at once rather than one control stranded beside empty space.
  */
 
 .counterhand-wrap .nav-tab-wrapper {
@@ -39,31 +41,74 @@
 	color: var(--counterhand-text-inverse);
 }
 
+/* Running text keeps a measure even though the page does not: a subtitle read
+   across 2000px is unreadable in a way a checkbox row is not. */
 .counterhand-subtitle {
-	max-width: var(--counterhand-measure);
+	max-width: var(--counterhand-prose);
 	margin: -8px 0 var(--counterhand-gap);
 	color: var(--counterhand-text-muted);
 	font-size: 14px;
 }
 
-.counterhand-measure {
-	max-width: var(--counterhand-measure);
+/* Card lists ---------------------------------------------------------------
+ * Removing the column cap is only half of using the width: a stack of cards on
+ * a 2560px monitor is a control on the left with two thousand pixels of nothing
+ * beside it. These lists reflow into as many columns as fit and collapse to one
+ * on their own, with no breakpoint to maintain.
+ *
+ * 30rem is the narrowest a card stays comfortable at — below that the head's
+ * title-and-description row starts to wrap badly.
+ */
+
+.counterhand-clients,
+.counterhand-settings-form {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+	gap: var(--counterhand-gap);
+	align-items: start;
+}
+
+/* The grid supplies the rhythm; the cards' own bottom margin would double it. */
+.counterhand-clients > .counterhand-card,
+.counterhand-settings-form > .counterhand-card {
+	margin-bottom: 0;
+}
+
+/*
+ * settings_fields() prints four bare hidden inputs straight into the form. A
+ * grid would lay each one out as an item and push the cards out of order, so
+ * they are taken out of flow — display:none would be equivalent here, but these
+ * are submitted values and hiding them that way invites someone to "clean up"
+ * a rule that looks like it hides a control.
+ */
+.counterhand-settings-form > input[type="hidden"] {
+	position: absolute;
+}
+
+/*
+ * Two exceptions in the settings form. The tool-group table is the tallest
+ * thing on the screen and its three columns need room, so it takes the full
+ * row; the submit button belongs under everything, not in a column of its own.
+ */
+.counterhand-settings-form > .counterhand-card:has(.counterhand-groups-table),
+.counterhand-settings-form > .submit {
+	grid-column: 1 / -1;
+}
+
+.counterhand-settings-form > .submit {
+	margin: 0;
+	padding: 0;
 }
 
 /* Card ------------------------------------------------------------------- */
 
 .counterhand-card {
-	max-width: var(--counterhand-measure);
 	margin: 0 0 var(--counterhand-gap);
 	background: var(--counterhand-surface);
 	border: 1px solid var(--counterhand-border);
 	border-radius: var(--counterhand-radius-card);
 	box-shadow: var(--counterhand-shadow-card);
 	overflow: hidden;
-}
-
-.counterhand-card--wide {
-	max-width: none;
 }
 
 .counterhand-card__head {
@@ -212,7 +257,6 @@
 	display: flex;
 	align-items: center;
 	gap: var(--counterhand-gap-small);
-	max-width: var(--counterhand-measure);
 	margin: var(--counterhand-gap-large) 0 var(--counterhand-gap-small);
 	font-size: 11px;
 	font-weight: 600;

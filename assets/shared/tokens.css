@@ -59,9 +59,11 @@
 	--counterhand-error-text: var(--wpds-color-text-error-strong, #8a1f21);
 
 	/* Dimensions --------------------------------------------------------- */
-	/* 720px is WooCommerce's settings measure — one centred column so every
-	   extension lines up at the same width. */
-	--counterhand-measure: var(--wpds-dimension-surface-width-xl, 720px);
+	/* Prose measure — the cap on a paragraph, not on the page. WordPress core
+	   never constrains .wrap and WooCommerce's settings form-table runs the
+	   full width, so the screens do too; only running text is held back to a
+	   readable line. */
+	--counterhand-prose: 68ch;
 	--counterhand-radius: var(--wpds-dimension-radius-small, 4px);
 	--counterhand-radius-card: var(--wpds-dimension-radius-medium, 6px);
 	--counterhand-gap-small: var(--wpds-dimension-gap-small, 8px);

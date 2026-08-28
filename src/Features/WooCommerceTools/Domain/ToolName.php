@@ -29,7 +29,7 @@ final readonly class ToolName {
 			throw new \InvalidArgumentException(
 				sprintf(
 					'"%s" is not a usable tool name: expected up to 64 characters of lower-case letters, digits and underscores, starting with a letter.',
-					$value
+					esc_html( $value )
 				)
 			);
 		}

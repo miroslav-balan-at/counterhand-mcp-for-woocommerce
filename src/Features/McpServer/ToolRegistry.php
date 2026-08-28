@@ -46,9 +46,9 @@ final class ToolRegistry {
 			throw new \LogicException(
 				sprintf(
 					'Two tools are registered as "%s": %s and %s.',
-					$name,
-					$this->tools[ $name ]::class,
-					$tool::class
+					esc_html( $name ),
+					esc_html( $this->tools[ $name ]::class ),
+					esc_html( $tool::class )
 				)
 			);
 		}

@@ -62,7 +62,7 @@ final readonly class ResourceDescriptor {
 
 		if ( null === $this->item ) {
 			throw new \LogicException(
-				sprintf( 'Resource "%s" declares %s but has no item route.', $this->id, $operation->value )
+				sprintf( 'Resource "%s" declares %s but has no item route.', esc_html( $this->id ), esc_html( $operation->value ) )
 			);
 		}
 

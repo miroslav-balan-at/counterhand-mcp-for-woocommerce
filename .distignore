@@ -31,9 +31,14 @@ phpunit.xml.dist
 .phpunit.cache
 .phpunit.result.cache
 
-# Internal documentation; readme.txt is the customer-facing one
+# Repository-only files; readme.txt is the one the directory reads
 CLAUDE.md
 RELEASE-CHECKLIST.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+.github
+.wordpress-org
 
 # Generated for the marketing site; customers have no use for it
 tool-surface.json

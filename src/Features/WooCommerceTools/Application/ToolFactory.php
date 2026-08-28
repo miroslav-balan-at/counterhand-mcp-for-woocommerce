@@ -106,10 +106,10 @@ final readonly class ToolFactory {
 			throw new \LogicException(
 				sprintf(
 					'Tool "%s" is a %s but group "%s" has no %s scope.',
-					$operation->name->value,
-					$operation->operation->value,
-					$resource->group->value,
-					$intent->value
+					esc_html( $operation->name->value ),
+					esc_html( $operation->operation->value ),
+					esc_html( $resource->group->value ),
+					esc_html( $intent->value )
 				)
 			);
 		}

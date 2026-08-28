@@ -132,9 +132,9 @@ final readonly class AgentLoop {
 			throw new ToolCallException(
 				sprintf(
 					/* translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove. */
-					__( 'Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open "available to chat" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs.', 'counterhand-mcp-for-woocommerce' ),
+					esc_html__( 'Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open "available to chat" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs.', 'counterhand-mcp-for-woocommerce' ),
 					count( $tools ),
-					$ceiling,
+					(int) $ceiling,
 					count( $tools ) - $ceiling
 				)
 			);

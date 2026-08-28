@@ -267,7 +267,7 @@ final readonly class MetaTool implements ToolInterface {
 			throw new ToolCallException(
 				sprintf(
 					'A value is required. To remove the field, call %s.',
-					MetaOperation::Delete->tool_name( $this->descriptor->singular_slug() )
+					esc_html( MetaOperation::Delete->tool_name( $this->descriptor->singular_slug() ) )
 				)
 			);
 		}
@@ -289,7 +289,7 @@ final readonly class MetaTool implements ToolInterface {
 	private function item_route(): RestRoute {
 		if ( null === $this->descriptor->item ) {
 			throw new \LogicException(
-				sprintf( 'Resource "%s" has no item route to carry meta.', $this->descriptor->id )
+				sprintf( 'Resource "%s" has no item route to carry meta.', esc_html( $this->descriptor->id ) )
 			);
 		}
 

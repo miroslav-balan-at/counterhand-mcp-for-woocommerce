@@ -9,7 +9,7 @@ Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can manage products, orders and reports — with OAuth consent.
+Make your WooCommerce store an MCP server, so Claude, ChatGPT and Cursor can manage products, orders and reports — with OAuth consent.
 
 == Description ==
 

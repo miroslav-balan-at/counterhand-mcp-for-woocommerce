@@ -123,14 +123,14 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 	public function test( ProviderConfig $config ): void {
 		if ( ! $this->builder( $config )->with_text( 'ping' )->is_supported_for_text_generation() ) {
 			throw new ToolCallException(
-				__( 'No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins.', 'counterhand-mcp-for-woocommerce' )
+				esc_html__( 'No installed AI provider can serve this request. Connect a provider under Settings → Connectors, or install one of the AI Provider plugins.', 'counterhand-mcp-for-woocommerce' )
 			);
 		}
 	}
 
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
 		if ( [] === $messages ) {
-			throw new ToolCallException( __( 'Nothing to send to the model.', 'counterhand-mcp-for-woocommerce' ) );
+			throw new ToolCallException( esc_html__( 'Nothing to send to the model.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		// The last message is the turn being asked; everything before it is context.
@@ -160,7 +160,7 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 		$result = $builder->generate_text_result();
 
 		if ( is_wp_error( $result ) ) {
-			throw new ToolCallException( $result->get_error_message() );
+			throw new ToolCallException( esc_html( $result->get_error_message() ) );
 		}
 
 		return $this->to_turn( $result );

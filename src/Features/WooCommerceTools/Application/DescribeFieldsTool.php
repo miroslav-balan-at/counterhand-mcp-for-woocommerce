@@ -143,7 +143,7 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		throw new ToolCallException(
 			sprintf(
 				'"%s" is not a tool whose fields can be described. Only the WooCommerce resource tools have a schema to show; pass a name exactly as it appears in the tool list.',
-				$name
+				esc_html( $name )
 			)
 		);
 	}

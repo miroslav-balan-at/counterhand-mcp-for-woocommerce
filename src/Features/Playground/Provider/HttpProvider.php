@@ -50,7 +50,7 @@ abstract readonly class HttpProvider implements ProviderInterface {
 	 */
 	protected function decode( mixed $response ): array {
 		if ( is_wp_error( $response ) ) {
-			throw new ToolCallException( sprintf( $this->unreachable_error(), $response->get_error_message() ) );
+			throw new ToolCallException( esc_html( sprintf( $this->unreachable_error(), $response->get_error_message() ) ) );
 		}
 
 		$payload = json_decode( (string) wp_remote_retrieve_body( $response ), true );
@@ -58,10 +58,12 @@ abstract readonly class HttpProvider implements ProviderInterface {
 
 		if ( 200 !== $status ) {
 			throw new ToolCallException(
-				sprintf(
-					$this->api_error(),
-					$status,
-					(string) ( $payload['error']['message'] ?? __( 'unknown error', 'counterhand-mcp-for-woocommerce' ) )
+				esc_html(
+					sprintf(
+						$this->api_error(),
+						$status,
+						(string) ( $payload['error']['message'] ?? __( 'unknown error', 'counterhand-mcp-for-woocommerce' ) )
+					)
 				)
 			);
 		}

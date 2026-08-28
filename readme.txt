@@ -115,11 +115,9 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 == Screenshots ==
 
 1. Settings — every tool group is its own switch, with read and write as separate axes.
-2. Connect AI apps — one endpoint URL, one-click install for Cursor and VS Code, and a reachability check.
-3. The consent screen an assistant's connection opens in your browser — narrow the scopes before approving.
-4. Connections — every connected assistant, what it may do, and a revoke button.
-5. Chat — ask your store questions in plain language from wp-admin.
-6. Action log — every tool call, with personal data masked.
+2. Connect AI apps — one endpoint URL for Claude, ChatGPT, Cursor, VS Code and Claude Code, with a reachability check.
+3. Chat — ask your store questions in plain language from wp-admin, on a model WordPress manages or your own key.
+4. Action log — every tool call, with personal data masked before it is stored.
 
 == Changelog ==
 

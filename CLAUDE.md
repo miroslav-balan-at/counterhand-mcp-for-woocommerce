@@ -61,7 +61,7 @@ Unit tests run without WordPress, so they cannot tell you whether a field name i
 
 ## UI
 - Design tokens from `assets/shared/tokens.css` (mapped to `--wpds-*` with fallbacks). No raw hex in admin/OAuth CSS, never hardcode WooCommerce purple `#7f54b3`.
-- WooCommerce settings-screen rules: 720px measure, white cards, one idea per card. Chat is deliberately wider — it is not a settings screen.
+- Admin screens use the whole canvas, as core and WooCommerce do: card lists reflow into as many columns as fit (`repeat(auto-fit, minmax(30rem, 1fr))`), only running text carries a measure (`--counterhand-prose`, 68ch). White cards, one idea per card.
 - No JS build step; hand-written ES5-flavoured IIFEs. No remote assets (WordPress.org rule).
 - Escape-then-format for any model output rendered as HTML (`chat.js formatAnswer`).
 

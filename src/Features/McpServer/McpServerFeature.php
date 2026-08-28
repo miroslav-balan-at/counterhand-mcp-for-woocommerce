@@ -4,7 +4,6 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\McpServer;
 
-use Counterhand\Features\Licensing\Licence;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
 use Counterhand\Shared\CanonicalUri;
@@ -26,7 +25,6 @@ final readonly class McpServerFeature implements FeatureInterface {
 		private PluginSettings $settings,
 		TokenAuthenticator $authenticator,
 		McpServer $server,
-		private Licence $licence,
 	) {
 		$this->endpoint = new McpEndpoint( $authenticator, $server );
 	}
@@ -34,17 +32,6 @@ final readonly class McpServerFeature implements FeatureInterface {
 	public function register(): void {
 		// Master switch off → no MCP surface exists at all.
 		if ( ! $this->settings->is_enabled() ) {
-			return;
-		}
-
-		/*
-		 * Without a licence the route is never registered, so an unlicensed
-		 * store answers 404 rather than 401 — there is nothing here to probe
-		 * or brute-force. The chat gates itself in PlaygroundFeature.
-		 */
-		if ( ! $this->licence->is_active() ) {
-			add_action( 'admin_notices', [ $this, 'render_licence_notice' ] );
-
 			return;
 		}
 
@@ -56,20 +43,6 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	public static function register_rewrite(): void {
 		add_rewrite_rule( '^' . CanonicalUri::MCP_PATH . '/?$', 'index.php?' . self::QUERY_VAR . '=1', 'top' );
-	}
-
-	/** Shown in place of the endpoint, so the reason is on screen and actionable. */
-	public function render_licence_notice(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
-		}
-
-		printf(
-			'<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
-			esc_html__( 'Counterhand needs an active licence: the connection for AI apps and the chat in your admin are switched off until one is activated.', 'counterhand-mcp-for-woocommerce' ),
-			esc_url( $this->licence->upgrade_url() ),
-			esc_html__( 'Activate a licence', 'counterhand-mcp-for-woocommerce' )
-		);
 	}
 
 	public function add_query_var( array $query_vars ): array {

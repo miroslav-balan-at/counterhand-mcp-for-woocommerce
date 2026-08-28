@@ -1,4 +1,0 @@
-# The Freemius SDK is vendor code committed verbatim — it ships inside the
-# plugin, since customers have no Composer step. Git must not rewrite its line
-# endings or try to diff it as ours.
-/freemius/** -text -diff linguist-vendored

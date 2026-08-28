@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build the distributable plugin zip for Freemius and the WooCommerce Marketplace.
+# Build the distributable plugin zip, the same files the wordpress.org release carries.
 #
 # The file list comes from git, not from the working directory. A denylist can
 # only exclude what someone thought to name, so anything new and untracked ships
@@ -27,7 +27,7 @@ version="$( grep -m1 -E '^[[:space:]]*\*[[:space:]]*Version:' "$SLUG.php" | tr -
 [ -n "$version" ] || { echo "build: no Version header in $SLUG.php" >&2; exit 1; }
 
 # A WordPress plugin carries its version in several places and nothing keeps
-# them in step. The header is what WordPress and Freemius read for update
+# them in step. The header is what WordPress reads for update
 # checks, so a stale constant or Stable tag is a silent bug rather than a loud
 # one — check every surface against the header.
 check_version() {
@@ -116,9 +116,7 @@ done < <( git ls-files -c )
 
 # The plugin cannot boot without these, and a silent allowlist miss would only
 # show up on a customer's site.
-# No uninstall.php on purpose: Freemius rejects a deployment containing one —
-# cleanup rides its after_uninstall hook (src/Uninstall.php).
-for required in "$SLUG.php" 'readme.txt' 'src/Autoloader.php' 'src/Uninstall.php' 'freemius/start.php'; do
+for required in "$SLUG.php" 'readme.txt' 'src/Autoloader.php' 'src/Uninstall.php' 'uninstall.php'; do
 	[ -f "$STAGE/$required" ] || { echo "build: $required missing from the package" >&2; exit 1; }
 done
 

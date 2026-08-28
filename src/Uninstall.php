@@ -6,14 +6,7 @@ namespace Counterhand;
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Uninstall cleanup: drops the plugin's tables, options and transients.
- *
- * Runs through Freemius' after_uninstall hook rather than a root
- * uninstall.php, because Freemius rejects a deployment containing one: the SDK
- * owns WordPress' uninstall event to record the uninstall reason, and a raw
- * uninstall.php would run outside that flow.
- */
+/** Uninstall cleanup: drops the plugin's tables, options and transients. Invoked from the root uninstall.php. */
 final class Uninstall {
 
 	public static function run(): void {

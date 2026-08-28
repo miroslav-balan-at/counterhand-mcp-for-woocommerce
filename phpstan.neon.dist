@@ -8,7 +8,6 @@ parameters:
     scanFiles:
         - counterhand-mcp-for-woocommerce.php
         - tests/phpstan-wc-stubs.php
-        - tests/freemius-stubs.php
         - tests/phpstan-core-ai-stubs.php
     bootstrapFiles:
         - tests/phpstan-bootstrap.php

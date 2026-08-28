@@ -38,6 +38,25 @@ final readonly class SettingsFeature implements FeatureInterface {
 		add_action( 'admin_enqueue_scripts', [ $this->assets, 'enqueue' ] );
 		add_action( 'wp_ajax_counterhand_preflight', [ $this, 'handle_preflight' ] );
 		add_action( 'wp_ajax_counterhand_connection_status', [ $this, 'handle_connection_status' ] );
+		add_filter( 'plugin_row_meta', [ $this, 'add_row_meta' ], 10, 2 );
+	}
+
+	/**
+	 * The only place the plugin asks for support: the Plugins screen row, next to
+	 * "View details", where every other free plugin puts it. Never a notice.
+	 *
+	 * @param list<string> $links
+	 * @return list<string>
+	 */
+	public function add_row_meta( array $links, string $file ): array {
+		if ( plugin_basename( COUNTERHAND_PLUGIN_FILE ) !== $file ) {
+			return $links;
+		}
+
+		$links[] = sprintf( '<a href="%s">%s</a>', esc_url( 'https://github.com/miroslav-balan-at/counterhand-mcp-for-woocommerce' ), esc_html__( 'Source on GitHub', 'counterhand-mcp-for-woocommerce' ) );
+		$links[] = sprintf( '<a href="%s">%s</a>', esc_url( 'https://github.com/sponsors/miroslav-balan-at' ), esc_html__( 'Sponsor', 'counterhand-mcp-for-woocommerce' ) );
+
+		return $links;
 	}
 
 	/**

@@ -1,0 +1,33 @@
+# Pushes a tagged release to the wordpress.org SVN repository and attaches the
+# same zip to the GitHub release. Needs the SVN_USERNAME / SVN_PASSWORD secrets,
+# available once the plugin is approved on wordpress.org.
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to the plugin directory
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        id: deploy
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: counterhand-mcp-for-woocommerce
+          ASSETS_DIR: .wordpress-org
+
+      - name: Attach the zip to the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.deploy.outputs.zip-path }}
+          generate_release_notes: true

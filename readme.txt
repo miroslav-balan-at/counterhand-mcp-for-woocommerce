@@ -1,18 +1,19 @@
 === Counterhand MCP for WooCommerce ===
 Contributors: miroslavbalan
-Tags: woocommerce, mcp, ai, claude, oauth
+Donate link: https://github.com/sponsors/miroslav-balan-at
+Tags: woocommerce, mcp, ai, claude, chatgpt
 Requires at least: 6.5
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Turn your WooCommerce store into a secure MCP server so AI assistants like Claude and Cursor can manage products, orders and reports — with OAuth consent.
+Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can manage products, orders and reports — with OAuth consent.
 
 == Description ==
 
-Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature.
+Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature. It is free, open source (GPL) and self-hosted: nothing about your store passes through a third-party service.
 
 Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an assistant connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
 
@@ -50,7 +51,32 @@ Visibility is decided by WooCommerce too: before a tool is offered, this plugin 
 
 **Connect AI apps you already use.** The Connect AI apps tab shows one URL to paste into Claude, ChatGPT, Claude Code or any other MCP client — one click installs it into Cursor and VS Code. There is no token to create and nothing to copy back: the app identifies itself with its own published address (CIMD), and you approve exactly what it may do on a consent screen in your browser. No local proxy, no Node.js required.
 
+= How this differs from WooCommerce's built-in MCP =
+
+WooCommerce ships an experimental MCP server behind a feature flag, authenticated with REST API keys and covering a handful of product and order abilities. Counterhand adds what a self-hosted store still lacks: OAuth 2.1 browser consent instead of copied keys, the whole WooCommerce and WordPress surface (coupons, customers, reports, shipping, tax, settings, posts and pages), per-connection scopes with one-click revocation, confirmation-gated risky writes, an audit log, and the in-admin chat. The two can run side by side.
+
+= Free, open source, sponsor-supported =
+
+Counterhand is free for every store, with no paid tier and no locked features. Development and support are funded by [GitHub Sponsors](https://github.com/sponsors/miroslav-balan-at). The source is on [GitHub](https://github.com/miroslav-balan-at/counterhand-mcp-for-woocommerce) — issues and pull requests are welcome.
+
+= Privacy =
+
+The plugin contacts no server of its own and collects no usage data. Requests leave your site only when you initiate them: to the AI provider you configured for the in-admin chat (with your own key, or through WordPress's AI connectors), to an MCP client's published metadata URL when it connects, and to your own site for the reachability check on the Connect AI apps tab.
+
+== Installation ==
+
+1. In wp-admin go to Plugins → Add New, search for "Counterhand MCP" and click Install, then Activate. WooCommerce must already be active.
+2. Open WooCommerce → Counterhand MCP. On the Settings tab switch on the tool groups your assistants may use — Products, Orders and Reports are on, read-only, by default.
+3. On the Connect AI apps tab copy the endpoint URL (`https://yourstore.com/mcp`) into Claude, ChatGPT, Claude Code, Cursor or VS Code — or use the one-click install buttons.
+4. Approve the connection on the consent screen that opens in your browser. It appears on the Connections tab, where you can revoke it at any time.
+
+Your store must be reachable over HTTPS from the public internet for cloud assistants (Claude, ChatGPT); Claude Code, Cursor and VS Code connect from your own machine and work with a local site too.
+
 == Frequently Asked Questions ==
+
+= Is it really free? =
+
+Yes. Every tool, the chat, OAuth and the action log are in the one free plugin, licensed GPLv2 or later. There is no Pro version and nothing is unlocked by paying. If it saves you time, you can support its maintenance through [GitHub Sponsors](https://github.com/sponsors/miroslav-balan-at).
 
 = How does an assistant connect? =
 
@@ -80,14 +106,29 @@ The things that could are gated separately. Store settings, payment gateways and
 
 = Can I connect a client that only supports bearer headers? =
 
-The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue — a developer token path may be added.
+The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue on GitHub — a developer token path may be added.
+
+= Where do I report a bug or a security issue? =
+
+Bugs and feature requests: the [GitHub issue tracker](https://github.com/miroslav-balan-at/counterhand-mcp-for-woocommerce/issues) or the support forum here. Security issues: please report them privately as described in the repository's SECURITY.md rather than in a public thread.
+
+== Screenshots ==
+
+1. Settings — every tool group is its own switch, with read and write as separate axes.
+2. Connect AI apps — one endpoint URL, one-click install for Cursor and VS Code, and a reachability check.
+3. The consent screen an assistant's connection opens in your browser — narrow the scopes before approving.
+4. Connections — every connected assistant, what it may do, and a revoke button.
+5. Chat — ask your store questions in plain language from wp-admin.
+6. Action log — every tool call, with personal data masked.
 
 == Changelog ==
 
+= 1.2.0 =
+* First release in the wordpress.org plugin directory. Updates and language packs now come from WordPress itself.
+* Deleting the plugin removes its tables, options and transients through a standard `uninstall.php`.
+
 = 1.1.1 =
-* German translation (de_DE) for the whole plugin, and translations now actually load — the plugin is distributed outside wordpress.org, so the bundled language files are read directly.
-* The licence notice no longer claims the chat keeps working without a licence; both the AI-app connection and the chat are off until one is active.
-* Shops with an active paid licence no longer see the Pricing page in the admin menu — there is one plan and nothing to upgrade to. Trials keep it.
+* German translation (de_DE) for the whole plugin, and the bundled language files now load.
 
 = 1.1.0 =
 * The action log is paginated: 25 calls per page with WordPress's own pagination, instead of stopping silently at the newest 100. The tab also shows the total number of recorded calls.
@@ -106,3 +147,8 @@ The security model is OAuth-first. If you need a raw bearer token for a script o
 * Initial release: OAuth 2.1 + CIMD browser-consent authorization, MCP server endpoint, 14 WooCommerce tools, per-connection scoped access with audience binding, Connections management with revoke, opt-in action log with PII masking.
 * In-admin chat with support for the WordPress 7.0 AI Client, so model credentials are managed by WordPress rather than this plugin.
 * One-click install links for Cursor and VS Code, and an automatic readiness check that reports whether cloud assistants can reach the store.
+
+== Upgrade Notice ==
+
+= 1.2.0 =
+First release in the wordpress.org plugin directory. Nothing changes for connected assistants.

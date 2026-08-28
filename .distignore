@@ -30,7 +30,6 @@ phpstan.neon.dist
 phpunit.xml.dist
 .phpunit.cache
 .phpunit.result.cache
-freemius/composer.json
 
 # Internal documentation; readme.txt is the customer-facing one
 CLAUDE.md

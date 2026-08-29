@@ -17,7 +17,7 @@ final readonly class ActionLogger {
 	public function log( string $tool_name, string $token_label, bool $is_error, array $arguments ): void {
 		global $wpdb;
 
-		$wpdb->insert(
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			LogSchema::table_name(),
 			[
 				'created_at'  => current_time( 'mysql', true ),

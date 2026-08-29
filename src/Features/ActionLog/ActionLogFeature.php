@@ -71,7 +71,7 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		$retention_days = $this->settings->log_retention_days();
 		$table_name     = LogSchema::table_name();
 
-		$wpdb->query(
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} WHERE created_at < %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
 				gmdate( 'Y-m-d H:i:s', time() - $retention_days * DAY_IN_SECONDS )
@@ -109,11 +109,11 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		$table_name = LogSchema::table_name();
 		$per_page   = 25;
 
-		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared -- table name is plugin-owned, no user input.
+		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery -- table name is plugin-owned, no user input. plugin-owned table, no core API covers it.
 		$pages = max( 1, (int) ceil( $total / $per_page ) );
 		$paged = min( max( 1, absint( $_GET['paged'] ?? 1 ) ), $pages ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view state.
 
-		$entries = $wpdb->get_results(
+		$entries = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} ORDER BY id DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
 				$per_page,

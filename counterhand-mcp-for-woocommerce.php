@@ -29,12 +29,19 @@ define( 'COUNTERHAND_PLUGIN_DIR', __DIR__ );
 require_once __DIR__ . '/src/Autoloader.php';
 Counterhand\Autoloader::register();
 
-// wordpress.org language packs take over once they exist; until then the bundled .mo files are the only translations.
-add_action(
-	'init',
-	static function (): void {
-		load_plugin_textdomain( 'counterhand-mcp-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-	}
+// Language packs from wordpress.org take precedence; when none exists for the
+// locale, WordPress is pointed at the bundled files instead.
+add_filter(
+	'lang_dir_for_domain',
+	static function ( string|false $path, string $domain ): string|false {
+		if ( 'counterhand-mcp-for-woocommerce' !== $domain || false !== $path ) {
+			return $path;
+		}
+
+		return __DIR__ . '/languages/';
+	},
+	10,
+	2
 );
 
 // HPOS (custom order tables) compatibility.

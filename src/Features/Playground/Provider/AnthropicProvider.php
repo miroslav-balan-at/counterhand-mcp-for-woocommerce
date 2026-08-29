@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class AnthropicProvider extends HttpProvider {
 
-	private const ENDPOINT    = 'https://api.anthropic.com/v1/messages';
+	private const ENDPOINT    = 'https://api.anthropic.com/v1/messages'; // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- fallback for WordPress below 7.0; the AI Client is preferred when present.
 	private const API_VERSION = '2023-06-01';
 
 	/**

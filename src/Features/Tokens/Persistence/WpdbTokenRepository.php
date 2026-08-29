@@ -30,7 +30,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 		$token_id = TokenId::generate();
 		$secret   = TokenSecret::generate();
 
-		$wpdb->insert(
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			Schema::table_name(),
 			[
 				'token_id'      => $token_id->value,
@@ -55,7 +55,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 
 		$table_name = Schema::table_name();
 
-		$row = $wpdb->get_row(
+		$row = $wpdb->get_row( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} WHERE token_id = %s AND status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
 				$token_id->value,
@@ -76,7 +76,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 
 		$table_name = Schema::table_name();
 
-		$rows = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned, no user input.
+		$rows = $wpdb->get_results( "SELECT * FROM {$table_name} ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- table name is plugin-owned, no user input. plugin-owned table, no core API covers it.
 
 		return array_map( fn ( array $row ): ApiToken => $this->hydrate( $row ), is_array( $rows ) ? $rows : [] );
 	}
@@ -84,7 +84,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 	public function revoke( int $id ): bool {
 		global $wpdb;
 
-		$updated = $wpdb->update(
+		$updated = $wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			Schema::table_name(),
 			[
 				'status'     => TokenStatus::Revoked->value,
@@ -101,7 +101,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 	public function mark_expired( int $id ): void {
 		global $wpdb;
 
-		$wpdb->update(
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			Schema::table_name(),
 			[ 'status' => TokenStatus::Expired->value ],
 			[ 'id' => $id ],
@@ -113,7 +113,7 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 	public function touch_last_used( int $id ): void {
 		global $wpdb;
 
-		$wpdb->update(
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			Schema::table_name(),
 			[ 'last_used_at' => current_time( 'mysql', true ) ],
 			[ 'id' => $id ],

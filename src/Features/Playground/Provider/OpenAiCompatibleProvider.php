@@ -31,7 +31,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 		return new self(
 			id: 'openai',
 			label: static fn (): string => __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
-			default_base_url: 'https://api.openai.com/v1',
+			default_base_url: 'https://api.openai.com/v1', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- fallback for WordPress below 7.0; the AI Client is preferred when present.
 			models: [
 				'gpt-5'      => 'GPT-5',
 				'gpt-5-mini' => 'GPT-5 mini',
@@ -50,7 +50,7 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 		return new self(
 			id: 'google',
 			label: static fn (): string => __( 'Gemini (Google)', 'counterhand-mcp-for-woocommerce' ),
-			default_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+			default_base_url: 'https://generativelanguage.googleapis.com/v1beta/openai/', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- fallback for WordPress below 7.0; the AI Client is preferred when present.
 			// Google renames models often; the picker is a starting point and
 			// the field accepts whatever the account actually offers.
 			models: [

@@ -35,6 +35,7 @@ phpunit.xml.dist
 CLAUDE.md
 RELEASE-CHECKLIST.md
 CODE_OF_CONDUCT.md
+CHANGELOG.md
 CONTRIBUTING.md
 SECURITY.md
 .github

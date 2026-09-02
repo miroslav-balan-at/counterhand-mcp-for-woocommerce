@@ -73,7 +73,9 @@ The "Chat" tab lets a store administrator ask questions about the store in plain
 
 On WordPress 7.0 and later the chat uses the AI model WordPress itself manages under Settings → Connectors, so this plugin never handles the API key and the provider is whichever one you configured in WordPress. On earlier WordPress versions, you choose a provider on the Chat tab and supply your own API key.
 
-**What is sent, and when:** only when an administrator sends a chat message (and on each follow-up step of answering it) the plugin transmits, to the provider you chose: your message text, the earlier messages in that chat conversation, the list of enabled tool definitions (tool names, descriptions and argument schemas), and the results of any tool the model calls to answer you. **Those tool results contain your store's data** — for example product, order, customer or report records the model looked up in order to answer. A short system instruction and your API key accompany the request. Nothing is sent on a schedule or in the background.
+**What is sent, and when:** only when an administrator sends a chat message (and on each follow-up step of answering it) the plugin transmits, to the provider you chose: your message text, the earlier messages in that chat conversation, the list of enabled tool definitions (tool names, descriptions and argument schemas), and the results of any tool the model calls to answer you. **Those tool results contain your store's data** — for example product, order, customer or report records the model looked up in order to answer. A short system instruction accompanies the request, authenticated with your own API key (or, on WordPress 7.0 and later, by WordPress's connector, so this plugin never sees the key). Nothing is sent on a schedule or in the background.
+
+There is one other, smaller request: when you save an API key on the Chat tab, the plugin sends a single "ping" message to the provider to check the key works before storing it, so a wrong key is reported immediately. That check contains no store data.
 
 The provider you select determines the destination:
 

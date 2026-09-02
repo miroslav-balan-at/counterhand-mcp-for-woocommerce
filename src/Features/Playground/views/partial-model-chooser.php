@@ -114,7 +114,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 						</form>
 					<?php endforeach; ?>
 				<?php else : ?>
-					<p><?php esc_html_e( 'Who do you have an account with? One click installs the official provider for it.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p><?php esc_html_e( 'Who do you have an account with? One click installs and activates the official provider plugin for it.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
 						id="counterhand-install-form" data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
 						<input type="hidden" name="action" value="counterhand_install_provider">

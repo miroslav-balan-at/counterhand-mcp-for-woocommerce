@@ -589,8 +589,8 @@ msgid "Get a key"
 msgstr "Schlüssel holen"
 
 #: src/Features/Playground/views/partial-model-chooser.php:117
-msgid "Who do you have an account with? One click installs the official provider for it."
-msgstr "Bei wem hast du ein Konto? Ein Klick installiert den offiziellen Anbieter dafür."
+msgid "Who do you have an account with? One click installs and activates the official provider plugin for it."
+msgstr "Bei wem hast du ein Konto? Ein Klick installiert und aktiviert das offizielle Anbieter-Plugin dafür."
 
 #: src/Features/Playground/views/partial-model-chooser.php:140
 msgid "On WordPress 7.0 or newer, WordPress manages the model and the key for you — this screen offers it automatically after you update."

@@ -1,11 +1,11 @@
 === Counterhand MCP for WooCommerce ===
-Contributors: miroslavbalan
+Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
 Tags: woocommerce, mcp, ai, claude, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,7 +61,45 @@ Counterhand is free for every store, with no paid tier and no locked features. D
 
 = Privacy =
 
-The plugin contacts no server of its own and collects no usage data. Requests leave your site only when you initiate them: to the AI provider you configured for the in-admin chat (with your own key, or through WordPress's AI connectors), to an MCP client's published metadata URL when it connects, and to your own site for the reachability check on the Connect AI apps tab.
+The plugin contacts no server of its own, collects no usage data and phones no telemetry home. It makes no outbound request until you ask it to — see the "External services" section below for exactly which services can be contacted, what is sent and when. Nothing is sent to the author of this plugin, ever.
+
+== External services ==
+
+This plugin does not depend on any service of its own. It never contacts the plugin author, and it sends no analytics or telemetry anywhere. Every outbound request below happens only as a direct result of something you do in wp-admin, and most stores will only ever use one of them.
+
+= AI model providers (in-admin chat only) =
+
+The "Chat" tab lets a store administrator ask questions about the store in plain language. Answering a question means sending it to an AI model, so this is the one feature that transmits store data to a third party. It is used only when you open the Chat tab and send a message; if you never use the chat, no request is ever made to any of these services.
+
+On WordPress 7.0 and later the chat uses the AI model WordPress itself manages under Settings → Connectors, so this plugin never handles the API key and the provider is whichever one you configured in WordPress. On earlier WordPress versions, you choose a provider on the Chat tab and supply your own API key.
+
+**What is sent, and when:** only when an administrator sends a chat message (and on each follow-up step of answering it) the plugin transmits, to the provider you chose: your message text, the earlier messages in that chat conversation, the list of enabled tool definitions (tool names, descriptions and argument schemas), and the results of any tool the model calls to answer you. **Those tool results contain your store's data** — for example product, order, customer or report records the model looked up in order to answer. A short system instruction and your API key accompany the request. Nothing is sent on a schedule or in the background.
+
+The provider you select determines the destination:
+
+* **Anthropic (Claude)** — `https://api.anthropic.com`. [Terms of service](https://www.anthropic.com/legal/consumer-terms), [privacy policy](https://www.anthropic.com/legal/privacy).
+* **OpenAI (ChatGPT)** — `https://api.openai.com`. [Terms of use](https://openai.com/policies/terms-of-use/), [privacy policy](https://openai.com/policies/privacy-policy/).
+* **Google (Gemini)** — `https://generativelanguage.googleapis.com`. [Terms of service](https://policies.google.com/terms), [privacy policy](https://policies.google.com/privacy).
+* **Ollama** — a model running on your own server (`http://localhost:11434` by default). No data leaves your machine and no account or key is needed.
+* **Custom OpenAI-compatible endpoint** — any URL you enter yourself. The data goes wherever you point it, under that operator's terms; if that is a self-hosted model, nothing leaves your infrastructure.
+
+Choosing Ollama or a self-hosted custom endpoint means the chat sends no store data to any third party.
+
+= MCP client identity documents (when an AI app connects) =
+
+When an AI assistant connects to your store, it identifies itself with a Client ID Metadata Document (CIMD) — a URL it publishes, as required by the MCP authorization specification. To show you on the consent screen which app is actually asking for access, the plugin fetches that URL once and caches the result.
+
+**What is sent, and when:** an ordinary HTTP GET to the URL the connecting app supplied, at the moment someone starts a connection. It carries no store data, no personal data and no credentials — only the request itself. The destination is not fixed: it is whichever app you are connecting (for example `https://claude.ai/...` for Claude or `https://chatgpt.com/...` for ChatGPT), so the applicable terms are those of the AI app you chose to connect. If the document cannot be fetched or does not match, the connection is refused.
+
+= Your own store (reachability check) =
+
+The "Connect AI apps" tab reports whether your MCP endpoint is actually reachable and advertising OAuth discovery. To find out, the plugin requests **your own site's** URLs (`/mcp` and `/.well-known/oauth-protected-resource`) over HTTP.
+
+This is not a third-party service: the request goes to your own domain and no data leaves your server's control. It runs only while an administrator is viewing that tab.
+
+= Links on the Connect AI apps tab =
+
+That tab also shows documentation links for Claude, ChatGPT, Cursor and VS Code, and "add to editor" buttons. These are ordinary links and buttons in your browser — the plugin makes no request to those sites, and nothing is sent unless you click through.
 
 == Installation ==
 
@@ -121,16 +159,17 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 
 == Changelog ==
 
+= 1.2.1 =
+* The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.
+* The readme now documents every external service the plugin can contact, what is sent to each and when.
+
 = 1.2.0 =
 * First release in the wordpress.org plugin directory. Updates and language packs now come from WordPress itself.
 * Deleting the plugin removes its tables, options and transients through a standard `uninstall.php`.
-
-= 1.1.1 =
-* German translation (de_DE) for the whole plugin, and the bundled language files now load.
 
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
-= 1.2.0 =
-First release in the wordpress.org plugin directory. Nothing changes for connected assistants.
+= 1.2.1 =
+Housekeeping only: consent-page styles go through the WordPress style queue and the readme documents the external services. Nothing changes for connected assistants.

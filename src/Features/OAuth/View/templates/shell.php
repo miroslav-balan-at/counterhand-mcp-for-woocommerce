@@ -14,15 +14,6 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-/** Cache-busted asset URL; these pages render outside the wp_enqueue pipeline. */
-$counterhand_asset_url = static function ( string $relative_path ): string {
-	return plugins_url( $relative_path, COUNTERHAND_PLUGIN_FILE )
-		. '?v=' . rawurlencode( (string) filemtime( COUNTERHAND_PLUGIN_DIR . '/' . $relative_path ) );
-};
-
-// Tokens first — flow.css consumes the custom properties it defines.
-$counterhand_tokens_url = $counterhand_asset_url( 'assets/shared/tokens.css' );
-$counterhand_css_url    = $counterhand_asset_url( 'assets/oauth/flow.css' );
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -31,10 +22,7 @@ $counterhand_css_url    = $counterhand_asset_url( 'assets/oauth/flow.css' );
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex,nofollow">
 	<title><?php echo esc_html( $page_title . ' — ' . $store_name ); ?></title>
-	<?php // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- Standalone OAuth pages render their own document outside the wp_enqueue pipeline. ?>
-	<link rel="stylesheet" href="<?php echo esc_url( $counterhand_tokens_url ); ?>">
-	<link rel="stylesheet" href="<?php echo esc_url( $counterhand_css_url ); ?>">
-	<?php // phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet ?>
+	<?php wp_print_styles( [ 'counterhand-oauth-flow' ] ); ?>
 </head>
 <body class="counterhand-flow">
 	<header class="counterhand-siteheader">

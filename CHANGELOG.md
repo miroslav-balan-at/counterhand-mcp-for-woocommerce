@@ -2,6 +2,9 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 1.1.1
+* German translation (de_DE) for the whole plugin, and the bundled language files now load.
+
 ## 1.1.0
 * The action log is paginated: 25 calls per page with WordPress's own pagination, instead of stopping silently at the newest 100. The tab also shows the total number of recorded calls.
 * The plugin's admin screens carry the product's mark, and the admin menu icon is the brand glyph in the standard monochrome form WordPress recolours to your admin scheme.

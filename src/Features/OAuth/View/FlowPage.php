@@ -32,6 +32,8 @@ final readonly class FlowPage {
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
 
+		$this->enqueue_styles();
+
 		$body_template = __DIR__ . '/templates/' . $state . '.php';
 		if ( ! is_readable( $body_template ) ) {
 			$body_template = __DIR__ . '/templates/error.php';
@@ -44,6 +46,37 @@ final readonly class FlowPage {
 		$store_host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
 
 		include __DIR__ . '/templates/shell.php';
+	}
+
+	/**
+	 * Queues the flow stylesheets so shell.php can print them.
+	 *
+	 * The dependency on the token sheet is what orders the two: flow.css reads
+	 * the custom properties tokens.css defines. shell.php prints the dependent
+	 * handle by name, which pulls in tokens.css but skips the wp_print_styles
+	 * action — nothing else may inject assets into a consent page.
+	 */
+	private function enqueue_styles(): void {
+		wp_register_style(
+			'counterhand-tokens',
+			plugins_url( 'assets/shared/tokens.css', COUNTERHAND_PLUGIN_FILE ),
+			[],
+			self::asset_version( 'assets/shared/tokens.css' )
+		);
+
+		wp_enqueue_style(
+			'counterhand-oauth-flow',
+			plugins_url( 'assets/oauth/flow.css', COUNTERHAND_PLUGIN_FILE ),
+			[ 'counterhand-tokens' ],
+			self::asset_version( 'assets/oauth/flow.css' )
+		);
+	}
+
+	/** File mtime, so an edited stylesheet is never served from a stale cache. */
+	private static function asset_version( string $relative_path ): string {
+		$mtime = filemtime( COUNTERHAND_PLUGIN_DIR . '/' . $relative_path );
+
+		return false === $mtime ? COUNTERHAND_VERSION : (string) $mtime;
 	}
 
 	/** Renders an error page and terminates the request with an HTTP status. */

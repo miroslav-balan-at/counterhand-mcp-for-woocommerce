@@ -66,14 +66,30 @@ $counterhand_key_hint = $chat_settings->masked_key();
 					</form>
 				<?php elseif ( CoreAiState::NeedsKey === $core_state ) : ?>
 					<p><?php esc_html_e( 'A provider is installed. Add its API key where WordPress keeps every connector key, then come back here.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<?php
+					$counterhand_connector_needs_replacement = [] !== array_filter(
+						$core_connectors,
+						static fn ( CoreConnector $counterhand_connector ): bool => $counterhand_connector->has_key && ! $counterhand_connector->is_connected
+					);
+					?>
 					<ul class="counterhand-connectors">
 						<?php foreach ( $core_connectors as $counterhand_connector ) : ?>
 							<li class="counterhand-connectors__item">
 								<span class="counterhand-connectors__name"><?php echo esc_html( $counterhand_connector->name ); ?></span>
 								<?php if ( $counterhand_connector->is_connected ) : ?>
 									<span class="counterhand-ok"><?php esc_html_e( 'Key accepted.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+								<?php elseif ( $counterhand_connector->has_key ) : ?>
+									<span class="counterhand-fail">
+										<?php
+										printf(
+											/* translators: %s: provider name */
+											esc_html__( 'WordPress has a key saved, but %s rejected it. Replace it in WordPress Settings.', 'counterhand-mcp-for-woocommerce' ),
+											esc_html( $counterhand_connector->name )
+										);
+										?>
+									</span>
 								<?php else : ?>
-									<span class="counterhand-field__hint"><?php esc_html_e( 'No working key yet.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+									<span class="counterhand-field__hint"><?php esc_html_e( 'No key saved yet.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 								<?php endif; ?>
 								<?php if ( '' !== $counterhand_connector->credentials_url ) : ?>
 									<a href="<?php echo esc_url( $counterhand_connector->credentials_url ); ?>" target="_blank" rel="noreferrer noopener">
@@ -85,7 +101,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 					</ul>
 					<div class="counterhand-actions">
 						<a class="button button-primary button-hero" href="<?php echo esc_url( CoreConnector::settings_url() ); ?>">
-							<?php esc_html_e( 'Add the key in WordPress Settings', 'counterhand-mcp-for-woocommerce' ); ?>
+							<?php echo esc_html( $counterhand_connector_needs_replacement ? __( 'Replace the key in WordPress Settings', 'counterhand-mcp-for-woocommerce' ) : __( 'Add the key in WordPress Settings', 'counterhand-mcp-for-woocommerce' ) ); ?>
 						</a>
 					</div>
 					<p class="counterhand-field__hint"><?php esc_html_e( 'WordPress stores and checks the key, not this plugin.', 'counterhand-mcp-for-woocommerce' ); ?></p>

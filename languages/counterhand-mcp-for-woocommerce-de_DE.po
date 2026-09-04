@@ -537,98 +537,98 @@ msgstr "Tausche den Schlüssel oder wechsle den Anbieter an einer einzigen Stell
 msgid "Use WordPress AI"
 msgstr "WordPress AI verwenden"
 
-#: src/Features/Playground/views/partial-model-chooser.php:74
+#: src/Features/Playground/views/partial-model-chooser.php:80
 msgid "Key accepted."
 msgstr "Schlüssel akzeptiert."
 
-#: src/Features/Playground/views/partial-model-chooser.php:80
+#: src/Features/Playground/views/partial-model-chooser.php:96
 msgid "Get a key"
 msgstr "Schlüssel holen"
 
-#: src/Features/Playground/views/partial-model-chooser.php:93
+#: src/Features/Playground/views/partial-model-chooser.php:109
 msgid "Who do you have an account with? One click installs and activates the official provider plugin for it."
 msgstr "Bei wem hast du ein Konto? Ein Klick installiert und aktiviert das offizielle Anbieter-Plugin dafür."
 
-#: src/Features/Playground/views/partial-model-chooser.php:116
+#: src/Features/Playground/views/partial-model-chooser.php:132
 msgid "On WordPress 7.0 or newer, WordPress manages the model and the key for you — this screen offers it automatically after you update."
 msgstr "Ab WordPress 7.0 verwaltet WordPress das Modell und den Schlüssel für dich – dieser Bildschirm bietet das nach dem Update automatisch an."
 
-#: src/Features/Playground/views/partial-model-chooser.php:123
+#: src/Features/Playground/views/partial-model-chooser.php:139
 msgid "Use your own provider account"
 msgstr "Eigenes Anbieterkonto verwenden"
 
-#: src/Features/Playground/views/partial-model-chooser.php:124
+#: src/Features/Playground/views/partial-model-chooser.php:140
 msgid "Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama."
 msgstr "Füge einen API-Schlüssel von Anthropic, OpenAI oder Google ein – oder betreibe ein lokales Modell mit Ollama."
 
-#: src/Features/Playground/views/partial-model-chooser.php:133
+#: src/Features/Playground/views/partial-model-chooser.php:149
 msgid "Provider"
 msgstr "Anbieter"
 
-#: src/Features/Playground/views/partial-model-chooser.php:148
+#: src/Features/Playground/views/partial-model-chooser.php:164
 msgid "Needs an API key"
 msgstr "Benötigt einen API-Schlüssel"
 
-#: src/Features/Playground/views/partial-model-chooser.php:149
+#: src/Features/Playground/views/partial-model-chooser.php:165
 msgid "No key needed"
 msgstr "Kein Schlüssel nötig"
 
-#: src/Features/Playground/views/partial-model-chooser.php:159
+#: src/Features/Playground/views/partial-model-chooser.php:175
 msgid "Model"
 msgstr "Modell"
 
-#: src/Features/Playground/views/partial-model-chooser.php:163
+#: src/Features/Playground/views/partial-model-chooser.php:179
 msgid "e.g. claude-opus-5"
 msgstr "z. B. claude-opus-5"
 
-#: src/Features/Playground/views/partial-model-chooser.php:177
+#: src/Features/Playground/views/partial-model-chooser.php:193
 msgid "Pick from the list or type any model your provider offers."
 msgstr "Wähle aus der Liste oder gib ein beliebiges Modell ein, das dein Anbieter anbietet."
 
-#: src/Features/Playground/views/partial-model-chooser.php:181
+#: src/Features/Playground/views/partial-model-chooser.php:197
 msgid "API key"
 msgstr "API-Schlüssel"
 
 #. translators: %s: masked API key
-#: src/Features/Playground/views/partial-model-chooser.php:185
+#: src/Features/Playground/views/partial-model-chooser.php:201
 #, php-format
 msgid "Saved (%s) — leave blank to keep"
 msgstr "Gespeichert (%s) – leer lassen, um ihn zu behalten"
 
-#: src/Features/Playground/views/partial-model-chooser.php:186
+#: src/Features/Playground/views/partial-model-chooser.php:202
 msgid "Paste your provider API key"
 msgstr "Füge den API-Schlüssel deines Anbieters ein"
 
-#: src/Features/Playground/views/partial-model-chooser.php:192
+#: src/Features/Playground/views/partial-model-chooser.php:208
 msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
 msgstr "Wird in deiner Datenbank gespeichert und nur an den gewählten Anbieter gesendet. Ollama läuft lokal und braucht keinen Schlüssel."
 
-#: src/Features/Playground/views/partial-model-chooser.php:194
+#: src/Features/Playground/views/partial-model-chooser.php:210
 msgid "Get a key:"
 msgstr "Schlüssel holen:"
 
-#: src/Features/Playground/views/partial-model-chooser.php:216
+#: src/Features/Playground/views/partial-model-chooser.php:232
 msgid "Remove the saved key"
 msgstr "Gespeicherten Schlüssel entfernen"
 
-#: src/Features/Playground/views/partial-model-chooser.php:226
+#: src/Features/Playground/views/partial-model-chooser.php:242
 #: src/Shared/Tool/ToolSection.php:33
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: src/Features/Playground/views/partial-model-chooser.php:227
+#: src/Features/Playground/views/partial-model-chooser.php:243
 msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
 msgstr "Nur für einen eigenen OpenAI-kompatiblen Endpunkt. Bei den anderen Anbietern wird das automatisch ausgefüllt."
 
-#: src/Features/Playground/views/partial-model-chooser.php:231
+#: src/Features/Playground/views/partial-model-chooser.php:247
 msgid "Base URL"
 msgstr "Basis-URL"
 
-#: src/Features/Playground/views/partial-model-chooser.php:241
+#: src/Features/Playground/views/partial-model-chooser.php:257
 msgid "Connect model"
 msgstr "Modell verbinden"
 
-#: src/Features/Playground/views/partial-model-chooser.php:244
+#: src/Features/Playground/views/partial-model-chooser.php:260
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr "Vor dem Speichern senden wir eine winzige Testnachricht – so fällt ein falscher Schlüssel schon hier auf und nicht erst bei deiner ersten Frage."
 
@@ -1620,14 +1620,24 @@ msgstr "Unterstützen"
 msgid "A provider is installed. Add its API key where WordPress keeps every connector key, then come back here."
 msgstr "Ein Anbieter ist installiert. Hinterlege seinen API-Schlüssel dort, wo WordPress alle Connector-Schlüssel aufbewahrt, und komm dann hierher zurück."
 
-#: src/Features/Playground/views/partial-model-chooser.php:76
-msgid "No working key yet."
-msgstr "Noch kein funktionierender Schlüssel."
-
-#: src/Features/Playground/views/partial-model-chooser.php:88
+#: src/Features/Playground/views/partial-model-chooser.php:104
 msgid "Add the key in WordPress Settings"
 msgstr "Schlüssel in den WordPress-Einstellungen hinterlegen"
 
-#: src/Features/Playground/views/partial-model-chooser.php:91
+#: src/Features/Playground/views/partial-model-chooser.php:107
 msgid "WordPress stores and checks the key, not this plugin."
 msgstr "WordPress speichert und prüft den Schlüssel, nicht dieses Plugin."
+
+#. translators: %s: provider name
+#: src/Features/Playground/views/partial-model-chooser.php:86
+#, php-format
+msgid "WordPress has a key saved, but %s rejected it. Replace it in WordPress Settings."
+msgstr "WordPress hat einen Schlüssel gespeichert, aber %s hat ihn abgelehnt. Ersetze ihn in den WordPress-Einstellungen."
+
+#: src/Features/Playground/views/partial-model-chooser.php:92
+msgid "No key saved yet."
+msgstr "Noch kein Schlüssel hinterlegt."
+
+#: src/Features/Playground/views/partial-model-chooser.php:104
+msgid "Replace the key in WordPress Settings"
+msgstr "Schlüssel in den WordPress-Einstellungen ersetzen"

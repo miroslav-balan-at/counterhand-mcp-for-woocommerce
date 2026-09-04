@@ -139,6 +139,8 @@ namespace WordPress\AiClient {
 		public function hasProvider( string $id ): bool {}
 
 		public function isProviderConfigured( string $id ): bool {}
+
+		public function getProviderRequestAuthentication( string $id ): ?object {}
 	}
 
 	class AiClient {

@@ -21,6 +21,7 @@ final readonly class CoreConnector {
 		public string $id,
 		public string $name,
 		public string $credentials_url,
+		public bool $has_key,
 		public bool $is_connected,
 	) {}
 
@@ -50,6 +51,7 @@ final readonly class CoreConnector {
 				id: (string) $id,
 				name: (string) ( $data['name'] ?? $id ),
 				credentials_url: (string) ( $auth['credentials_url'] ?? '' ),
+				has_key: self::client_holds_key( (string) $id ),
 				is_connected: self::provider_accepts_key( (string) $id ),
 			);
 		}
@@ -63,21 +65,52 @@ final readonly class CoreConnector {
 	}
 
 	/**
-	 * Whether the AI client accepts the stored key, which is the same signal
-	 * core's own Connectors screen shows as "connected". Asked of the client
-	 * rather than the option so the credential never passes through here.
+	 * Whether core has handed the AI client a credential for this provider.
+	 * Core's own screen calls this "connected", but it only means a key is
+	 * saved — asked of the client, so the key itself never passes through here.
 	 */
-	private static function provider_accepts_key( string $id ): bool {
-		if ( ! class_exists( \WordPress\AiClient\AiClient::class ) ) {
+	private static function client_holds_key( string $id ): bool {
+		$registry = self::registry();
+
+		if ( null === $registry || ! $registry->hasProvider( $id ) ) {
 			return false;
 		}
 
 		try {
-			$registry = \WordPress\AiClient\AiClient::defaultRegistry();
-
-			return $registry->hasProvider( $id ) && $registry->isProviderConfigured( $id );
+			return null !== $registry->getProviderRequestAuthentication( $id );
 		} catch ( \Throwable ) {
 			return false;
+		}
+	}
+
+	/**
+	 * Whether the provider actually accepts that key. The client checks by
+	 * listing the provider's models, so a revoked or mistyped key reports
+	 * false here while core's screen still shows it as saved.
+	 */
+	private static function provider_accepts_key( string $id ): bool {
+		$registry = self::registry();
+
+		if ( null === $registry || ! $registry->hasProvider( $id ) ) {
+			return false;
+		}
+
+		try {
+			return $registry->isProviderConfigured( $id );
+		} catch ( \Throwable ) {
+			return false;
+		}
+	}
+
+	private static function registry(): ?\WordPress\AiClient\ProviderRegistry {
+		if ( ! class_exists( \WordPress\AiClient\AiClient::class ) ) {
+			return null;
+		}
+
+		try {
+			return \WordPress\AiClient\AiClient::defaultRegistry();
+		} catch ( \Throwable ) {
+			return null;
 		}
 	}
 }

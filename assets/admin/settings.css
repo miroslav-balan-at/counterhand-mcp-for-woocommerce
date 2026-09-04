@@ -260,6 +260,16 @@
 	color: var(--counterhand-text);
 }
 
+.counterhand-connectors .counterhand-ok {
+	color: var(--counterhand-success-text);
+	font-weight: 600;
+}
+
+.counterhand-connectors .counterhand-fail {
+	color: var(--counterhand-error);
+	font-weight: 600;
+}
+
 /* Micro label ------------------------------------------------------------ */
 
 .counterhand-label {

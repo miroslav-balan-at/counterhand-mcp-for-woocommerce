@@ -47,6 +47,7 @@ final class CoreConnectorTest extends TestCase {
 		self::assertSame( 'anthropic', $connectors[0]->id );
 		self::assertSame( 'Anthropic', $connectors[0]->name );
 		self::assertSame( 'https://platform.claude.com/settings/keys', $connectors[0]->credentials_url );
+		self::assertFalse( $connectors[0]->has_key );
 		self::assertFalse( $connectors[0]->is_connected );
 	}
 

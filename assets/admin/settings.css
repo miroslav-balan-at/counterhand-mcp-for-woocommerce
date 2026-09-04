@@ -50,6 +50,38 @@
 	font-size: 14px;
 }
 
+/*
+ * Closing note under the client grids. It is a page-level footnote, not a
+ * section intro, so it clears the grid with real space and a hairline rule
+ * instead of reusing the subtitle's negative top margin, which pulled it up
+ * flush against the last card.
+ */
+.counterhand-connect-note {
+	max-width: var(--counterhand-prose);
+	margin-top: var(--counterhand-gap-large);
+	padding-top: var(--counterhand-gap);
+	border-top: 1px solid var(--counterhand-border);
+	color: var(--counterhand-text-muted);
+	font-size: 13px;
+}
+
+.counterhand-connect-note p {
+	margin: 0 0 6px;
+}
+
+.counterhand-connect-note p:last-child {
+	margin-bottom: 0;
+}
+
+.counterhand-connect-note code {
+	padding: 2px 6px;
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius);
+	font-size: 12px;
+	word-break: break-all;
+}
+
 /* Card lists ---------------------------------------------------------------
  * Removing the column cap is only half of using the width: a stack of cards on
  * a 2560px monitor is a control on the left with two thousand pixels of nothing
@@ -512,20 +544,44 @@
 	margin: var(--counterhand-gap-small) 0 0;
 }
 
+/*
+ * Code and button share a row like the store-address field, so the button
+ * sits beside the command and never overlays it — a long command scrolls
+ * inside its own panel instead of running under the button.
+ */
+.counterhand-snippet__row {
+	display: flex;
+	gap: var(--counterhand-gap-small);
+	align-items: flex-start;
+}
+
 .counterhand-snippet pre {
-	background: var(--counterhand-surface-inverse);
-	color: var(--counterhand-text-inverse);
-	/* Room on the right so the copy button never covers the text. */
-	padding: 1em 6.5em 1em 1.25em;
+	/* Same light code surface as the store-address panel, so the two code
+	   blocks on this tab read as one style rather than dark vs. light. */
+	flex: 1 1 auto;
+	min-width: 0;
+	background: var(--counterhand-surface-sunken);
+	color: var(--counterhand-text);
+	border: 1px solid var(--counterhand-border);
+	padding: 1em 1.25em;
 	overflow-x: auto;
 	border-radius: var(--counterhand-radius);
 	margin: 0;
 }
 
-.counterhand-snippet .counterhand-copy {
-	position: absolute;
-	right: 8px;
-	bottom: 8px;
+/*
+ * The inner <code> would otherwise get WordPress's own grey code background,
+ * nesting a second pill inside the panel. Let the <pre> supply the surface.
+ */
+.counterhand-snippet pre code {
+	background: none;
+	padding: 0;
+	font-size: inherit;
+	color: inherit;
+}
+
+.counterhand-snippet__row .counterhand-copy {
+	flex: 0 0 auto;
 }
 
 /* Steps ------------------------------------------------------------------ */

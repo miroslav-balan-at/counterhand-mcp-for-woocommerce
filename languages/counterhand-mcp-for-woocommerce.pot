@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-04T18:29:00+00:00\n"
+"POT-Creation-Date: 2026-09-04T18:56:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -942,7 +942,7 @@ msgid "Use store tools inside the Cursor editor."
 msgstr ""
 
 #: src/Features/Settings/McpClient.php:104
-msgid "Press the button below — Cursor opens and asks you to confirm the server."
+msgid "Press Add to Cursor — Cursor opens and asks you to confirm the server."
 msgstr ""
 
 #: src/Features/Settings/McpClient.php:105
@@ -971,7 +971,7 @@ msgid "Use store tools from Copilot Chat in Visual Studio Code."
 msgstr ""
 
 #: src/Features/Settings/McpClient.php:131
-msgid "Press the button below — VS Code opens and asks you to confirm the server."
+msgid "Press Add to VS Code — VS Code opens and asks you to confirm the server."
 msgstr ""
 
 #: src/Features/Settings/McpClient.php:133
@@ -1139,12 +1139,12 @@ msgid "Official setup documentation"
 msgstr ""
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:149
+#: src/Features/Settings/views/tab-connect.php:150
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:153
+#: src/Features/Settings/views/tab-connect.php:155
 msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
 msgstr ""
 

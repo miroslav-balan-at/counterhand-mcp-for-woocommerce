@@ -101,7 +101,7 @@ final readonly class McpClient {
 				blurb: __( 'Use store tools inside the Cursor editor.', 'counterhand-mcp-for-woocommerce' ),
 				group: ClientGroup::Local,
 				steps: [
-					__( 'Press the button below — Cursor opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Press Add to Cursor — Cursor opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Confirm, then approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'If your browser blocks the link, paste the JSON below into your mcp.json instead.', 'counterhand-mcp-for-woocommerce' ),
 				],
@@ -128,7 +128,7 @@ final readonly class McpClient {
 				blurb: __( 'Use store tools from Copilot Chat in Visual Studio Code.', 'counterhand-mcp-for-woocommerce' ),
 				group: ClientGroup::Local,
 				steps: [
-					__( 'Press the button below — VS Code opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Press Add to VS Code — VS Code opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Confirm, then approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Manage it later with "MCP: List Servers" from the Command Palette.', 'counterhand-mcp-for-woocommerce' ),
 				],

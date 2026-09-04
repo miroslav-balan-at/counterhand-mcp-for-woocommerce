@@ -121,11 +121,13 @@ $counterhand_ordered_groups = array_values(
 						<?php if ( '' !== $counterhand_client->snippet ) : ?>
 							<div class="counterhand-snippet">
 								<span class="counterhand-label"><?php echo esc_html( $counterhand_client->snippet_label ); ?></span>
-								<pre><code><?php echo esc_html( $counterhand_client->snippet ); ?></code></pre>
-								<button type="button" class="button counterhand-copy" data-copy="<?php echo esc_attr( $counterhand_client->snippet ); ?>"
-									data-copied-label="<?php esc_attr_e( 'Copied!', 'counterhand-mcp-for-woocommerce' ); ?>">
-									<?php esc_html_e( 'Copy', 'counterhand-mcp-for-woocommerce' ); ?>
-								</button>
+								<div class="counterhand-snippet__row">
+									<pre><code><?php echo esc_html( $counterhand_client->snippet ); ?></code></pre>
+									<button type="button" class="button counterhand-copy" data-copy="<?php echo esc_attr( $counterhand_client->snippet ); ?>"
+										data-copied-label="<?php esc_attr_e( 'Copied!', 'counterhand-mcp-for-woocommerce' ); ?>">
+										<?php esc_html_e( 'Copy', 'counterhand-mcp-for-woocommerce' ); ?>
+									</button>
+								</div>
 							</div>
 						<?php endif; ?>
 
@@ -142,16 +144,18 @@ $counterhand_ordered_groups = array_values(
 		</div>
 	<?php endforeach; ?>
 
-	<p class="counterhand-subtitle">
-		<?php
-		printf(
-			/* translators: %s: fallback REST URL */
-			esc_html__( 'If your host breaks pretty permalinks, the same endpoint also answers at %s.', 'counterhand-mcp-for-woocommerce' ),
-			'<code>' . esc_html( $fallback_url ) . '</code>'
-		);
-		?>
-		<?php esc_html_e( 'Approved apps appear on the Connections tab, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?>
-	</p>
+	<footer class="counterhand-connect-note">
+		<p>
+			<?php
+			printf(
+				/* translators: %s: fallback REST URL */
+				esc_html__( 'If your host breaks pretty permalinks, the same endpoint also answers at %s.', 'counterhand-mcp-for-woocommerce' ),
+				'<code>' . esc_html( $fallback_url ) . '</code>'
+			);
+			?>
+		</p>
+		<p><?php esc_html_e( 'Approved apps appear on the Connections tab, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+	</footer>
 
 	<span class="screen-reader-text" role="status" id="counterhand-copy-status"></span>
 </div>

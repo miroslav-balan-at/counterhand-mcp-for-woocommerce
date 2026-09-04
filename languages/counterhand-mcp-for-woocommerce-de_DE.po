@@ -905,10 +905,6 @@ msgstr "Cursor"
 msgid "Use store tools inside the Cursor editor."
 msgstr "Nutze die Shop-Tools direkt im Cursor-Editor."
 
-#: src/Features/Settings/McpClient.php:104
-msgid "Press the button below — Cursor opens and asks you to confirm the server."
-msgstr "Klicke auf die Schaltfläche unten — Cursor öffnet sich und bittet dich, den Server zu bestätigen."
-
 #: src/Features/Settings/McpClient.php:105
 #: src/Features/Settings/McpClient.php:132
 msgid "Confirm, then approve the scopes on this store's consent screen."
@@ -933,10 +929,6 @@ msgstr "VS Code"
 #: src/Features/Settings/McpClient.php:128
 msgid "Use store tools from Copilot Chat in Visual Studio Code."
 msgstr "Nutze die Shop-Tools über Copilot Chat in Visual Studio Code."
-
-#: src/Features/Settings/McpClient.php:131
-msgid "Press the button below — VS Code opens and asks you to confirm the server."
-msgstr "Klicke auf die Schaltfläche unten — VS Code öffnet sich und bittet dich, den Server zu bestätigen."
 
 #: src/Features/Settings/McpClient.php:133
 msgid "Manage it later with \"MCP: List Servers\" from the Command Palette."
@@ -1095,12 +1087,12 @@ msgid "Official setup documentation"
 msgstr "Offizielle Einrichtungsdokumentation"
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:149
+#: src/Features/Settings/views/tab-connect.php:150
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
 msgstr "Falls dein Hoster sprechende Permalinks nicht unterstützt, ist derselbe Endpunkt auch unter %s erreichbar."
 
-#: src/Features/Settings/views/tab-connect.php:153
+#: src/Features/Settings/views/tab-connect.php:155
 msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
 msgstr "Genehmigte Apps erscheinen im Tab \"Verbindungen\", wo du jede davon widerrufen kannst."
 
@@ -1641,3 +1633,11 @@ msgstr "Noch kein Schlüssel hinterlegt."
 #: src/Features/Playground/views/partial-model-chooser.php:104
 msgid "Replace the key in WordPress Settings"
 msgstr "Schlüssel in den WordPress-Einstellungen ersetzen"
+
+#: src/Features/Settings/McpClient.php:104
+msgid "Press Add to Cursor — Cursor opens and asks you to confirm the server."
+msgstr "Klicke auf „Zu Cursor hinzufügen“ — Cursor öffnet sich und bittet dich, den Server zu bestätigen."
+
+#: src/Features/Settings/McpClient.php:131
+msgid "Press Add to VS Code — VS Code opens and asks you to confirm the server."
+msgstr "Klicke auf „Zu VS Code hinzufügen“ — VS Code öffnet sich und bittet dich, den Server zu bestätigen."

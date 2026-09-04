@@ -11,6 +11,9 @@ defined( 'ABSPATH' ) || exit;
  *
  * Hardening (SSRF / open-redirect):
  * - client_id must be HTTPS, without credentials, fragment or dot-segments
+ * - the fetch goes through wp_safe_remote_get(), so core's URL validation
+ *   refuses private and loopback hosts and non-standard ports; a local
+ *   development client opts back in with core's http_request_host_is_external
  * - the fetched document's client_id must equal the URL it was fetched from
  * - redirect URIs must be HTTPS or loopback-HTTP
  */
@@ -29,7 +32,7 @@ final readonly class ClientMetadataResolver {
 			return new ClientMetadata( $client_id_url, $cached['client_name'], $cached['redirect_uris'] );
 		}
 
-		$response = wp_remote_get(
+		$response = wp_safe_remote_get(
 			$client_id_url,
 			[
 				'timeout'     => 10,

@@ -91,7 +91,11 @@ Choosing Ollama or a self-hosted custom endpoint means the chat sends no store d
 
 When an AI assistant connects to your store, it identifies itself with a Client ID Metadata Document (CIMD) — a URL it publishes, as required by the MCP authorization specification. To show you on the consent screen which app is actually asking for access, the plugin fetches that URL once and caches the result.
 
-**What is sent, and when:** an ordinary HTTP GET to the URL the connecting app supplied, at the moment someone starts a connection. It carries no store data, no personal data and no credentials — only the request itself. The destination is not fixed: it is whichever app you are connecting (for example `https://claude.ai/...` for Claude or `https://chatgpt.com/...` for ChatGPT), so the applicable terms are those of the AI app you chose to connect. If the document cannot be fetched or does not match, the connection is refused.
+**What is sent, and when:** an ordinary HTTP GET to the URL the connecting app supplied, at the moment someone starts a connection. It carries no store data, no personal data and no credentials — only the request itself. The URL must be HTTPS, and the request goes through WordPress's own safe HTTP function, so private-network and loopback addresses are refused. The destination is not fixed: it is whichever app you are connecting (for example `https://claude.ai/...` for Claude or `https://chatgpt.com/...` for ChatGPT), so the applicable terms are those of the AI app you chose to connect. If the document cannot be fetched or does not match, the connection is refused.
+
+= WordPress.org (installing an AI provider plugin) =
+
+On WordPress 7.0 and later, the Chat tab can install the official "AI Provider for Anthropic", "AI Provider for OpenAI" or "AI Provider for Google" plugin for you. This happens only when an administrator with permission to install plugins clicks the matching button. WordPress then fetches the plugin from the WordPress.org plugin directory the same way Plugins → Add New does, subject to the [WordPress.org privacy policy](https://wordpress.org/about/privacy/). No store data is sent; the API key for the provider is entered afterwards on WordPress's own Settings → Connectors screen.
 
 = Your own store (reachability check) =
 
@@ -162,6 +166,9 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 == Changelog ==
 
 = 1.2.2 =
+* The connecting app's identity document is fetched through WordPress's safe HTTP function, which refuses private-network and loopback addresses.
+* Uninstall no longer runs a raw query against the options table; the plugin's short-lived transients expire on their own and WordPress's daily cleanup removes them.
+* The readme discloses that the Chat tab can install the official AI Provider plugins from WordPress.org on request.
 * On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
 
 = 1.2.1 =

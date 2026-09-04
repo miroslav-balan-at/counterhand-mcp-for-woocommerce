@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, ai, claude, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -161,17 +161,16 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 
 == Changelog ==
 
+= 1.2.2 =
+* On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
+
 = 1.2.1 =
 * The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.
 * The readme now documents every external service the plugin can contact, what is sent to each and when.
-
-= 1.2.0 =
-* First release in the wordpress.org plugin directory. Updates and language packs now come from WordPress itself.
-* Deleting the plugin removes its tables, options and transients through a standard `uninstall.php`.
 
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
-= 1.2.1 =
-Housekeeping only: consent-page styles go through the WordPress style queue and the readme documents the external services. Nothing changes for connected assistants.
+= 1.2.2 =
+Connector keys for the WordPress-managed model are now entered on the WordPress Settings → Connectors screen only; the plugin no longer touches them. Nothing changes for connected assistants.

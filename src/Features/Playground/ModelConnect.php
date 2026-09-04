@@ -29,7 +29,6 @@ final readonly class ModelConnect {
 		add_action( 'admin_post_counterhand_save_chat', [ $this, 'handle_save' ] );
 		add_action( 'admin_post_counterhand_install_provider', [ $this, 'handle_install_provider' ] );
 		add_action( 'wp_ajax_counterhand_install_provider', [ $this, 'handle_install_provider_ajax' ] );
-		add_action( 'admin_post_counterhand_save_connector_key', [ $this, 'handle_save_connector_key' ] );
 	}
 
 	/** Which chooser card to show for the WordPress-managed path; null below 7.0. */
@@ -50,47 +49,6 @@ final readonly class ModelConnect {
 	/** @return list<CoreConnector> */
 	public function connectors(): array {
 		return CoreConnector::ai_providers();
-	}
-
-	/**
-	 * Stores the key in WordPress's own connector setting.
-	 *
-	 * Core hands stored keys to the AI client on the next request, so the
-	 * redirect re-evaluates core_state(): the chooser then shows either the
-	 * ready card or, when the key was refused, says so.
-	 */
-	public function handle_save_connector_key(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
-		}
-
-		check_admin_referer( 'counterhand_save_connector_key' );
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified above.
-		$connector = CoreConnector::find( sanitize_key( wp_unslash( $_POST['counterhand_connector_id'] ?? '' ) ) );
-		$key       = sanitize_text_field( wp_unslash( $_POST['counterhand_connector_key'] ?? '' ) );
-		// phpcs:enable
-
-		if ( null === $connector ) {
-			$this->redirect_back( new ConnectResult( false, __( 'Unknown provider.', 'counterhand-mcp-for-woocommerce' ) ) );
-		}
-
-		if ( '' === $key ) {
-			$this->redirect_back( new ConnectResult( false, __( 'Paste the API key first.', 'counterhand-mcp-for-woocommerce' ) ) );
-		}
-
-		$connector->save_key( $key );
-
-		$this->redirect_back(
-			new ConnectResult(
-				true,
-				sprintf(
-					/* translators: %s: provider name */
-					__( 'Saved your %s key.', 'counterhand-mcp-for-woocommerce' ),
-					$connector->name
-				)
-			)
-		);
 	}
 
 	/** No-JS fallback for the install buttons; the AJAX path is the primary one. */

@@ -9,15 +9,16 @@ use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
 
 /**
- * The chooser writes the key into core's own setting, so the filtering rules
- * that decide which connectors are offered are pinned here.
+ * The chooser only lists core's connectors and links to core's own screen, so
+ * what is pinned here is which connectors are offered — and that the plugin
+ * never touches the connector's key option to find out.
  */
 final class CoreConnectorTest extends TestCase {
 
 	/** @param array<string, mixed> $connectors */
-	private function given_connectors( array $connectors, string $stored_key = '' ): void {
+	private function given_connectors( array $connectors ): void {
 		Functions\when( 'wp_get_connectors' )->justReturn( $connectors );
-		Functions\when( 'get_option' )->justReturn( $stored_key );
+		Functions\when( 'admin_url' )->alias( static fn ( string $path ): string => 'https://store.test/wp-admin/' . $path );
 	}
 
 	/** @param array<string, mixed> $overrides */
@@ -44,16 +45,16 @@ final class CoreConnectorTest extends TestCase {
 
 		self::assertCount( 1, $connectors );
 		self::assertSame( 'anthropic', $connectors[0]->id );
-		self::assertSame( 'connectors_ai_anthropic_api_key', $connectors[0]->setting_name );
+		self::assertSame( 'Anthropic', $connectors[0]->name );
 		self::assertSame( 'https://platform.claude.com/settings/keys', $connectors[0]->credentials_url );
-		self::assertFalse( $connectors[0]->has_key );
 		self::assertFalse( $connectors[0]->is_connected );
 	}
 
-	public function test_a_stored_key_is_detected(): void {
-		$this->given_connectors( [ 'anthropic' => $this->anthropic() ], 'sk-ant-stored' );
+	public function test_never_reads_the_connector_key_option(): void {
+		Functions\expect( 'get_option' )->never();
+		$this->given_connectors( [ 'anthropic' => $this->anthropic() ] );
 
-		self::assertTrue( CoreConnector::ai_providers()[0]->has_key );
+		self::assertCount( 1, CoreConnector::ai_providers() );
 	}
 
 	public function test_inactive_provider_plugins_are_skipped(): void {
@@ -64,7 +65,7 @@ final class CoreConnectorTest extends TestCase {
 		self::assertSame( [], CoreConnector::ai_providers() );
 	}
 
-	public function test_connectors_without_a_key_setting_are_skipped(): void {
+	public function test_connectors_without_api_key_authentication_are_skipped(): void {
 		$this->given_connectors(
 			[ 'local' => $this->anthropic( [ 'authentication' => [ 'method' => 'none' ] ] ) ]
 		);
@@ -78,16 +79,15 @@ final class CoreConnectorTest extends TestCase {
 		self::assertSame( [], CoreConnector::ai_providers() );
 	}
 
-	public function test_find_returns_null_for_an_unknown_id(): void {
-		$this->given_connectors( [ 'anthropic' => $this->anthropic() ] );
-
-		self::assertNotNull( CoreConnector::find( 'anthropic' ) );
-		self::assertNull( CoreConnector::find( 'not-a-provider' ) );
-	}
-
 	public function test_no_connectors_when_core_registers_none(): void {
 		$this->given_connectors( [] );
 
 		self::assertSame( [], CoreConnector::ai_providers() );
+	}
+
+	public function test_settings_url_is_core_connectors_screen(): void {
+		$this->given_connectors( [] );
+
+		self::assertSame( 'https://store.test/wp-admin/options-connectors.php', CoreConnector::settings_url() );
 	}
 }

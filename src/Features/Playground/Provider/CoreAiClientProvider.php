@@ -109,7 +109,7 @@ final readonly class CoreAiClientProvider implements ProviderInterface {
 		return true;
 	}
 
-	/** Empty: the key is entered on our own chooser, into core's setting. */
+	/** Empty: the chooser sends the admin to core's Connectors screen instead. */
 	public function key_url(): string {
 		return '';
 	}

@@ -9,23 +9,22 @@ defined( 'ABSPATH' ) || exit;
 /**
  * One AI provider registered with WordPress 7.0's Connectors API.
  *
- * Wraps the public wp_get_connectors() data so the key can be entered here
- * rather than sending the admin off to Settings → Connectors. The key still
- * lands in core's own registered setting, so it stays shared with every other
- * plugin and this one never keeps a copy.
+ * Read-only view over the public wp_get_connectors() data, so the chooser can
+ * name the providers the site has and say which of them WordPress already
+ * accepts a key for. The key itself is entered, stored and validated on
+ * core's own Settings → Connectors screen; this plugin never reads or writes
+ * the connector's credential.
  */
 final readonly class CoreConnector {
 
 	public function __construct(
 		public string $id,
 		public string $name,
-		public string $setting_name,
 		public string $credentials_url,
-		public bool $has_key,
 		public bool $is_connected,
 	) {}
 
-	/** Active AI providers whose key WordPress stores. */
+	/** Active AI providers WordPress can hold a key for. */
 	public static function ai_providers(): array {
 		if ( ! function_exists( 'wp_get_connectors' ) ) {
 			return [];
@@ -40,13 +39,6 @@ final readonly class CoreConnector {
 				continue;
 			}
 
-			$setting_name = (string) ( $auth['setting_name'] ?? '' );
-
-			// No setting means core has no key to manage for this provider.
-			if ( '' === $setting_name ) {
-				continue;
-			}
-
 			// Only providers whose plugin is actually active can be configured.
 			$is_active = $data['plugin']['is_active'] ?? null;
 
@@ -57,9 +49,7 @@ final readonly class CoreConnector {
 			$connectors[] = new self(
 				id: (string) $id,
 				name: (string) ( $data['name'] ?? $id ),
-				setting_name: $setting_name,
 				credentials_url: (string) ( $auth['credentials_url'] ?? '' ),
-				has_key: self::key_is_set( $setting_name, $auth ),
 				is_connected: self::provider_accepts_key( (string) $id ),
 			);
 		}
@@ -67,25 +57,15 @@ final readonly class CoreConnector {
 		return $connectors;
 	}
 
-	public static function find( string $id ): ?self {
-		foreach ( self::ai_providers() as $connector ) {
-			if ( $connector->id === $id ) {
-				return $connector;
-			}
-		}
-
-		return null;
-	}
-
-	/** Writes to core's registered setting — the same place its own screen writes. */
-	public function save_key( string $key ): void {
-		update_option( $this->setting_name, $key );
+	/** Core's own screen for entering and rotating connector keys. */
+	public static function settings_url(): string {
+		return admin_url( 'options-connectors.php' );
 	}
 
 	/**
 	 * Whether the AI client accepts the stored key, which is the same signal
-	 * core's own Connectors screen shows as "connected". Distinguishes a key
-	 * that is merely present from one that actually works.
+	 * core's own Connectors screen shows as "connected". Asked of the client
+	 * rather than the option so the credential never passes through here.
 	 */
 	private static function provider_accepts_key( string $id ): bool {
 		if ( ! class_exists( \WordPress\AiClient\AiClient::class ) ) {
@@ -99,28 +79,5 @@ final readonly class CoreConnector {
 		} catch ( \Throwable ) {
 			return false;
 		}
-	}
-
-	/**
-	 * Mirrors core's env → constant → database precedence. Core's own resolver
-	 * is a private function, so the check is repeated here from the public
-	 * connector data rather than called.
-	 *
-	 * @param array<string, mixed> $auth
-	 */
-	private static function key_is_set( string $setting_name, array $auth ): bool {
-		$env_var = (string) ( $auth['env_var_name'] ?? '' );
-
-		if ( '' !== $env_var && '' !== (string) getenv( $env_var ) ) {
-			return true;
-		}
-
-		$constant = (string) ( $auth['constant_name'] ?? '' );
-
-		if ( '' !== $constant && defined( $constant ) && '' !== (string) constant( $constant ) ) {
-			return true;
-		}
-
-		return '' !== (string) get_option( $setting_name, '' );
 	}
 }

@@ -21,6 +21,7 @@
 declare( strict_types=1 );
 
 use Counterhand\Features\Playground\CoreAiState;
+use Counterhand\Features\Playground\CoreConnector;
 use Counterhand\Features\Playground\ProviderPlugin;
 use Counterhand\Features\Playground\Provider\CoreAiClientProvider;
 use Counterhand\Features\Playground\Provider\OpenAiCompatibleProvider;
@@ -64,55 +65,30 @@ $counterhand_key_hint = $chat_settings->masked_key();
 						</div>
 					</form>
 				<?php elseif ( CoreAiState::NeedsKey === $core_state ) : ?>
-					<?php foreach ( $core_connectors as $counterhand_connector ) : ?>
-						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-field">
-							<input type="hidden" name="action" value="counterhand_save_connector_key">
-							<input type="hidden" name="counterhand_connector_id" value="<?php echo esc_attr( $counterhand_connector->id ); ?>">
-							<?php wp_nonce_field( 'counterhand_save_connector_key' ); ?>
-
-							<label class="counterhand-label" for="counterhand-key-<?php echo esc_attr( $counterhand_connector->id ); ?>">
-								<?php
-								printf(
-									/* translators: %s: provider name */
-									esc_html__( '%s API key', 'counterhand-mcp-for-woocommerce' ),
-									esc_html( $counterhand_connector->name )
-								);
-								?>
-							</label>
-
-							<div class="counterhand-endpoint-row">
-								<input type="password" class="regular-text" autocomplete="off"
-									id="counterhand-key-<?php echo esc_attr( $counterhand_connector->id ); ?>"
-									name="counterhand_connector_key"
-									placeholder="<?php echo esc_attr( $counterhand_connector->has_key ? __( 'A key is saved — paste a new one to replace it', 'counterhand-mcp-for-woocommerce' ) : __( 'Paste your API key', 'counterhand-mcp-for-woocommerce' ) ); ?>">
-								<button type="submit" class="button button-primary"><?php esc_html_e( 'Save key', 'counterhand-mcp-for-woocommerce' ); ?></button>
-							</div>
-
-							<p class="counterhand-field__hint">
-								<?php if ( $counterhand_connector->has_key && ! $counterhand_connector->is_connected ) : ?>
-									<span class="counterhand-fail">
-										<?php
-										printf(
-											/* translators: %s: provider name */
-											esc_html__( '%s did not accept the stored key. Paste a different one.', 'counterhand-mcp-for-woocommerce' ),
-											esc_html( $counterhand_connector->name )
-										);
-										?>
-									</span>
-									<br>
-								<?php elseif ( $counterhand_connector->is_connected ) : ?>
+					<p><?php esc_html_e( 'A provider is installed. Add its API key where WordPress keeps every connector key, then come back here.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<ul class="counterhand-connectors">
+						<?php foreach ( $core_connectors as $counterhand_connector ) : ?>
+							<li class="counterhand-connectors__item">
+								<span class="counterhand-connectors__name"><?php echo esc_html( $counterhand_connector->name ); ?></span>
+								<?php if ( $counterhand_connector->is_connected ) : ?>
 									<span class="counterhand-ok"><?php esc_html_e( 'Key accepted.', 'counterhand-mcp-for-woocommerce' ); ?></span>
-									<br>
+								<?php else : ?>
+									<span class="counterhand-field__hint"><?php esc_html_e( 'No working key yet.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 								<?php endif; ?>
-								<?php esc_html_e( 'WordPress stores it, not this plugin.', 'counterhand-mcp-for-woocommerce' ); ?>
 								<?php if ( '' !== $counterhand_connector->credentials_url ) : ?>
 									<a href="<?php echo esc_url( $counterhand_connector->credentials_url ); ?>" target="_blank" rel="noreferrer noopener">
 										<?php esc_html_e( 'Get a key', 'counterhand-mcp-for-woocommerce' ); ?> ↗
 									</a>
 								<?php endif; ?>
-							</p>
-						</form>
-					<?php endforeach; ?>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+					<div class="counterhand-actions">
+						<a class="button button-primary button-hero" href="<?php echo esc_url( CoreConnector::settings_url() ); ?>">
+							<?php esc_html_e( 'Add the key in WordPress Settings', 'counterhand-mcp-for-woocommerce' ); ?>
+						</a>
+					</div>
+					<p class="counterhand-field__hint"><?php esc_html_e( 'WordPress stores and checks the key, not this plugin.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 				<?php else : ?>
 					<p><?php esc_html_e( 'Who do you have an account with? One click installs and activates the official provider plugin for it.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"

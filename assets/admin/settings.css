@@ -239,6 +239,27 @@
 	font-weight: 700;
 }
 
+/* Connector list: which providers WordPress holds a key for, and whether it works. */
+.counterhand-connectors {
+	margin: 0 0 var(--counterhand-gap);
+	padding: 0;
+	list-style: none;
+	font-size: 13px;
+}
+
+.counterhand-connectors__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--counterhand-gap-small);
+	padding: 4px 0;
+}
+
+.counterhand-connectors__name {
+	font-weight: 600;
+	color: var(--counterhand-text);
+}
+
 /* Micro label ------------------------------------------------------------ */
 
 .counterhand-label {

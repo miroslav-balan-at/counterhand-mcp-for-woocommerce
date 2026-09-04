@@ -2,6 +2,10 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 1.2.0
+* First release in the wordpress.org plugin directory. Updates and language packs now come from WordPress itself.
+* Deleting the plugin removes its tables, options and transients through a standard `uninstall.php`.
+
 ## 1.1.1
 * German translation (de_DE) for the whole plugin, and the bundled language files now load.
 

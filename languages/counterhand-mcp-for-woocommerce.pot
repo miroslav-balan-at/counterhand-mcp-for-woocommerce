@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Counterhand MCP for WooCommerce 1.2.1\n"
+"Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-02T19:07:17+00:00\n"
+"POT-Creation-Date: 2026-09-04T17:48:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -296,62 +296,47 @@ msgstr ""
 msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:64
-#: src/Features/Playground/ModelConnect.php:178
-#: src/Features/Playground/PlaygroundFeature.php:130
-msgid "You are not allowed to change these settings."
-msgstr ""
-
-#: src/Features/Playground/ModelConnect.php:75
-msgid "Unknown provider."
-msgstr ""
-
 #: src/Features/Playground/ModelConnect.php:79
-msgid "Paste the API key first."
-msgstr ""
-
-#. translators: %s: provider name
-#: src/Features/Playground/ModelConnect.php:89
-#, php-format
-msgid "Saved your %s key."
-msgstr ""
-
-#: src/Features/Playground/ModelConnect.php:121
 msgid "You are not allowed to install plugins."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:129
+#: src/Features/Playground/ModelConnect.php:87
 msgid "Unknown provider plugin."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:135
+#: src/Features/Playground/ModelConnect.php:93
 msgid "The provider plugin could not be installed. Try it from the Plugins screen."
 msgstr ""
 
 #. translators: %s: provider plugin name
-#: src/Features/Playground/ModelConnect.php:148
+#: src/Features/Playground/ModelConnect.php:106
 #, php-format
 msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:186
+#: src/Features/Playground/ModelConnect.php:136
+#: src/Features/Playground/PlaygroundFeature.php:130
+msgid "You are not allowed to change these settings."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:144
 msgid "The saved key was removed."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:198
+#: src/Features/Playground/ModelConnect.php:156
 msgid "Choose a model provider first."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:205
+#: src/Features/Playground/ModelConnect.php:163
 msgid "This provider needs an API key."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:220
+#: src/Features/Playground/ModelConnect.php:178
 msgid "The model could not be reached. Check the details and try again."
 msgstr ""
 
 #. translators: 1: provider name, 2: model name
-#: src/Features/Playground/ModelConnect.php:230
+#: src/Features/Playground/ModelConnect.php:188
 #, php-format
 msgid "Connected to %1$s%2$s."
 msgstr ""
@@ -530,158 +515,146 @@ msgstr[1] ""
 msgid "Save areas"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:34
+#: src/Features/Playground/views/partial-model-chooser.php:35
 msgid "Connect a model to start chatting"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:36
+#: src/Features/Playground/views/partial-model-chooser.php:37
 msgid "One step, then this becomes your conversation."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:43
+#: src/Features/Playground/views/partial-model-chooser.php:44
 msgid "Let WordPress manage the model"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:44
+#: src/Features/Playground/views/partial-model-chooser.php:45
 msgid "The recommended way — fewer steps now, nothing to maintain later."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:49
+#: src/Features/Playground/views/partial-model-chooser.php:50
 msgid "One connection for the whole site — every AI plugin shares it instead of each asking for its own key."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:50
+#: src/Features/Playground/views/partial-model-chooser.php:51
 msgid "The key stays with WordPress. This plugin never sees or stores it."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:51
+#: src/Features/Playground/views/partial-model-chooser.php:52
 msgid "Rotate the key or switch provider in one place, without touching this plugin again."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:62
+#: src/Features/Playground/views/partial-model-chooser.php:63
 msgid "Use WordPress AI"
 msgstr ""
 
-#. translators: %s: provider name
-#: src/Features/Playground/views/partial-model-chooser.php:77
-#, php-format
-msgid "%s API key"
+#: src/Features/Playground/views/partial-model-chooser.php:68
+msgid "A provider is installed. Add its API key where WordPress keeps every connector key, then come back here."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:87
-msgid "A key is saved — paste a new one to replace it"
-msgstr ""
-
-#: src/Features/Playground/views/partial-model-chooser.php:87
-msgid "Paste your API key"
-msgstr ""
-
-#: src/Features/Playground/views/partial-model-chooser.php:88
-msgid "Save key"
-msgstr ""
-
-#. translators: %s: provider name
-#: src/Features/Playground/views/partial-model-chooser.php:97
-#, php-format
-msgid "%s did not accept the stored key. Paste a different one."
-msgstr ""
-
-#: src/Features/Playground/views/partial-model-chooser.php:104
+#: src/Features/Playground/views/partial-model-chooser.php:74
 msgid "Key accepted."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:107
-msgid "WordPress stores it, not this plugin."
+#: src/Features/Playground/views/partial-model-chooser.php:76
+msgid "No working key yet."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:110
+#: src/Features/Playground/views/partial-model-chooser.php:80
 msgid "Get a key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:117
+#: src/Features/Playground/views/partial-model-chooser.php:88
+msgid "Add the key in WordPress Settings"
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:91
+msgid "WordPress stores and checks the key, not this plugin."
+msgstr ""
+
+#: src/Features/Playground/views/partial-model-chooser.php:93
 msgid "Who do you have an account with? One click installs and activates the official provider plugin for it."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:140
+#: src/Features/Playground/views/partial-model-chooser.php:116
 msgid "On WordPress 7.0 or newer, WordPress manages the model and the key for you — this screen offers it automatically after you update."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:147
+#: src/Features/Playground/views/partial-model-chooser.php:123
 msgid "Use your own provider account"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:148
+#: src/Features/Playground/views/partial-model-chooser.php:124
 msgid "Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:157
+#: src/Features/Playground/views/partial-model-chooser.php:133
 msgid "Provider"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:172
+#: src/Features/Playground/views/partial-model-chooser.php:148
 msgid "Needs an API key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:173
+#: src/Features/Playground/views/partial-model-chooser.php:149
 msgid "No key needed"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:183
+#: src/Features/Playground/views/partial-model-chooser.php:159
 msgid "Model"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:187
+#: src/Features/Playground/views/partial-model-chooser.php:163
 msgid "e.g. claude-opus-5"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:201
+#: src/Features/Playground/views/partial-model-chooser.php:177
 msgid "Pick from the list or type any model your provider offers."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:205
+#: src/Features/Playground/views/partial-model-chooser.php:181
 msgid "API key"
 msgstr ""
 
 #. translators: %s: masked API key
-#: src/Features/Playground/views/partial-model-chooser.php:209
+#: src/Features/Playground/views/partial-model-chooser.php:185
 #, php-format
 msgid "Saved (%s) — leave blank to keep"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:210
+#: src/Features/Playground/views/partial-model-chooser.php:186
 msgid "Paste your provider API key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:216
+#: src/Features/Playground/views/partial-model-chooser.php:192
 msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:218
+#: src/Features/Playground/views/partial-model-chooser.php:194
 msgid "Get a key:"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:240
+#: src/Features/Playground/views/partial-model-chooser.php:216
 msgid "Remove the saved key"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:250
+#: src/Features/Playground/views/partial-model-chooser.php:226
 #: src/Shared/Tool/ToolSection.php:33
 msgid "Advanced"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:251
+#: src/Features/Playground/views/partial-model-chooser.php:227
 msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:255
+#: src/Features/Playground/views/partial-model-chooser.php:231
 msgid "Base URL"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:265
+#: src/Features/Playground/views/partial-model-chooser.php:241
 msgid "Connect model"
 msgstr ""
 
-#: src/Features/Playground/views/partial-model-chooser.php:268
+#: src/Features/Playground/views/partial-model-chooser.php:244
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr ""
 

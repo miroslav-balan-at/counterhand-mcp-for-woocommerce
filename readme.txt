@@ -15,6 +15,8 @@ Make your WooCommerce store an MCP server, so Claude, ChatGPT and Cursor can man
 
 Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature. It is free, open source (GPL) and self-hosted: nothing about your store passes through a third-party service.
 
+Home page and documentation: [counterhand.app](https://counterhand.app/).
+
 Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an assistant connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
 
 * **OAuth 2.1 with PKCE** — the modern MCP authorization standard. Client identity via Client ID Metadata Documents (CIMD); no client secrets, no manual registration.

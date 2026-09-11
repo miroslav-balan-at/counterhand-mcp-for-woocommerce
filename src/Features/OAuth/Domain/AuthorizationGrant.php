@@ -20,17 +20,19 @@ final readonly class AuthorizationGrant {
 		public array $scopes,
 		public int $user_id,
 		public string $resource, // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound -- "resource" is the RFC 8707 term for the OAuth resource indicator.
+		public bool $issues_refresh_token = false,
 	) {}
 
-	/** @return array{client_id: string, redirect_uri: string, code_challenge: string, scopes: list<string>, user_id: int, resource: string} */
+	/** @return array{client_id: string, redirect_uri: string, code_challenge: string, scopes: list<string>, user_id: int, resource: string, issues_refresh_token: bool} */
 	public function to_array(): array {
 		return [
-			'client_id'      => $this->client_id,
-			'redirect_uri'   => $this->redirect_uri,
-			'code_challenge' => $this->code_challenge,
-			'scopes'         => $this->scopes,
-			'user_id'        => $this->user_id,
-			'resource'       => $this->resource,
+			'client_id'            => $this->client_id,
+			'redirect_uri'         => $this->redirect_uri,
+			'code_challenge'       => $this->code_challenge,
+			'scopes'               => $this->scopes,
+			'user_id'              => $this->user_id,
+			'resource'             => $this->resource,
+			'issues_refresh_token' => $this->issues_refresh_token,
 		];
 	}
 
@@ -40,16 +42,17 @@ final readonly class AuthorizationGrant {
 			return null;
 		}
 
-		$client_id      = $data['client_id'] ?? null;
-		$redirect_uri   = $data['redirect_uri'] ?? null;
-		$code_challenge = $data['code_challenge'] ?? null;
-		$scopes         = $data['scopes'] ?? null;
-		$user_id        = $data['user_id'] ?? null;
-		$resource       = $data['resource'] ?? null;
+		$client_id            = $data['client_id'] ?? null;
+		$redirect_uri         = $data['redirect_uri'] ?? null;
+		$code_challenge       = $data['code_challenge'] ?? null;
+		$scopes               = $data['scopes'] ?? null;
+		$user_id              = $data['user_id'] ?? null;
+		$resource             = $data['resource'] ?? null;
+		$issues_refresh_token = $data['issues_refresh_token'] ?? false;
 
 		if (
 			! is_string( $client_id ) || ! is_string( $redirect_uri ) || ! is_string( $code_challenge )
-			|| ! is_array( $scopes ) || ! is_int( $user_id ) || ! is_string( $resource )
+			|| ! is_array( $scopes ) || ! is_int( $user_id ) || ! is_string( $resource ) || ! is_bool( $issues_refresh_token )
 		) {
 			return null;
 		}
@@ -62,6 +65,6 @@ final readonly class AuthorizationGrant {
 			$scope_values[] = $scope;
 		}
 
-		return new self( $client_id, $redirect_uri, $code_challenge, $scope_values, $user_id, $resource );
+		return new self( $client_id, $redirect_uri, $code_challenge, $scope_values, $user_id, $resource, $issues_refresh_token );
 	}
 }

@@ -115,6 +115,10 @@ final readonly class MetaTool implements ToolInterface {
 		return $this->descriptor->group;
 	}
 
+	public function requires_confirmation(): bool {
+		return false;
+	}
+
 	/** Gated exactly like the resource it hangs off, since it is that route. */
 	public function is_available(): bool {
 		$intent = $this->operation->intent();

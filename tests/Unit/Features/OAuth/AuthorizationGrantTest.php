@@ -25,6 +25,23 @@ final class AuthorizationGrantTest extends TestCase {
 		self::assertSame( $grant->to_array(), $rehydrated->to_array() );
 	}
 
+	/** A code minted before refresh support, redeemed after the upgrade, must still work — as a non-refreshing grant. */
+	public function test_a_payload_without_the_refresh_flag_hydrates_as_not_refreshing(): void {
+		$grant = AuthorizationGrant::from_array(
+			[
+				'client_id'      => 'https://client.example/metadata.json',
+				'redirect_uri'   => 'https://client.example/callback',
+				'code_challenge' => str_repeat( 'c', 43 ),
+				'scopes'         => [ 'products:read' ],
+				'user_id'        => 7,
+				'resource'       => 'https://store.example/mcp',
+			]
+		);
+
+		self::assertNotNull( $grant );
+		self::assertFalse( $grant->issues_refresh_token );
+	}
+
 	/** @dataProvider malformed_payloads */
 	public function test_from_array_fails_closed_on_malformed_data( mixed $payload ): void {
 		self::assertNull( AuthorizationGrant::from_array( $payload ) );
@@ -50,6 +67,7 @@ final class AuthorizationGrantTest extends TestCase {
 			'user_id not an int'        => [ array_merge( $valid, [ 'user_id' => '7' ] ) ],
 			'scopes not an array'       => [ array_merge( $valid, [ 'scopes' => 'products:read' ] ) ],
 			'scope entry not a string'  => [ array_merge( $valid, [ 'scopes' => [ 'products:read', 5 ] ] ) ],
+			'refresh flag not a bool'   => [ array_merge( $valid, [ 'issues_refresh_token' => 'yes' ] ) ],
 		];
 	}
 }

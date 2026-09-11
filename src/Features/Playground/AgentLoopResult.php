@@ -24,5 +24,6 @@ final readonly class AgentLoopResult {
 		public array $messages,
 		public array $transcript,
 		public TokenUsage $usage,
+		public ?PendingConfirmation $pending = null,
 	) {}
 }

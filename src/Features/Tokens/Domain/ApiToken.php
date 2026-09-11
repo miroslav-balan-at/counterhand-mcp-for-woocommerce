@@ -23,9 +23,18 @@ final readonly class ApiToken {
 		public ?\DateTimeImmutable $expires_at,
 		public ?string $client_id = null,
 		public ?string $audience = null,
+		public ?\DateTimeImmutable $refresh_expires_at = null,
 	) {}
 
-	public function is_expired( \DateTimeImmutable $now ): bool {
+	/** The access token has lapsed; with a refresh token outstanding the connection itself lives on. */
+	public function is_access_expired( \DateTimeImmutable $now ): bool {
 		return null !== $this->expires_at && $this->expires_at <= $now;
+	}
+
+	/** The connection is over: nothing, refresh token included, can revive it. */
+	public function is_expired( \DateTimeImmutable $now ): bool {
+		$end = $this->refresh_expires_at ?? $this->expires_at;
+
+		return null !== $end && $end <= $now;
 	}
 }

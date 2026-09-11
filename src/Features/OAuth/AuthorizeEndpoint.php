@@ -11,6 +11,7 @@ use Counterhand\Features\OAuth\View\FlowPage;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -108,6 +109,7 @@ final readonly class AuthorizeEndpoint {
 				[
 					'error'             => 'access_denied',
 					'error_description' => 'The store administrator denied the request.',
+					'iss'               => CanonicalUri::issuer(),
 					'state'             => $request->state,
 				],
 				FlowPage::STATE_DENIED,
@@ -139,6 +141,7 @@ final readonly class AuthorizeEndpoint {
 				scopes: $granted,
 				user_id: get_current_user_id(),
 				resource: $request->resource,
+				issues_refresh_token: $client->issues_refresh_tokens(),
 			)
 		);
 
@@ -151,6 +154,7 @@ final readonly class AuthorizeEndpoint {
 			$request->redirect_uri,
 			[
 				'code'  => $code,
+				'iss'   => CanonicalUri::issuer(),
 				'state' => $request->state,
 			],
 			FlowPage::STATE_CONNECTED,

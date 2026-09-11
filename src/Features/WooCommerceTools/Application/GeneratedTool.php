@@ -77,6 +77,10 @@ final readonly class GeneratedTool implements ToolInterface {
 		return $this->resource->group;
 	}
 
+	public function requires_confirmation(): bool {
+		return $this->operation->requires_confirmation;
+	}
+
 	/**
 	 * Two questions, both fail-closed: does this WooCommerce still serve the
 	 * route, and would it let this user in.

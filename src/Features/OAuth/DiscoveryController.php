@@ -48,7 +48,7 @@ final readonly class DiscoveryController {
 		return new \WP_REST_Response(
 			[
 				'resource'                 => CanonicalUri::mcp(),
-				'authorization_servers'    => [ home_url() ],
+				'authorization_servers'    => [ CanonicalUri::issuer() ],
 				'scopes_supported'         => $this->published->values(),
 				'bearer_methods_supported' => [ 'header' ],
 			],
@@ -60,12 +60,14 @@ final readonly class DiscoveryController {
 	public function authorization_server(): \WP_REST_Response {
 		return new \WP_REST_Response(
 			[
-				'issuer'                                => home_url(),
+				'issuer'                                => CanonicalUri::issuer(),
+				// RFC 9207 §2.3: required once the authorize redirects carry iss.
+				'authorization_response_iss_parameter_supported' => true,
 				'authorization_endpoint'                => home_url( '/mcp-authorize' ),
 				'token_endpoint'                        => rest_url( 'counterhand/v1/oauth/token' ),
 				'scopes_supported'                      => $this->published->values(),
 				'response_types_supported'              => [ 'code' ],
-				'grant_types_supported'                 => [ 'authorization_code' ],
+				'grant_types_supported'                 => [ 'authorization_code', 'refresh_token' ],
 				'code_challenge_methods_supported'      => [ 'S256' ],
 				'token_endpoint_auth_methods_supported' => [ 'none' ],
 				/*

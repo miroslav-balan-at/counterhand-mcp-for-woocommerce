@@ -20,6 +20,29 @@
 
 declare( strict_types=1 );
 
+if ( ! class_exists( 'WP_REST_Response' ) ) {
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- deliberately shadowing a WordPress class name in tests.
+	class WP_REST_Response {
+
+		/** @var array<string, string> */
+		public array $headers = [];
+
+		public function __construct( private mixed $data = null, private int $status = 200 ) {}
+
+		public function get_data(): mixed {
+			return $this->data;
+		}
+
+		public function get_status(): int {
+			return $this->status;
+		}
+
+		public function header( string $key, string $value ): void {
+			$this->headers[ $key ] = $value;
+		}
+	}
+}
+
 if ( ! class_exists( 'WP_REST_Request' ) ) {
 	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- deliberately shadowing a WordPress class name in tests.
 	class WP_REST_Request implements ArrayAccess {

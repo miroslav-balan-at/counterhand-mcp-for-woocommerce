@@ -17,6 +17,7 @@ final class Uninstall {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_action_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 
 		delete_option( 'counterhand_settings' );
+		delete_option( 'counterhand_chat' );
 		delete_option( 'counterhand_tokens_schema_version' );
 		delete_option( 'counterhand_action_log_schema_version' );
 

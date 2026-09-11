@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Schema {
 
-	private const VERSION        = '2';
+	private const VERSION        = '3';
 	private const VERSION_OPTION = 'counterhand_tokens_schema_version';
 
 	public static function table_name(): string {
@@ -42,6 +42,10 @@ final class Schema {
 			created_at DATETIME NOT NULL,
 			last_used_at DATETIME DEFAULT NULL,
 			expires_at DATETIME DEFAULT NULL,
+			refresh_secret_hash CHAR(64) DEFAULT NULL,
+			previous_refresh_secret_hash CHAR(64) DEFAULT NULL,
+			rotated_at DATETIME DEFAULT NULL,
+			refresh_expires_at DATETIME DEFAULT NULL,
 			revoked_at DATETIME DEFAULT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY token_id (token_id),

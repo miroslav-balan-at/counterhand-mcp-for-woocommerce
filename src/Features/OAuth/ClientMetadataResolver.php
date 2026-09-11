@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * Resolves a CIMD client_id URL into validated client metadata.
  *
  * Hardening (SSRF / open-redirect):
- * - client_id must be HTTPS, without credentials, fragment or dot-segments
+ * - client_id must be HTTPS with a path, without credentials, fragment or dot-segments
  * - the fetch goes through wp_safe_remote_get(), so core's URL validation
  *   refuses private and loopback hosts and non-standard ports; a local
  *   development client opts back in with core's http_request_host_is_external
@@ -21,6 +21,9 @@ final readonly class ClientMetadataResolver {
 
 	private const CACHE_TTL = 5 * MINUTE_IN_SECONDS;
 
+	/** The draft recommends 5 KB; this leaves room for a logo and policy URIs while still bounding the read. */
+	private const MAXIMUM_DOCUMENT_BYTES = 64 * KB_IN_BYTES;
+
 	public function resolve( string $client_id_url ): ?ClientMetadata {
 		if ( ! $this->is_acceptable_client_id_url( $client_id_url ) ) {
 			return null;
@@ -29,18 +32,19 @@ final readonly class ClientMetadataResolver {
 		$cache_key = 'counterhand_cimd_' . md5( $client_id_url );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
-			return new ClientMetadata( $client_id_url, $cached['client_name'], $cached['redirect_uris'] );
+			return new ClientMetadata( $client_id_url, $cached['client_name'], $cached['redirect_uris'], $cached['grant_types'] ?? ClientMetadata::DEFAULT_GRANT_TYPES );
 		}
 
 		$response = wp_safe_remote_get(
 			$client_id_url,
 			[
-				'timeout'     => 10,
-				'redirection' => 0,
-				'headers'     => [ 'Accept' => 'application/json' ],
+				'timeout'             => 10,
+				'redirection'         => 0,
+				'limit_response_size' => self::MAXIMUM_DOCUMENT_BYTES,
+				'headers'             => [ 'Accept' => 'application/json' ],
 				// Defaults to true (secure). A filter allows self-signed certs in
 				// local development only — never relax this in production.
-				'sslverify'   => apply_filters( 'counterhand_cimd_sslverify', true, $client_id_url ),
+				'sslverify'           => apply_filters( 'counterhand_cimd_sslverify', true, $client_id_url ),
 			]
 		);
 
@@ -70,17 +74,21 @@ final readonly class ClientMetadataResolver {
 		}
 
 		$client_name = sanitize_text_field( (string) ( $document['client_name'] ?? wp_parse_url( $client_id_url, PHP_URL_HOST ) ) );
+		$grant_types = is_array( $document['grant_types'] ?? null )
+			? array_values( array_filter( $document['grant_types'], 'is_string' ) )
+			: ClientMetadata::DEFAULT_GRANT_TYPES;
 
 		set_transient(
 			$cache_key,
 			[
 				'client_name'   => $client_name,
 				'redirect_uris' => $redirect_uris,
+				'grant_types'   => $grant_types,
 			],
 			self::CACHE_TTL
 		);
 
-		return new ClientMetadata( $client_id_url, $client_name, $redirect_uris );
+		return new ClientMetadata( $client_id_url, $client_name, $redirect_uris, $grant_types );
 	}
 
 	private function is_acceptable_client_id_url( string $url ): bool {
@@ -91,6 +99,7 @@ final readonly class ClientMetadataResolver {
 			&& '' !== ( $parsed['host'] ?? '' )
 			&& ! isset( $parsed['user'], $parsed['pass'] )
 			&& ! isset( $parsed['fragment'] )
+			&& '' !== ( $parsed['path'] ?? '' )
 			&& ! str_contains( $parsed['path'] ?? '', '..' );
 	}
 

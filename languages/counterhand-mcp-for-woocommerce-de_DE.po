@@ -115,41 +115,41 @@ msgstr "Seite %1$s von %2$s"
 msgid "Log pages"
 msgstr "Protokollseiten"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:66
+#: src/Features/OAuth/AuthorizeEndpoint.php:67
 msgid "Not permitted"
 msgstr "Nicht erlaubt"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:67
+#: src/Features/OAuth/AuthorizeEndpoint.php:68
 msgid "Your account cannot authorize AI access to this store. Ask a store administrator to approve the connection."
 msgstr "Dein Konto kann keinen KI-Zugriff auf diesen Shop autorisieren. Bitte einen Shop-Administrator, die Verbindung zu genehmigen."
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:75
+#: src/Features/OAuth/AuthorizeEndpoint.php:76
 msgid "Incomplete request"
 msgstr "Unvollständige Anfrage"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:76
+#: src/Features/OAuth/AuthorizeEndpoint.php:77
 msgid "This authorization link is missing required details or has expired. Start the connection again from your AI assistant."
 msgstr "Diesem Autorisierungslink fehlen erforderliche Angaben oder er ist abgelaufen. Starte die Verbindung erneut aus deinem KI-Assistenten."
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:84
+#: src/Features/OAuth/AuthorizeEndpoint.php:85
 msgid "Could not verify the app"
 msgstr "App konnte nicht überprüft werden"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:85
+#: src/Features/OAuth/AuthorizeEndpoint.php:86
 msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
 msgstr "Die Identität der App, die Zugriff anfordert, konnte nicht bestätigt werden — es wurde daher nichts verbunden. Das kann passieren, wenn die App falsch konfiguriert ist oder der Link verändert wurde."
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:114
+#: src/Features/OAuth/AuthorizeEndpoint.php:116
 #: src/Features/OAuth/View/templates/denied.php:22
 msgid "Access not granted"
 msgstr "Zugriff nicht gewährt"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:157
+#: src/Features/OAuth/AuthorizeEndpoint.php:161
 #: src/Features/OAuth/View/templates/connected.php:24
 msgid "Access approved"
 msgstr "Zugriff genehmigt"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:174
+#: src/Features/OAuth/AuthorizeEndpoint.php:178
 #: src/Features/OAuth/View/templates/consent.php:26
 msgid "Authorize AI access"
 msgstr "KI-Zugriff autorisieren"
@@ -170,7 +170,7 @@ msgstr "Für diesen Shop ausgeschaltet. Aktiviere den Bereich unter Counterhand 
 msgid "The app did not ask for this, so it cannot be granted here. Reconnect the app to request it."
 msgstr "Die App hat das nicht angefragt, daher kann es hier nicht gewährt werden. Verbinde die App erneut, um es anzufragen."
 
-#: src/Features/OAuth/View/FlowPage.php:88
+#: src/Features/OAuth/View/FlowPage.php:93
 msgid "Connection problem"
 msgstr "Verbindungsproblem"
 
@@ -276,18 +276,18 @@ msgstr "Zurück zu %s"
 msgid "Secured by Counterhand MCP"
 msgstr "Gesichert durch Counterhand MCP"
 
-#: src/Features/Playground/AgentLoop.php:97
+#: src/Features/Playground/AgentLoop.php:152
 msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
 msgstr "Gestoppt: Der Assistent hat über das Sicherheitslimit für eine Nachricht hinaus weiter Tools aufgerufen."
 
 #. translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove.
-#: src/Features/Playground/AgentLoop.php:135
+#: src/Features/Playground/AgentLoop.php:262
 #, php-format
 msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
 msgstr "Der Chat kann %1$d Tools erreichen — mehr, als dieses Modell in einer Nachricht mitführen kann (%2$d). Öffne unten \"für den Chat verfügbar\" und wähle Bereiche ab, bis mindestens %3$d Tools weniger ausgewählt sind — die abgewählten Bereiche bleiben für deine anderen KI-Apps verfügbar. Verbindest du stattdessen ein Anthropic-Modell, entfällt das Limit, weil Claude die benötigten Tools selbst suchen kann."
 
 #: src/Features/Playground/ModelConnect.php:136
-#: src/Features/Playground/PlaygroundFeature.php:130
+#: src/Features/Playground/PlaygroundFeature.php:164
 msgid "You are not allowed to change these settings."
 msgstr "Du darfst diese Einstellungen nicht ändern."
 
@@ -331,35 +331,29 @@ msgstr "Das Modell konnte nicht erreicht werden. Prüfe die Angaben und versuche
 msgid "Connected to %1$s%2$s."
 msgstr "Verbunden mit %1$s%2$s."
 
-#: src/Features/Playground/PlaygroundFeature.php:87
+#: src/Features/Playground/PlaygroundFeature.php:118
 #: src/Features/Settings/SettingsFeature.php:211
 #: src/Features/Settings/SettingsFeature.php:225
 msgid "Not allowed."
 msgstr "Nicht erlaubt."
 
-#: src/Features/Playground/PlaygroundFeature.php:94
+#: src/Features/Playground/PlaygroundFeature.php:125
 msgid "No model is connected yet. Pick one at the top of this tab."
 msgstr "Es ist noch kein Modell verbunden. Wähle eines oben in diesem Tab aus."
 
-#: src/Features/Playground/PlaygroundFeature.php:99
+#: src/Features/Playground/PlaygroundFeature.php:93
 msgid "Type a message first."
 msgstr "Gib zuerst eine Nachricht ein."
 
-#: src/Features/Playground/PlaygroundFeature.php:116
+#: src/Features/Playground/PlaygroundFeature.php:149
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Die Chat-Anfrage ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
-#. translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders"
-#: src/Features/Playground/PlaygroundFeature.php:196
-#, php-format
-msgid "You are a WooCommerce store assistant for \"%1$s\". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched."
-msgstr "Du bist ein WooCommerce-Shop-Assistent für \"%1$s\". Preise sind in %2$s. Du kannst folgende Bereiche des Shops erreichen: %3$s. Nutze die verfügbaren Tools, um Fragen zu beantworten und Änderungen vorzunehmen — rate niemals bei Shop-Daten, die du nachschlagen kannst, und sag klar, wenn etwas außerhalb deiner Reichweite liegt. Neue Produkte werden als Entwürfe angelegt, damit der Administrator sie prüfen kann. Bestätige vor jeder destruktiven Aktion. Antworte knapp und nenne die konkreten Datensätze, die du geändert hast."
-
-#: src/Features/Playground/PlaygroundFeature.php:199
+#: src/Features/Playground/PlaygroundFeature.php:233
 msgid "none — no tool groups are selected for chat"
 msgstr "keine — für den Chat sind keine Tool-Bereiche ausgewählt"
 
-#: src/Features/Playground/PlaygroundFeature.php:220
+#: src/Features/Playground/PlaygroundFeature.php:254
 msgid "Admin chat"
 msgstr "Admin-Chat"
 
@@ -1032,19 +1026,19 @@ msgstr "ausgeführt"
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: src/Features/Settings/ScreenAssets.php:133
+#: src/Features/Settings/ScreenAssets.php:141
 msgid "Tokens"
 msgstr "Tokens"
 
-#: src/Features/Settings/ScreenAssets.php:134
+#: src/Features/Settings/ScreenAssets.php:142
 msgid "Installing…"
 msgstr "Wird installiert…"
 
-#: src/Features/Settings/ScreenAssets.php:135
+#: src/Features/Settings/ScreenAssets.php:143
 msgid "Installed"
 msgstr "Installiert"
 
-#: src/Features/Settings/ScreenAssets.php:136
+#: src/Features/Settings/ScreenAssets.php:144
 msgid "The install failed."
 msgstr "Die Installation ist fehlgeschlagen."
 
@@ -1065,12 +1059,12 @@ msgid "Paste this one URL into any AI app. The app identifies itself with its ow
 msgstr "Füge diese eine URL in eine beliebige KI-App ein. Die App identifiziert sich mit ihrer eigenen veröffentlichten Adresse — du musst also keinen Schlüssel erstellen und nichts zurückkopieren. Du bestätigst nur, was sie tun darf."
 
 #: src/Features/Settings/views/tab-connect.php:49
-#: src/Features/Settings/views/tab-connect.php:126
+#: src/Features/Settings/views/tab-connect.php:127
 msgid "Copied!"
 msgstr "Kopiert!"
 
 #: src/Features/Settings/views/tab-connect.php:50
-#: src/Features/Settings/views/tab-connect.php:127
+#: src/Features/Settings/views/tab-connect.php:128
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -1082,17 +1076,17 @@ msgstr "Erneut prüfen"
 msgid "✓ Connected"
 msgstr "✓ Verbunden"
 
-#: src/Features/Settings/views/tab-connect.php:135
+#: src/Features/Settings/views/tab-connect.php:137
 msgid "Official setup documentation"
 msgstr "Offizielle Einrichtungsdokumentation"
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:150
+#: src/Features/Settings/views/tab-connect.php:152
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
 msgstr "Falls dein Hoster sprechende Permalinks nicht unterstützt, ist derselbe Endpunkt auch unter %s erreichbar."
 
-#: src/Features/Settings/views/tab-connect.php:155
+#: src/Features/Settings/views/tab-connect.php:157
 msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
 msgstr "Genehmigte Apps erscheinen im Tab \"Verbindungen\", wo du jede davon widerrufen kannst."
 
@@ -1641,3 +1635,49 @@ msgstr "Klicke auf „Zu Cursor hinzufügen“ — Cursor öffnet sich und bitte
 #: src/Features/Settings/McpClient.php:131
 msgid "Press Add to VS Code — VS Code opens and asks you to confirm the server."
 msgstr "Klicke auf „Zu VS Code hinzufügen“ — VS Code öffnet sich und bittet dich, den Server zu bestätigen."
+
+#: src/Features/Playground/AgentLoop.php:177
+msgid "The store administrator declined this action."
+msgstr "Der Shop-Administrator hat diese Aktion abgelehnt."
+
+#: src/Features/Playground/PlaygroundFeature.php:109
+msgid "That approval has expired. Send your message again."
+msgstr "Diese Freigabe ist abgelaufen. Sende deine Nachricht noch einmal."
+
+#. translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders"
+#: src/Features/Playground/PlaygroundFeature.php:230
+#, php-format
+msgid "You are a WooCommerce store assistant for \"%1$s\". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Changes that need approval are approved by the administrator with a button in this chat: call the tool with confirm set to true and the approval prompt appears — do not ask for confirmation in words first. Answer concisely and mention the concrete records you touched."
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:133
+msgid "declined"
+msgstr "abgelehnt"
+
+#: src/Features/Settings/ScreenAssets.php:134
+msgid "Approve this change?"
+msgstr "Diese Änderung freigeben?"
+
+#: src/Features/Settings/ScreenAssets.php:135
+msgid "The assistant wants to run this. Nothing happens until you decide."
+msgstr "Der Assistent möchte das ausführen. Es passiert nichts, bis du entscheidest."
+
+#: src/Features/Settings/ScreenAssets.php:136
+msgid "Approve"
+msgstr "Freigeben"
+
+#: src/Features/Settings/ScreenAssets.php:137
+msgid "Decline"
+msgstr "Ablehnen"
+
+#: src/Features/Settings/ScreenAssets.php:138
+msgid "Approved"
+msgstr "Freigegeben"
+
+#: src/Features/Settings/ScreenAssets.php:139
+msgid "Declined"
+msgstr "Abgelehnt"
+
+#: src/Features/Settings/ScreenAssets.php:140
+msgid "Waiting for your approval…"
+msgstr "Wartet auf deine Freigabe…"

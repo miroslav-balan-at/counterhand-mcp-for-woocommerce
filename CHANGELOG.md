@@ -2,6 +2,10 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 1.2.1
+* The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.
+* The readme now documents every external service the plugin can contact, what is sent to each and when.
+
 ## 1.2.0
 * First release in the wordpress.org plugin directory. Updates and language packs now come from WordPress itself.
 * Deleting the plugin removes its tables, options and transients through a standard `uninstall.php`.

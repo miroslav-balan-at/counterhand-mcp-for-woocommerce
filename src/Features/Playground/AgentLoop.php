@@ -20,6 +20,9 @@ defined( 'ABSPATH' ) || exit;
  * The agentic loop: ask the model, run any tools it requests through the same
  * gated dispatch pipeline an external assistant hits, feed the results back,
  * repeat until the model stops calling tools.
+ *
+ * A turn that asks for a change the person must approve is parked before any
+ * of it runs, and resumed only once they have decided.
  */
 final readonly class AgentLoop {
 
@@ -34,7 +37,10 @@ final readonly class AgentLoop {
 	 */
 	public const FALLBACK_TOOL_CEILING = 60;
 
-	public function __construct( private ToolDispatcherInterface $dispatcher ) {}
+	public function __construct(
+		private ToolDispatcherInterface $dispatcher,
+		private PendingConfirmationStore $pending_store,
+	) {}
 
 	/**
 	 * @param list<array<string,mixed>> $history Provider-format messages from earlier turns.
@@ -46,13 +52,58 @@ final readonly class AgentLoop {
 		string $user_text,
 		AuthenticatedAgent $agent
 	): AgentLoopResult {
-		$messages   = array_merge( $history, [ $provider->user_message( $user_text ) ] );
-		$tools      = $this->tool_definitions( $provider, $agent );
+		return $this->converse( $provider, $config, array_merge( $history, [ $provider->user_message( $user_text ) ] ), [], $agent );
+	}
+
+	/**
+	 * Picks a parked turn back up: the approved calls run, the declined ones are
+	 * reported to the model as refused, and the conversation continues.
+	 *
+	 * @param list<array<string,mixed>> $history Provider-format messages, ending with the parked assistant turn.
+	 */
+	public function resume(
+		ProviderInterface $provider,
+		ProviderConfig $config,
+		array $history,
+		PendingConfirmation $pending,
+		ApprovalDecisions $decisions,
+		AuthenticatedAgent $agent
+	): AgentLoopResult {
 		$transcript = [];
-		$usage      = new TokenUsage();
+		$results    = [];
+
+		foreach ( $pending->calls as $call ) {
+			$approved = ! $pending->needs_approval( $call ) || $decisions->approves( $call->id );
+			$data     = $approved ? $this->tool_result( self::approved( $call, $pending ), $agent ) : self::declined();
+
+			$transcript[] = self::transcript_entry( $call, $data, ! $approved );
+			$results[]    = self::result_for( $call, $data );
+		}
+
+		return $this->converse( $provider, $config, array_merge( $history, $provider->tool_result_messages( $results ) ), $transcript, $agent );
+	}
+
+	/**
+	 * @param list<array<string,mixed>> $messages
+	 * @param list<array<string,mixed>> $transcript
+	 */
+	private function converse(
+		ProviderInterface $provider,
+		ProviderConfig $config,
+		array $messages,
+		array $transcript,
+		AuthenticatedAgent $agent
+	): AgentLoopResult {
+		$tools       = $this->dispatcher->visible_for( $agent );
+		$definitions = $this->tool_definitions( $provider, $tools );
+		$gated_names = array_map(
+			static fn ( ToolInterface $tool ): string => $tool->name(),
+			array_filter( $tools, static fn ( ToolInterface $tool ): bool => $tool->requires_confirmation() )
+		);
+		$usage       = new TokenUsage();
 
 		for ( $iteration = 0; $iteration < self::MAX_ITERATIONS; $iteration++ ) {
-			$turn = $provider->complete( $messages, $tools, $config );
+			$turn = $provider->complete( $messages, $definitions, $config );
 
 			$usage = $usage->plus( $turn->usage );
 
@@ -69,24 +120,28 @@ final readonly class AgentLoop {
 
 			$messages[] = $provider->assistant_message( $turn );
 
+			$gated_ids = array_values(
+				array_map(
+					static fn ( ToolCall $call ): string => $call->id,
+					array_filter( $turn->tool_calls, static fn ( ToolCall $call ): bool => in_array( $call->name, $gated_names, true ) )
+				)
+			);
+
+			// Nothing in the turn runs until the person has ruled on the part
+			// that needs them — running the rest first would present a half-done
+			// change as the thing they are approving.
+			if ( [] !== $gated_ids ) {
+				$pending = $this->pending_store->park( $agent->token->owner_user_id, self::without_model_confirmation( $turn->tool_calls, $gated_ids ), $gated_ids );
+
+				return new AgentLoopResult( $messages, $transcript, $usage, $pending );
+			}
+
 			$results = [];
 			foreach ( $turn->tool_calls as $call ) {
 				$data = $this->tool_result( $call, $agent );
 
-				$transcript[] = [
-					'type'      => 'tool',
-					'name'      => $call->name,
-					'arguments' => $call->input,
-					'result'    => $data['data'],
-					'is_error'  => $data['is_error'],
-				];
-
-				$results[] = new ToolResult(
-					id: $call->id,
-					name: $call->name,
-					output: (string) wp_json_encode( $data['data'] ),
-					is_error: $data['is_error'],
-				);
+				$transcript[] = self::transcript_entry( $call, $data, false );
+				$results[]    = self::result_for( $call, $data );
 			}
 
 			$messages = array_merge( $messages, $provider->tool_result_messages( $results ) );
@@ -116,16 +171,88 @@ final readonly class AgentLoop {
 		];
 	}
 
+	/** @return array{data: mixed, is_error: bool} */
+	private static function declined(): array {
+		return [
+			'data'     => [ 'error' => __( 'The store administrator declined this action.', 'counterhand-mcp-for-woocommerce' ) ],
+			'is_error' => true,
+		];
+	}
+
 	/**
-	 * Built once per run() and reused across iterations: the visible set cannot
-	 * change mid-conversation, and input_schema() asks WooCommerce for its route
-	 * args, which is not work to repeat twelve times.
+	 * The model's own `confirm` carries no weight here: the argument is
+	 * dropped when the turn is parked and set only by the person's approval.
 	 *
+	 * @param  list<ToolCall> $calls
+	 * @param  list<string>   $gated_ids
+	 * @return list<ToolCall>
+	 */
+	private static function without_model_confirmation( array $calls, array $gated_ids ): array {
+		return array_map(
+			static function ( ToolCall $call ) use ( $gated_ids ): ToolCall {
+				if ( ! in_array( $call->id, $gated_ids, true ) ) {
+					return $call;
+				}
+
+				$input = $call->input;
+				unset( $input['confirm'] );
+
+				return new ToolCall( $call->id, $call->name, $input );
+			},
+			$calls
+		);
+	}
+
+	private static function approved( ToolCall $call, PendingConfirmation $pending ): ToolCall {
+		if ( ! $pending->needs_approval( $call ) ) {
+			return $call;
+		}
+
+		return new ToolCall(
+			$call->id,
+			$call->name,
+			[
+				...$call->input,
+				'confirm' => true,
+			]
+		);
+	}
+
+	/**
+	 * @param  array{data: mixed, is_error: bool} $data
+	 * @return array<string, mixed>
+	 */
+	private static function transcript_entry( ToolCall $call, array $data, bool $declined ): array {
+		return [
+			'type'      => 'tool',
+			'name'      => $call->name,
+			'arguments' => $call->input,
+			'result'    => $data['data'],
+			'is_error'  => $data['is_error'],
+			'declined'  => $declined,
+		];
+	}
+
+	/** @param array{data: mixed, is_error: bool} $data */
+	private static function result_for( ToolCall $call, array $data ): ToolResult {
+		return new ToolResult(
+			id: $call->id,
+			name: $call->name,
+			output: (string) wp_json_encode( $data['data'] ),
+			is_error: $data['is_error'],
+		);
+	}
+
+	/**
+	 * Built once per exchange and reused across iterations: the visible set
+	 * cannot change mid-conversation, and input_schema() asks WooCommerce for
+	 * its route args, which is not work to repeat twelve times.
+	 *
+	 * @param  list<ToolInterface> $tools
 	 * @throws ToolCallException When more tools are enabled than one request should carry.
 	 * @return list<array<string,mixed>>
 	 */
-	private function tool_definitions( ProviderInterface $provider, AuthenticatedAgent $agent ): array {
-		$tools   = $this->dispatcher->visible_for( $agent );
+	private function tool_definitions( ProviderInterface $provider, array $tools ): array {
 		$ceiling = $provider->max_eager_tools() ?? PHP_INT_MAX;
 
 		if ( count( $tools ) > $ceiling ) {

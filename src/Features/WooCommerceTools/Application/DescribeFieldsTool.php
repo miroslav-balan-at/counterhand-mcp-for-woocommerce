@@ -88,6 +88,10 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		return ToolGroup::Products;
 	}
 
+	public function requires_confirmation(): bool {
+		return false;
+	}
+
 	/** Pure description over descriptors already loaded; nothing to probe. */
 	public function is_available(): bool {
 		return true;

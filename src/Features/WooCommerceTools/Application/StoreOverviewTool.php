@@ -51,6 +51,10 @@ final readonly class StoreOverviewTool implements ToolInterface {
 		return ToolGroup::Reports;
 	}
 
+	public function requires_confirmation(): bool {
+		return false;
+	}
+
 	/**
 	 * No route to probe, and nothing here a token owner cannot already see:
 	 * reaching this plugin at all requires manage_woocommerce.

@@ -53,6 +53,11 @@ final readonly class TokenAuthenticator {
 			throw new AuthenticationFailedException();
 		}
 
+		// The 401 is the cue for the client to refresh; the row stays live for that.
+		if ( $stored->token->is_access_expired( $now ) ) {
+			throw new AuthenticationFailedException();
+		}
+
 		if ( ! hash_equals( $stored->secret_hash, $secret->hash() ) ) {
 			throw new AuthenticationFailedException();
 		}

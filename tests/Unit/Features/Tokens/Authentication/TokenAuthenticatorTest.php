@@ -102,6 +102,15 @@ final class TokenAuthenticatorTest extends TestCase {
 		( new TokenAuthenticator( $repository, $this->rate_limiter() ) )->authenticate( $this->bearer, null );
 	}
 
+	public function test_a_lapsed_access_token_on_a_live_connection_is_refused_but_not_expired(): void {
+		$repository = $this->repository( $this->stored_token( expires_at: new \DateTimeImmutable( '-1 hour' ), refresh_expires_at: new \DateTimeImmutable( '+1 day' ) ) );
+		$repository->expects( self::never() )->method( 'mark_expired' );
+
+		$this->expectException( AuthenticationFailedException::class );
+
+		( new TokenAuthenticator( $repository, $this->rate_limiter() ) )->authenticate( $this->bearer, null );
+	}
+
 	public function test_demoted_owner_fail_closes_token(): void {
 		Functions\when( 'user_can' )->justReturn( false );
 
@@ -134,7 +143,7 @@ final class TokenAuthenticatorTest extends TestCase {
 		self::assertSame( 846, $agent->token->owner_user_id );
 	}
 
-	private function stored_token( ?\DateTimeImmutable $expires_at = null, ?string $audience = null ): StoredToken {
+	private function stored_token( ?\DateTimeImmutable $expires_at = null, ?string $audience = null, ?\DateTimeImmutable $refresh_expires_at = null ): StoredToken {
 		return new StoredToken(
 			new ApiToken(
 				id: 1,
@@ -148,6 +157,7 @@ final class TokenAuthenticatorTest extends TestCase {
 				expires_at: $expires_at,
 				client_id: null,
 				audience: $audience,
+				refresh_expires_at: $refresh_expires_at,
 			),
 			$this->secret->hash()
 		);

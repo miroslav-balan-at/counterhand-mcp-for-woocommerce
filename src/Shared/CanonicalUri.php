@@ -20,6 +20,11 @@ final class CanonicalUri {
 		return untrailingslashit( home_url( '/' . self::MCP_PATH ) );
 	}
 
+	/** The OAuth issuer (RFC 8414); the iss parameter must be byte-identical to it (RFC 9207). */
+	public static function issuer(): string {
+		return home_url();
+	}
+
 	/** Compares two resource URIs, tolerating case in scheme/host per the spec. */
 	public static function matches( string $candidate, string $expected ): bool {
 		return strtolower( untrailingslashit( $candidate ) ) === strtolower( untrailingslashit( $expected ) );

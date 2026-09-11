@@ -21,9 +21,9 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class McpServer {
 
-	public const PROTOCOL_VERSION = '2025-06-18';
+	public const PROTOCOL_VERSION = '2025-11-25';
 
-	private const KNOWN_PROTOCOL_VERSIONS = [ '2025-06-18', '2025-03-26', '2024-11-05' ];
+	private const KNOWN_PROTOCOL_VERSIONS = [ '2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05' ];
 
 	public function __construct( private ToolDispatcher $dispatcher ) {}
 

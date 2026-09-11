@@ -259,15 +259,16 @@
 	function addToolCard( entry ) {
 		hideEmptyState();
 
-		var details = el( 'details', 'counterhand-tool' + ( entry.is_error ? ' counterhand-tool--error' : '' ) );
+		var state = entry.declined ? 'declined' : ( entry.is_error ? 'error' : 'ok' );
+		var details = el( 'details', 'counterhand-tool' + ( state === 'ok' ? '' : ' counterhand-tool--' + state ) );
 		var summary = el( 'summary', 'counterhand-tool__summary' );
 
-		summary.appendChild( el( 'span', 'counterhand-tool__icon', entry.is_error ? '✕' : '✓' ) );
+		summary.appendChild( el( 'span', 'counterhand-tool__icon', state === 'ok' ? '✓' : ( state === 'declined' ? '–' : '✕' ) ) );
 		summary.appendChild( el( 'code', 'counterhand-tool__name', entry.name ) );
 		summary.appendChild( el(
 			'span',
 			'counterhand-tool__hint',
-			entry.is_error ? ( i18n.toolFailed || 'failed' ) : ( i18n.toolRan || 'ran' )
+			state === 'declined' ? ( i18n.toolDeclined || 'declined' ) : ( state === 'error' ? ( i18n.toolFailed || 'failed' ) : ( i18n.toolRan || 'ran' ) )
 		) );
 		details.appendChild( summary );
 
@@ -298,9 +299,8 @@
 		input.style.height = Math.min( input.scrollHeight, 240 ) + 'px';
 	}
 
-	function send( text ) {
-		addBubble( 'user', text );
-
+	/** A pending row with the typing indicator, removed when the answer lands. */
+	function typingRow() {
 		var parts = messageRow( 'assistant' );
 		parts.row.classList.add( 'counterhand-msg--pending' );
 
@@ -313,57 +313,153 @@
 		log.appendChild( parts.row );
 		scrollToEnd();
 
-		setBusy( true );
+		return parts.row;
+	}
 
-		var body = new URLSearchParams();
-		body.set( 'action', 'counterhand_chat_send' );
+	function post( body ) {
 		body.set( '_ajax_nonce', form.dataset.nonce );
-		body.set( 'message', text );
 		body.set( 'history', JSON.stringify( history ) );
 
-		fetch( form.dataset.ajaxUrl, {
+		return fetch( form.dataset.ajaxUrl, {
 			method: 'POST',
 			credentials: 'same-origin',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: body.toString()
-		} )
-			.then( function ( response ) {
-				return response.json();
-			} )
+		} ).then( function ( response ) {
+			return response.json();
+		} );
+	}
+
+	/**
+	 * Renders one exchange. A turn parked for approval leaves the composer
+	 * locked: the conversation cannot move on until the person has decided.
+	 */
+	function render( payload ) {
+		var data = payload.data || {};
+
+		if ( ! payload.success ) {
+			addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ) ).classList.add( 'counterhand-msg--error' );
+			return false;
+		}
+
+		history = data.history || history;
+
+		( data.transcript || [] ).forEach( function ( entry ) {
+			if ( entry.type === 'tool' ) {
+				addToolCard( entry );
+			} else if ( entry.type === 'text' && entry.text ) {
+				addBubble( 'assistant', entry.text );
+			}
+		} );
+
+		if ( data.usage ) {
+			status.textContent = ( i18n.tokens || 'Tokens' ) + ': ' +
+				data.usage.input + ' → ' + data.usage.output;
+		}
+
+		if ( data.pending ) {
+			askApproval( data.pending );
+			return true;
+		}
+
+		return false;
+	}
+
+	/** One card per call that needs the person; the turn resumes once all are decided. */
+	function askApproval( pending ) {
+		hideEmptyState();
+
+		var decisions = {};
+		var remaining = pending.gated.length;
+
+		pending.calls.forEach( function ( call ) {
+			if ( pending.gated.indexOf( call.id ) === -1 ) {
+				return;
+			}
+
+			var card = el( 'div', 'counterhand-confirm' );
+			card.appendChild( el( 'p', 'counterhand-confirm__title', i18n.approvalTitle || 'Approve this change?' ) );
+			card.appendChild( el( 'p', 'counterhand-confirm__hint', i18n.approvalHint || 'The assistant wants to run this. Nothing happens until you decide.' ) );
+			card.appendChild( el( 'code', 'counterhand-tool__name', call.name ) );
+
+			if ( call.arguments && Object.keys( call.arguments ).length ) {
+				card.appendChild( el( 'pre', 'counterhand-tool__code', JSON.stringify( call.arguments, null, 2 ) ) );
+			}
+
+			var actions = el( 'div', 'counterhand-confirm__actions' );
+			var approve = el( 'button', 'button button-primary', i18n.approve || 'Approve' );
+			var decline = el( 'button', 'button', i18n.decline || 'Decline' );
+			approve.type = 'button';
+			decline.type = 'button';
+			actions.appendChild( approve );
+			actions.appendChild( decline );
+			card.appendChild( actions );
+
+			function decide( approved ) {
+				decisions[ call.id ] = approved;
+				remaining -= 1;
+
+				card.classList.add( 'counterhand-confirm--decided' );
+				actions.replaceWith( el(
+					'p',
+					'counterhand-confirm__decision',
+					approved ? ( i18n.approved || 'Approved' ) : ( i18n.declined || 'Declined' )
+				) );
+
+				if ( remaining === 0 ) {
+					resume( pending.key, decisions );
+				}
+			}
+
+			approve.addEventListener( 'click', function () { decide( true ); } );
+			decline.addEventListener( 'click', function () { decide( false ); } );
+
+			log.appendChild( card );
+		} );
+
+		status.textContent = i18n.awaiting || 'Waiting for your approval…';
+		scrollToEnd();
+	}
+
+	function exchange( body ) {
+		var row = typingRow();
+		setBusy( true );
+
+		post( body )
 			.then( function ( payload ) {
-				parts.row.remove();
-
-				var data = payload.data || {};
-
-				if ( ! payload.success ) {
-					var failure = addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ) );
-					failure.classList.add( 'counterhand-msg--error' );
-					return;
-				}
-
-				history = data.history || history;
-
-				( data.transcript || [] ).forEach( function ( entry ) {
-					if ( entry.type === 'tool' ) {
-						addToolCard( entry );
-					} else if ( entry.type === 'text' && entry.text ) {
-						addBubble( 'assistant', entry.text );
-					}
-				} );
-
-				if ( data.usage ) {
-					status.textContent = ( i18n.tokens || 'Tokens' ) + ': ' +
-						data.usage.input + ' → ' + data.usage.output;
-				}
+				row.remove();
+				return render( payload );
 			} )
 			.catch( function ( error ) {
-				parts.row.remove();
+				row.remove();
 				addBubble( 'assistant', String( error ) ).classList.add( 'counterhand-msg--error' );
+				return false;
 			} )
-			.finally( function () {
-				setBusy( false );
-				input.focus();
+			.then( function ( awaiting ) {
+				if ( ! awaiting ) {
+					setBusy( false );
+					input.focus();
+				}
 			} );
+	}
+
+	function send( text ) {
+		addBubble( 'user', text );
+
+		var body = new URLSearchParams();
+		body.set( 'action', 'counterhand_chat_send' );
+		body.set( 'message', text );
+
+		exchange( body );
+	}
+
+	function resume( key, decisions ) {
+		var body = new URLSearchParams();
+		body.set( 'action', 'counterhand_chat_resume' );
+		body.set( 'pending_key', key );
+		body.set( 'decisions', JSON.stringify( decisions ) );
+
+		exchange( body );
 	}
 
 	form.addEventListener( 'submit', function ( event ) {

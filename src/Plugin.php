@@ -13,6 +13,7 @@ use Counterhand\Features\OAuth\OAuthFeature;
 use Counterhand\Features\Playground\AgentLoop;
 use Counterhand\Features\Playground\ChatSettings;
 use Counterhand\Features\Playground\ModelConnect;
+use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\ConnectionMatcher;
@@ -115,9 +116,11 @@ final class Plugin {
 
 		$chat_settings  = new ChatSettings();
 		$chat_providers = new ProviderRegistry();
+		$pending_store  = new PendingConfirmationStore();
 		$playground     = new PlaygroundFeature(
 			$tool_dispatcher,
-			new AgentLoop( $tool_dispatcher ),
+			new AgentLoop( $tool_dispatcher, $pending_store ),
+			$pending_store,
 			$chat_settings,
 			$chat_providers,
 			new ModelConnect( $chat_settings, $chat_providers ),

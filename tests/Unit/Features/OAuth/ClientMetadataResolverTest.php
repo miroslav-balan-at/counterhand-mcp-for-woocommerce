@@ -43,11 +43,40 @@ final class ClientMetadataResolverTest extends TestCase {
 		self::assertSame( [ 'https://assistant.example/callback' ], $metadata->redirect_uris );
 	}
 
+	public function test_the_fetch_is_bounded_in_size(): void {
+		Functions\expect( 'wp_safe_remote_get' )
+			->once()
+			->with(
+				self::CLIENT_ID,
+				\Mockery::on( static fn ( array $args ): bool => ( $args['limit_response_size'] ?? 0 ) > 0 && 0 === $args['redirection'] )
+			)
+			->andReturn( [ 'body' => $this->document() ] );
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $this->document() );
+
+		self::assertNotNull( ( new ClientMetadataResolver() )->resolve( self::CLIENT_ID ) );
+	}
+
 	public function test_a_document_claiming_another_client_id_is_refused(): void {
 		Functions\when( 'wp_safe_remote_get' )->justReturn( [] );
 		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $this->document( 'https://elsewhere.example/client.json' ) );
 
 		self::assertNull( ( new ClientMetadataResolver() )->resolve( self::CLIENT_ID ) );
+	}
+
+	public function test_a_client_id_without_a_path_is_never_fetched(): void {
+		Functions\expect( 'wp_safe_remote_get' )->never();
+
+		self::assertNull( ( new ClientMetadataResolver() )->resolve( 'https://assistant.example' ) );
+	}
+
+	public function test_refresh_capability_is_what_the_document_declares(): void {
+		Functions\when( 'wp_safe_remote_get' )->justReturn( [] );
+
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $this->document( grant_types: [ 'authorization_code', 'refresh_token' ] ) );
+		self::assertTrue( ( new ClientMetadataResolver() )->resolve( self::CLIENT_ID )->issues_refresh_tokens() );
+
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $this->document() );
+		self::assertFalse( ( new ClientMetadataResolver() )->resolve( self::CLIENT_ID )->issues_refresh_tokens() );
 	}
 
 	public function test_plain_http_client_ids_are_never_fetched(): void {
@@ -56,13 +85,18 @@ final class ClientMetadataResolverTest extends TestCase {
 		self::assertNull( ( new ClientMetadataResolver() )->resolve( 'http://assistant.example/client.json' ) );
 	}
 
-	private function document( string $client_id = self::CLIENT_ID ): string {
-		return (string) json_encode(
-			[
-				'client_id'     => $client_id,
-				'client_name'   => 'Assistant',
-				'redirect_uris' => [ 'https://assistant.example/callback', 'ftp://assistant.example/no' ],
-			]
-		);
+	/** @param list<string> $grant_types */
+	private function document( string $client_id = self::CLIENT_ID, array $grant_types = [] ): string {
+		$document = [
+			'client_id'     => $client_id,
+			'client_name'   => 'Assistant',
+			'redirect_uris' => [ 'https://assistant.example/callback', 'ftp://assistant.example/no' ],
+		];
+
+		if ( [] !== $grant_types ) {
+			$document['grant_types'] = $grant_types;
+		}
+
+		return (string) json_encode( $document );
 	}
 }

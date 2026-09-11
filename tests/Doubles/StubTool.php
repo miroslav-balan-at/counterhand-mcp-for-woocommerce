@@ -29,6 +29,7 @@ final class StubTool implements ToolInterface {
 		private readonly array $schema = [ 'type' => 'object' ],
 		private readonly ?\Throwable $throws = null,
 		private readonly bool $available = true,
+		private readonly bool $confirms = false,
 	) {}
 
 	public function name(): string {
@@ -49,6 +50,10 @@ final class StubTool implements ToolInterface {
 
 	public function group(): ToolGroup {
 		return $this->group;
+	}
+
+	public function requires_confirmation(): bool {
+		return $this->confirms;
 	}
 
 	public function is_available(): bool {

@@ -6,6 +6,7 @@ namespace Counterhand\Features\Playground;
 
 use Counterhand\Features\McpServer\ToolDispatcherInterface;
 use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Features\Playground\Provider\ProviderInterface;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\SettingsTabInterface;
@@ -37,6 +38,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	public function __construct(
 		private ToolDispatcherInterface $tools,
 		private AgentLoop $loop,
+		private PendingConfirmationStore $pending_store,
 		private ChatSettings $settings,
 		private ProviderRegistry $providers,
 		private ModelConnect $model_connect,
@@ -45,6 +47,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 
 	public function register(): void {
 		add_action( 'wp_ajax_counterhand_chat_send', [ $this, 'handle_send' ] );
+		add_action( 'wp_ajax_counterhand_chat_resume', [ $this, 'handle_resume' ] );
 		add_action( 'admin_post_' . self::TOOLS_NONCE, [ $this, 'handle_save_tools' ] );
 		$this->model_connect->register();
 	}
@@ -83,6 +86,34 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	}
 
 	public function handle_send(): void {
+		$provider = $this->ready_provider();
+
+		$message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in ready_provider().
+		if ( '' === trim( $message ) ) {
+			wp_send_json_error( [ 'message' => __( 'Type a message first.', 'counterhand-mcp-for-woocommerce' ) ] );
+		}
+
+		$this->respond( fn (): AgentLoopResult => $this->loop->run( $provider, $this->config(), $this->history(), $message, $this->synthetic_agent() ) );
+	}
+
+	/** The administrator has ruled on a parked turn; run what they approved and carry on. */
+	public function handle_resume(): void {
+		$provider = $this->ready_provider();
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified in ready_provider().
+		$pending   = $this->pending_store->take( get_current_user_id(), sanitize_key( wp_unslash( $_POST['pending_key'] ?? '' ) ) );
+		$decisions = json_decode( wp_unslash( $_POST['decisions'] ?? '{}' ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- reduced to id => bool below.
+		// phpcs:enable
+
+		if ( null === $pending ) {
+			wp_send_json_error( [ 'message' => __( 'That approval has expired. Send your message again.', 'counterhand-mcp-for-woocommerce' ) ] );
+		}
+
+		$this->respond( fn (): AgentLoopResult => $this->loop->resume( $provider, $this->config(), $this->history(), $pending, ApprovalDecisions::from_request( $decisions ), $this->synthetic_agent() ) );
+	}
+
+	/** Capability, nonce and a connected model — every chat request starts here. */
+	private function ready_provider(): ProviderInterface {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( [ 'message' => __( 'Not allowed.', 'counterhand-mcp-for-woocommerce' ) ], 403 );
 		}
@@ -94,18 +125,20 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 			wp_send_json_error( [ 'message' => __( 'No model is connected yet. Pick one at the top of this tab.', 'counterhand-mcp-for-woocommerce' ) ] );
 		}
 
-		$message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
-		if ( '' === trim( $message ) ) {
-			wp_send_json_error( [ 'message' => __( 'Type a message first.', 'counterhand-mcp-for-woocommerce' ) ] );
-		}
+		return $provider;
+	}
 
-		$history = json_decode( wp_unslash( $_POST['history'] ?? '[]' ), true ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- provider-format JSON validated below, never output as HTML.
-		if ( ! is_array( $history ) ) {
-			$history = [];
-		}
+	/** @return list<array<string,mixed>> */
+	private function history(): array {
+		$history = json_decode( wp_unslash( $_POST['history'] ?? '[]' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in ready_provider(); provider-format JSON, never output as HTML.
 
+		return is_array( $history ) ? $history : [];
+	}
+
+	/** @param callable(): AgentLoopResult $exchange */
+	private function respond( callable $exchange ): void {
 		try {
-			$result = $this->loop->run( $provider, $this->config(), $history, $message, $this->synthetic_agent() );
+			$result = $exchange();
 		} catch ( ToolCallException $exception ) {
 			wp_send_json_error( [ 'message' => $exception->getMessage() ] );
 		} catch ( \Throwable $throwable ) {
@@ -121,6 +154,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 				'transcript' => $result->transcript,
 				'history'    => $result->messages,
 				'usage'      => $result->usage->to_array(),
+				'pending'    => $result->pending?->to_array(),
 			]
 		);
 	}
@@ -193,7 +227,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 
 		return sprintf(
 			/* translators: 1: store name, 2: currency code, 3: comma-separated areas of the store, e.g. "products, orders" */
-			__( 'You are a WooCommerce store assistant for "%1$s". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Confirm before any destructive action. Answer concisely and mention the concrete records you touched.', 'counterhand-mcp-for-woocommerce' ),
+			__( 'You are a WooCommerce store assistant for "%1$s". Prices are in %2$s. You can reach these areas of the store: %3$s. Use the available tools to answer questions and make changes — never guess at store data you can look up, and say plainly when something is outside what you can reach. New products are created as drafts for the administrator to review. Changes that need approval are approved by the administrator with a button in this chat: call the tool with confirm set to true and the approval prompt appears — do not ask for confirmation in words first. Answer concisely and mention the concrete records you touched.', 'counterhand-mcp-for-woocommerce' ),
 			get_bloginfo( 'name' ),
 			function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EUR',
 			[] !== $areas ? implode( ', ', $areas ) : __( 'none — no tool groups are selected for chat', 'counterhand-mcp-for-woocommerce' )

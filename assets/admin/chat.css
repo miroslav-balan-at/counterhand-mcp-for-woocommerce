@@ -311,6 +311,14 @@
 	border-left-color: var(--counterhand-error);
 }
 
+.counterhand-tool--declined {
+	border-left-color: var(--counterhand-border-strong);
+}
+
+.counterhand-tool--declined .counterhand-tool__icon {
+	color: var(--counterhand-text-subtle);
+}
+
 .counterhand-tool__summary {
 	display: flex;
 	align-items: center;
@@ -363,6 +371,55 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: .04em;
+	color: var(--counterhand-text-subtle);
+}
+
+/* Approval cards --------------------------------------------------------- */
+
+/*
+ * Louder than a tool card on purpose: this is the one moment the person, not
+ * the model, is being asked to act, so it reads as a question, not evidence.
+ */
+.counterhand-confirm {
+	align-self: flex-start;
+	max-width: 78%;
+	margin-left: 42px;
+	padding: 12px 14px;
+	background: var(--counterhand-surface);
+	border: 1px solid var(--counterhand-border);
+	border-left: 3px solid var(--counterhand-accent);
+	border-radius: var(--counterhand-radius);
+	font-size: 13px;
+}
+
+.counterhand-confirm__title {
+	margin: 0 0 4px;
+	font-weight: 600;
+	color: var(--counterhand-text);
+}
+
+.counterhand-confirm__hint {
+	margin: 0 0 10px;
+	color: var(--counterhand-text-muted);
+}
+
+.counterhand-confirm .counterhand-tool__code {
+	margin-top: 8px;
+}
+
+.counterhand-confirm__actions {
+	display: flex;
+	gap: var(--counterhand-gap-small);
+	margin-top: 12px;
+}
+
+.counterhand-confirm--decided {
+	opacity: .75;
+}
+
+.counterhand-confirm__decision {
+	margin: 10px 0 0;
+	font-size: 12px;
 	color: var(--counterhand-text-subtle);
 }
 

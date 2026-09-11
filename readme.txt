@@ -1,15 +1,15 @@
-=== Counterhand MCP for WooCommerce ===
+=== Counterhand MCP for WooCommerce — AI Agent Server for Claude, ChatGPT & Cursor ===
 Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
-Tags: woocommerce, mcp, ai, claude, chatgpt
+Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Make your WooCommerce store an MCP server, so Claude, ChatGPT and Cursor can manage products, orders and reports — with OAuth consent.
+The WooCommerce-native MCP server. Let Claude, ChatGPT and Cursor read sales, manage inventory and orders as an AI agent — with OAuth consent.
 
 == Description ==
 
@@ -22,13 +22,23 @@ Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants 
 * **OAuth 2.1 with PKCE** — the modern MCP authorization standard. Client identity via Client ID Metadata Documents (CIMD); no client secrets, no manual registration.
 * **You approve scopes per connection** — the consent screen groups the requested scopes under plain headings (Catalog, Sales, Insights, Content, Store setup, Advanced) as checkboxes you can narrow before approving. Write never implies read, and anything under Advanced is collapsed and never pre-ticked.
 * **Fail-closed security** — disabled tool groups and missing scopes make tools invisible AND uncallable. A connection can never do more than the administrator who approved it; demoting or removing that user instantly disables it.
-* **Audience-bound, hashed tokens** — access tokens are bound to your store (RFC 8707) and stored as SHA-256 hashes. Constant-time verification, no authentication oracle, per-connection rate limiting.
+* **Audience-bound, hashed tokens** — access tokens are bound to your store (RFC 8707) and stored as SHA-256 hashes. Constant-time verification, no authentication oracle, per-connection rate limiting. Apps that can refresh get one-hour access tokens and a rotating refresh token; a replayed refresh token revokes the connection.
 * **Safe defaults for writes** — products and posts are created as drafts for human review; deletion moves to trash unless permanent deletion is explicitly requested.
 * **Confirmation for the dangerous few** — changing a store setting, enabling or disabling a payment gateway, or running a WooCommerce maintenance tool each require an explicit confirmation argument, so an assistant has to tell you what it is about to do and get your agreement first.
 * **Credentials stay out of reach** — settings named like an API key, secret, password or token are never writable through the API, payment gateway credentials are neither read nor written, and maintenance routines that cannot be undone (resetting user roles, deleting tax rates, dropping order tables, running the database migration) are refused outright.
 * **Custom fields are guarded** — WordPress's own private fields are hidden, and the keys that hold roles, capabilities and login sessions can be neither read nor written. Customer custom fields are read-only.
 * **Revoke anytime** — the Connections tab lists every connected assistant; one click cuts off its access.
 * **Opt-in action log** — record every tool call with PII (emails, phone numbers) masked before storage, configurable retention, one-click clearing.
+
+= What you can ask an assistant to do =
+
+Once connected, an AI agent works your store through plain requests, and the Chat tab gives you the same as an in-admin chatbot. What the tool groups cover, in everyday terms:
+
+* **Inventory and catalog** — check stock levels, find products that are low or out of stock, adjust quantities and prices, create draft products, and manage variations, categories, tags and coupons.
+* **Orders, refunds and customers** — look up an order, list what shipped today, add an order note, issue a refund, or pull up a customer's history.
+* **Sales dashboard questions** — "what did we sell last week?", top sellers, revenue by period and coupon usage, answered from WooCommerce's own reports.
+* **Automation of repetitive work** — rewriting product descriptions, tidying categories or drafting posts and pages becomes one instruction instead of a hundred clicks; every change still passes WooCommerce's own validation, and the risky ones need your confirmation.
+* **Store setup** — shipping zones and rates, tax rates and, behind Advanced, settings, payment gateways and maintenance tools.
 
 = 127 tools, in groups you switch on individually =
 
@@ -49,7 +59,7 @@ Visibility is decided by WooCommerce too: before a tool is offered, this plugin 
 
 = Two ways to use AI with your store =
 
-**Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.
+**Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.
 
 **Connect AI apps you already use.** The Connect AI apps tab shows one URL to paste into Claude, ChatGPT, Claude Code or any other MCP client — one click installs it into Cursor and VS Code. There is no token to create and nothing to copy back: the app identifies itself with its own published address (CIMD), and you approve exactly what it may do on a consent screen in your browser. No local proxy, no Node.js required.
 
@@ -167,19 +177,26 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 
 == Changelog ==
 
+= 1.3.0 =
+* Changes that need approval are now approved by you, not the model: the Chat tab pauses before a risky change, shows exactly what the assistant wants to run, and only your Approve button lets it happen. Nothing in that turn runs until you decide.
+* AI apps that declare refresh support (Claude Code, for example) receive one-hour access tokens and a rotating refresh token, so a leaked token is useful for an hour rather than a month. A refresh token replayed after it was retired revokes the connection. Apps without refresh support keep the 30-day token they had, so nothing changes for them.
+* An app's identity document URL must now carry a path, as the Client ID Metadata Document specification requires.
+* The OAuth consent pages refuse to be shown inside another site's frame, so a store administrator cannot be tricked into approving a connection they did not open.
+* Authorization responses now carry the issuer (RFC 9207) and the discovery document says so, which lets AI apps detect a mix-up between authorization servers.
+* The connecting app's identity document is read with a size limit.
+* Deleting the plugin also removes the Chat tab's saved provider key.
+* Speaks MCP protocol revision 2025-11-25 alongside the earlier ones.
+* Tested with WooCommerce 11.1.
+
 = 1.2.2 =
 * The connecting app's identity document is fetched through WordPress's safe HTTP function, which refuses private-network and loopback addresses.
 * Uninstall no longer runs a raw query against the options table; the plugin's short-lived transients expire on their own and WordPress's daily cleanup removes them.
 * The readme discloses that the Chat tab can install the official AI Provider plugins from WordPress.org on request.
 * On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
 
-= 1.2.1 =
-* The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.
-* The readme now documents every external service the plugin can contact, what is sent to each and when.
-
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
-= 1.2.2 =
-Connector keys for the WordPress-managed model are now entered on the WordPress Settings → Connectors screen only; the plugin no longer touches them. Nothing changes for connected assistants.
+= 1.3.0 =
+Risky changes from the Chat tab now wait for your approval. Security hardening of the OAuth consent flow and tested with WooCommerce 11.1. Connected assistants keep working; apps that can refresh will start doing so on their next connection.

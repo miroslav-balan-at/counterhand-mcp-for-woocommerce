@@ -31,6 +31,11 @@ final readonly class FlowPage {
 	public function render( string $state, string $title, array $context = [] ): void {
 		nocache_headers();
 		header( 'Content-Type: text/html; charset=utf-8' );
+		// Core frames-protects only wp-admin and wp-login; this is a front-end route,
+		// and a framed consent screen lets another site click Approve for the admin.
+		header( 'X-Frame-Options: DENY' );
+		header( "Content-Security-Policy: frame-ancestors 'none'" );
+		header( 'Referrer-Policy: no-referrer' );
 
 		$this->enqueue_styles();
 

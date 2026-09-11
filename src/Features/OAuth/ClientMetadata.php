@@ -12,12 +12,27 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ClientMetadata {
 
-	/** @param list<string> $redirect_uris */
+	/** RFC 7591 §2: what a document that names no grant_types is taken to mean. */
+	public const DEFAULT_GRANT_TYPES = [ 'authorization_code' ];
+
+	/**
+	 * @param list<string> $redirect_uris
+	 * @param list<string> $grant_types
+	 */
 	public function __construct(
 		public string $client_id,
 		public string $client_name,
 		public array $redirect_uris,
+		public array $grant_types = self::DEFAULT_GRANT_TYPES,
 	) {}
+
+	/**
+	 * Whether the client says it can refresh. Only such a client gets a
+	 * short-lived access token; the rest would simply stop working when it lapsed.
+	 */
+	public function issues_refresh_tokens(): bool {
+		return in_array( 'refresh_token', $this->grant_types, true );
+	}
 
 	public function allows_redirect_uri( string $redirect_uri ): bool {
 		if ( in_array( $redirect_uri, $this->redirect_uris, true ) ) {

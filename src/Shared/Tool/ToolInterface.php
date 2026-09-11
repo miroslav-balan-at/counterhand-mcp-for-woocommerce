@@ -44,6 +44,13 @@ interface ToolInterface {
 	public function is_available(): bool;
 
 	/**
+	 * Whether a call changes the store in a way the person, not the model, has
+	 * to approve. The in-admin chat pauses on these; an MCP client is held to
+	 * it through the required `confirm` argument instead.
+	 */
+	public function requires_confirmation(): bool;
+
+	/**
 	 * @param array $arguments Already schema-sanitized and validated arguments.
 	 * @throws ToolCallException On any execution failure, with an agent-actionable message.
 	 */

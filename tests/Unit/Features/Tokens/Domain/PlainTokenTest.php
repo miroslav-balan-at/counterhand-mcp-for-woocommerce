@@ -58,4 +58,11 @@ final class PlainTokenTest extends TestCase {
 		self::assertMatchesRegularExpression( '/^[0-9a-f]{64}$/', $first->hash() );
 		self::assertSame( hash( 'sha256', $first->value ), $first->hash() );
 	}
+
+	public function test_a_refresh_token_never_parses_as_an_access_token(): void {
+		$refresh = \Counterhand\Features\Tokens\Domain\PlainRefreshToken::compose( TokenId::generate(), TokenSecret::generate() )->to_string();
+
+		self::assertNull( PlainToken::parse( $refresh ) );
+		self::assertNotNull( \Counterhand\Features\Tokens\Domain\PlainRefreshToken::parse( $refresh ) );
+	}
 }

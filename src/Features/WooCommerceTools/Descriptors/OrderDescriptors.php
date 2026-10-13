@@ -138,7 +138,7 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 					false
 				),
 				'',
-				'Create an order the customer has not paid for yet, and return payment_url — the link that lets them pay it. Always pending: the status is forced, because an unpaid order is the only kind this tool is for, and because the statuses that would email the customer are not it. WooCommerce prices the order itself, so send line_items as product_id and quantity and let it fill in the rest; a shipping_lines entry needs method_id, method_title and total, and is not calculated for you — read the store\'s own rates first if you do not know it. Nothing is emailed to anyone on creation. Confirm the products, quantities, shipping cost and address with the user before calling this, then give them back the total the response reports rather than one you worked out.',
+				'Create an order the customer has not paid for yet, and return payment_url — the link that lets them pay it. Always pending: the status is forced, because an unpaid order is the only kind this tool is for, and because the statuses that would email the customer are not it. WooCommerce prices the order itself, so send line_items as product_id and quantity and let it fill in the rest; a shipping_lines entry needs method_id, method_title and total, and is not calculated for you — read the store\'s own rates first if you do not know it. WooCommerce sends no email of its own for a new pending order, though a store\'s other plugins may. Confirm the products, quantities, shipping cost and address with the user before calling this, then give them back the total the response reports rather than one you worked out.',
 				[ 'status' => 'pending' ],
 			),
 			new OperationDescriptor(

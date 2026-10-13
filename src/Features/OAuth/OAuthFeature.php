@@ -42,7 +42,7 @@ final readonly class OAuthFeature implements FeatureInterface {
 
 		add_action( 'init', [ self::class, 'register_rewrites' ] );
 		add_filter( 'query_vars', [ $this, 'add_query_vars' ] );
-		add_action( 'parse_request', [ $this, 'maybe_handle_well_known' ] );
+		add_action( 'parse_request', [ $this, 'maybe_handle_well_known' ], 0 );
 		add_action( 'parse_request', [ $this->authorize, 'maybe_handle' ] );
 
 		add_action( 'rest_api_init', [ $this->discovery, 'register_routes' ] );
@@ -66,12 +66,14 @@ final readonly class OAuthFeature implements FeatureInterface {
 	}
 
 	public function maybe_handle_well_known( \WP $wp ): void {
-		$which = $wp->query_vars[ self::WELL_KNOWN_QUERY_VAR ] ?? null;
-		if ( null === $which ) {
+		$document = WellKnownDocument::try_from_query_var( $wp->query_vars[ self::WELL_KNOWN_QUERY_VAR ] ?? null )
+			?? WellKnownDocument::from_path( $wp->request );
+
+		if ( null === $document ) {
 			return;
 		}
 
-		$response = 'server' === $which
+		$response = WellKnownDocument::Server === $document
 			? $this->discovery->authorization_server()
 			: $this->discovery->protected_resource();
 

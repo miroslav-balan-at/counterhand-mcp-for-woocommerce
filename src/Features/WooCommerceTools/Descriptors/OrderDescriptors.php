@@ -67,6 +67,8 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 		'fee_lines',
 		'coupon_lines',
 		'refunds',
+		'needs_payment',
+		'payment_url',
 	];
 
 	private const NOTE_FIELDS = [
@@ -122,6 +124,22 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 				Operation::GetItem,
 				new FieldProfile( [], self::ITEM_FIELDS, false ),
 				'Totals are strings in the order currency. line_items carries what was bought, at the prices charged at the time.'
+			),
+			new OperationDescriptor(
+				ToolName::from( 'create_order' ),
+				Operation::CreateItem,
+				// No set_paid, transaction_id or needs_confirmation: marking an
+				// order paid for money nobody received is the one mistake here
+				// that cannot be walked back, and allow_additional false keeps
+				// them out of the schema entirely rather than policing them.
+				new FieldProfile(
+					[ 'customer_id', 'customer_note', 'billing', 'shipping', 'line_items', 'shipping_lines', 'fee_lines', 'coupon_lines', 'payment_method', 'payment_method_title' ],
+					self::ITEM_FIELDS,
+					false
+				),
+				'',
+				'Create an order the customer has not paid for yet, and return payment_url — the link that lets them pay it. Always pending: the status is forced, because an unpaid order is the only kind this tool is for, and because the statuses that would email the customer are not it. WooCommerce prices the order itself, so send line_items as product_id and quantity and let it fill in the rest; a shipping_lines entry needs method_id, method_title and total, and is not calculated for you — read the store\'s own rates first if you do not know it. Nothing is emailed to anyone on creation. Confirm the products, quantities, shipping cost and address with the user before calling this, then give them back the total the response reports rather than one you worked out.',
+				[ 'status' => 'pending' ],
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_order_status' ),

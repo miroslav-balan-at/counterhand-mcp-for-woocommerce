@@ -16,7 +16,7 @@
             "slug": "orders",
             "label": "Orders",
             "description": "Orders, totals, line items and customer addresses.",
-            "tools": 10
+            "tools": 11
         },
         {
             "slug": "content",
@@ -99,6 +99,6 @@
     ],
     "totals": {
         "groups": 16,
-        "tools": 127
+        "tools": 128
     }
 }

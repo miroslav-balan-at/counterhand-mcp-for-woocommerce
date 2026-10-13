@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,9 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 4. Action log — every tool call, with personal data masked before it is stored.
 
 == Changelog ==
+
+= 1.3.2 =
+* Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending, and nothing is emailed on creation.
 
 = 1.3.1 =
 * Fixed: the OAuth discovery documents are now served from the request path, so another plugin registering the same `/.well-known/` rewrite can no longer answer for this one and break the connection.

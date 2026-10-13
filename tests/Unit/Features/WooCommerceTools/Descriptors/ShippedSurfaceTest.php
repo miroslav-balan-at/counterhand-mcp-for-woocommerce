@@ -86,6 +86,7 @@ final class ShippedSurfaceTest extends TestCase {
 		'delete_product_review'          => [ 'reviews', 'reviews:write' ],
 		'list_orders'                    => [ 'orders', 'orders:read' ],
 		'get_order'                      => [ 'orders', 'orders:read' ],
+		'create_order'                   => [ 'orders', 'orders:write' ],
 		'update_order_status'            => [ 'orders', 'orders:write' ],
 		'get_order_meta'                 => [ 'orders', 'orders:read' ],
 		'set_order_meta'                 => [ 'orders', 'orders:write' ],
@@ -234,8 +235,8 @@ final class ShippedSurfaceTest extends TestCase {
 	 * number too, rather than discovering later that a descriptor quietly
 	 * stopped being registered.
 	 */
-	public function test_the_surface_is_one_hundred_and_twenty_seven_tools(): void {
-		$this->assertCount( 127, $this->surface() );
+	public function test_the_surface_is_one_hundred_and_twenty_eight_tools(): void {
+		$this->assertCount( 128, $this->surface() );
 	}
 
 	/**

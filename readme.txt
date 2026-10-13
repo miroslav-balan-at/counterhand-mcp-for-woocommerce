@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,9 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 4. Action log — every tool call, with personal data masked before it is stored.
 
 == Changelog ==
+
+= 1.3.1 =
+* Fixed: the OAuth discovery documents are now served from the request path, so another plugin registering the same `/.well-known/` rewrite can no longer answer for this one and break the connection.
 
 = 1.3.0 =
 * Changes that need approval are now approved by you, not the model: the Chat tab pauses before a risky change, shows exactly what the assistant wants to run, and only your Approve button lets it happen. Nothing in that turn runs until you decide.

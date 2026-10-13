@@ -9,13 +9,7 @@ use Counterhand\Tests\Unit\TestCase;
 
 final class WellKnownDocumentTest extends TestCase {
 
-	/**
-	 * The path has to resolve on its own: when a plugin sharing the
-	 * /.well-known/ namespace wins the rewrite rule, our query var is absent
-	 * and the path is all we get.
-	 *
-	 * @dataProvider paths
-	 */
+	/** @dataProvider paths */
 	public function test_path_resolves_without_a_query_var( string $path, ?WellKnownDocument $expected ): void {
 		self::assertSame( $expected, WellKnownDocument::from_path( $path ) );
 	}

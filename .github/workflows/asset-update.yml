@@ -1,13 +1,15 @@
 # readme.txt and the directory assets (banners, icons, screenshots) can change
 # between releases — this pushes them to SVN without a version bump.
+#
+# Run by hand, not on push: the action refuses outright when anything beyond the
+# readme and the assets has changed, and a push filter matches when a commit
+# touches readme.txt *and* code, so it failed on nearly every release. Code
+# reaches wordpress.org through deploy.yml and a version tag; this is only for
+# the times a readme or a banner changes on its own.
 name: Update WordPress.org assets and readme
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - readme.txt
-      - .wordpress-org/**
+  workflow_dispatch:
 
 jobs:
   assets:

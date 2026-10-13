@@ -43,7 +43,9 @@ except the build and the SVN deploy.
 - [ ] Reply to every open support thread on wordpress.org — the resolution
       rate feeds search ranking.
 - [ ] Readme/asset-only changes (screenshots, `Tested up to`) go through
-      `asset-update.yml` without a version bump.
+      `asset-update.yml` without a version bump — run it by hand from the
+      Actions tab. It refuses when the commit also touched code, which is why
+      it is not on a push trigger.
 
 ## Why the zip is built from `git ls-files`
 

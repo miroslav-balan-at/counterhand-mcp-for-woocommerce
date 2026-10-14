@@ -67,3 +67,5 @@ Unit tests run without WordPress, so they cannot tell you whether a field name i
 
 ## Verification
 - `composer run lint` (phpcs), `composer run analyse` (phpstan, needs `--memory-limit=1G`), `composer run test` (phpunit) — all green before claiming done.
+- `npm run e2e` (Playwright, see `tests/e2e/README.md`) for anything a user can see or an MCP client can call. It runs against the plugin's own disposable **devbox** store in `tests/e2e/store` (`npm run e2e:store:start`), never Docker or wp-env, and never the marketing site's store. A new user-facing flow gets a spec in the same change.
+- npm is test tooling only: `package.json`, the lockfile and `playwright.config.ts` are in `.distignore`, and the plugin never loads anything from `node_modules`. The no-build-step rule for shipped JS still holds.

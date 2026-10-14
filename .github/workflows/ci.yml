@@ -28,3 +28,65 @@ jobs:
       - run: composer run lint
       - run: composer run analyse -- --memory-limit=1G
       - run: composer run test
+
+  # The same disposable devbox store the suite uses locally (tests/e2e/store),
+  # so a green run here means what a green run on a laptop means.
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install devbox and the store's packages
+        uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          project-path: tests/e2e/store
+          devbox-version: 0.17.1
+          enable-cache: 'true'
+
+      - run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start the store
+        run: |
+          npm run e2e:store:start
+          for _ in $(seq 1 60); do
+            nc -z 127.0.0.1 8007 && exit 0
+            sleep 2
+          done
+          echo 'nginx never came up on :8007' >&2
+          cat "$HOME/.cache/counterhand-e2e/log/process-compose.log" >&2 || true
+          exit 1
+
+      - name: Run the suite
+        run: npm run e2e
+
+      - name: Store logs
+        if: failure()
+        run: |
+          for log in "$HOME"/.cache/counterhand-e2e/log/*.log "$HOME"/.cache/counterhand-e2e/wordpress/wp-content/debug.log; do
+            [ -f "$log" ] && { echo "::group::$log"; tail -n 200 "$log"; echo '::endgroup::'; }
+          done
+          true
+
+      # Traces hold bearer tokens for this run's throwaway store only.
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            ~/.cache/counterhand-e2e/report
+            ~/.cache/counterhand-e2e/results
+          retention-days: 7
+
+      - name: Stop the store
+        if: always()
+        run: npm run e2e:store:stop

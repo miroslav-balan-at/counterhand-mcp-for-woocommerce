@@ -1,6 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Environment for the disposable e2e store. Sourced from devbox.json's
 # init_hook, so everything exported here reaches process-compose and WP-CLI.
+#
+# POSIX sh only: devbox sources the hook with sh, which is dash on Linux, so
+# bash-isms such as brace expansion silently do something else there.
 #
 # The store's files live outside the repo (COUNTERHAND_E2E_STATE_DIR): the
 # plugin is symlinked into the store's plugins directory, and a store inside
@@ -24,18 +27,21 @@ export COUNTERHAND_E2E_BASE_URL="http://localhost:${COUNTERHAND_E2E_HTTP_PORT}"
 export MYSQL_HOME="$COUNTERHAND_E2E_STATE_DIR/mariadb"
 export MYSQL_UNIX_PORT="$COUNTERHAND_E2E_STATE_DIR/mariadb/mysql.sock"
 
-mkdir -p \
-	"$COUNTERHAND_E2E_STATE_DIR"/{mariadb/data,log,php/sessions} \
-	"$COUNTERHAND_E2E_STATE_DIR"/nginx/temp/{client_body,proxy,fastcgi,uwsgi,scgi} \
-	"$COUNTERHAND_E2E_WORDPRESS"
+for directory in mariadb/data log php/sessions \
+	nginx/temp/client_body nginx/temp/proxy nginx/temp/fastcgi nginx/temp/uwsgi nginx/temp/scgi; do
+	mkdir -p "$COUNTERHAND_E2E_STATE_DIR/$directory"
+done
+mkdir -p "$COUNTERHAND_E2E_WORDPRESS"
 chmod 700 "$COUNTERHAND_E2E_STATE_DIR"
 
 # nginx needs its own store's conf dir for mime.types and fastcgi_params.
 COUNTERHAND_E2E_NGINX_CONF="$(nginx -V 2>&1 | grep -o 'prefix=[^ ]*' | cut -d= -f2)/conf"
 export COUNTERHAND_E2E_NGINX_CONF
 
+# shellcheck disable=SC2016 # envsubst takes the literal variable names.
 envsubst '${COUNTERHAND_E2E_STATE_DIR} ${COUNTERHAND_E2E_WORDPRESS} ${COUNTERHAND_E2E_NGINX_CONF} ${COUNTERHAND_E2E_HTTP_PORT} ${COUNTERHAND_E2E_PHP_FPM_PORT}' \
 	<"$DEVBOX_PROJECT_ROOT/config/nginx.template" >"$COUNTERHAND_E2E_STATE_DIR/nginx/nginx.conf"
 
+# shellcheck disable=SC2016
 envsubst '${COUNTERHAND_E2E_STATE_DIR} ${COUNTERHAND_E2E_PHP_FPM_PORT}' \
 	<"$DEVBOX_PROJECT_ROOT/config/php-fpm.template" >"$COUNTERHAND_E2E_STATE_DIR/php/php-fpm.conf"

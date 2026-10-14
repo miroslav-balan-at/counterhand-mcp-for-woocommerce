@@ -28,16 +28,26 @@ final readonly class McpEndpoint {
 
 	private StatelessGate $gate;
 
+	private OriginPolicy $origins;
+
 	public function __construct(
 		private TokenAuthenticator $authenticator,
 		private McpServer $server,
 	) {
-		$this->gate = new StatelessGate();
+		$this->gate    = new StatelessGate();
+		$this->origins = new OriginPolicy();
 	}
 
 	public function process( McpHttpRequest $http ): McpReply {
 		if ( 'POST' !== strtoupper( $http->method ) ) {
 			return new McpReply( 405, null, [ 'Allow' => 'POST' ] );
+		}
+
+		// Before authentication: a rebinding page must learn nothing, not even
+		// whether a token would have been accepted.
+		$origin = $http->header( 'Origin' );
+		if ( null !== $origin && ! $this->origins->allows( $origin ) ) {
+			return McpReply::json( JsonRpcResponse::error( null, JsonRpcErrorCode::InvalidRequest, 'This origin may not call the MCP endpoint.' ), 403 );
 		}
 
 		try {

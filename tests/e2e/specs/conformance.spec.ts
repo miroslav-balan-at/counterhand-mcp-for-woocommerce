@@ -20,7 +20,7 @@ import { adminStatePath } from '../support/store';
 const run = promisify( execFile );
 
 const SCENARIOS: Record< string, string[] > = {
-	'2026-07-28': [ 'server-stateless', 'tools-list', 'caching' ],
+	'2026-07-28': [ 'server-stateless', 'tools-list', 'caching', 'dns-rebinding-protection' ],
 	'2025-11-25': [ 'server-initialize', 'tools-list' ],
 };
 

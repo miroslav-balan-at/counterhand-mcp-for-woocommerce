@@ -16,3 +16,7 @@
 
 # Review correspondence, local only
 REVIEW-REPLY.txt
+
+# The e2e store's devbox environment. Its state (WordPress, database, test
+# credentials, reports) lives outside the repo in ~/.cache/counterhand-e2e.
+/tests/e2e/store/.devbox/

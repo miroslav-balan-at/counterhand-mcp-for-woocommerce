@@ -28,6 +28,11 @@ enum MetaOperation: string {
 		};
 	}
 
+	/** Set is an upsert, so it can overwrite an existing value just as delete removes one. */
+	public function is_destructive(): bool {
+		return self::Get !== $this; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+	}
+
 	/** The tool name, e.g. Set + "product" => "set_product_meta". */
 	public function tool_name( string $singular ): string {
 		return $this->value . '_' . $singular . '_meta'; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.

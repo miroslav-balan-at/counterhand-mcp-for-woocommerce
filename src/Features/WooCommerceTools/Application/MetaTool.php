@@ -9,6 +9,7 @@ use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOperation;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
@@ -117,6 +118,19 @@ final readonly class MetaTool implements ToolInterface {
 
 	public function requires_confirmation(): bool {
 		return false;
+	}
+
+	public function is_read_only(): bool {
+		return ToolIntent::Read === $this->operation->intent();
+	}
+
+	public function is_destructive(): bool {
+		return $this->operation->is_destructive();
+	}
+
+	/** Setting the same value twice, or deleting an absent key, changes nothing further. */
+	public function is_idempotent(): bool {
+		return true;
 	}
 
 	/** Gated exactly like the resource it hangs off, since it is that route. */

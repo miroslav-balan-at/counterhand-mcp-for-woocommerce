@@ -1,0 +1,23 @@
+; Rendered by scripts/setup-env.sh into $COUNTERHAND_E2E_STATE_DIR/php/php-fpm.conf.
+[global]
+error_log = ${COUNTERHAND_E2E_STATE_DIR}/log/php-fpm.log
+pid = ${COUNTERHAND_E2E_STATE_DIR}/php/php-fpm.pid
+
+[www]
+listen = 127.0.0.1:${COUNTERHAND_E2E_PHP_FPM_PORT}
+pm = dynamic
+pm.max_children = 8
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 4
+
+; FPM clears the environment; on arm64 macOS gettext then crashes inside
+; libintl without a locale (php-src #17735), as the site repo found.
+env[LC_ALL] = C.UTF-8
+env[LANG] = C.UTF-8
+
+php_admin_value[error_log] = ${COUNTERHAND_E2E_STATE_DIR}/log/php-error.log
+php_admin_flag[log_errors] = on
+php_admin_flag[display_errors] = off
+php_admin_value[memory_limit] = 512M
+php_value[session.save_path] = ${COUNTERHAND_E2E_STATE_DIR}/php/sessions

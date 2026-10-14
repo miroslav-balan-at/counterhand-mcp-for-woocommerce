@@ -80,6 +80,14 @@ final readonly class McpServer {
 				'name'        => $tool->name(),
 				'description' => $tool->description(),
 				'inputSchema' => $tool->input_schema(),
+				// Every hint is sent, because an omitted one defaults to the
+				// unsafe reading (destructive, open-world).
+				'annotations' => [
+					'readOnlyHint'    => $tool->is_read_only(),
+					'destructiveHint' => $tool->is_destructive(),
+					'idempotentHint'  => $tool->is_idempotent(),
+					'openWorldHint'   => false,
+				],
 			],
 			$this->dispatcher->visible_for( $agent )
 		);

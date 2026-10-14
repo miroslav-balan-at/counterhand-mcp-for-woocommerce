@@ -17,6 +17,9 @@
 # Dependencies and build output
 vendor
 node_modules
+package.json
+package-lock.json
+playwright.config.ts
 build
 dist
 

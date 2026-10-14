@@ -1,0 +1,71 @@
+version: "0.5"
+
+# The disposable e2e store: MariaDB → PHP-FPM → nginx, all under
+# $COUNTERHAND_E2E_STATE_DIR, ports from $COUNTERHAND_E2E_PORT_OFFSET
+# (scripts/setup-env.sh). Start with `npm run e2e:store:start`.
+
+log_location: ${COUNTERHAND_E2E_STATE_DIR}/log/process-compose.log
+log_level: info
+is_strict: false
+
+processes:
+  # --no-defaults and --user: a CI runner's system MySQL ships an
+  # /etc/mysql/my.cnf naming user=mysql, which the init would try to chown to.
+  database-init:
+    command: >
+      test -d "$COUNTERHAND_E2E_STATE_DIR/mariadb/data/mysql"
+      || mariadb-install-db --no-defaults --user="$(id -un)" --datadir="$COUNTERHAND_E2E_STATE_DIR/mariadb/data" --auth-root-authentication-method=normal --skip-test-db >/dev/null
+    availability:
+      restart: "no"
+
+  mariadb:
+    command: >
+      mariadbd --no-defaults
+      --datadir="$COUNTERHAND_E2E_STATE_DIR/mariadb/data"
+      --socket="$COUNTERHAND_E2E_STATE_DIR/mariadb/mysql.sock"
+      --pid-file="$COUNTERHAND_E2E_STATE_DIR/mariadb/mariadb.pid"
+      --log-error="$COUNTERHAND_E2E_STATE_DIR/log/mariadb.log"
+      --bind-address=127.0.0.1 --port="$COUNTERHAND_E2E_DATABASE_PORT"
+    availability:
+      restart: always
+      backoff_seconds: 2
+    readiness_probe:
+      exec:
+        command: mariadb-admin --socket="$COUNTERHAND_E2E_STATE_DIR/mariadb/mysql.sock" ping
+      initial_delay_seconds: 2
+      period_seconds: 2
+      failure_threshold: 15
+    depends_on:
+      database-init:
+        condition: process_completed_successfully
+
+  php-fpm:
+    command: php-fpm -y "$COUNTERHAND_E2E_STATE_DIR/php/php-fpm.conf" -F
+    availability:
+      restart: always
+      backoff_seconds: 2
+    readiness_probe:
+      exec:
+        command: nc -z 127.0.0.1 "$COUNTERHAND_E2E_PHP_FPM_PORT"
+      initial_delay_seconds: 1
+      period_seconds: 2
+      failure_threshold: 10
+    depends_on:
+      mariadb:
+        condition: process_healthy
+
+  nginx:
+    command: nginx -p "$COUNTERHAND_E2E_STATE_DIR/nginx" -c "$COUNTERHAND_E2E_STATE_DIR/nginx/nginx.conf" -g 'daemon off;'
+    availability:
+      restart: always
+      backoff_seconds: 2
+    readiness_probe:
+      exec:
+        command: nc -z 127.0.0.1 "$COUNTERHAND_E2E_HTTP_PORT"
+      initial_delay_seconds: 1
+      period_seconds: 2
+      failure_threshold: 10
+    depends_on:
+      php-fpm:
+        condition: process_healthy
+

@@ -1,0 +1,57 @@
+# Rendered by scripts/setup-env.sh into $COUNTERHAND_E2E_STATE_DIR/nginx/nginx.conf.
+worker_processes 2;
+error_log ${COUNTERHAND_E2E_STATE_DIR}/log/nginx-error.log;
+pid ${COUNTERHAND_E2E_STATE_DIR}/nginx/nginx.pid;
+
+events {
+    worker_connections 256;
+}
+
+http {
+    include ${COUNTERHAND_E2E_NGINX_CONF}/mime.types;
+    default_type application/octet-stream;
+    access_log ${COUNTERHAND_E2E_STATE_DIR}/log/nginx-access.log;
+    sendfile on;
+    client_max_body_size 32M;
+
+    client_body_temp_path ${COUNTERHAND_E2E_STATE_DIR}/nginx/temp/client_body;
+    proxy_temp_path ${COUNTERHAND_E2E_STATE_DIR}/nginx/temp/proxy;
+    fastcgi_temp_path ${COUNTERHAND_E2E_STATE_DIR}/nginx/temp/fastcgi;
+    uwsgi_temp_path ${COUNTERHAND_E2E_STATE_DIR}/nginx/temp/uwsgi;
+    scgi_temp_path ${COUNTERHAND_E2E_STATE_DIR}/nginx/temp/scgi;
+
+    server {
+        listen 127.0.0.1:${COUNTERHAND_E2E_HTTP_PORT};
+        listen [::1]:${COUNTERHAND_E2E_HTTP_PORT};
+        server_name localhost;
+        root ${COUNTERHAND_E2E_WORDPRESS};
+        index index.php;
+
+        # The plugin is a symlink to the repo: only what the release zip ships
+        # may be served from it, never the tests, the tooling or dependencies.
+        location ~ ^/wp-content/plugins/counterhand-mcp-for-woocommerce/(tests|node_modules|vendor|bin|build)/ {
+            deny all;
+        }
+
+        location ~ /\. {
+            deny all;
+        }
+
+        # OAuth/MCP discovery documents are WordPress rewrites, not files.
+        location ^~ /.well-known/ {
+            try_files $uri /index.php?$args;
+        }
+
+        location / {
+            try_files $uri $uri/ /index.php?$args;
+        }
+
+        location ~ \.php$ {
+            try_files $uri =404;
+            fastcgi_pass 127.0.0.1:${COUNTERHAND_E2E_PHP_FPM_PORT};
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include ${COUNTERHAND_E2E_NGINX_CONF}/fastcgi_params;
+            fastcgi_read_timeout 120;
+        }
+    }
+}

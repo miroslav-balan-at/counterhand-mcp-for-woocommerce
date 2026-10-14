@@ -50,6 +50,18 @@ interface ToolInterface {
 	 */
 	public function requires_confirmation(): bool;
 
+	/** Whether a call leaves the store exactly as it found it. */
+	public function is_read_only(): bool;
+
+	/**
+	 * Whether a call can overwrite or remove what is already there, rather than
+	 * only add. Meaningless for a read-only tool, which answers false.
+	 */
+	public function is_destructive(): bool;
+
+	/** Whether repeating a call with the same arguments changes nothing further. */
+	public function is_idempotent(): bool;
+
 	/**
 	 * @param array $arguments Already schema-sanitized and validated arguments.
 	 * @throws ToolCallException On any execution failure, with an agent-actionable message.

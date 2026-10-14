@@ -48,6 +48,24 @@ final class OperationTest extends TestCase {
 	}
 
 	/**
+	 * The hints an MCP client relies on before running a tool: only create is
+	 * purely additive, and only create has an effect when repeated.
+	 */
+	public function test_only_update_and_delete_can_lose_data(): void {
+		$this->assertTrue( Operation::UpdateItem->is_destructive() );
+		$this->assertTrue( Operation::DeleteItem->is_destructive() );
+		$this->assertFalse( Operation::CreateItem->is_destructive() );
+	}
+
+	public function test_only_create_is_not_idempotent(): void {
+		$this->assertFalse( Operation::CreateItem->is_idempotent() );
+
+		foreach ( [ Operation::GetItems, Operation::GetItem, Operation::UpdateItem, Operation::DeleteItem ] as $operation ) {
+			$this->assertTrue( $operation->is_idempotent(), $operation->value );
+		}
+	}
+
+	/**
 	 * The shape of the response an agent gets back. A create returns the one
 	 * thing it made, not a list of one.
 	 */

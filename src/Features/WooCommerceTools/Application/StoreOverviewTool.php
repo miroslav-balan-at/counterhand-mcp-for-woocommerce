@@ -55,6 +55,18 @@ final readonly class StoreOverviewTool implements ToolInterface {
 		return false;
 	}
 
+	public function is_read_only(): bool {
+		return true;
+	}
+
+	public function is_destructive(): bool {
+		return false;
+	}
+
+	public function is_idempotent(): bool {
+		return true;
+	}
+
 	/**
 	 * No route to probe, and nothing here a token owner cannot already see:
 	 * reaching this plugin at all requires manage_woocommerce.

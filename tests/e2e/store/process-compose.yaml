@@ -9,10 +9,12 @@ log_level: info
 is_strict: false
 
 processes:
+  # --no-defaults and --user: a CI runner's system MySQL ships an
+  # /etc/mysql/my.cnf naming user=mysql, which the init would try to chown to.
   database-init:
     command: >
       test -d "$COUNTERHAND_E2E_STATE_DIR/mariadb/data/mysql"
-      || mariadb-install-db --datadir="$COUNTERHAND_E2E_STATE_DIR/mariadb/data" --auth-root-authentication-method=normal --skip-test-db >/dev/null
+      || mariadb-install-db --no-defaults --user="$(id -un)" --datadir="$COUNTERHAND_E2E_STATE_DIR/mariadb/data" --auth-root-authentication-method=normal --skip-test-db >/dev/null
     availability:
       restart: "no"
 

@@ -1,0 +1,19 @@
+# Checks of the official MCP conformance suite that this server is expected
+# to fail, each for a stated reason. The runner fails on any other failure, and
+# also on an entry here that starts passing, so this list cannot go stale.
+#
+# All of these are "not testable" rather than wrong: they need the reference
+# server's diagnostic tools (test_missing_capability, test_streaming_elicitation,
+# test_logging_tool), which an application server has no reason to ship.
+server:
+  - server-stateless:sep-2575-server-rejects-undeclared-capability
+  - server-stateless:sep-2575-missing-capability-http-400
+  - server-stateless:sep-2575-http-server-no-independent-requests-on-stream
+  - server-stateless:sep-2575-server-no-log-without-loglevel
+
+  # The caching scenario also asks for hints on prompts and resources lists.
+  # This server declares neither capability yet (MCP prompts and resources are
+  # planned for 2.1); when they land, these entries go stale and fail the run.
+  - caching:sep-2549-prompts-list-caching-hints
+  - caching:sep-2549-resources-list-caching-hints
+  - caching:sep-2549-resources-templates-list-caching-hints

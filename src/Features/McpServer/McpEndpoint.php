@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\McpServer;
 
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
 use Counterhand\Shared\Exception\AuthenticationFailedException;
 use Counterhand\Shared\Exception\RateLimitExceededException;
@@ -17,87 +18,82 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Transport-agnostic request processing for the /mcp endpoint.
  * Both the pretty rewrite and the REST fallback delegate here.
+ *
+ * Legacy requests keep HTTP 200 for every JSON-RPC error: a 2025-era client
+ * reads a 4xx without a body it recognizes as "no Streamable HTTP server
+ * here" and falls back to the old SSE transport. Only stateless requests get
+ * the 400s and 404 their revision defines.
  */
 final readonly class McpEndpoint {
+
+	private StatelessGate $gate;
 
 	public function __construct(
 		private TokenAuthenticator $authenticator,
 		private McpServer $server,
-	) {}
+	) {
+		$this->gate = new StatelessGate();
+	}
 
-	/**
-	 * @return array{status: int, body: array|null, headers: array<string, string>}
-	 */
-	public function process( string $http_method, string $raw_body, ?string $authorization_header, ?string $fallback_header ): array {
-		if ( 'POST' !== strtoupper( $http_method ) ) {
-			return [
-				'status'  => 405,
-				'body'    => null,
-				'headers' => [ 'Allow' => 'POST' ],
-			];
+	public function process( McpHttpRequest $http ): McpReply {
+		if ( 'POST' !== strtoupper( $http->method ) ) {
+			return new McpReply( 405, null, [ 'Allow' => 'POST' ] );
 		}
 
 		try {
-			$agent = $this->authenticator->authenticate( $authorization_header, $fallback_header );
+			$agent = $this->authenticator->authenticate( $http->header( 'Authorization' ), $http->header( 'X-Counterhand-Token' ) );
 		} catch ( AuthenticationFailedException $exception ) {
 			// RFC 9728 §5.1: point clients at the protected-resource metadata so
 			// they can discover the authorization server and start the OAuth flow.
 			$resource_metadata = home_url( '/.well-known/oauth-protected-resource' );
 
-			return [
-				'status'  => 401,
-				'body'    => [ 'error' => $exception->getMessage() ],
-				'headers' => [
+			return new McpReply(
+				401,
+				[ 'error' => $exception->getMessage() ],
+				[
 					'WWW-Authenticate' => sprintf(
 						'Bearer realm="Counterhand MCP", error="invalid_token", resource_metadata="%s"',
 						$resource_metadata
 					),
-				],
-			];
+				]
+			);
 		} catch ( RateLimitExceededException $exception ) {
-			return [
-				'status'  => 429,
-				'body'    => [ 'error' => $exception->getMessage() ],
-				'headers' => [ 'Retry-After' => (string) $exception->retry_after_seconds ],
-			];
+			return new McpReply(
+				429,
+				[ 'error' => $exception->getMessage() ],
+				[ 'Retry-After' => (string) $exception->retry_after_seconds ]
+			);
 		}
 
 		try {
-			$request = JsonRpcRequest::from_body( $raw_body );
+			$request = JsonRpcRequest::from_body( $http->body );
 		} catch ( JsonRpcEnvelopeException $exception ) {
-			return [
-				'status'  => 200,
-				'body'    => JsonRpcResponse::error( null, $exception->error_code, $exception->getMessage() )->payload,
-				'headers' => [],
-			];
+			// No body to read the era from; only a modern header earns the 400.
+			$header = $http->header( 'MCP-Protocol-Version' );
+
+			return McpReply::json(
+				JsonRpcResponse::error( null, $exception->error_code, $exception->getMessage() ),
+				null !== $header && ProtocolVersion::is_modern( $header ) ? 400 : 200
+			);
 		}
 
 		try {
-			$response = $this->server->handle( $request, $agent );
+			if ( ! $this->gate->is_stateless( $request, $http ) ) {
+				return $this->legacy( $request, $agent );
+			}
+
+			return $this->gate->reject( $request, $http ) ?? $this->server->handle_stateless( $request, $agent );
 		} catch ( \Throwable $throwable ) {
 			$this->log_internal_error( $throwable );
 
-			return [
-				'status'  => 200,
-				'body'    => JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InternalError, 'Internal server error.' )->payload,
-				'headers' => [],
-			];
+			return McpReply::json( JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InternalError, 'Internal server error.' ) );
 		}
+	}
 
-		// Notifications get 202 Accepted with no body (MCP streamable HTTP).
-		if ( null === $response ) {
-			return [
-				'status'  => 202,
-				'body'    => null,
-				'headers' => [],
-			];
-		}
+	private function legacy( JsonRpcRequest $request, AuthenticatedAgent $agent ): McpReply {
+		$response = $this->server->handle( $request, $agent );
 
-		return [
-			'status'  => 200,
-			'body'    => $response->payload,
-			'headers' => [],
-		];
+		return null === $response ? McpReply::accepted() : McpReply::json( $response );
 	}
 
 	private function log_internal_error( \Throwable $throwable ): void {

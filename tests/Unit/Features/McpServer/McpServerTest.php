@@ -330,6 +330,72 @@ final class McpServerTest extends TestCase {
 		$this->assertStringContainsString( 'Cannot assign null', $logger->errors[0] );
 	}
 
+	public function test_a_legacy_tool_list_is_unchanged_by_the_stateless_era(): void {
+		$result = $this->server( $this->registry_with( new StubTool( 'list_products', ApiScope::ProductsRead, ToolGroup::Products ) ) )
+			->handle( $this->request( 'tools/list' ), AgentFactory::with_scopes( [ 'products:read' ] ) )
+			->payload['result'];
+
+		$this->assertSame( [ 'tools' ], array_keys( $result ), '2025-era clients must see exactly what they saw before' );
+	}
+
+	public function test_discovery_names_only_stateless_revisions_and_the_servers_identity(): void {
+		$reply = $this->server( $this->registry_with() )->handle_stateless( $this->request( 'server/discover' ), AgentFactory::with_scopes( [ 'products:read' ] ) );
+
+		$result = $reply->body['result'];
+		$this->assertSame( 200, $reply->status );
+		$this->assertSame( 'complete', $result['resultType'] );
+		$this->assertSame( [ '2026-07-28' ], $result['supportedVersions'] );
+		$this->assertSame( [ 'tools' => [ 'listChanged' => false ] ], $result['capabilities'] );
+		$this->assertStringContainsString( 'Products', $result['instructions'] );
+		$this->assertSame( 'Counterhand MCP for WooCommerce', $result['_meta']['io.modelcontextprotocol/serverInfo']['name'] );
+	}
+
+	/** What a token sees depends on what it was granted, so nothing it is told may be shared with another. */
+	public function test_cacheable_results_are_private(): void {
+		$server = $this->server( $this->registry_with( new StubTool( 'list_products', ApiScope::ProductsRead, ToolGroup::Products ) ) );
+		$agent  = AgentFactory::with_scopes( [ 'products:read' ] );
+
+		foreach ( [ 'server/discover', 'tools/list' ] as $method ) {
+			$result = $server->handle_stateless( $this->request( $method ), $agent )->body['result'];
+
+			$this->assertSame( 'private', $result['cacheScope'], $method );
+			$this->assertGreaterThanOrEqual( 0, $result['ttlMs'], $method );
+		}
+	}
+
+	public function test_a_stateless_tool_call_is_complete_and_not_cacheable(): void {
+		$server = $this->server( $this->registry_with( new StubTool( 'list_products', ApiScope::ProductsRead, ToolGroup::Products ) ) );
+
+		$result = $server->handle_stateless( $this->request( 'tools/call', [ 'name' => 'list_products' ] ), AgentFactory::with_scopes( [ 'products:read' ] ) )->body['result'];
+
+		$this->assertSame( 'complete', $result['resultType'] );
+		$this->assertFalse( $result['isError'] );
+		$this->assertArrayNotHasKey( 'ttlMs', $result );
+		$this->assertArrayHasKey( 'io.modelcontextprotocol/serverInfo', $result['_meta'] );
+	}
+
+	public function test_a_stateless_method_this_server_does_not_serve_is_a_404(): void {
+		$reply = $this->server( $this->registry_with() )->handle_stateless( $this->request( 'prompts/list' ), AgentFactory::with_scopes( [] ) );
+
+		$this->assertSame( 404, $reply->status );
+		$this->assertSame( JsonRpcErrorCode::MethodNotFound->value, $reply->body['error']['code'] );
+	}
+
+	/** The modern era has no handshake: initialize is just a method it does not define. */
+	public function test_initialize_is_not_a_stateless_method(): void {
+		$reply = $this->server( $this->registry_with() )->handle_stateless( $this->request( 'initialize' ), AgentFactory::with_scopes( [] ) );
+
+		$this->assertSame( 404, $reply->status );
+	}
+
+	/** An unknown tool is the handler's answer, so it stays in-band rather than becoming an HTTP error. */
+	public function test_an_unknown_tool_stays_an_in_band_error_on_200(): void {
+		$reply = $this->server( $this->registry_with() )->handle_stateless( $this->request( 'tools/call', [ 'name' => 'nope' ] ), AgentFactory::with_scopes( [] ) );
+
+		$this->assertSame( 200, $reply->status );
+		$this->assertSame( JsonRpcErrorCode::InvalidParams->value, $reply->body['error']['code'] );
+	}
+
 	private function broken_tool(): StubTool {
 		return new StubTool(
 			'list_products',

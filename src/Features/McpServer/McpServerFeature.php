@@ -56,22 +56,23 @@ final readonly class McpServerFeature implements FeatureInterface {
 			return;
 		}
 
-		$result = $this->endpoint->process(
-			(string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared against a fixed verb whitelist, never output.
-			(string) file_get_contents( 'php://input' ),
-			$this->read_authorization_header(),
-			$this->read_header( 'HTTP_X_COUNTERHAND_TOKEN' )
+		$reply = $this->endpoint->process(
+			new McpHttpRequest(
+				(string) ( $_SERVER['REQUEST_METHOD'] ?? 'GET' ), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared against a fixed verb whitelist, never output.
+				(string) file_get_contents( 'php://input' ),
+				$this->server_headers()
+			)
 		);
 
-		status_header( $result['status'] );
+		status_header( $reply->status );
 		header( 'Content-Type: application/json; charset=utf-8' );
 
-		foreach ( $result['headers'] as $name => $value ) {
+		foreach ( $reply->headers as $name => $value ) {
 			header( $name . ': ' . $value );
 		}
 
-		if ( null !== $result['body'] ) {
-			echo wp_json_encode( $result['body'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON API response.
+		if ( null !== $reply->body ) {
+			echo wp_json_encode( $reply->body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON API response.
 		}
 
 		exit;
@@ -94,30 +95,45 @@ final readonly class McpServerFeature implements FeatureInterface {
 	}
 
 	public function handle_rest_fallback( \WP_REST_Request $request ): \WP_REST_Response {
-		$result = $this->endpoint->process(
-			$request->get_method(),
-			(string) $request->get_body(),
-			$request->get_header( 'authorization' ),
-			$request->get_header( 'x-counterhand-token' )
-		);
+		$headers = [];
+		foreach ( $request->get_headers() as $name => $values ) {
+			// WP_REST_Request stores header names lower-cased with underscores.
+			$headers[ str_replace( '_', '-', (string) $name ) ] = (string) ( is_array( $values ) ? reset( $values ) : $values );
+		}
 
-		$response = new \WP_REST_Response( $result['body'], $result['status'] );
+		$reply = $this->endpoint->process( new McpHttpRequest( $request->get_method(), (string) $request->get_body(), $headers ) );
 
-		foreach ( $result['headers'] as $name => $value ) {
+		$response = new \WP_REST_Response( $reply->body, $reply->status );
+
+		foreach ( $reply->headers as $name => $value ) {
 			$response->header( $name, $value );
 		}
 
 		return $response;
 	}
 
-	private function read_authorization_header(): ?string {
+	/**
+	 * The request's headers from $_SERVER, by name. Raw values: they are compared
+	 * and parsed as credentials, never output.
+	 *
+	 * @return array<string, string>
+	 */
+	private function server_headers(): array {
+		$headers = [];
+
+		foreach ( $_SERVER as $key => $value ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- raw header values, never output.
+			if ( ! is_string( $value ) || ! str_starts_with( (string) $key, 'HTTP_' ) ) {
+				continue;
+			}
+
+			$headers[ str_replace( '_', '-', strtolower( substr( (string) $key, 5 ) ) ) ] = $value;
+		}
+
 		// Apache CGI/FastCGI setups may expose it only via REDIRECT_.
-		return $this->read_header( 'HTTP_AUTHORIZATION' ) ?? $this->read_header( 'REDIRECT_HTTP_AUTHORIZATION' );
-	}
+		if ( ! isset( $headers['authorization'] ) && is_string( $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? null ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- raw credential, never output.
+			$headers['authorization'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- raw credential, never output.
+		}
 
-	private function read_header( string $server_key ): ?string {
-		$value = $_SERVER[ $server_key ] ?? null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- raw header needed for credential parsing, never output.
-
-		return is_string( $value ) && '' !== $value ? $value : null;
+		return $headers;
 	}
 }

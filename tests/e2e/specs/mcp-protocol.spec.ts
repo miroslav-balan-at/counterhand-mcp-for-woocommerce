@@ -139,4 +139,21 @@ test.describe( 'MCP protocol (2025-11-25)', () => {
 			restore();
 		}
 	} );
+
+	test( 'a browser page on another origin is refused before its token is even looked at', async ( { baseURL } ) => {
+		const client = await anonymousContext( baseURL as string );
+
+		const foreign = await client.post( endpoint, {
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ accessToken }`, Origin: 'http://evil.example.com' },
+			data: { jsonrpc: '2.0', id: 1, method: 'tools/list' },
+		} );
+		const own = await client.post( endpoint, {
+			headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ accessToken }`, Origin: new URL( baseURL as string ).origin },
+			data: { jsonrpc: '2.0', id: 2, method: 'tools/list' },
+		} );
+
+		expect( foreign.status() ).toBe( 403 );
+		expect( own.status() ).toBe( 200 );
+		await client.dispose();
+	} );
 } );

@@ -14,6 +14,7 @@
 		"e2e:report": "playwright show-report \"${COUNTERHAND_E2E_STATE_DIR:-$HOME/.cache/counterhand-e2e}/report\""
 	},
 	"devDependencies": {
+		"@modelcontextprotocol/conformance": "0.2.0-alpha.11",
 		"@playwright/test": "1.63.0",
 		"@types/node": "22.20.4"
 	}

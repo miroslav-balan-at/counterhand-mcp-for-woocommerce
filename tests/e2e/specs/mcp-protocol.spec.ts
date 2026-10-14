@@ -61,7 +61,13 @@ test.describe( 'MCP protocol (2025-11-25)', () => {
 			expect( tool.name ).toMatch( /^[a-z0-9_]+$/ );
 			expect( tool.description.length, `${ tool.name } has a description` ).toBeGreaterThan( 0 );
 			expect( tool.inputSchema.type, `${ tool.name } input schema` ).toBe( 'object' );
+			// All four hints, always: an omitted one defaults to destructive and open-world.
+			expect( Object.keys( tool.annotations ).sort(), `${ tool.name } annotations` ).toEqual( [ 'destructiveHint', 'idempotentHint', 'openWorldHint', 'readOnlyHint' ] );
+			expect( tool.annotations.openWorldHint ).toBe( false );
 		}
+
+		// This token is read-only, so every tool it sees is too.
+		expect( first.result.tools.every( ( tool: { annotations: { readOnlyHint: boolean } } ) => tool.annotations.readOnlyHint ) ).toBe( true );
 
 		// Stable order keeps a client's cached list, and the model's prompt cache, valid.
 		const second = await listToolNames( client, endpoint, accessToken );

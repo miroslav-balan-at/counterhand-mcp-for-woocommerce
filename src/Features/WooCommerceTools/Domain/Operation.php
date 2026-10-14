@@ -44,6 +44,19 @@ enum Operation: string {
 		};
 	}
 
+	/** Create only adds; update overwrites fields and delete removes, so both can lose data. */
+	public function is_destructive(): bool {
+		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+			self::UpdateItem, self::DeleteItem => true,
+			default                            => false,
+		};
+	}
+
+	/** Every operation but create can be repeated without a further effect; create makes another one. */
+	public function is_idempotent(): bool {
+		return self::CreateItem !== $this; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+	}
+
 	/** Whether this addresses one resource by id rather than the collection. */
 	public function targets_item(): bool {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.

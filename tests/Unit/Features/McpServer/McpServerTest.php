@@ -124,7 +124,7 @@ final class McpServerTest extends TestCase {
 		$this->assertSame( McpServer::PROTOCOL_VERSION, $response->payload['result']['protocolVersion'] );
 	}
 
-	public function test_tools_list_exposes_name_description_and_schema_only(): void {
+	public function test_tools_list_exposes_name_description_schema_and_annotations_only(): void {
 		$registry = $this->registry_with( new StubTool( 'list_products', ApiScope::ProductsRead, ToolGroup::Products ) );
 
 		$response = $this->server( $registry )->handle(
@@ -134,9 +134,35 @@ final class McpServerTest extends TestCase {
 
 		$this->assertCount( 1, $response->payload['result']['tools'] );
 		$this->assertSame(
-			[ 'name', 'description', 'inputSchema' ],
+			[ 'name', 'description', 'inputSchema', 'annotations' ],
 			array_keys( $response->payload['result']['tools'][0] )
 		);
+	}
+
+	public function test_every_annotation_is_sent_because_an_omitted_one_reads_as_unsafe(): void {
+		$registry = $this->registry_with(
+			new StubTool( 'list_products', ApiScope::ProductsRead, ToolGroup::Products ),
+			new StubTool( 'delete_product', ApiScope::ProductsWrite, ToolGroup::Products, confirms: true )
+		);
+
+		$tools = $this->server( $registry )->handle(
+			$this->request( 'tools/list' ),
+			AgentFactory::with_scopes( [ 'products:read', 'products:write' ] )
+		)->payload['result']['tools'];
+
+		$annotations = array_column( $tools, 'annotations', 'name' );
+		$this->assertSame(
+			[
+				'readOnlyHint'    => true,
+				'destructiveHint' => false,
+				'idempotentHint'  => true,
+				'openWorldHint'   => false,
+			],
+			$annotations['list_products']
+		);
+		$this->assertFalse( $annotations['delete_product']['readOnlyHint'] );
+		$this->assertTrue( $annotations['delete_product']['destructiveHint'] );
+		$this->assertFalse( $annotations['delete_product']['openWorldHint'], 'every tool acts on this store alone' );
 	}
 
 	public function test_calling_a_tool_outside_scope_reads_as_unknown(): void {

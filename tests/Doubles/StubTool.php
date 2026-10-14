@@ -56,6 +56,18 @@ final class StubTool implements ToolInterface {
 		return $this->confirms;
 	}
 
+	public function is_read_only(): bool {
+		return ! $this->confirms;
+	}
+
+	public function is_destructive(): bool {
+		return $this->confirms;
+	}
+
+	public function is_idempotent(): bool {
+		return true;
+	}
+
 	public function is_available(): bool {
 		++$this->availability_checks;
 

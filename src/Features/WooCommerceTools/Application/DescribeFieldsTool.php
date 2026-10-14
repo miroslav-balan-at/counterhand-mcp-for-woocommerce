@@ -92,6 +92,18 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		return false;
 	}
 
+	public function is_read_only(): bool {
+		return true;
+	}
+
+	public function is_destructive(): bool {
+		return false;
+	}
+
+	public function is_idempotent(): bool {
+		return true;
+	}
+
 	/** Pure description over descriptors already loaded; nothing to probe. */
 	public function is_available(): bool {
 		return true;

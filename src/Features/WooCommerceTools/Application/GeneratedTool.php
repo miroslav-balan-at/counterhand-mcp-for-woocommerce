@@ -7,6 +7,7 @@ namespace Counterhand\Features\WooCommerceTools\Application;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestResult;
@@ -79,6 +80,19 @@ final readonly class GeneratedTool implements ToolInterface {
 
 	public function requires_confirmation(): bool {
 		return $this->operation->requires_confirmation;
+	}
+
+	public function is_read_only(): bool {
+		return ToolIntent::Read === $this->operation->operation->intent();
+	}
+
+	/** A write the person must confirm is treated as destructive whatever its verb. */
+	public function is_destructive(): bool {
+		return $this->operation->requires_confirmation || $this->operation->operation->is_destructive();
+	}
+
+	public function is_idempotent(): bool {
+		return $this->operation->operation->is_idempotent();
 	}
 
 	/**

@@ -394,6 +394,30 @@ final class GeneratedToolTest extends TestCase {
 		$this->assertArrayNotHasKey( 'confirm', $schema['properties'] );
 	}
 
+	public function test_a_read_is_read_only_and_never_destructive(): void {
+		$tool = $this->tool( Operation::GetItems );
+
+		$this->assertTrue( $tool->is_read_only() );
+		$this->assertFalse( $tool->is_destructive() );
+	}
+
+	public function test_an_ordinary_create_is_additive(): void {
+		$tool = $this->tool( Operation::CreateItem );
+
+		$this->assertFalse( $tool->is_read_only() );
+		$this->assertFalse( $tool->is_destructive() );
+		$this->assertFalse( $tool->is_idempotent() );
+	}
+
+	/**
+	 * Running a maintenance routine is a create to WooCommerce, but nothing an
+	 * MCP client should treat as harmless: what the person must confirm, the
+	 * client is told is destructive.
+	 */
+	public function test_a_create_that_needs_confirmation_is_destructive(): void {
+		$this->assertTrue( $this->tool( Operation::CreateItem, requires_confirmation: true )->is_destructive() );
+	}
+
 	/** A policy refusal must stop the call, not annotate it. */
 	public function test_a_policy_refusal_prevents_the_dispatch(): void {
 		$policy = new class() implements ArgumentPolicy {

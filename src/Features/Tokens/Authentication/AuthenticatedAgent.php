@@ -4,9 +4,9 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Tokens\Authentication;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Features\Tokens\Domain\ApiToken;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\Exception\ScopeDeniedException;
 
 defined( 'ABSPATH' ) || exit;
@@ -26,7 +26,7 @@ final readonly class AuthenticatedAgent {
 	/**
 	 * @throws ScopeDeniedException When the token does not grant the scope.
 	 */
-	public function require_scope( ApiScope $scope ): void {
+	public function require_scope( ScopeInterface $scope ): void {
 		if ( ! $this->token->scopes->contains( $scope ) ) {
 			throw new ScopeDeniedException( $scope ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}

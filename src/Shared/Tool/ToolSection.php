@@ -4,6 +4,9 @@ declare( strict_types=1 );
 
 namespace Counterhand\Shared\Tool;
 
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -22,6 +25,8 @@ enum ToolSection: string {
 	case Content  = 'content';
 	case Store    = 'store';
 	case Advanced = 'advanced';
+	// Last, so another plugin's abilities never sit above the store's own groups.
+	case Integrations = 'integrations';
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
@@ -31,6 +36,7 @@ enum ToolSection: string {
 			self::Content  => __( 'Content', 'counterhand-mcp-for-woocommerce' ),
 			self::Store    => __( 'Store setup', 'counterhand-mcp-for-woocommerce' ),
 			self::Advanced => __( 'Advanced', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'Other plugins', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
@@ -42,16 +48,22 @@ enum ToolSection: string {
 			self::Content  => __( 'The blog posts and pages around your store.', 'counterhand-mcp-for-woocommerce' ),
 			self::Store    => __( 'Shipping, tax and reference data.', 'counterhand-mcp-for-woocommerce' ),
 			self::Advanced => __( 'Store configuration and maintenance. Enable only if you know why you need it.', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'What other plugins on this store offer to AI clients. Each plugin still checks its own permissions.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	/** Advanced sections render collapsed and are never pre-checked. */
 	public function is_advanced(): bool {
-		return self::Advanced === $this; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+		// Integrations too: it is someone else's code, so granting it takes a deliberate click.
+		return self::Advanced === $this || self::Integrations === $this; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
 	}
 
-	/** @return list<ToolGroup> */
+	/** @return list<ScopeGroupInterface> */
 	public function groups(): array {
+		if ( self::Integrations === $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+			return ScopeGroups::integrations();
+		}
+
 		return array_values(
 			array_filter(
 				ToolGroup::cases(),

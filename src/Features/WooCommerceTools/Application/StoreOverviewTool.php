@@ -51,6 +51,10 @@ final readonly class StoreOverviewTool implements ToolInterface {
 		return ToolGroup::Reports;
 	}
 
+	public function is_open_world(): bool {
+		return false;
+	}
+
 	public function requires_confirmation(): bool {
 		return false;
 	}

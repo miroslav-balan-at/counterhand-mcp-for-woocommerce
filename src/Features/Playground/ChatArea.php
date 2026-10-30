@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground;
 
-use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,18 +19,18 @@ defined( 'ABSPATH' ) || exit;
 final readonly class ChatArea {
 
 	private function __construct(
-		public ToolGroup $group,
+		public ScopeGroupInterface $group,
 		public bool $is_selected,
 		public bool $store_allows_read,
 		public bool $store_allows_write,
 		public int $tool_count,
 	) {}
 
-	/** @param list<ToolGroup> $selected */
-	public static function of( ToolGroup $group, array $selected, ChatToolPolicy $policy, int $tool_count ): self {
+	/** @param list<ScopeGroupInterface> $selected */
+	public static function of( ScopeGroupInterface $group, array $selected, ChatToolPolicy $policy, int $tool_count ): self {
 		return new self(
 			$group,
-			in_array( $group, $selected, true ),
+			in_array( $group->key(), array_map( static fn ( ScopeGroupInterface $chosen ): string => $chosen->key(), $selected ), true ),
 			$policy->allows_read( $group ),
 			$policy->allows_write( $group ),
 			$tool_count

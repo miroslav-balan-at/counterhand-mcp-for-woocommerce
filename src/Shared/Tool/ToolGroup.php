@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Shared\Tool;
 
 use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  * Scopes and option keys are derived from the value rather than restated, so a
  * new group cannot drift out of step with its own scope.
  */
-enum ToolGroup: string {
+enum ToolGroup: string implements ScopeGroupInterface {
 	case Products   = 'products';
 	case Orders     = 'orders';
 	case Customers  = 'customers';
@@ -46,6 +47,10 @@ enum ToolGroup: string {
 	 * value" until the group states its own wording and its own section — which
 	 * is the decision we want made deliberately, not defaulted.
 	 */
+
+	public function key(): string {
+		return $this->value; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+	}
 
 	public function label(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.

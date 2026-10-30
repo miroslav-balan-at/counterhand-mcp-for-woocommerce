@@ -111,4 +111,21 @@ final class SettingSanitizerTest extends TestCase {
 			);
 		}
 	}
+
+	/** Not in the defaults, since integrations come and go with their plugins. */
+	public function test_integration_ticks_persist_and_lookalikes_do_not(): void {
+		$sanitized = ( new SettingSanitizer() )->sanitize(
+			[
+				'integration_yoast-seo_read'  => '1',
+				'integration_yoast-seo_write' => '',
+				'integration_yoast-seo_admin' => '1',
+				'something_else_read'         => '1',
+			]
+		);
+
+		$this->assertTrue( $sanitized['integration_yoast-seo_read'] );
+		$this->assertArrayNotHasKey( 'integration_yoast-seo_write', $sanitized );
+		$this->assertArrayNotHasKey( 'integration_yoast-seo_admin', $sanitized );
+		$this->assertArrayNotHasKey( 'something_else_read', $sanitized );
+	}
 }

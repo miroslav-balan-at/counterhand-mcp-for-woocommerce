@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\Tokens\Domain;
 
 use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,8 +28,9 @@ final readonly class ScopeSummary {
 		$grants = [];
 
 		// ToolGroup order, not grant order: the same token always reads the same
-		// way, and a re-issued token does not appear to have changed.
-		foreach ( ToolGroup::cases() as $group ) {
+		// way, and a re-issued token does not appear to have changed. Integrations
+		// come from the grant itself, so one whose plugin is off is still shown.
+		foreach ( [ ...ToolGroup::cases(), ...self::integrations_in( $scopes ) ] as $group ) {
 			$write = $group->write_scope();
 
 			if ( ! $scopes->contains( $group->read_scope() ) && ( null === $write || ! $scopes->contains( $write ) ) ) {
@@ -39,6 +41,21 @@ final readonly class ScopeSummary {
 		}
 
 		return new self( $grants );
+	}
+
+	/** @return list<ScopeGroupInterface> */
+	private static function integrations_in( GrantedScopeSet $scopes ): array {
+		$groups = [];
+
+		foreach ( $scopes->all() as $scope ) {
+			if ( ToolSection::Integrations === $scope->group()->section() ) {
+				$groups[ $scope->group()->key() ] = $scope->group();
+			}
+		}
+
+		ksort( $groups );
+
+		return array_values( $groups );
 	}
 
 	public function is_empty(): bool {

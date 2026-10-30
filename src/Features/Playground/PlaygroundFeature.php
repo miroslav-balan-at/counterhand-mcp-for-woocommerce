@@ -11,13 +11,14 @@ use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\SettingsTabInterface;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Features\Tokens\Domain\ApiToken;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\TokenId;
 use Counterhand\Features\Tokens\Domain\TokenStatus;
 use Counterhand\Shared\Exception\ToolCallException;
 use Counterhand\Shared\FeatureInterface;
-use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
@@ -182,19 +183,19 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	 * Every area with both facts the picker needs: whether chat wants it, and
 	 * whether the store exposes it at all.
 	 *
-	 * @param  list<ToolGroup> $selected
+	 * @param  list<ScopeGroupInterface> $selected
 	 * @return array<string, ChatArea>
 	 */
 	private function areas( array $selected ): array {
 		$counts = $this->tools->tool_counts_by_group();
 		$areas  = [];
 
-		foreach ( ToolGroup::cases() as $group ) {
-			$areas[ $group->value ] = ChatArea::of(
+		foreach ( ScopeGroups::all() as $group ) {
+			$areas[ $group->key() ] = ChatArea::of(
 				$group,
 				$selected,
 				$this->store_policy,
-				$counts[ $group->value ] ?? 0
+				$counts[ $group->key() ] ?? 0
 			);
 		}
 
@@ -221,7 +222,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	 */
 	private function system_prompt(): string {
 		$areas = array_map(
-			static fn ( ToolGroup $group ): string => $group->noun(),
+			static fn ( ScopeGroupInterface $group ): string => $group->noun(),
 			$this->settings->groups()
 		);
 
@@ -272,11 +273,11 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		$scopes = [];
 
 		foreach ( $this->settings->groups() as $group ) {
-			$scopes[] = $group->read_scope()->value;
+			$scopes[] = $group->read_scope()->key();
 
 			$write = $group->write_scope();
 			if ( null !== $write ) {
-				$scopes[] = $write->value;
+				$scopes[] = $write->key();
 			}
 		}
 

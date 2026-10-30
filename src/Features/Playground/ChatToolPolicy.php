@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground;
 
-use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -17,9 +17,9 @@ defined( 'ABSPATH' ) || exit;
  */
 interface ChatToolPolicy {
 
-	public function allows_read( ToolGroup $group ): bool;
+	public function allows_read( ScopeGroupInterface $group ): bool;
 
-	public function allows_write( ToolGroup $group ): bool;
+	public function allows_write( ScopeGroupInterface $group ): bool;
 
 	/** Where an administrator goes to change the answer. */
 	public function settings_url(): string;

@@ -5,6 +5,8 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth\Domain;
 
 use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,14 +29,10 @@ final readonly class AuthorizationRequest {
 	/**
 	 * The scopes the consent screen puts in front of the admin.
 	 *
-	 * @return list<ApiScope>
+	 * @return list<ScopeInterface>
 	 */
 	public function offered_scopes(): array {
-		$scopes = array_values(
-			array_filter(
-				array_map( static fn ( string $value ): ?ApiScope => ApiScope::tryFrom( $value ), $this->scopes )
-			)
-		);
+		$scopes = GrantedScopeSet::from_values( $this->scopes )->all();
 
 		// A client that named no scopes is offered a read-only, non-advanced set
 		// rather than the whole catalogue — see ApiScope::conservative_default().

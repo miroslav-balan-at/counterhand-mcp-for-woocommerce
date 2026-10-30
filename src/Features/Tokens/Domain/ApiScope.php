@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * The scope catalog. Write never implies read — both are granted explicitly.
  */
-enum ApiScope: string {
+enum ApiScope: string implements ScopeInterface {
 	case ProductsRead  = 'products:read';
 	case ProductsWrite = 'products:write';
 	case OrdersRead    = 'orders:read';
@@ -53,6 +53,10 @@ enum ApiScope: string {
 	case SystemRead      = 'system:read';
 	case SystemWrite     = 'system:write';
 
+	public function key(): string {
+		return $this->value; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+	}
+
 	/** @return list<string> */
 	public static function values(): array {
 		return array_map( static fn ( self $scope ): string => $scope->value, self::cases() );
@@ -71,7 +75,7 @@ enum ApiScope: string {
 	 * The admin still sees and can uncheck every line, and the store's own group
 	 * toggles gate anything granted here — this only decides what is offered.
 	 *
-	 * @return list<self>
+	 * @return list<ScopeInterface>
 	 */
 	public static function conservative_default(): array {
 		$groups = array_merge(
@@ -81,7 +85,7 @@ enum ApiScope: string {
 			)
 		);
 
-		return array_map( static fn ( ToolGroup $group ): self => $group->read_scope(), $groups );
+		return array_map( static fn ( ScopeGroupInterface $group ): ScopeInterface => $group->read_scope(), $groups );
 	}
 
 	public function is_write(): bool {
@@ -166,7 +170,7 @@ enum ApiScope: string {
 		];
 	}
 
-	private static function derived_label( ToolGroup $group, bool $is_write ): string {
+	public static function derived_label( ScopeGroupInterface $group, bool $is_write ): string {
 		return $is_write
 			/* translators: %s: tool group name mid-sentence, e.g. "products". */
 			? sprintf( __( 'Manage %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() )

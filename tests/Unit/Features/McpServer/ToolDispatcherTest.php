@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Tests\Unit\Features\McpServer;
 
+use Counterhand\Features\McpServer\DispatchStatus;
 use Counterhand\Features\McpServer\ToolDispatcher;
 use Counterhand\Features\McpServer\ToolRegistry;
 use Counterhand\Features\Settings\PluginSettings;
@@ -154,5 +155,83 @@ final class ToolDispatcherTest extends TestCase {
 		);
 
 		$this->assertSame( 'draft', $tool->received['status'] );
+	}
+
+	/** @return array{0: ToolDispatcher, 1: StubTool} */
+	private function gated_dispatcher(): array {
+		$this->dispatcher( [ 'type' => 'object' ] );
+
+		$tool     = new StubTool( 'gated_tool', ApiScope::ProductsRead, ToolGroup::Products, [ 'type' => 'object' ], confirms: true );
+		$registry = new ToolRegistry( new PluginSettings() );
+		$registry->add( $tool );
+
+		return [ new ToolDispatcher( $registry ), $tool ];
+	}
+
+	/**
+	 * The gate is the whole of what stands between an agent and a maintenance
+	 * routine on a live store, whose endpoint every token owner already holds the
+	 * capability for. Anything but boolean true is not a confirmation.
+	 *
+	 * @dataProvider not_confirmations
+	 * @param array<string, mixed> $arguments
+	 */
+	public function test_a_gated_tool_is_not_reached_without_confirmation( array $arguments ): void {
+		[ $dispatcher, $tool ] = $this->gated_dispatcher();
+
+		$outcome = $dispatcher->dispatch( 'gated_tool', $arguments, AgentFactory::with_scopes( [ 'products:read' ] ) );
+
+		$this->assertSame( DispatchStatus::Failed, $outcome->status );
+		$this->assertStringContainsString( 'confirm', $outcome->message );
+		$this->assertSame( 0, $tool->calls );
+	}
+
+	/** @return iterable<string, array{array<string, mixed>}> */
+	public static function not_confirmations(): iterable {
+		yield 'absent' => [ [] ];
+		yield 'false' => [ [ 'confirm' => false ] ];
+		yield 'truthy' => [ [ 'confirm' => 'yes' ] ];
+	}
+
+	public function test_a_confirmed_call_runs_without_handing_confirm_to_the_tool(): void {
+		[ $dispatcher, $tool ] = $this->gated_dispatcher();
+
+		$dispatcher->dispatch(
+			'gated_tool',
+			[
+				'code'    => 'x',
+				'confirm' => true,
+			],
+			AgentFactory::with_scopes( [ 'products:read' ] )
+		);
+
+		$this->assertSame( 1, $tool->calls );
+		$this->assertSame( [ 'code' => 'x' ], $tool->received );
+	}
+
+	public function test_a_gated_tool_publishes_confirm_as_a_required_argument_over_any_schema(): void {
+		[ $dispatcher ] = $this->gated_dispatcher();
+
+		$schema = $dispatcher->published_schema(
+			new StubTool(
+				'empty_tool',
+				ApiScope::ProductsRead,
+				ToolGroup::Products,
+				[
+					'type'       => 'object',
+					'properties' => new \stdClass(),
+				],
+				confirms: true
+			)
+		);
+
+		$this->assertSame( 'boolean', $schema['properties']['confirm']['type'] );
+		$this->assertContains( 'confirm', $schema['required'] );
+	}
+
+	public function test_an_ordinary_tool_publishes_its_own_schema_untouched(): void {
+		[ $dispatcher, $tool ] = $this->dispatcher( [ 'type' => 'object' ] );
+
+		$this->assertSame( [ 'type' => 'object' ], $dispatcher->published_schema( $tool ) );
 	}
 }

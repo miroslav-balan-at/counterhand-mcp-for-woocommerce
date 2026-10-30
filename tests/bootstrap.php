@@ -15,3 +15,4 @@ define( 'DAY_IN_SECONDS', 86400 );
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/wp-schema-stubs.php';
 require_once __DIR__ . '/wp-rest-stubs.php';
+require_once __DIR__ . '/wp-ability-stubs.php';

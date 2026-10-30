@@ -88,6 +88,10 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		return ToolGroup::Products;
 	}
 
+	public function is_open_world(): bool {
+		return false;
+	}
+
 	public function requires_confirmation(): bool {
 		return false;
 	}

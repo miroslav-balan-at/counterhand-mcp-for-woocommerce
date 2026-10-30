@@ -20,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ToolDispatcher implements ToolDispatcherInterface {
 
+	private const CONFIRM_ARGUMENT = 'confirm';
+
 	public function __construct( private ToolRegistry $registry ) {}
 
 	/** @return list<ToolInterface> */
@@ -30,6 +32,32 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	/** @return array<string, int> */
 	public function tool_counts_by_group(): array {
 		return $this->registry->tool_counts_by_group();
+	}
+
+	/**
+	 * A required `confirm` in the schema rather than only in the prose, because a
+	 * model reads the schema far more reliably than a warning, and the first
+	 * attempt then fails loudly rather than succeeding quietly.
+	 */
+	public function published_schema( ToolInterface $tool ): array {
+		$schema = $tool->input_schema();
+
+		if ( ! $tool->requires_confirmation() ) {
+			return $schema;
+		}
+
+		// An argument-less tool publishes properties as stdClass; adding a key to
+		// that would throw, and `confirm` makes it non-empty anyway.
+		$properties                           = (array) ( $schema['properties'] ?? [] );
+		$properties[ self::CONFIRM_ARGUMENT ] = [
+			'type'        => 'boolean',
+			'description' => 'Must be true. Set it only after telling the user what this will change and getting their agreement.',
+		];
+
+		$schema['properties'] = $properties;
+		$schema['required']   = [ ...( $schema['required'] ?? [] ), self::CONFIRM_ARGUMENT ];
+
+		return $schema;
 	}
 
 	public function dispatch( string $tool_name, array $arguments, AuthenticatedAgent $agent ): DispatchOutcome {
@@ -50,7 +78,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			// gate inside the dispatch path must hold on its own.
 			$agent->require_scope( $tool->required_scope() );
 
-			$data = $tool->execute( $validated );
+			$data = $tool->execute( $this->confirmed_arguments( $tool, $validated ) );
 
 			/**
 			 * Fires after every tool call (success or failure) — the ActionLog
@@ -63,7 +91,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			 * @param string $group       Slug of the tool's group, so a listener can
 			 *                            decide by area without resolving the tool.
 			 */
-			do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, false, $validated, $tool->group()->value );
+			do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, false, $validated, $tool->group()->key() );
 
 			return DispatchOutcome::succeeded( $data );
 		} catch ( ScopeDeniedException | ToolCallException $exception ) {
@@ -86,6 +114,31 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	}
 
 	/**
+	 * The tool never sees `confirm`: it is this pipeline's argument, and sending it
+	 * on would be an unknown parameter to whatever the tool wraps.
+	 *
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 * @throws ToolCallException When a call needing confirmation does not carry confirm set to true.
+	 */
+	private function confirmed_arguments( ToolInterface $tool, array $arguments ): array {
+		if ( ! $tool->requires_confirmation() ) {
+			return $arguments;
+		}
+
+		if ( true !== ( $arguments[ self::CONFIRM_ARGUMENT ] ?? false ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
+			throw new ToolCallException(
+				'This changes the store in a way that is not easily undone. Tell the user exactly what will happen, and call it again with confirm set to true only once they have agreed.'
+			);
+		}
+
+		unset( $arguments[ self::CONFIRM_ARGUMENT ] );
+
+		return $arguments;
+	}
+
+	/**
 	 * A failed call is still a call: it is audited like a successful one, and it
 	 * comes back as an outcome the agent can read and self-correct from.
 	 *
@@ -93,7 +146,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	 */
 	private function failure( ToolInterface $tool, AuthenticatedAgent $agent, array $arguments, string $message ): DispatchOutcome {
 		/** This hook is documented above. */
-		do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, true, $arguments, $tool->group()->value );
+		do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, true, $arguments, $tool->group()->key() );
 
 		return DispatchOutcome::failed( $message );
 	}
@@ -118,7 +171,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	}
 
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {
-		$schema = $tool->input_schema();
+		$schema = $this->published_schema( $tool );
 
 		// rest_sanitize/validate_value_from_schema do NOT apply defaults —
 		// without this, absent args fall through to WooCommerce's own defaults

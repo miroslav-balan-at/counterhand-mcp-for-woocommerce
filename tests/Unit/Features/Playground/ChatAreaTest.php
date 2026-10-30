@@ -20,11 +20,11 @@ final class ChatAreaTest extends TestCase {
 		return new class( $read, $write ) implements ChatToolPolicy {
 			public function __construct( private bool $read, private bool $write ) {}
 
-			public function allows_read( ToolGroup $group ): bool {
+			public function allows_read( \Counterhand\Features\Tokens\Domain\ScopeGroupInterface $group ): bool {
 				return $this->read;
 			}
 
-			public function allows_write( ToolGroup $group ): bool {
+			public function allows_write( \Counterhand\Features\Tokens\Domain\ScopeGroupInterface $group ): bool {
 				return $this->write;
 			}
 

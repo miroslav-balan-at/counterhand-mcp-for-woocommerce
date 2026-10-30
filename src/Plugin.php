@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand;
 
+use Counterhand\Features\Abilities\AbilitiesFeature;
+use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
 use Counterhand\Features\McpServer\McpServer;
 use Counterhand\Features\McpServer\McpServerFeature;
@@ -143,6 +145,7 @@ final class Plugin {
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),
 			new OAuthFeature( $settings, $repository ),
 			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, new StaticDescriptorCatalog(), $schema_provider ),
+			new AbilitiesFeature( $this->tool_registry, new AbilityCatalog() ),
 		];
 
 		foreach ( $this->features as $feature ) {

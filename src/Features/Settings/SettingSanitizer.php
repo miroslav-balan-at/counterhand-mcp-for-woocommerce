@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Settings;
 
+use Counterhand\Features\Tokens\Domain\IntegrationGroup;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -35,6 +37,15 @@ final readonly class SettingSanitizer {
 			$sanitized[ $key ] = is_bool( $default_value )
 				? ! empty( $posted[ $key ] )
 				: $this->clamp( (string) $key, $posted[ $key ] ?? $default_value );
+		}
+
+		// Not in defaults(): integrations come and go with their plugins. A plugin
+		// that is off when this form is saved loses its ticks, so reactivating it
+		// never quietly re-exposes it.
+		foreach ( $posted as $key => $value ) {
+			if ( is_string( $key ) && IntegrationGroup::is_option_key( $key ) && ! empty( $value ) ) {
+				$sanitized[ $key ] = true;
+			}
 		}
 
 		return $sanitized;

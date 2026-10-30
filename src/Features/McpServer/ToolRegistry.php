@@ -6,7 +6,7 @@ namespace Counterhand\Features\McpServer;
 
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
@@ -30,6 +30,9 @@ final class ToolRegistry {
 
 	/** @var array<string, array<string, ToolInterface>> Memo key => visible tools. */
 	private array $visible = [];
+
+	/** @var list<callable(): iterable<ToolInterface>> */
+	private array $late_sources = [];
 
 	public function __construct( private readonly PluginSettings $settings ) {}
 
@@ -57,6 +60,19 @@ final class ToolRegistry {
 		$this->visible        = [];
 	}
 
+	/**
+	 * Tools that cannot be known at boot and are not worth knowing on every page.
+	 *
+	 * Asked once, the first time anything reads the surface. A name already taken
+	 * is skipped rather than thrown on, unlike add(): these names come from other
+	 * plugins, and a clash must not take the whole store's endpoint down with it.
+	 *
+	 * @param callable(): iterable<ToolInterface> $source
+	 */
+	public function add_late_source( callable $source ): void {
+		$this->late_sources[] = $source;
+	}
+
 	/** @return list<ToolInterface> */
 	public function visible_for( AuthenticatedAgent $agent ): array {
 		return array_values( $this->visible_map_for( $agent ) );
@@ -73,10 +89,12 @@ final class ToolRegistry {
 	 * @return array<string, int>
 	 */
 	public function tool_counts_by_group(): array {
+		$this->resolve_late_sources();
+
 		$counts = [];
 
 		foreach ( $this->tools as $tool ) {
-			$slug            = $tool->group()->value;
+			$slug            = $tool->group()->key();
 			$counts[ $slug ] = ( $counts[ $slug ] ?? 0 ) + 1;
 		}
 
@@ -90,6 +108,8 @@ final class ToolRegistry {
 	 * @return array<string, ToolInterface>
 	 */
 	private function visible_map_for( AuthenticatedAgent $agent ): array {
+		$this->resolve_late_sources();
+
 		return $this->visible[ $this->memo_key( $agent ) ] ??= array_filter(
 			$this->tools,
 			fn ( ToolInterface $tool ): bool =>
@@ -99,13 +119,26 @@ final class ToolRegistry {
 		);
 	}
 
+	private function resolve_late_sources(): void {
+		$sources            = $this->late_sources;
+		$this->late_sources = [];
+
+		foreach ( $sources as $source ) {
+			foreach ( $source() as $tool ) {
+				if ( ! isset( $this->tools[ $tool->name() ] ) ) {
+					$this->add( $tool );
+				}
+			}
+		}
+	}
+
 	/**
 	 * What the answer depends on. Availability is a function of the WordPress
 	 * user, which follows the token owner, so two tokens of the same owner with
 	 * the same scopes genuinely see the same surface.
 	 */
 	private function memo_key( AuthenticatedAgent $agent ): string {
-		$scopes = array_map( static fn ( ApiScope $scope ): string => $scope->value, $agent->scopes()->all() );
+		$scopes = array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $agent->scopes()->all() );
 		sort( $scopes );
 
 		return $agent->token->owner_user_id . '|' . implode( ',', $scopes );

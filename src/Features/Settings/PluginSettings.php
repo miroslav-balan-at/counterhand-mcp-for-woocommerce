@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Settings;
 
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
@@ -34,11 +35,12 @@ final class PluginSettings {
 		return max( 1, (int) $this->get( 'log_retention_days' ) );
 	}
 
-	public function is_group_read_enabled( ToolGroup $group ): bool {
-		return (bool) $this->get( $group->read_option_key() );
+	public function is_group_read_enabled( ScopeGroupInterface $group ): bool {
+		// An integration has no shipped default, so an absent key must read as off.
+		return (bool) ( $this->all()[ $group->read_option_key() ] ?? false );
 	}
 
-	public function is_group_write_enabled( ToolGroup $group ): bool {
+	public function is_group_write_enabled( ScopeGroupInterface $group ): bool {
 		// Read-only groups have no write key at all; treat as disabled.
 		return (bool) ( $this->all()[ $group->write_option_key() ] ?? false );
 	}

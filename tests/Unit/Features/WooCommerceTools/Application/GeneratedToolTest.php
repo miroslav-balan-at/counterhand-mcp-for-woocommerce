@@ -331,61 +331,9 @@ final class GeneratedToolTest extends TestCase {
 		$this->assertArrayNotHasKey( 'not_a_coupon_field', $schema['properties'] );
 	}
 
-	/**
-	 * The confirmation gate, which is the whole of what stands between an agent
-	 * and a maintenance routine on a live store — WooCommerce gates that
-	 * endpoint on a capability every token owner already holds.
-	 */
-	public function test_an_operation_needing_confirmation_refuses_without_it(): void {
-		$tool = $this->tool( Operation::CreateItem, requires_confirmation: true );
-
-		try {
-			$tool->execute( [ 'code' => 'x' ] );
-			$this->fail( 'An unconfirmed call was executed.' );
-		} catch ( ToolCallException $e ) {
-			$this->assertStringContainsString( 'confirm', $e->getMessage() );
-		}
-
-		$this->assertSame( [], $this->gateway->calls, 'An unconfirmed call reached WooCommerce.' );
-	}
-
-	/** Anything but boolean true is not a confirmation. */
-	public function test_a_truthy_value_is_not_a_confirmation(): void {
-		$this->expectException( ToolCallException::class );
-
-		$this->tool( Operation::CreateItem, requires_confirmation: true )
-			->execute(
-				[
-					'code'    => 'x',
-					'confirm' => 'yes',
-				]
-			);
-	}
-
-	public function test_a_confirmed_call_goes_through_without_sending_confirm_on(): void {
-		$this->tool( Operation::CreateItem, requires_confirmation: true )
-			->execute(
-				[
-					'code'    => 'x',
-					'confirm' => true,
-				]
-			);
-
-		$params = $this->gateway->call()['params'];
-
-		$this->assertSame( 'x', $params['code'] );
-		$this->assertArrayNotHasKey( 'confirm', $params, 'confirm was forwarded as an unknown WooCommerce parameter.' );
-	}
-
-	/**
-	 * Published in the schema, not only in the prose: a model reads a required
-	 * argument far more reliably than it reads a warning.
-	 */
-	public function test_confirmation_is_published_as_a_required_argument(): void {
-		$schema = $this->tool( Operation::CreateItem, requires_confirmation: true )->input_schema();
-
-		$this->assertSame( 'boolean', $schema['properties']['confirm']['type'] );
-		$this->assertContains( 'confirm', $schema['required'] );
+	/** Nothing undeclared rides along on a call the person is asked to approve. */
+	public function test_an_operation_needing_confirmation_takes_only_what_it_declares(): void {
+		$this->assertFalse( $this->tool( Operation::CreateItem, requires_confirmation: true )->input_schema()['additionalProperties'] );
 	}
 
 	public function test_an_ordinary_operation_publishes_no_confirm_argument(): void {

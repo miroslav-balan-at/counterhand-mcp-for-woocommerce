@@ -105,7 +105,7 @@ final class AgentLoopTest extends TestCase {
 		$result = $this->loop()->resume( $provider, $this->config(), [], $this->pending(), ApprovalDecisions::from_request( [ 'c1' => true ] ), $this->agent() );
 
 		self::assertSame( 1, $this->guarded->calls );
-		self::assertTrue( $this->guarded->received['confirm'] );
+		self::assertSame( 1, $this->guarded->calls );
 		self::assertSame( 1, $this->plain->calls );
 		self::assertNull( $result->pending );
 	}

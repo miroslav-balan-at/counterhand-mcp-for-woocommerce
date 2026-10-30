@@ -55,7 +55,7 @@ final readonly class GeneratedTool implements ToolInterface {
 	public function input_schema(): array {
 		$route = $this->route();
 
-		return $this->with_confirmation(
+		return $this->with_closed_arguments(
 			$this->with_body_argument(
 				$this->with_defaults(
 					$this->schemas->schema(
@@ -111,6 +111,11 @@ final readonly class GeneratedTool implements ToolInterface {
 			&& $this->probe->allows( $this->resource->probe_route( $intent ), $intent->probe_method() );
 	}
 
+	/** Every route here is on this store. */
+	public function is_open_world(): bool {
+		return false;
+	}
+
 	public function execute( array $arguments ): array {
 		$this->guard( $arguments );
 
@@ -139,23 +144,12 @@ final readonly class GeneratedTool implements ToolInterface {
 	}
 
 	/**
-	 * The two checks WooCommerce cannot make for us, both before dispatch.
-	 *
-	 * Confirmation first, because refusing an unconfirmed call is cheaper than
-	 * explaining why the thing it asked for is off limits, and an agent that has
-	 * not confirmed has not yet involved the person who would decide.
+	 * The check WooCommerce cannot make for us, before dispatch.
 	 *
 	 * @param  array<string, mixed> $arguments
-	 * @throws ToolCallException When unconfirmed, or when the policy refuses.
+	 * @throws ToolCallException When the policy refuses.
 	 */
 	private function guard( array $arguments ): void {
-		if ( $this->operation->requires_confirmation && true !== ( $arguments['confirm'] ?? false ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
-			throw new ToolCallException(
-				'This changes the store in a way that is not easily undone. Tell the user exactly what will happen, and call it again with confirm set to true only once they have agreed.'
-			);
-		}
-
 		$verdict = $this->operation->policy?->verdict( $arguments );
 
 		if ( null !== $verdict && ! $verdict->allowed ) {
@@ -169,9 +163,6 @@ final readonly class GeneratedTool implements ToolInterface {
 	 * @return array<string, mixed>
 	 */
 	private function params( array $arguments ): array {
-		// Ours, not WooCommerce's — sending it on would be an unknown parameter.
-		unset( $arguments['confirm'] );
-
 		$params = [
 			// First, so the agent can argue its way out of any of them.
 			...$this->operation->default_params,
@@ -243,33 +234,16 @@ final readonly class GeneratedTool implements ToolInterface {
 	}
 
 	/**
-	 * Publishes the `confirm` argument, required, for operations that demand it.
-	 *
-	 * In the schema rather than only in the prose because a model reads the
-	 * schema far more reliably than it reads a warning, and because a required
-	 * argument means the first attempt fails loudly rather than succeeding
-	 * quietly.
+	 * A risky write takes exactly what it declares, so nothing undeclared rides
+	 * along on a call the person is being asked to approve.
 	 *
 	 * @param  array<string, mixed> $schema
 	 * @return array<string, mixed>
 	 */
-	private function with_confirmation( array $schema ): array {
-		if ( ! $this->operation->requires_confirmation ) {
-			return $schema;
+	private function with_closed_arguments( array $schema ): array {
+		if ( $this->operation->requires_confirmation ) {
+			$schema['additionalProperties'] = false;
 		}
-
-		// An argument-less route publishes properties as stdClass; adding a key
-		// to that would throw, and `confirm` makes it non-empty anyway.
-		$properties            = (array) ( $schema['properties'] ?? [] );
-		$properties['confirm'] = [
-			'type'        => 'boolean',
-			'description' => 'Must be true. Set it only after telling the user what this will change and getting their agreement.',
-		];
-
-		$schema['properties'] = $properties;
-
-		$schema['required']             = [ ...( $schema['required'] ?? [] ), 'confirm' ];
-		$schema['additionalProperties'] = false;
 
 		return $schema;
 	}

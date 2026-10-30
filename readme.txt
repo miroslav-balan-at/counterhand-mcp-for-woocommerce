@@ -57,6 +57,10 @@ Each tool offers the ten or so fields that matter rather than all hundred WooCom
 
 Visibility is decided by WooCommerce too: before a tool is offered, this plugin runs WooCommerce's own permission check for that endpoint. A shop manager therefore sees a different set of tools from an administrator, without this plugin keeping a list of who may do what.
 
+= Other plugins, through WordPress abilities =
+
+On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Writes that a plugin does not declare as safe need explicit confirmation, and every call is recorded in the action log. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
+
 = Two ways to use AI with your store =
 
 **Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.

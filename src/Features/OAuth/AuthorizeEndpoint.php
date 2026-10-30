@@ -10,7 +10,8 @@ use Counterhand\Features\OAuth\View\ConsentScopes;
 use Counterhand\Features\OAuth\View\FlowPage;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PublishedScopes;
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
@@ -146,8 +147,8 @@ final readonly class AuthorizeEndpoint {
 		);
 
 		$granted_labels = array_map(
-			static fn ( string $value ): string => ApiScope::from( $value )->label(),
-			$granted
+			static fn ( ScopeInterface $scope ): string => $scope->label(),
+			GrantedScopeSet::from_values( $granted )->all()
 		);
 
 		$this->redirector->redirect_with(
@@ -194,7 +195,7 @@ final readonly class AuthorizeEndpoint {
 					// replays, so a client that named no scopes would otherwise
 					// walk away with a token granting nothing — the screen would
 					// show a full list of ticked boxes and mint an empty grant.
-					'scope'                 => implode( ' ', array_map( static fn ( ApiScope $scope ): string => $scope->value, $scopes ) ),
+					'scope'                 => implode( ' ', array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $scopes ) ),
 				],
 			]
 		);

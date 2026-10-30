@@ -7,8 +7,8 @@ namespace Counterhand\Features\ActionLog;
 use Counterhand\Features\ActionLog\Persistence\LogSchema;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\FeatureInterface;
-use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -56,7 +56,7 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 	 * @param array<string, mixed> $arguments
 	 */
 	public function maybe_log( string $tool_name, string $token_label, bool $is_error, array $arguments, string $group = '' ): void {
-		$always = ToolGroup::tryFrom( $group )?->is_always_logged() ?? false;
+		$always = ScopeGroups::try_from( $group )?->is_always_logged() ?? false;
 
 		if ( ! $always && ! $this->settings->is_action_log_enabled() ) {
 			return;

@@ -5,8 +5,8 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth\View;
 
 use Counterhand\Features\Settings\PublishedScopes;
-use Counterhand\Features\Tokens\Domain\ApiScope;
-use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ final readonly class ConsentGroup {
 
 	/** @param list<ConsentScope> $scopes */
 	private function __construct(
-		public ToolGroup $group,
+		public ScopeGroupInterface $group,
 		public array $scopes,
 	) {}
 
@@ -31,9 +31,9 @@ final readonly class ConsentGroup {
 	 * Every scope the group has, whether grantable or not — the screen shows
 	 * the catalogue, and availability says why a box is inert.
 	 *
-	 * @param  list<ApiScope> $requested
+	 * @param  list<ScopeInterface> $requested
 	 */
-	public static function from( ToolGroup $group, array $requested, PublishedScopes $published ): self {
+	public static function from( ScopeGroupInterface $group, array $requested, PublishedScopes $published ): self {
 		$scopes = [];
 
 		foreach ( [ $group->read_scope(), $group->write_scope() ] as $scope ) {
@@ -43,7 +43,7 @@ final readonly class ConsentGroup {
 
 			$availability = match ( true ) {
 				! $published->includes( $scope )        => ConsentAvailability::SwitchedOff,
-				! in_array( $scope, $requested, true )  => ConsentAvailability::NotRequested,
+				! in_array( $scope->key(), array_map( static fn ( ScopeInterface $wanted ): string => $wanted->key(), $requested ), true ) => ConsentAvailability::NotRequested,
 				default                                 => ConsentAvailability::Grantable,
 			};
 

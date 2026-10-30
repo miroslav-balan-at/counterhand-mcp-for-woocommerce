@@ -5,8 +5,8 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth;
 
 use Counterhand\Features\OAuth\Domain\AuthorizationRequest;
-use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\CanonicalUri;
 
 defined( 'ABSPATH' ) || exit;
@@ -52,7 +52,7 @@ final readonly class AuthorizationRequestParser {
 			code_challenge: $code_challenge,
 			state: $state,
 			resource: CanonicalUri::mcp(),
-			scopes: array_map( static fn ( ApiScope $scope ): string => $scope->value, $requested->all() ),
+			scopes: array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $requested->all() ),
 		);
 	}
 }

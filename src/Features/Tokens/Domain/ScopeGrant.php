@@ -4,8 +4,6 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Tokens\Domain;
 
-use Counterhand\Shared\Tool\ToolGroup;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -18,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 final readonly class ScopeGrant {
 
 	public function __construct(
-		public ToolGroup $group,
+		public ScopeGroupInterface $group,
 		public bool $writable,
 	) {}
 

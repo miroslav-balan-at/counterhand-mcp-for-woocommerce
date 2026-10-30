@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 		<?php foreach ( $counterhand_group->scopes as $counterhand_row ) : ?>
 			<?php
 			$counterhand_scope = $counterhand_row->scope;
-			$counterhand_id    = 'counterhand-scope-' . sanitize_html_class( $counterhand_scope->value );
+			$counterhand_id    = 'counterhand-scope-' . sanitize_html_class( $counterhand_scope->key() );
 			$counterhand_off   = ! $counterhand_row->available();
 			?>
 			<label
@@ -32,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
 				<?php endif; ?>
 			>
 				<input type="checkbox" id="<?php echo esc_attr( $counterhand_id ); ?>"
-					name="counterhand_scopes[]" value="<?php echo esc_attr( $counterhand_scope->value ); ?>"
+					name="counterhand_scopes[]" value="<?php echo esc_attr( $counterhand_scope->key() ); ?>"
 					<?php checked( $counterhand_row->pre_checked ); ?>
 					<?php disabled( $counterhand_off ); ?>
 					<?php if ( $counterhand_off ) : ?>

@@ -126,17 +126,17 @@ final readonly class McpServer {
 	private function tool_list( AuthenticatedAgent $agent ): array {
 		return [
 			'tools' => array_map(
-				static fn ( ToolInterface $tool ): array => [
+				fn ( ToolInterface $tool ): array => [
 					'name'        => $tool->name(),
 					'description' => $tool->description(),
-					'inputSchema' => $tool->input_schema(),
+					'inputSchema' => $this->dispatcher->published_schema( $tool ),
 					// Every hint is sent, because an omitted one defaults to the
 					// unsafe reading (destructive, open-world).
 					'annotations' => [
 						'readOnlyHint'    => $tool->is_read_only(),
 						'destructiveHint' => $tool->is_destructive(),
 						'idempotentHint'  => $tool->is_idempotent(),
-						'openWorldHint'   => false,
+						'openWorldHint'   => $tool->is_open_world(),
 					],
 				],
 				$this->dispatcher->visible_for( $agent )

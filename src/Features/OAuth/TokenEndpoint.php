@@ -166,7 +166,7 @@ final readonly class TokenEndpoint {
 			return $this->error( 'invalid_grant', 'This refresh token has just been replaced; use the newest one.' );
 		}
 
-		return $this->tokens( $issued, array_map( static fn ( $scope ): string => $scope->value, $stored->token->scopes->all() ), $now );
+		return $this->tokens( $issued, array_map( static fn ( $scope ): string => $scope->key(), $stored->token->scopes->all() ), $now );
 	}
 
 	private function access_expiry( AuthorizationGrant $grant, \DateTimeImmutable $now ): \DateTimeImmutable {

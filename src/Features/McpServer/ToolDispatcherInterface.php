@@ -23,6 +23,14 @@ interface ToolDispatcherInterface {
 	public function visible_for( AuthenticatedAgent $agent ): array;
 
 	/**
+	 * The arguments a caller should offer a model for this tool: its own schema
+	 * plus what the pipeline itself requires of a call.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function published_schema( ToolInterface $tool ): array;
+
+	/**
 	 * How many tools each group holds, before any gate is applied.
 	 *
 	 * The denominator an admin screen needs to explain what a setting is

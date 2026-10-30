@@ -52,6 +52,10 @@ final class StubTool implements ToolInterface {
 		return $this->group;
 	}
 
+	public function is_open_world(): bool {
+		return false;
+	}
+
 	public function requires_confirmation(): bool {
 		return $this->confirms;
 	}

@@ -209,4 +209,33 @@ final class ToolRegistryTest extends TestCase {
 
 		$this->assertSame( [ 0, 1 ], array_keys( $visible ) );
 	}
+
+	public function test_a_late_source_is_asked_once_and_only_when_the_surface_is_read(): void {
+		$registry = $this->registry( [ 'products_read' => true ] );
+		$asked    = 0;
+
+		$registry->add_late_source(
+			function () use ( &$asked ): array {
+				++$asked;
+
+				return [ $this->read_tool() ];
+			}
+		);
+		$this->assertSame( 0, $asked );
+
+		$registry->tool_counts_by_group();
+		$registry->tool_counts_by_group();
+
+		$this->assertSame( 1, $asked );
+		$this->assertSame( [ 'products' => 1 ], $registry->tool_counts_by_group() );
+	}
+
+	/** Names from other plugins: a clash must not take the store's endpoint down. */
+	public function test_a_late_tool_with_a_taken_name_is_skipped_rather_than_fatal(): void {
+		$registry = $this->registry( [ 'products_read' => true ] );
+		$registry->add( $this->read_tool() );
+		$registry->add_late_source( fn (): array => [ $this->read_tool() ] );
+
+		$this->assertSame( [ 'products' => 1 ], $registry->tool_counts_by_group() );
+	}
 }

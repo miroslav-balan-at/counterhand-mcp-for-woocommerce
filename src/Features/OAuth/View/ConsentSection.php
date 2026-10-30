@@ -5,7 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth\View;
 
 use Counterhand\Features\Settings\PublishedScopes;
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
@@ -24,7 +24,7 @@ final readonly class ConsentSection {
 		public array $groups,
 	) {}
 
-	/** @param list<ApiScope> $requested */
+	/** @param list<ScopeInterface> $requested */
 	public static function from( ToolSection $section, array $requested, PublishedScopes $published ): self {
 		return new self(
 			$section,

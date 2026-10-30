@@ -177,3 +177,98 @@ add_filter(
 		return $providers;
 	}
 );
+
+/*
+ * Abilities for the bridge to find, one per shape a real plugin can declare.
+ * Fixtures rather than Yoast or WPForms, whose admin notices and scripts would
+ * trip the screen checks in admin-ui.spec.ts.
+ */
+add_action(
+	'wp_abilities_api_categories_init',
+	static function (): void {
+		wp_register_ability_category(
+			'counterhand-e2e',
+			[
+				'label'       => 'E2E',
+				'description' => 'Test-only abilities.',
+			]
+		);
+	}
+);
+
+add_action(
+	'wp_abilities_api_init',
+	static function (): void {
+		$read_only = [
+			'readonly'    => true,
+			'destructive' => false,
+			'idempotent'  => true,
+		];
+		$define    = static function ( string $name, array $meta, callable $callback, array $extra = [] ): void {
+			wp_register_ability(
+				$name,
+				[
+					'label'               => $name,
+					'description'         => 'E2E fixture: ' . $name,
+					'category'            => 'counterhand-e2e',
+					'execute_callback'    => $callback,
+					'permission_callback' => static fn (): bool => current_user_can( 'manage_options' ),
+					'meta'                => $meta,
+					...$extra,
+				]
+			);
+		};
+
+		$define(
+			'e2e-fixture/list-notes',
+			[
+				'annotations' => $read_only,
+				'mcp'         => [ 'public' => true ],
+			],
+			static fn (): array => [ 'first', 'second' ]
+		);
+		$define(
+			'e2e-fixture/shout',
+			[
+				'annotations' => $read_only,
+				'public'      => true,
+			],
+			static fn ( string $input ): string => strtoupper( $input ),
+			[ 'input_schema' => [ 'type' => 'string' ] ]
+		);
+		$define(
+			'e2e-fixture/rewrite-note',
+			[
+				// Null, like Yoast's update: unknown has to read as destructive.
+				'annotations' => [
+					'readonly'    => false,
+					'destructive' => null,
+					'idempotent'  => false,
+				],
+				'mcp'         => [ 'public' => true ],
+			],
+			static function ( array $input ): array {
+				update_option( 'counterhand_e2e_note', $input['note'] );
+
+				return [ 'saved' => $input['note'] ];
+			},
+			[
+				'input_schema' => [
+					'type'                 => 'object',
+					'properties'           => [ 'note' => [ 'type' => 'string' ] ],
+					'required'             => [ 'note' ],
+					'additionalProperties' => false,
+				],
+			]
+		);
+		$define( 'e2e-fixture/not-exposed', [ 'annotations' => $read_only ], static fn (): array => [ 'secret' => true ] );
+		$define(
+			'e2e-other/ping',
+			[
+				'annotations' => $read_only,
+				'mcp'         => [ 'public' => true ],
+			],
+			static fn (): array => [ 'pong' => true ]
+		);
+	}
+);

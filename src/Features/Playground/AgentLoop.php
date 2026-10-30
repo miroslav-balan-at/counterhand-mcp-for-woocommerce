@@ -268,10 +268,10 @@ final readonly class AgentLoop {
 		}
 
 		$definitions = array_map(
-			static fn ( ToolInterface $tool ): array => $provider->describe_tool(
+			fn ( ToolInterface $tool ): array => $provider->describe_tool(
 				$tool->name(),
 				$tool->description(),
-				$tool->input_schema()
+				$this->dispatcher->published_schema( $tool )
 			),
 			$tools
 		);

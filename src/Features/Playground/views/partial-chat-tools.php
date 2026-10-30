@@ -150,11 +150,11 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 				<div class="counterhand-chat-tools__grid">
 					<?php
 					foreach ( $counterhand_section->groups() as $counterhand_group ) :
-						$counterhand_area = $chat_areas[ $counterhand_group->value ];
+						$counterhand_area = $chat_areas[ $counterhand_group->key() ];
 						?>
 						<label class="counterhand-area<?php echo $counterhand_area->is_overruled_by_store() ? ' counterhand-area--withheld' : ''; ?>">
 							<input class="counterhand-area__input" type="checkbox" name="counterhand_chat_groups[]"
-								value="<?php echo esc_attr( $counterhand_group->value ); ?>"
+								value="<?php echo esc_attr( $counterhand_group->key() ); ?>"
 								<?php checked( $counterhand_area->is_selected ); ?>>
 							<span class="counterhand-area__name"><?php echo esc_html( $counterhand_group->label() ); ?></span>
 

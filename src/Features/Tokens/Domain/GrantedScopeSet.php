@@ -12,14 +12,14 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class GrantedScopeSet {
 
-	/** @param list<ApiScope> $scopes */
+	/** @param list<ScopeInterface> $scopes */
 	private function __construct( private array $scopes ) {}
 
 	public static function from_csv( string $csv ): self {
 		$scopes = [];
 
 		foreach ( explode( ',', $csv ) as $candidate ) {
-			$scope = ApiScope::tryFrom( trim( $candidate ) );
+			$scope = ApiScope::tryFrom( trim( $candidate ) ) ?? IntegrationScope::try_from_string( trim( $candidate ) );
 			if ( null !== $scope ) {
 				$scopes[ $scope->value ] = $scope;
 			}
@@ -33,8 +33,8 @@ final readonly class GrantedScopeSet {
 		return self::from_csv( implode( ',', $values ) );
 	}
 
-	public function contains( ApiScope $scope ): bool {
-		return in_array( $scope, $this->scopes, true );
+	public function contains( ScopeInterface $scope ): bool {
+		return in_array( $scope->key(), array_map( static fn ( ScopeInterface $held ): string => $held->key(), $this->scopes ), true );
 	}
 
 	public function is_empty(): bool {
@@ -42,10 +42,10 @@ final readonly class GrantedScopeSet {
 	}
 
 	public function to_csv(): string {
-		return implode( ',', array_map( static fn ( ApiScope $scope ): string => $scope->value, $this->scopes ) );
+		return implode( ',', array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $this->scopes ) );
 	}
 
-	/** @return list<ApiScope> */
+	/** @return list<ScopeInterface> */
 	public function all(): array {
 		return $this->scopes;
 	}

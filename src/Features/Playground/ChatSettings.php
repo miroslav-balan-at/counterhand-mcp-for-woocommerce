@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground;
 
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
@@ -64,7 +66,7 @@ final class ChatSettings {
 	 * message, so this is narrower than what the store exposes to external
 	 * clients and is meant to stay that way.
 	 *
-	 * @return list<ToolGroup>
+	 * @return list<ScopeGroupInterface>
 	 */
 	public function groups(): array {
 		$stored = $this->get( 'tool_groups' );
@@ -73,12 +75,12 @@ final class ChatSettings {
 			return array_values( array_filter( ToolGroup::cases(), static fn ( ToolGroup $group ): bool => $group->in_chat_by_default() ) );
 		}
 
-		// tryFrom, so a group removed in a later release drops out of a stored
+		// try_from, so a group removed in a later release drops out of a stored
 		// selection instead of fataling on every chat render.
 		return array_values(
 			array_filter(
 				array_map(
-					static fn ( $value ): ?ToolGroup => is_string( $value ) ? ToolGroup::tryFrom( $value ) : null,
+					static fn ( $value ): ?ScopeGroupInterface => is_string( $value ) ? ScopeGroups::try_from( $value ) : null,
 					$stored
 				)
 			)
@@ -92,8 +94,8 @@ final class ChatSettings {
 		$stored                = $this->all();
 		$stored['tool_groups'] = array_values(
 			array_map(
-				static fn ( ToolGroup $group ): string => $group->value,
-				array_filter( array_map( static fn ( string $value ): ?ToolGroup => ToolGroup::tryFrom( $value ), $values ) )
+				static fn ( ScopeGroupInterface $group ): string => $group->key(),
+				array_filter( array_map( static fn ( string $value ): ?ScopeGroupInterface => ScopeGroups::try_from( $value ), $values ) )
 			)
 		);
 

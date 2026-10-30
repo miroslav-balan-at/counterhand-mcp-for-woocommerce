@@ -5,6 +5,8 @@ declare( strict_types=1 );
 namespace Counterhand\Features\Settings;
 
 use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,22 +29,22 @@ final readonly class PublishedScopes {
 
 	public function __construct( private PluginSettings $settings ) {}
 
-	/** @return list<ApiScope> */
+	/** @return list<ScopeInterface> */
 	public function all(): array {
 		return array_values(
 			array_filter(
-				ApiScope::cases(),
-				fn ( ApiScope $scope ): bool => $this->includes( $scope )
+				[ ...ApiScope::cases(), ...ScopeGroups::integration_scopes() ],
+				fn ( ScopeInterface $scope ): bool => $this->includes( $scope )
 			)
 		);
 	}
 
 	/** @return list<string> */
 	public function values(): array {
-		return array_map( static fn ( ApiScope $scope ): string => $scope->value, $this->all() );
+		return array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $this->all() );
 	}
 
-	public function includes( ApiScope $scope ): bool {
+	public function includes( ScopeInterface $scope ): bool {
 		return $scope->is_write()
 			? $this->settings->is_group_write_enabled( $scope->group() )
 			: $this->settings->is_group_read_enabled( $scope->group() );
@@ -51,12 +53,12 @@ final readonly class PublishedScopes {
 	/**
 	 * The part of a request this store can actually honour.
 	 *
-	 * @param  list<ApiScope> $requested
-	 * @return list<ApiScope>
+	 * @param  list<ScopeInterface> $requested
+	 * @return list<ScopeInterface>
 	 */
 	public function grantable( array $requested ): array {
 		return array_values(
-			array_filter( $requested, fn ( ApiScope $scope ): bool => $this->includes( $scope ) )
+			array_filter( $requested, fn ( ScopeInterface $scope ): bool => $this->includes( $scope ) )
 		);
 	}
 
@@ -64,12 +66,12 @@ final readonly class PublishedScopes {
 	 * The part it cannot — what the consent screen owes the admin an
 	 * explanation for, rather than dropping silently.
 	 *
-	 * @param  list<ApiScope> $requested
-	 * @return list<ApiScope>
+	 * @param  list<ScopeInterface> $requested
+	 * @return list<ScopeInterface>
 	 */
 	public function withheld( array $requested ): array {
 		return array_values(
-			array_filter( $requested, fn ( ApiScope $scope ): bool => ! $this->includes( $scope ) )
+			array_filter( $requested, fn ( ScopeInterface $scope ): bool => ! $this->includes( $scope ) )
 		);
 	}
 }

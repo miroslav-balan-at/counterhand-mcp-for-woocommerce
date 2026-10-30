@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth\View;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 final readonly class ConsentScope {
 
 	public function __construct(
-		public ApiScope $scope,
+		public ScopeInterface $scope,
 		public ConsentAvailability $availability,
 		public bool $pre_checked,
 	) {}

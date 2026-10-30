@@ -4,7 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Shared\Tool;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
@@ -23,9 +24,9 @@ interface ToolInterface {
 	/** JSON Schema (draft 2020-12 subset understood by WP core validators). */
 	public function input_schema(): array;
 
-	public function required_scope(): ApiScope;
+	public function required_scope(): ScopeInterface;
 
-	public function group(): ToolGroup;
+	public function group(): ScopeGroupInterface;
 
 	/**
 	 * False when the current user's capabilities — or a missing endpoint — make
@@ -46,7 +47,8 @@ interface ToolInterface {
 	/**
 	 * Whether a call changes the store in a way the person, not the model, has
 	 * to approve. The in-admin chat pauses on these; an MCP client is held to
-	 * it through the required `confirm` argument instead.
+	 * it through the required `confirm` argument, which the dispatch pipeline
+	 * publishes and enforces so a tool only has to declare this.
 	 */
 	public function requires_confirmation(): bool;
 
@@ -61,6 +63,9 @@ interface ToolInterface {
 
 	/** Whether repeating a call with the same arguments changes nothing further. */
 	public function is_idempotent(): bool;
+
+	/** Whether a call can reach beyond this store, as far as anyone can promise. */
+	public function is_open_world(): bool;
 
 	/**
 	 * @param array $arguments Already schema-sanitized and validated arguments.

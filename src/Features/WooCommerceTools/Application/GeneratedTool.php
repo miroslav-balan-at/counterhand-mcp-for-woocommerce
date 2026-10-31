@@ -4,7 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Application;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
@@ -16,13 +17,12 @@ use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
 use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
 use Counterhand\Shared\Exception\ToolCallException;
-use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Any wc/v3 resource operation, as an MCP tool.
+ * Any REST resource operation, as an MCP tool.
  *
  * One class for the whole surface. That is the design, not a shortcut: a tool
  * per endpoint would mean a hand-written copy of WooCommerce's field list in
@@ -37,7 +37,7 @@ final readonly class GeneratedTool implements ToolInterface {
 		// phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound -- "resource" is what wc/v3 calls the thing a controller exposes; renaming it here would leave the code speaking a different language from the API it wraps.
 		private ResourceDescriptor $resource,
 		private OperationDescriptor $operation,
-		private ApiScope $scope,
+		private ScopeInterface $scope,
 		private RestGatewayInterface $gateway,
 		private RouteCatalog $catalog,
 		private RoutePermissionProbe $probe,
@@ -58,23 +58,25 @@ final readonly class GeneratedTool implements ToolInterface {
 		return $this->with_closed_arguments(
 			$this->with_body_argument(
 				$this->with_defaults(
-					$this->schemas->schema(
-						$this->name(),
-						$route,
-						$this->method(),
-						$this->operation->fields,
-						$route->parameters()
+					$this->operation->with_declared_arguments(
+						$this->schemas->schema(
+							$this->name(),
+							$route,
+							$this->method(),
+							$this->operation->fields,
+							$route->parameters()
+						)
 					)
 				)
 			)
 		);
 	}
 
-	public function required_scope(): ApiScope {
+	public function required_scope(): ScopeInterface {
 		return $this->scope;
 	}
 
-	public function group(): ToolGroup {
+	public function group(): ScopeGroupInterface {
 		return $this->resource->group;
 	}
 
@@ -167,11 +169,11 @@ final readonly class GeneratedTool implements ToolInterface {
 			// First, so the agent can argue its way out of any of them.
 			...$this->operation->default_params,
 			...$arguments,
-			// Last, so a descriptor pinning a value cannot be argued out of it.
-			...$this->operation->forced_params,
 			// 'edit' context returns raw HTML for every prose field and roughly
 			// doubles the payload, and nothing here renders an edit form.
 			'context' => 'view',
+			// Last, so a descriptor pinning a value cannot be argued out of it.
+			...$this->operation->forced_params,
 		];
 
 		$fields = $this->operation->fields->output_fields();
@@ -224,11 +226,9 @@ final readonly class GeneratedTool implements ToolInterface {
 			return $schema;
 		}
 
-		$properties              = (array) ( $schema['properties'] ?? [] );
-		$properties[ $argument ] = $this->operation->body_schema;
+		$schema['properties'][ $argument ] = $this->operation->body_schema;
 
-		$schema['properties'] = $properties;
-		$schema['required']   = [ ...( $schema['required'] ?? [] ), $argument ];
+		$schema['required'] = [ ...( $schema['required'] ?? [] ), $argument ];
 
 		return $schema;
 	}
@@ -241,7 +241,7 @@ final readonly class GeneratedTool implements ToolInterface {
 	 * @return array<string, mixed>
 	 */
 	private function with_closed_arguments( array $schema ): array {
-		if ( $this->operation->requires_confirmation ) {
+		if ( ! $this->operation->accepts_additional() ) {
 			$schema['additionalProperties'] = false;
 		}
 

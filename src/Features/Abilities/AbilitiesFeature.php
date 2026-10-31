@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Abilities;
 
-use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\McpServer\ToolRegistrarInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\FeatureInterface;
 
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 final readonly class AbilitiesFeature implements FeatureInterface {
 
 	public function __construct(
-		private ToolRegistry $tool_registry,
+		private ToolRegistrarInterface $tool_registry,
 		private AbilityCatalog $catalog,
 	) {}
 

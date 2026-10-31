@@ -44,9 +44,18 @@ final readonly class StaticDescriptorCatalog implements DescriptorProvider {
 		 *
 		 * @param list<ResourceDescriptor> $resources
 		 */
-		$filtered = apply_filters( 'counterhand_tool_descriptors', $resources );
+		try {
+			$filtered = apply_filters( 'counterhand_tool_descriptors', $resources );
+		} catch ( \Throwable $throwable ) {
+			// This runs at boot on every page, so another plugin's bad descriptor must not fatal the store.
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->error( 'counterhand_tool_descriptors failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );
+			}
 
-		return array_values( array_filter( $filtered, static fn ( mixed $r ): bool => $r instanceof ResourceDescriptor ) );
+			return $resources;
+		}
+
+		return array_values( array_filter( (array) $filtered, static fn ( mixed $r ): bool => $r instanceof ResourceDescriptor ) );
 	}
 
 	/** @return list<DescriptorProvider> */
@@ -67,6 +76,7 @@ final readonly class StaticDescriptorCatalog implements DescriptorProvider {
 			new StoreConfigDescriptors(),
 			new ContentDescriptors(),
 			new SystemDescriptors(),
+			new ContactForm7Descriptors(),
 		];
 	}
 }

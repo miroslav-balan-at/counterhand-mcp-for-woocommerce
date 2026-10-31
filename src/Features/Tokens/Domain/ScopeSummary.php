@@ -49,7 +49,7 @@ final readonly class ScopeSummary {
 
 		foreach ( $scopes->all() as $scope ) {
 			if ( ToolSection::Integrations === $scope->group()->section() ) {
-				$groups[ $scope->group()->key() ] = $scope->group();
+				$groups[ $scope->group()->key() ] = ScopeGroups::try_from( $scope->group()->key() ) ?? $scope->group();
 			}
 		}
 
@@ -74,6 +74,21 @@ final readonly class ScopeSummary {
 	/** How many grants shown() left out, for a "+N more" tail. */
 	public function hidden( int $limit ): int {
 		return max( 0, count( $this->grants ) - $limit );
+	}
+
+	/**
+	 * What the token can reach right now, for an agent: naming a plugin that is off
+	 * would promise work it cannot do. labels() keeps it, for the person reviewing a grant.
+	 *
+	 * @return list<string>
+	 */
+	public function live_labels(): array {
+		return array_values(
+			array_map(
+				static fn ( ScopeGrant $grant ): string => $grant->label(),
+				array_filter( $this->grants, static fn ( ScopeGrant $grant ): bool => ScopeGroups::is_live( $grant->group ) )
+			)
+		);
 	}
 
 	/** @return list<string> */

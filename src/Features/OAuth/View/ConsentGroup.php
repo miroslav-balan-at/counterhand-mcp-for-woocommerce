@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth\View;
 
 use Counterhand\Features\Settings\PublishedScopes;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
@@ -35,6 +36,7 @@ final readonly class ConsentGroup {
 	 */
 	public static function from( ScopeGroupInterface $group, array $requested, PublishedScopes $published ): self {
 		$scopes = [];
+		$wanted = GrantedScopeSet::of( $requested );
 
 		foreach ( [ $group->read_scope(), $group->write_scope() ] as $scope ) {
 			if ( null === $scope ) {
@@ -43,7 +45,7 @@ final readonly class ConsentGroup {
 
 			$availability = match ( true ) {
 				! $published->includes( $scope )        => ConsentAvailability::SwitchedOff,
-				! in_array( $scope->key(), array_map( static fn ( ScopeInterface $wanted ): string => $wanted->key(), $requested ), true ) => ConsentAvailability::NotRequested,
+				! $wanted->contains( $scope )            => ConsentAvailability::NotRequested,
 				default                                 => ConsentAvailability::Grantable,
 			};
 

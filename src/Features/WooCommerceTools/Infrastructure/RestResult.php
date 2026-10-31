@@ -7,7 +7,7 @@ namespace Counterhand\Features\WooCommerceTools\Infrastructure;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * One wc/v3 response: the payload plus the pagination WooCommerce reports in
+ * One REST response: the payload plus the pagination the route reports in
  * headers.
  *
  * Those headers were previously discarded, so no list tool could tell an agent

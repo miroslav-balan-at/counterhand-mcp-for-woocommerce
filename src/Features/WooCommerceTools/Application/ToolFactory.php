@@ -108,7 +108,7 @@ final readonly class ToolFactory {
 					'Tool "%s" is a %s but group "%s" has no %s scope.',
 					esc_html( $operation->name->value ),
 					esc_html( $operation->operation->value ),
-					esc_html( $resource->group->value ),
+					esc_html( $resource->group->key() ),
 					esc_html( $intent->value )
 				)
 			);

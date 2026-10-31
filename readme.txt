@@ -61,6 +61,10 @@ Visibility is decided by WooCommerce too: before a tool is offered, this plugin 
 
 On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Writes that a plugin does not declare as safe need explicit confirmation, and every call is recorded in the action log. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
 
+= Contact Form 7 and Flamingo =
+
+With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under "Other plugins" in Settings, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
+
 = Two ways to use AI with your store =
 
 **Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.

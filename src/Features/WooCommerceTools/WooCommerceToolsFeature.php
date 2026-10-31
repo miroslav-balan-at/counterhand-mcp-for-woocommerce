@@ -4,8 +4,10 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools;
 
-use Counterhand\Features\McpServer\ToolRegistry;
+use Counterhand\Features\McpServer\ToolRegistrarInterface;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Features\WooCommerceTools\Application\DescribeFieldsTool;
+use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
@@ -25,10 +27,11 @@ defined( 'ABSPATH' ) || exit;
 final readonly class WooCommerceToolsFeature implements FeatureInterface {
 
 	public function __construct(
-		private ToolRegistry $tool_registry,
+		private ToolRegistrarInterface $tool_registry,
 		private ToolFactory $factory,
 		private DescriptorProvider $descriptors,
 		private SchemaProvider $schemas,
+		private ServedIntegrationGroups $served_groups,
 	) {}
 
 	public function register(): void {
@@ -41,5 +44,15 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 
 		// The escape hatch from the field pruning every generated tool applies.
 		$this->tool_registry->add( new DescribeFieldsTool( $this->descriptors, $this->schemas ) );
+
+		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_served_groups' ] );
+	}
+
+	/**
+	 * @param  mixed $groups What earlier filters returned.
+	 * @return array<mixed>
+	 */
+	public function with_served_groups( mixed $groups ): array {
+		return [ ...( is_array( $groups ) ? $groups : [] ), ...$this->served_groups->all() ];
 	}
 }

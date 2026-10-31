@@ -63,7 +63,7 @@ final class SchemaProviderTest extends TestCase {
 		$this->assertEquals(
 			[
 				'type'                 => 'object',
-				'properties'           => new \stdClass(),
+				'properties'           => [],
 				'additionalProperties' => false,
 			],
 			$schema

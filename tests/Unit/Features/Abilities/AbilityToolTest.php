@@ -93,7 +93,7 @@ final class AbilityToolTest extends TestCase {
 		$tool    = $this->tool( $ability );
 
 		$this->assertSame( 'object', $tool->input_schema()['type'] );
-		$this->assertInstanceOf( \stdClass::class, $tool->input_schema()['properties'] );
+		$this->assertSame( [], $tool->input_schema()['properties'] );
 
 		$tool->execute( [] );
 
@@ -166,5 +166,45 @@ final class AbilityToolTest extends TestCase {
 		yield 'denied' => [ false ];
 		yield 'a value that is not true' => [ 'yes' ];
 		yield 'a plugin bug must not break tools/list' => [ new \TypeError( 'boom' ) ];
+	}
+
+	/** Both spellings core accepts, so an item-level ability is never probed without its id. */
+	public function test_a_per_property_required_counts_and_is_not_probed(): void {
+		$tool = $this->tool(
+			new \WP_Ability(
+				'some-plugin/get',
+				[
+					'type'       => 'object',
+					'properties' => [
+						'id' => [
+							'type'     => 'integer',
+							'required' => true,
+						],
+					],
+				],
+				self::READ_ONLY,
+				[],
+				false
+			)
+		);
+
+		$this->assertSame( [ 'id' ], $tool->input_schema()['required'] );
+		$this->assertTrue( $tool->is_available() );
+	}
+
+	public function test_a_malformed_required_never_reaches_the_schema(): void {
+		$schema = $this->tool(
+			new \WP_Ability(
+				'some-plugin/update',
+				[
+					'type'       => 'object',
+					'required'   => true,
+					'properties' => [ 'id' => [ 'type' => 'integer' ] ],
+				],
+				self::UNKNOWN_DANGER
+			)
+		)->input_schema();
+
+		$this->assertArrayNotHasKey( 'required', $schema );
 	}
 }

@@ -4,13 +4,13 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Domain;
 
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
-use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * One wc/v3 resource and the tools it offers.
+ * One REST resource and the tools it offers.
  *
  * This is the whole per-resource knowledge the plugin holds: two routes, two
  * nouns, and a list of operations. Everything an agent actually sees — field
@@ -33,7 +33,7 @@ final readonly class ResourceDescriptor {
 	 */
 	public function __construct(
 		public string $id,
-		public ToolGroup $group,
+		public ScopeGroupInterface $group,
 		public RestRoute $collection,
 		public ?RestRoute $item,
 		public string $singular,

@@ -11,6 +11,7 @@ use Counterhand\Features\OAuth\View\FlowPage;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\CanonicalUri;
 
@@ -171,7 +172,9 @@ final readonly class AuthorizeEndpoint {
 		// The screen gets everything the client asked for — withheld scopes
 		// render as disabled rows — while the replay field below carries only
 		// what the store can actually grant.
-		$requested = $request->offered_scopes();
+		// Integrations are not in public discovery, so no client can ask for one: the
+		// admin is offered them here, never pre-ticked.
+		$requested = GrantedScopeSet::of( [ ...$request->offered_scopes(), ...ScopeGroups::integration_scopes() ] )->all();
 		$scopes    = $this->published->grantable( $requested );
 
 		$this->page->render(

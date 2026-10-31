@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  * at all, the token's scopes say whether this client was granted it, and the
  * tool itself says whether WordPress would let the token owner use it.
  */
-final class ToolRegistry {
+final class ToolRegistry implements ToolRegistrarInterface {
 
 	/** @var array<string, ToolInterface> */
 	private array $tools = [];
@@ -63,9 +63,9 @@ final class ToolRegistry {
 	/**
 	 * Tools that cannot be known at boot and are not worth knowing on every page.
 	 *
-	 * Asked once, the first time anything reads the surface. A name already taken
-	 * is skipped rather than thrown on, unlike add(): these names come from other
-	 * plugins, and a clash must not take the whole store's endpoint down with it.
+	 * Asked once, the first time anything needs a tool it does not already hold. A
+	 * name already taken is skipped and a source that throws is logged, unlike add():
+	 * these come from other plugins, which must not take the store's endpoint down.
 	 *
 	 * @param callable(): iterable<ToolInterface> $source
 	 */
@@ -78,8 +78,26 @@ final class ToolRegistry {
 		return array_values( $this->visible_map_for( $agent ) );
 	}
 
+	/**
+	 * Gates only the named tool, so calling a WooCommerce tool runs no other
+	 * plugin's discovery or permission callback.
+	 */
 	public function resolve_for( AuthenticatedAgent $agent, string $tool_name ): ?ToolInterface {
-		return $this->visible_map_for( $agent )[ $tool_name ] ?? null;
+		if ( ! isset( $this->tools[ $tool_name ] ) ) {
+			$this->resolve_late_sources();
+		}
+
+		$tool = $this->tools[ $tool_name ] ?? null;
+		if ( null === $tool ) {
+			return null;
+		}
+
+		$known = $this->visible[ $this->memo_key( $agent ) ] ?? null;
+		if ( null !== $known ) {
+			return $known[ $tool_name ] ?? null;
+		}
+
+		return $this->passes_gates( $tool, $agent ) ? $tool : null;
 	}
 
 	/**
@@ -112,22 +130,41 @@ final class ToolRegistry {
 
 		return $this->visible[ $this->memo_key( $agent ) ] ??= array_filter(
 			$this->tools,
-			fn ( ToolInterface $tool ): bool =>
-				$this->is_group_enabled( $tool )
-				&& $agent->scopes()->contains( $tool->required_scope() )
-				&& $tool->is_available()
+			fn ( ToolInterface $tool ): bool => $this->passes_gates( $tool, $agent )
 		);
 	}
 
+	private function passes_gates( ToolInterface $tool, AuthenticatedAgent $agent ): bool {
+		return $this->is_group_enabled( $tool )
+			&& $agent->scopes()->contains( $tool->required_scope() )
+			&& $tool->is_available();
+	}
+
 	private function resolve_late_sources(): void {
+		// Before init a source would answer empty and be used up for the request.
+		if ( [] === $this->late_sources || ! did_action( 'init' ) ) {
+			return;
+		}
+
 		$sources            = $this->late_sources;
 		$this->late_sources = [];
 
 		foreach ( $sources as $source ) {
+			$this->add_from( $source );
+		}
+	}
+
+	/** @param callable(): iterable<ToolInterface> $source */
+	private function add_from( callable $source ): void {
+		try {
 			foreach ( $source() as $tool ) {
 				if ( ! isset( $this->tools[ $tool->name() ] ) ) {
 					$this->add( $tool );
 				}
+			}
+		} catch ( \Throwable $throwable ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->error( 'A late tool source failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );
 			}
 		}
 	}

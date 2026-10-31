@@ -37,6 +37,7 @@ phpunit.xml.dist
 # Repository-only files; readme.txt is the one the directory reads
 CLAUDE.md
 RELEASE-CHECKLIST.md
+VISIBILITY-PLAN.md
 CODE_OF_CONDUCT.md
 CHANGELOG.md
 CONTRIBUTING.md

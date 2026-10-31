@@ -53,7 +53,7 @@ final readonly class SchemaFromArgs {
 	 */
 	private const UNDECLARED_PATH_PARAM = [
 		'type'        => 'string',
-		'description' => 'Identifies the resource in the request path. WooCommerce publishes no description for it.',
+		'description' => 'Identifies the resource in the request path. The route publishes no description for it.',
 	];
 
 	/**
@@ -93,9 +93,7 @@ final readonly class SchemaFromArgs {
 
 		$schema = [
 			'type'       => 'object',
-			// An empty PHP array encodes as [], and a provider rejects the whole
-			// request over it: "input_schema.properties: Input should be an object".
-			'properties' => [] !== $properties ? $properties : new \stdClass(),
+			'properties' => $properties,
 		];
 
 		if ( [] !== $required ) {

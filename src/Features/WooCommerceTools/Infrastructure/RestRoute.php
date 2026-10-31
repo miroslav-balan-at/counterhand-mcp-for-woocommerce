@@ -9,7 +9,7 @@ use Counterhand\Shared\Exception\ToolCallException;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * A REST route as a template, e.g. WcV3 + "/products/{id}".
+ * A REST route as a template, e.g. "wc/v3" + "/products/{id}".
  *
  * Tools declare the template, never a concrete path, so the same value can be
  * dispatched, looked up in the route catalog and handed to the permission
@@ -19,17 +19,36 @@ final readonly class RestRoute {
 
 	private const PLACEHOLDER = '/\{(\w+)\}/';
 
+	private const NAMESPACE_PATTERN = '#^(?!.*\.\.)[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)*$#';
+
 	private function __construct(
-		public RestNamespace $rest_namespace,
+		public string $rest_namespace,
 		public string $template,
 	) {}
 
+	/**
+	 * A route in any plugin's namespace, e.g. "contact-form-7/v1".
+	 *
+	 * Checked for shape only. Asking the REST server here would build it at
+	 * plugins_loaded, and whether the route is served is answered per request by
+	 * the tool's availability check anyway.
+	 *
+	 * @throws \InvalidArgumentException When it could not be a REST namespace.
+	 */
+	public static function of( string $rest_namespace, string $template ): self {
+		if ( 1 !== preg_match( self::NAMESPACE_PATTERN, $rest_namespace ) ) {
+			throw new \InvalidArgumentException( sprintf( '"%s" is not a REST namespace.', esc_html( $rest_namespace ) ) );
+		}
+
+		return new self( $rest_namespace, $template );
+	}
+
 	public static function wc( string $template ): self {
-		return new self( RestNamespace::WcV3, $template );
+		return new self( 'wc/v3', $template );
 	}
 
 	public static function wp( string $template ): self {
-		return new self( RestNamespace::WpV2, $template );
+		return new self( 'wp/v2', $template );
 	}
 
 	/**
@@ -39,7 +58,7 @@ final readonly class RestRoute {
 	 * doubles as the route-catalog key.
 	 */
 	public function path_template(): string {
-		return $this->rest_namespace->prefix() . $this->template;
+		return '/' . $this->rest_namespace . $this->template;
 	}
 
 	/**
@@ -76,7 +95,7 @@ final readonly class RestRoute {
 			$path = str_replace( '{' . $name . '}', rawurlencode( (string) $value ), $path );
 		}
 
-		return $this->rest_namespace->prefix() . $path;
+		return '/' . $this->rest_namespace . $path;
 	}
 
 	/**

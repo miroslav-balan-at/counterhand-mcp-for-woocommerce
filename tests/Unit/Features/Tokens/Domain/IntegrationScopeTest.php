@@ -48,9 +48,9 @@ final class IntegrationScopeTest extends TestCase {
 	}
 
 	public function test_a_summary_shows_an_integration_after_the_shipped_groups_and_collapses_its_axes(): void {
-		$summary = ScopeSummary::of( GrantedScopeSet::from_csv( 'integration:yoast-seo:write,integration:yoast-seo:read,products:read' ) );
+		$summary = ScopeSummary::of( GrantedScopeSet::from_csv( 'integration:contact-form-7:write,integration:contact-form-7:read,products:read' ) );
 
-		$this->assertSame( [ 'Products', 'Yoast SEO' ], $summary->labels() );
+		$this->assertSame( [ 'Products', 'Contact Form 7' ], $summary->labels() );
 		$this->assertTrue( $summary->grants[1]->writable );
 	}
 
@@ -90,5 +90,44 @@ final class IntegrationScopeTest extends TestCase {
 		$this->assertFalse( IntegrationGroup::is_option_key( 'enabled' ) );
 		$this->assertFalse( IntegrationGroup::is_option_key( 'integration__read' ) );
 		$this->assertFalse( IntegrationGroup::is_option_key( 'integration_yoast-seo_admin' ) );
+	}
+
+	public function test_a_plugin_named_by_two_sources_is_one_row_and_keeps_its_write_switch(): void {
+		\Brain\Monkey\Filters\expectApplied( ScopeGroups::INTEGRATIONS_FILTER )->andReturn(
+			[ IntegrationGroup::try_of( 'yoast-seo', false ), IntegrationGroup::try_of( 'yoast-seo' ), IntegrationGroup::try_of( 'yoast-seo', false ) ]
+		);
+
+		$groups = ScopeGroups::integrations();
+
+		$this->assertCount( 1, $groups );
+		$this->assertTrue( $groups[0]->has_write() );
+	}
+
+	public function test_the_owning_feature_supplies_the_consent_wording(): void {
+		$scope = IntegrationGroup::of( 'flamingo', copy: new \Counterhand\Features\Flamingo\FlamingoCopy() )->read_scope();
+
+		$this->assertStringContainsString( 'email addresses', $scope->description() );
+	}
+
+	public function test_a_malformed_slug_in_code_is_a_programming_error(): void {
+		$this->expectException( \InvalidArgumentException::class );
+
+		IntegrationGroup::of( 'Not A Slug' );
+	}
+
+	public function test_groups_come_back_in_name_order_whichever_source_named_them_first(): void {
+		\Brain\Monkey\Filters\expectApplied( ScopeGroups::INTEGRATIONS_FILTER )->andReturn( [ IntegrationGroup::of( 'yoast-seo' ), IntegrationGroup::of( 'flamingo' ) ] );
+
+		$this->assertSame(
+			[ 'integration:flamingo', 'integration:yoast-seo' ],
+			array_map( static fn ( $group ): string => $group->key(), ScopeGroups::integrations() )
+		);
+	}
+
+	public function test_a_plugin_that_is_off_is_not_named_to_an_agent(): void {
+		$summary = ScopeSummary::of( GrantedScopeSet::from_csv( 'products:read,integration:wpforms:read' ) );
+
+		$this->assertSame( [ 'Products' ], $summary->live_labels() );
+		$this->assertCount( 2, $summary->grants, 'the person reviewing the grant still sees it' );
 	}
 }

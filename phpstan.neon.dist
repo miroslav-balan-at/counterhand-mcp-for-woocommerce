@@ -9,6 +9,7 @@ parameters:
         - counterhand-mcp-for-woocommerce.php
         - tests/phpstan-wc-stubs.php
         - tests/phpstan-core-ai-stubs.php
+        - tests/phpstan-flamingo-stubs.php
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false

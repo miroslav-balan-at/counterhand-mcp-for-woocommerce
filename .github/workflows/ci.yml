@@ -4,8 +4,24 @@ on:
   push:
     branches: [master]
   pull_request:
+  # Against whatever WooCommerce and the integrated plugins released today, so an
+  # update that breaks a tool is found here rather than on someone's store.
+  schedule:
+    - cron: '17 4 * * *'
 
 jobs:
+  # GitHub disables a schedule after 60 days without repository activity, which
+  # would end the daily run above silently on a quiet stretch.
+  keep-schedule-alive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh api --method PUT "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   checks:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest

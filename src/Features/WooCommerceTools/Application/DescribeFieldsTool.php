@@ -121,18 +121,27 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		$route  = $resource->route_for( $operation->operation );
 		$method = $operation->operation->method();
 
-		$full = $this->schemas->schema(
-			self::NAME . ':' . $name,
-			$route,
-			$method,
-			FieldProfile::everything(),
-			$route->parameters()
+		// A tool whose plugin is off does not exist here, whatever is written down for it.
+		if ( ! $this->schemas->serves( $route, $method ) ) {
+			throw $this->not_describable( $name );
+		}
+
+		$full = $operation->with_declared_arguments(
+			$this->schemas->schema(
+				self::NAME . ':' . $name,
+				$route,
+				$method,
+				FieldProfile::everything(),
+				$route->parameters()
+			)
 		);
 
-		// Cast: an argument-less route publishes properties as stdClass, and
-		// array_keys() fatals on an object.
-		$published = array_keys( (array) ( $this->schemas->schema( $name, $route, $method, $operation->fields, $route->parameters() )['properties'] ?? [] ) );
-		$all       = array_keys( (array) ( $full['properties'] ?? [] ) );
+		$published = array_keys( $operation->with_declared_arguments( $this->schemas->schema( $name, $route, $method, $operation->fields, $route->parameters() ) )['properties'] ?? [] );
+		$all       = array_keys( $full['properties'] ?? [] );
+
+		if ( [] === $all ) {
+			$full['properties'] = new \stdClass();
+		}
 
 		return [
 			'tool'          => $name,
@@ -141,7 +150,7 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 			'route'         => $route->path_template(),
 			'published'     => $published,
 			'additional'    => array_values( array_diff( $all, $published ) ),
-			'accepts_extra' => $operation->fields->allow_additional,
+			'accepts_extra' => $operation->accepts_additional(),
 			'schema'        => $full,
 		];
 	}
@@ -159,8 +168,12 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 			}
 		}
 
+		throw $this->not_describable( $name );
+	}
+
+	private function not_describable( string $name ): ToolCallException {
 		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
-		throw new ToolCallException(
+		return new ToolCallException(
 			sprintf(
 				'"%s" is not a tool whose fields can be described. Only the WooCommerce resource tools have a schema to show; pass a name exactly as it appears in the tool list.',
 				esc_html( $name )

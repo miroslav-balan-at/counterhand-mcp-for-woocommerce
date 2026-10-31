@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { listToolNames, mcpCall } from '../support/mcp';
-import { anonymousContext, connect } from '../support/oauth';
+import { anonymousContext, authorizationUrl, connect, discover, pkcePair } from '../support/oauth';
 import { adminStatePath, patchSettings, shopManagerStatePath, wp } from '../support/store';
 
 const FIXTURE_READ = 'integration:e2e-fixture:read';
@@ -11,13 +11,10 @@ const OTHER_READ = 'integration:e2e-other:read';
 test.describe( 'Abilities bridge', () => {
 	test( 'a plugin stays off until the store enables it, and consent then offers it', async ( { browser, baseURL } ) => {
 		const client = await anonymousContext( baseURL as string );
-		const discovered = async () => ( await ( await client.get( '/.well-known/oauth-authorization-server' ) ).json() ).scopes_supported as string[];
-		expect( await discovered() ).not.toContain( FIXTURE_READ );
-
 		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
 		try {
-			expect( await discovered() ).toContain( FIXTURE_READ );
-			expect( await discovered(), 'the other plugin is still off' ).not.toContain( OTHER_READ );
+			const discovered = ( await ( await client.get( '/.well-known/oauth-authorization-server' ) ).json() ).scopes_supported as string[];
+			expect( discovered.filter( ( scope ) => scope.startsWith( 'integration:' ) ), 'discovery names no plugin, so a store cannot be fingerprinted' ).toEqual( [] );
 
 			const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
 			const { tokens, discovery } = await connect( page, baseURL as string, [ FIXTURE_READ ] );
@@ -42,6 +39,43 @@ test.describe( 'Abilities bridge', () => {
 		} finally {
 			restore();
 			await client.dispose();
+		}
+	} );
+
+	test( 'consent offers an enabled plugin no client could know to ask for, unticked', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const client = await anonymousContext( baseURL as string );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		try {
+			const { challenge } = pkcePair();
+			await page.goto( authorizationUrl( await discover( client ), { scopes: [ 'products:read' ], verifierChallenge: challenge, state: 'consent-offer' } ) );
+
+			const offered = page.locator( `input[name="counterhand_scopes[]"][value="${ FIXTURE_READ }"]` );
+			await expect( offered ).toHaveCount( 1 );
+			await expect( offered ).toBeEnabled();
+			await expect( offered ).not.toBeChecked();
+			await expect( page.locator( `input[name="counterhand_scopes[]"][value="${ OTHER_READ }"]` ), 'off in Settings' ).toBeDisabled();
+		} finally {
+			await page.close();
+			await client.dispose();
+			restore();
+		}
+	} );
+
+	test( 'a plugin can be picked for the chat', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		try {
+			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
+			await page.locator( 'details', { has: page.locator( 'input[name="counterhand_chat_groups[]"]' ) } ).first().locator( 'summary' ).click();
+			const area = page.locator( 'input[name="counterhand_chat_groups[]"][value="integration:e2e-fixture"]' );
+			await area.check();
+			await page.getByRole( 'button', { name: 'Save areas' } ).click();
+			await expect( page.locator( 'input[name="counterhand_chat_groups[]"][value="integration:e2e-fixture"]' ) ).toBeChecked();
+		} finally {
+			await page.close();
+			wp( 'option', 'delete', 'counterhand_chat' );
+			restore();
 		}
 	} );
 

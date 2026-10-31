@@ -36,9 +36,7 @@ final readonly class StoreOverviewTool implements ToolInterface {
 	public function input_schema(): array {
 		return [
 			'type'                 => 'object',
-			// stdClass, not [], so json_encode emits {} — an empty PHP array
-			// would serialize as [] and strict MCP clients reject that.
-			'properties'           => new \stdClass(),
+			'properties'           => [],
 			'additionalProperties' => false,
 		];
 	}

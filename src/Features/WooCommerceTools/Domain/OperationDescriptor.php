@@ -28,6 +28,7 @@ final readonly class OperationDescriptor {
 	 *                                                   controllers that read get_json_params() instead of params.
 	 * @param array<string, mixed>|null $body_schema     JSON Schema for that argument. Hand-written because the route
 	 *                                                   publishes no argument to derive it from.
+	 * @param array<string, array<string, mixed>> $declared_arguments Argument name => JSON Schema, only for a route that publishes none. The one permitted copy of a schema: there is nothing live to derive from.
 	 */
 	public function __construct(
 		public ToolName $name,
@@ -41,7 +42,34 @@ final readonly class OperationDescriptor {
 		public ?ArgumentPolicy $policy = null,
 		public ?string $body_argument = null,
 		public ?array $body_schema = null,
+		public array $declared_arguments = [],
 	) {}
+
+	/**
+	 * Adds what this operation declares to a schema derived from the route. The
+	 * live route wins on any name, so a plugin that starts declaring its arguments
+	 * takes over from this copy with no edit here.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @return array<string, mixed>
+	 */
+	public function with_declared_arguments( array $schema ): array {
+		if ( [] === $this->declared_arguments ) {
+			return $schema;
+		}
+
+		$schema['properties'] = [ ...$this->declared_arguments, ...( $schema['properties'] ?? [] ) ];
+
+		return $schema;
+	}
+
+	/**
+	 * A risky write takes only what it declares. Declared arguments are the
+	 * exception: they are a copy, so what a plugin adds later has to get through.
+	 */
+	public function accepts_additional(): bool {
+		return $this->fields->allow_additional && ( ! $this->requires_confirmation || [] !== $this->declared_arguments );
+	}
 
 	public function describe( string $singular, string $plural ): string {
 		if ( null !== $this->description_override ) {

@@ -60,4 +60,59 @@ final class OperationDescriptorTest extends TestCase {
 		$this->assertNotContains( 'route', $properties );
 		$this->assertNotContains( 'method', $properties );
 	}
+
+	/** What keeps a plugin update from being overruled by the copy written here. */
+	public function test_the_live_route_wins_over_a_declared_argument(): void {
+		$operation = new OperationDescriptor(
+			ToolName::from( 'a_tool' ),
+			Operation::CreateItem,
+			new FieldProfile( [], [] ),
+			declared_arguments: [
+				'title' => [ 'type' => 'string' ],
+				'form'  => [ 'type' => 'string' ],
+			]
+		);
+
+		$schema = $operation->with_declared_arguments(
+			[
+				'type'       => 'object',
+				'properties' => [ 'title' => [ 'type' => 'integer' ] ],
+			]
+		);
+
+		$this->assertSame( 'integer', $schema['properties']['title']['type'] );
+		$this->assertSame( 'string', $schema['properties']['form']['type'] );
+	}
+
+	public function test_a_route_publishing_nothing_gets_the_declared_arguments(): void {
+		$operation = new OperationDescriptor(
+			ToolName::from( 'a_tool' ),
+			Operation::CreateItem,
+			new FieldProfile( [], [] ),
+			declared_arguments: [ 'form' => [ 'type' => 'string' ] ]
+		);
+
+		$schema = $operation->with_declared_arguments(
+			[
+				'type'       => 'object',
+				'properties' => [],
+			]
+		);
+
+		$this->assertSame( [ 'form' => [ 'type' => 'string' ] ], $schema['properties'] );
+	}
+
+	/** Gated writes close, except a declared copy, which must let later fields through. */
+	public function test_a_gated_operation_closes_unless_its_arguments_are_declared(): void {
+		$gated = static fn ( array $declared ): OperationDescriptor => new OperationDescriptor(
+			ToolName::from( 'a_tool' ),
+			Operation::UpdateItem,
+			new FieldProfile( [], [] ),
+			requires_confirmation: true,
+			declared_arguments: $declared
+		);
+
+		$this->assertFalse( $gated( [] )->accepts_additional() );
+		$this->assertTrue( $gated( [ 'title' => [ 'type' => 'string' ] ] )->accepts_additional() );
+	}
 }

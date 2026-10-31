@@ -114,7 +114,10 @@ final readonly class SchemaFromArgs {
 		if ( $fields->is_stale_against( $args ) ) {
 			$this->warn_stale( $route_args );
 
-			return $args;
+			// A closed profile is closed to keep something out, and falling back would let it in.
+			if ( $fields->allow_additional ) {
+				return $args;
+			}
 		}
 
 		// WooCommerce rejects a call missing a required argument, so a profile

@@ -13,6 +13,7 @@ use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
 use Counterhand\Shared\Exception\ToolCallException;
 use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Shared\Tool\ToolInterface;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -121,8 +122,9 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		$route  = $resource->route_for( $operation->operation );
 		$method = $operation->operation->method();
 
-		// A tool whose plugin is off does not exist here, whatever is written down for it.
-		if ( ! $resource->is_plugin_loaded() || ! $this->schemas->serves( $route, $method ) ) {
+		// Integration tools publish all they accept, and answering about one would tell a
+		// token that holds no grant for it which plugins the store runs.
+		if ( ToolSection::Integrations === $resource->group->section() || ! $this->schemas->serves( $route, $method ) ) {
 			throw $this->not_describable( $name );
 		}
 

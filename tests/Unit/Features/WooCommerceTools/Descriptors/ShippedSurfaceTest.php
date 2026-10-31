@@ -185,6 +185,37 @@ final class ShippedSurfaceTest extends TestCase {
 		'update_page_custom_fields'      => [ 'integration:acf', 'integration:acf:write' ],
 		'get_product_custom_fields'      => [ 'integration:acf', 'integration:acf:read' ],
 		'update_product_custom_fields'   => [ 'integration:acf', 'integration:acf:write' ],
+		'get_products_legal_details'     => [ 'integration:germanized', 'integration:germanized:read' ],
+		'get_product_legal_details'      => [ 'integration:germanized', 'integration:germanized:read' ],
+		'update_product_legal_details'   => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_delivery_times'             => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_delivery_time'           => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_delivery_time'           => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_delivery_time'           => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_units'                      => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_unit'                    => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_unit'                    => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_unit'                    => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_price_labels'               => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_price_label'             => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_price_label'             => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_price_label'             => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_deposit_types'              => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_deposit_type'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_deposit_type'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_deposit_type'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_manufacturers'              => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_manufacturer'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_manufacturer'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_manufacturer'            => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_nutrients'                  => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_nutrient'                => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_nutrient'                => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_nutrient'                => [ 'integration:germanized', 'integration:germanized:write' ],
+		'get_allergens'                  => [ 'integration:germanized', 'integration:germanized:read' ],
+		'create_allergen'                => [ 'integration:germanized', 'integration:germanized:write' ],
+		'update_allergen'                => [ 'integration:germanized', 'integration:germanized:write' ],
+		'delete_allergen'                => [ 'integration:germanized', 'integration:germanized:write' ],
 		'list_inbound_messages'          => [ 'integration:flamingo', 'integration:flamingo:read' ],
 		'get_inbound_message'            => [ 'integration:flamingo', 'integration:flamingo:read' ],
 		'trash_inbound_message'          => [ 'integration:flamingo', 'integration:flamingo:write' ],
@@ -259,8 +290,8 @@ final class ShippedSurfaceTest extends TestCase {
 	 * number too, rather than discovering later that a descriptor quietly
 	 * stopped being registered.
 	 */
-	public function test_the_surface_is_one_hundred_and_forty_two_tools(): void {
-		$this->assertCount( 142, $this->surface() );
+	public function test_the_surface_is_one_hundred_and_seventy_three_tools(): void {
+		$this->assertCount( 173, $this->surface() );
 	}
 
 	/**

@@ -31,6 +31,7 @@ final readonly class ResourceDescriptor {
 	 * @param RestRoute|null            $write_probe Same for writes.
 	 * @param MetaOwner|null            $meta        Which metadata table this resource's custom fields live in; null offers none.
 	 * @param string|null               $requires_function A function the plugin defines, for a resource on routes that exist without it.
+	 * @param array<string, mixed>      $meta_write_params Sent with every custom field write, which goes through the item route.
 	 */
 	public function __construct(
 		public string $id,
@@ -44,6 +45,7 @@ final readonly class ResourceDescriptor {
 		public ?RestRoute $write_probe = null,
 		public ?MetaOwner $meta = null,
 		public ?string $requires_function = null,
+		public array $meta_write_params = [],
 	) {}
 
 	/** False while the plugin behind a route that exists anyway is off. */

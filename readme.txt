@@ -69,6 +69,10 @@ With Contact Form 7 active, an assistant can list, create, edit and delete its f
 
 With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under "Other plugins" in Settings, and it cannot change anything else about those items.
 
+= Germanized =
+
+With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under "Other plugins" in Settings. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
+
 = Two ways to use AI with your store =
 
 **Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.

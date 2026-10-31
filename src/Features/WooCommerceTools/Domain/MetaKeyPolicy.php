@@ -70,9 +70,10 @@ final readonly class MetaKeyPolicy {
 
 	/**
 	 * Germanized keeps direct-debit bank details on the customer with no underscore, so
-	 * nothing marks them private, and an IBAN can be stored unencrypted.
+	 * nothing marks them private, and an IBAN can be stored unencrypted. On an order they
+	 * carry one, which a site can filter out of being protected.
 	 */
-	private const PAYMENT_DETAILS = '/^direct_debit_/i';
+	private const PAYMENT_DETAILS = '/^_?direct_debit_/i';
 
 	private const KEY_FORMAT = '/^[A-Za-z][A-Za-z0-9_\-]{0,254}$/';
 

@@ -221,6 +221,40 @@ final class AbilityToolTest extends TestCase {
 		$this->tool( new \WP_Ability( 'rank-math/set', [], self::READ_ONLY, [ 'error' => [ 'message' => 'Unknown module' ] ] ) )->execute( [] );
 	}
 
+	public function test_true_as_an_error_keeps_the_real_message(): void {
+		$this->expectException( ToolCallException::class );
+		$this->expectExceptionMessage( 'Quota exceeded' );
+
+		$this->tool(
+			new \WP_Ability(
+				'rank-math/set',
+				[],
+				self::READ_ONLY,
+				[
+					'error'   => true,
+					'message' => 'Quota exceeded',
+				]
+			)
+		)->execute( [] );
+	}
+
+	public function test_a_lone_string_error_is_a_failure(): void {
+		$this->expectException( ToolCallException::class );
+		$this->expectExceptionMessage( 'Nope' );
+
+		$this->tool( new \WP_Ability( 'x/set', [], self::READ_ONLY, [ 'error' => 'Nope' ] ) )->execute( [] );
+	}
+
+	/** A log or status record can have a field called error. */
+	public function test_an_error_field_beside_other_data_is_data(): void {
+		$result = [
+			'status' => 'ok',
+			'error'  => 'Last run timed out',
+		];
+
+		$this->assertSame( $result, $this->tool( new \WP_Ability( 'x/get', [], self::READ_ONLY, $result ) )->execute( [] ) );
+	}
+
 	public function test_an_empty_error_key_is_not_a_failure(): void {
 		$this->assertSame(
 			[

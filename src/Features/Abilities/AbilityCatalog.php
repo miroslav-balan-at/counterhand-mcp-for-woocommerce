@@ -24,8 +24,10 @@ final class AbilityCatalog {
 	 * contact-form-7/*, flamingo/*: served by our own tools with their policies, which
 	 * abilities from either plugin would bypass (CF7 is discussing them).
 	 * mcp-adapter/*: meta-tools that call any ability, which would bypass every gate.
+	 * acf/*: served by our own tools too. Its abilities return password fields, and
+	 * registering a field group named _price would let our tools write that meta.
 	 */
-	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand', 'contact-form-7', 'flamingo' ];
+	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand', 'contact-form-7', 'flamingo', 'acf' ];
 
 	/**
 	 * Each read and returned more than its plugin's scope should reach:
@@ -145,9 +147,21 @@ final class AbilityCatalog {
 		return true === ( $mcp['public'] ?? $meta['public'] ?? null );
 	}
 
-	/** What an ability's arguments must not say, where its own checks do not cover it. */
+	/**
+	 * What an ability's arguments must not say, where its own checks do not cover it.
+	 * Every write of the plugin rather than a named one, because a release can add
+	 * another that takes a template.
+	 */
 	public function policy_of( \WP_Ability $ability ): ?ArgumentPolicy {
-		return 'yoast-seo/update-post-seo-data' === $ability->get_name() ? new YoastFieldPolicy() : null;
+		if ( AbilityAnnotations::of( $ability )->read_only ) {
+			return null;
+		}
+
+		return match ( self::namespace_of( $ability ) ) {
+			'yoast-seo' => new YoastFieldPolicy(),
+			'rank-math' => new RankMathFieldPolicy(),
+			default     => null,
+		};
 	}
 
 	/**

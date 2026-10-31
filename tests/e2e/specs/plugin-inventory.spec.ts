@@ -34,8 +34,10 @@ test.describe( 'Plugins as they are once set up', () => {
 	let names: string[];
 	let tools: { name: string; inputSchema: Record< string, unknown>; annotations: { destructiveHint: boolean } }[];
 	let product: string;
+	let baseURL: string;
 
-	test.beforeAll( async ( { browser, baseURL } ) => {
+	test.beforeAll( async ( { browser, baseURL: storeURL } ) => {
+		baseURL = storeURL as string;
 		wp( 'plugin', 'activate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math' );
 		wp( 'option', 'update', 'rank_math_registration_skip', '1' );
 		const settings: Record< string, boolean > = { customers_read: true };
@@ -88,6 +90,48 @@ test.describe( 'Plugins as they are once set up', () => {
 		expect( refused.result?.isError ).toBe( true );
 		expect( JSON.stringify( refused ) ).not.toContain( 's3cret-protected' );
 		expect( wp( 'post', 'meta', 'list', product, '--format=csv' ) ).not.toContain( '%%cf_' );
+	} );
+
+	test( 'a Yoast title cannot read protected meta however it is spelled, because Yoast cleans what it saves', async () => {
+		for ( const seo_title of [ '%%<i>cf__probe_secret%%', '%%c%aaf__probe_secret%%', '%%c%a%aaaf__probe_secret%%', 'x%ab %%%abcf__probe_secret%%', '%%CT_product_cat%%' ] ) {
+			const refused = await call( 'yoast_seo_update_post_seo_data', { post_id: Number( product ), seo_title, confirm: true } );
+			expect( refused.result?.isError, seo_title ).toBe( true );
+		}
+		expect( wp( 'post', 'meta', 'list', product, '--format=csv' ).toLowerCase() ).not.toMatch( /cf_|ct_/ );
+	} );
+
+	test( 'a canonical on this site is accepted in any spelling, and one elsewhere is not', async () => {
+		for ( const canonical of [ '/shop/mug', baseURL + '/shop/mug', baseURL.toUpperCase().replace( 'HTTP', 'http' ) + '/shop/mug' ] ) {
+			const accepted = await call( 'yoast_seo_update_post_seo_data', { post_id: Number( product ), canonical, confirm: true } );
+			expect( accepted.result?.isError, canonical ).toBe( false );
+		}
+		for ( const canonical of [ 'https://elsewhere.example/mug', '//elsewhere.example/mug', '/\\\\elsewhere.example/mug', 'elsewhere.example/mug' ] ) {
+			const refused = await call( 'yoast_seo_update_post_seo_data', { post_id: Number( product ), canonical, confirm: true } );
+			expect( refused.result?.isError, canonical ).toBe( true );
+		}
+		expect( wp( 'post', 'meta', 'get', product, '_yoast_wpseo_canonical' ) ).not.toContain( 'elsewhere' );
+	} );
+
+	test( 'a Rank Math template cannot read protected meta, on any of its writes', async () => {
+		const original = wp( 'option', 'get', 'rank-math-options-titles', '--format=json' );
+		const before = JSON.parse( original ).pt_product_title;
+
+		try {
+			for ( const title of [ '%customfield(_probe_secret)%', '%CUSTOMFIELD(_probe_secret)%', '%custom%aafield(_probe_secret)%', '%custom<b>field(_probe_secret)%', '%customterm(product_visibility)%' ] ) {
+				const refused = await call( 'rank_math_set_post_type_seo_settings', { post_types: { product: { title } }, confirm: true } );
+				expect( refused.result?.isError, title ).toBe( true );
+			}
+			expect( JSON.parse( wp( 'option', 'get', 'rank-math-options-titles', '--format=json' ) ).pt_product_title ).toBe( before );
+
+			const homepage = await call( 'rank_math_set_homepage_seo', { title: '%customfield(_probe_secret)%', confirm: true } );
+			expect( homepage.result?.isError, 'nor the home page' ).toBe( true );
+
+			const allowed = await call( 'rank_math_set_post_type_seo_settings', { post_types: { product: { title: '%title% %sep% %sitename%' } }, confirm: true } );
+			expect( allowed.result?.isError, 'ordinary variables still work' ).toBe( false );
+			expect( JSON.stringify( ( await call( 'rank_math_get_post_seo_meta', { post_id: Number( product ) } ) ).result ) ).not.toContain( 's3cret-protected' );
+		} finally {
+			wp( 'option', 'update', 'rank-math-options-titles', original, '--format=json' );
+		}
 	} );
 
 	test( 'a Yoast write still needs a person', async () => {

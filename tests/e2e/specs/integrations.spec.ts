@@ -125,8 +125,35 @@ test.describe( 'Integrations with the real plugins', () => {
 
 			const added = await call( 'update_contact_form', { id, mail: { ...mail, attachments: 'uploads/brochure.pdf\ndebug.log' }, confirm: true } );
 			expect( added.isError, 'a new one may not' ).toBe( true );
+
+			for ( const change of [ { recipient: 'attacker@example.test' }, { recipient: '[your-email]' }, { additional_headers: 'Bcc: attacker@example.test' } ] ) {
+				const redirected = await call( 'update_contact_form', { id, mail: { ...mail, attachments: 'uploads/brochure.pdf', ...change }, confirm: true } );
+				expect( redirected.isError, `it cannot be sent somewhere new: ${ JSON.stringify( change ) }` ).toBe( true );
+			}
+			expect( wp( 'post', 'meta', 'get', String( id ), '_mail' ), 'nothing was stored' ).not.toContain( 'attacker' );
+
+			const moved = await call( 'update_contact_form', { id, mail: { ...mail, attachments: '[your-file]', recipient: 'someone@example.test' }, confirm: true } );
+			expect( moved.isError, 'with no server file the recipient is free' ).toBe( false );
 		} finally {
 			wp( 'option', 'delete', 'wpcf7' );
+			await call( 'delete_contact_form', { id, confirm: true } );
+			await client.dispose();
+		}
+	} );
+
+	test( 'a Flamingo field can use the form\'s own fields and nothing else', async ( { browser, baseURL } ) => {
+		const { client, call } = await tokenFor( browser, baseURL as string, [ CONTACT_FORM_READ, CONTACT_FORM_WRITE ] );
+		const id = ( await call( 'create_contact_form', { title: 'E2E flamingo', form: '[email* your-email] [text your-subject]', confirm: true } ) ).structuredContent[ 'contact form' ].id;
+
+		try {
+			for ( const settings of [ 'flamingo_email: [_remote_ip]', 'flamingo_email: [wpcf7.remote_ip]', 'demo: on\rflamingo_email: [_remote_ip]', 'flamingo_name: [_user_agent]', 'flamingo_subject: [_raw_your-subject]' ] ) {
+				expect( ( await call( 'update_contact_form', { id, additional_settings: settings, confirm: true } ) ).isError, settings ).toBe( true );
+			}
+			expect( wp( 'post', 'meta', 'list', String( id ), '--format=csv' ) ).not.toContain( 'flamingo_' );
+
+			expect( ( await call( 'update_contact_form', { id, additional_settings: 'flamingo_email: [your-email]\nflamingo_subject: [your-subject]', confirm: true } ) ).isError ).toBe( false );
+			expect( wp( 'post', 'meta', 'get', String( id ), '_additional_settings' ) ).toContain( 'flamingo_email: [your-email]' );
+		} finally {
 			await call( 'delete_contact_form', { id, confirm: true } );
 			await client.dispose();
 		}
@@ -286,6 +313,45 @@ test.describe( 'Advanced Custom Fields with the real plugin', () => {
 		await client.dispose();
 	} );
 
+	test( 'a password inside a group cannot be overwritten, while the fields beside it can', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ ACF_READ, ACF_WRITE ] );
+		wp( 'post', 'meta', 'set', post, 'nested_box_inner_secret', 'nested-hunter2' );
+		wp( 'post', 'meta', 'set', post, '_nested_box_inner_secret', 'field_inner_secret' );
+
+		const written = await call( 'update_post_custom_fields', { id: Number( post ), acf: { nested_box: { inner_note: 'beside it', inner_secret: 'changed' } } } );
+
+		expect( written.isError ).toBe( false );
+		expect( wp( 'post', 'meta', 'get', post, 'nested_box_inner_secret' ) ).toBe( 'nested-hunter2' );
+		expect( wp( 'post', 'meta', 'get', post, 'nested_box_inner_note' ) ).toBe( 'beside it' );
+		await client.dispose();
+	} );
+
+	test( 'a field stored under a protected name cannot be written, even in a group shown in REST', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ ACF_READ, ACF_WRITE ] );
+		const location = [ [ { param: 'post_type', operator: '==', value: 'product' } ] ];
+		wp( 'eval', `acf_import_field_group( json_decode( '${ JSON.stringify( { key: 'group_e2e_price', title: 'price', show_in_rest: 1, location, fields: [ { key: 'field_e2e_price', label: 'price', name: '_price', type: 'text' } ] } ) }', true ) );` );
+		wp( 'post', 'meta', 'set', product, '_price', '10' );
+
+		const refused = await call( 'update_product_custom_fields', { id: Number( product ), acf: { _price: '0.01' } } );
+
+		expect( refused.isError ).toBe( true );
+		expect( wp( 'post', 'meta', 'get', product, '_price' ) ).toBe( '10' );
+		await client.dispose();
+	} );
+
+	test( 'ACF\'s own AI access adds no tool to an ACF grant, because it reaches past our guards', async ( { browser, baseURL } ) => {
+		wp( 'option', 'update', 'counterhand_e2e_acf_ai', '1' );
+		try {
+			expect( wp( 'eval', 'echo implode( chr( 44 ), array_keys( wp_get_abilities() ) );' ), 'ACF really is offering them' ).toContain( 'acf/' );
+
+			const { client, names } = await caller( browser, baseURL as string, [ ACF_READ, ACF_WRITE ] );
+			expect( ( await names() ).sort() ).toEqual( [ 'get_page_custom_fields', 'get_post_custom_fields', 'get_product_custom_fields', 'update_page_custom_fields', 'update_post_custom_fields', 'update_product_custom_fields' ] );
+			await client.dispose();
+		} finally {
+			wp( 'option', 'delete', 'counterhand_e2e_acf_ai' );
+		}
+	} );
+
 	test( 'null clears a field', async ( { browser, baseURL } ) => {
 		const { client, call } = await caller( browser, baseURL as string, [ ACF_READ, ACF_WRITE ] );
 
@@ -338,6 +404,289 @@ test.describe( 'Advanced Custom Fields with the real plugin', () => {
 			expect( await names() ).not.toContain( 'get_post_custom_fields' );
 		} finally {
 			wp( 'plugin', 'activate', 'advanced-custom-fields' );
+		}
+		await client.dispose();
+	} );
+} );
+
+test.describe( 'Germanized with the real plugin', () => {
+	let restore: () => void;
+	let product: string;
+	let deliveryTime: number;
+
+	const READ = 'integration:germanized:read';
+	const WRITE = 'integration:germanized:write';
+
+	test.beforeAll( () => {
+		wp( 'plugin', 'activate', 'woocommerce-germanized' );
+		restore = patchSettings( { integration_germanized_read: true, integration_germanized_write: true, customers_read: true, orders_read: true, products_read: true, products_write: true } );
+		product = wp( 'wc', 'product', 'create', '--name=Legal product', '--regular_price=10', '--status=publish', '--user=e2e-admin', '--porcelain' ).trim();
+	} );
+
+	test.afterAll( () => {
+		wp( 'post', 'delete', product, '--force' );
+		restore();
+		wp( 'plugin', 'deactivate', 'woocommerce-germanized' );
+	} );
+
+	async function caller( browser: import('@playwright/test').Browser, baseURL: string, scopes: string[] ) {
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		const { tokens, discovery } = await connect( page, baseURL, scopes );
+		await page.close();
+		const client = await anonymousContext( baseURL );
+
+		return {
+			client,
+			names: () => listToolNames( client, discovery.resource, tokens.access_token ),
+			published: async ( name: string ) => Object.keys( ( await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/list' ) ).json() ).result.tools.find( ( tool: { name: string } ) => tool.name === name ).inputSchema.properties ),
+			call: async ( name: string, args: Record< string, unknown > ) => ( await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name, arguments: args } ) ).json() ).result,
+		};
+	}
+
+	test( 'a delivery time is created and set on a product, then found, then cleared', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		const name = `E2E 2-3 days ${ Date.now() }`;
+		deliveryTime = ( await call( 'create_delivery_time', { name } ) ).structuredContent[ 'delivery time' ].id;
+		expect( deliveryTime ).toBeGreaterThan( 0 );
+
+		const listed = ( await call( 'get_delivery_times', { search: name } ) ).structuredContent[ 'delivery times' ];
+		expect( listed.map( ( term: { id: number } ) => term.id ) ).toContain( deliveryTime );
+
+		const before = ( await call( 'get_products_legal_details', { include: [ Number( product ) ] } ) ).structuredContent.products[ 0 ];
+		expect( before.delivery_time, 'how an agent finds a product missing one' ).toEqual( [] );
+
+		const unconfirmed = await call( 'update_product_legal_details', { id: Number( product ), delivery_time: { id: deliveryTime }, confirm: false } );
+		expect( unconfirmed.isError ).toBe( true );
+
+		const abroad = ( await call( 'create_delivery_time', { name: `${ name } abroad` } ) ).structuredContent[ 'delivery time' ].id;
+		await call( 'update_product_legal_details', { id: Number( product ), delivery_time: { id: deliveryTime }, country_specific_delivery_times: [ { country: 'CH', id: abroad } ], confirm: true } );
+		const after = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product;
+		expect( after.delivery_time.id ).toBe( deliveryTime );
+		expect( after.country_specific_delivery_times.map( ( row: { country: string } ) => row.country ) ).toContain( 'CH' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), country_specific_delivery_times: [ { country: 'AT', id: deliveryTime } ], confirm: true } );
+		const merged = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product.country_specific_delivery_times.map( ( row: { country: string } ) => row.country );
+		expect( merged, 'countries merge' ).toContain( 'CH' );
+		expect( merged, 'and one matching the main delivery time is not stored, as the description says' ).not.toContain( 'AT' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), mini_desc: 'Keep dry', confirm: true } );
+		expect( ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product.delivery_time.id, 'only what is sent changes' ).toBe( deliveryTime );
+
+		const clearing = await call( 'update_product_legal_details', { id: Number( product ), delivery_time: null, country_specific_delivery_times: [], confirm: true } );
+		expect( clearing.isError, JSON.stringify( clearing ) ).toBe( false );
+		const cleared = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product;
+		expect( cleared.delivery_time?.id ).toBeUndefined();
+		expect( cleared.country_specific_delivery_times ).toEqual( [] );
+
+		await call( 'delete_delivery_time', { id: abroad, confirm: true } );
+		expect( ( await call( 'delete_delivery_time', { id: deliveryTime, confirm: false } ) ).isError ).toBe( true );
+		expect( ( await call( 'delete_delivery_time', { id: deliveryTime, confirm: true } ) ).isError ).toBe( false );
+		expect( wp( 'term', 'list', 'product_delivery_time', '--format=ids' ) ).not.toContain( String( deliveryTime ) );
+		await client.dispose();
+	} );
+
+	test( 'a term that does not exist is refused, because Germanized would create or clear one and report success', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const before = wp( 'term', 'list', 'product_delivery_time', '--format=count' );
+
+		for ( const delivery_time of [ { id: 999999 }, { name: '2-3 days' }, { slug: 'no-such-term' } ] ) {
+			const refused = await call( 'update_product_legal_details', { id: Number( product ), delivery_time, confirm: true } );
+			expect( refused.isError, JSON.stringify( delivery_time ) ).toBe( true );
+		}
+		expect( ( await call( 'update_product_legal_details', { id: Number( product ), country_specific_delivery_times: [ { country: 'AT', id: 999999 } ], confirm: true } ) ).isError ).toBe( true );
+		expect( ( await call( 'update_product_legal_details', { id: Number( product ), unit: { id: 999999 }, confirm: true } ) ).isError ).toBe( true );
+		expect( wp( 'term', 'list', 'product_delivery_time', '--format=count' ), 'no term appeared' ).toBe( before );
+		await client.dispose();
+	} );
+
+	test( 'the legal tools read what is stored, not the store\'s default', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const fallback = ( await call( 'create_delivery_time', { name: `E2E fallback ${ Date.now() }` } ) ).structuredContent[ 'delivery time' ];
+		wp( 'option', 'update', 'woocommerce_gzd_default_delivery_time', String( fallback.id ) );
+
+		try {
+			const updated = await call( 'update_product_legal_details', { id: Number( product ), delivery_time: null, confirm: true } );
+			expect( updated.isError, JSON.stringify( updated ) ).toBe( false );
+			const stored = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product;
+			expect( stored.delivery_time?.id, 'a product with none has none' ).toBeUndefined();
+
+			const listed = ( await call( 'get_products_legal_details', { include: [ Number( product ) ] } ) ).structuredContent.products[ 0 ];
+			expect( listed.delivery_time?.id ).toBeUndefined();
+		} finally {
+			wp( 'option', 'delete', 'woocommerce_gzd_default_delivery_time' );
+			await call( 'delete_delivery_time', { id: fallback.id, confirm: true } );
+			await client.dispose();
+		}
+	} );
+
+	test( 'an age check survives every tool that writes to a product, each of which Germanized would clear it through', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE, 'products:read', 'products:write' ] );
+		const age = () => wp( 'post', 'meta', 'list', product, '--keys=_min_age', '--fields=meta_value', '--format=csv' ).replace( 'meta_value', '' ).trim();
+
+		await call( 'update_product_legal_details', { id: Number( product ), min_age: '18', confirm: true } );
+		expect( age() ).toBe( '18' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), gtin: '4006381333931', confirm: true } );
+		expect( age(), 'by its own tool' ).toBe( '18' );
+
+		await call( 'update_product', { id: Number( product ), short_description: 'Short' } );
+		expect( age(), 'by update_product' ).toBe( '18' );
+
+		await call( 'set_product_meta', { id: Number( product ), key: 'e2e_note', value: 'x', confirm: true } );
+		expect( age(), 'by a custom field write' ).toBe( '18' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), min_age: '', confirm: true } );
+		expect( age(), 'it can still be cleared on purpose' ).toBe( '' );
+
+		const variable = wp( 'wc', 'product', 'create', '--name=Variable legal', '--type=variable', '--status=publish', '--user=e2e-admin', '--porcelain' ).trim();
+		const variation = wp( 'wc', 'product_variation', 'create', variable, '--regular_price=3', '--user=e2e-admin', '--porcelain' ).trim();
+		wp( 'post', 'meta', 'set', variation, '_min_age', '16' );
+		await call( 'update_product_variation', { product_id: Number( variable ), id: Number( variation ), sku: `E2E-${ Date.now() }` } );
+		expect( wp( 'post', 'meta', 'get', variation, '_min_age' ), 'by a variation update' ).toBe( '16' );
+
+		wp( 'post', 'delete', variable, '--force' );
+		await client.dispose();
+	} );
+
+	test( 'a Germanized grant cannot change a price, a status or anything else about a product', async ( { browser, baseURL } ) => {
+		const { client, names, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		expect( await names(), 'no product tool comes with it' ).not.toContain( 'update_product' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), mini_desc: 'x', regular_price: '0.01', status: 'draft', name: 'Hijacked', confirm: true } );
+		expect( wp( 'post', 'meta', 'get', product, '_regular_price' ) ).toBe( '10' );
+		expect( wp( 'post', 'get', product, '--field=post_status' ) ).toBe( 'publish' );
+		expect( wp( 'post', 'get', product, '--field=post_title' ) ).toBe( 'Legal product' );
+
+		const read = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product;
+		expect( read, 'and the read is legal details, not the catalog' ).not.toHaveProperty( 'regular_price' );
+		await client.dispose();
+	} );
+
+	test( 'a Germanized grant cannot switch off a product\'s tax, and sees that it is off', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		wp( 'post', 'meta', 'set', product, '_tax_status', 'taxable' );
+
+		await call( 'update_product_legal_details', { id: Number( product ), differential_taxation: true, photovoltaic_system: true, mini_desc: 'x', confirm: true } );
+
+		expect( wp( 'post', 'meta', 'get', product, '_tax_status' ) ).toBe( 'taxable' );
+		const read = ( await call( 'get_product_legal_details', { id: Number( product ) } ) ).structuredContent.product;
+		expect( read.differential_taxation ).toBe( false );
+		expect( read.photovoltaic_system ).toBe( false );
+		await client.dispose();
+	} );
+
+	test( 'a stale profile on /products cannot publish what a Germanized grant must not reach', async ( { browser, baseURL } ) => {
+		const { client, published } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const fields = await published( 'update_product_legal_details' );
+
+		expect( fields ).toContain( 'id' );
+		expect( fields ).not.toContain( 'regular_price' );
+		await client.dispose();
+	} );
+
+	test( 'script from an administrator\'s token does not reach what the shop displays', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		await call( 'update_product_legal_details', { id: Number( product ), mini_desc: '<script>window.counterhandProbe=1</script>Keep dry', confirm: true } );
+
+		expect( wp( 'post', 'meta', 'get', product, '_mini_desc' ) ).not.toContain( '<script' );
+		await client.dispose();
+	} );
+
+	test( 'bank details stay out of every tool, with real Germanized adding them to the responses', async ( { browser, baseURL } ) => {
+		const customer = wp( 'user', 'create', 'e2e-gzd-debit', 'e2e-gzd-debit@example.test', '--role=customer', '--porcelain' ).trim();
+		wp( 'user', 'meta', 'set', customer, 'direct_debit_holder', 'Jane Holder' );
+		wp( 'user', 'meta', 'set', customer, 'direct_debit_iban', 'AT00E2EPROBE' );
+		const order = wp( 'wc', 'shop_order', 'create', '--user=e2e-admin', '--status=on-hold', '--porcelain' ).trim();
+		wp( 'wc', 'shop_order', 'update', order, '--user=e2e-admin', `--meta_data=${ JSON.stringify( [ { key: '_direct_debit_holder', value: 'Jane Holder' }, { key: '_direct_debit_iban', value: 'AT00E2EPROBE' } ] ) }` );
+		const { client, call } = await caller( browser, baseURL as string, [ READ, 'customers:read', 'orders:read' ] );
+
+		try {
+			const unfiltered = wp( 'wc', 'shop_order', 'get', order, '--user=e2e-admin', '--format=json' );
+			expect( unfiltered, 'Germanized really does add them to an order' ).toContain( 'direct_debit' );
+
+			const responses = [
+				await call( 'get_customer', { id: Number( customer ) } ),
+				await call( 'list_customers', {} ),
+				await call( 'get_customer_meta', { id: Number( customer ) } ),
+				await call( 'get_order', { id: Number( order ) } ),
+				await call( 'list_orders', {} ),
+				await call( 'get_order_meta', { id: Number( order ) } ),
+			];
+			expect( responses.every( ( response ) => ! response.isError ), JSON.stringify( responses ) ).toBe( true );
+			const text = JSON.stringify( responses );
+			expect( text ).not.toContain( 'AT00E2EPROBE' );
+			expect( text ).not.toContain( 'Jane Holder' );
+			expect( text ).not.toContain( 'direct_debit' );
+		} finally {
+			wp( 'user', 'delete', customer, '--yes' );
+			wp( 'wc', 'shop_order', 'delete', order, '--force=true', '--user=e2e-admin' );
+			await client.dispose();
+		}
+	} );
+
+	test( 'deposit types change what customers pay, so edits need confirmation', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const id = ( await call( 'create_deposit_type', { name: `E2E bottle ${ Date.now() }`, deposit: 0.25, packaging_type: 'reusable' } ) ).structuredContent[ 'deposit type' ].id;
+
+		expect( ( await call( 'update_deposit_type', { id, deposit: 9.99, confirm: false } ) ).isError ).toBe( true );
+		expect( ( await call( 'update_deposit_type', { id, deposit: 0.5, confirm: true } ) ).structuredContent[ 'deposit type' ].deposit ).toBeTruthy();
+
+		await call( 'delete_deposit_type', { id, confirm: true } );
+		await client.dispose();
+	} );
+
+	test( 'editing a deposit amount keeps what it is packed in, which Germanized would reset', async ( { browser, baseURL } ) => {
+		const { client, call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const created = async ( fields: Record< string, unknown > ) => ( await call( 'create_deposit_type', { name: `E2E ${ Math.random() }`, deposit: 0.25, packaging_type: 'reusable', ...fields } ) ).structuredContent[ 'deposit type' ];
+		const crate = await created( { is_packaging: true, packaging_number_of_contents: 6 } );
+		const bottle = await created( { packaging: crate.slug } );
+
+		const crateAfter = ( await call( 'update_deposit_type', { id: crate.id, deposit: 3, confirm: true } ) ).structuredContent[ 'deposit type' ];
+		const bottleAfter = ( await call( 'update_deposit_type', { id: bottle.id, deposit: 0.5, confirm: true } ) ).structuredContent[ 'deposit type' ];
+
+		expect( crateAfter.is_packaging ).toBe( true );
+		expect( crateAfter.packaging_number_of_contents ).toBe( 6 );
+		expect( bottleAfter.packaging ).toBe( crate.slug );
+
+		await call( 'delete_deposit_type', { id: bottle.id, confirm: true } );
+		await call( 'delete_deposit_type', { id: crate.id, confirm: true } );
+		await client.dispose();
+	} );
+
+	test( 'every shipped name is one the running plugin declares', async ( { browser, baseURL } ) => {
+		const { client, call, names, published } = await caller( browser, baseURL as string, [ READ, WRITE, 'products:read' ] );
+
+		const update = await published( 'update_product_legal_details' );
+		expect( update ).toEqual( expect.arrayContaining( [ 'id', 'delivery_time', 'country_specific_delivery_times', 'sale_price_label', 'sale_price_regular_label', 'manufacturer', 'unit', 'unit_price', 'mini_desc', 'defect_description', 'free_shipping', 'safety_attachment_ids', 'safety_instructions', 'min_age', 'warranty_attachment_id', 'guarantee_length', 'gtin', 'mpn', 'service', 'used_good', 'defective_copy', 'is_food', 'food', 'wireless_electronic_device', 'device_contains_power_supply', 'device_charging_supports_usb_pd', 'device_charging_watt_min', 'device_charging_watt_max' ] ) );
+		expect( update ).not.toContain( 'regular_price' );
+		expect( update ).not.toContain( 'differential_taxation' );
+
+		expect( await published( 'create_deposit_type' ) ).toEqual( expect.arrayContaining( [ 'name', 'deposit', 'packaging_type', 'tax_status' ] ) );
+
+		const described = await call( 'describe_woocommerce_fields', { tool: 'update_product_legal_details' } );
+		expect( described.isError, 'a token cannot learn from this which plugins the store runs' ).toBe( true );
+
+		for ( const tool of [ 'get_units', 'get_price_labels', 'get_deposit_types', 'get_manufacturers', 'get_nutrients', 'get_allergens' ] ) {
+			expect( ( await call( tool, {} ) ).isError, tool ).toBe( false );
+		}
+		expect( ( await names() ).filter( ( name ) => name.startsWith( 'woocommerce_germanized_' ) ), 'no abilities to bridge yet' ).toEqual( [] );
+		await client.dispose();
+	} );
+
+	test( 'Germanized going away hides the product tools even though /products remains', async ( { browser, baseURL } ) => {
+		const { client, names } = await caller( browser, baseURL as string, [ READ ] );
+		expect( await names() ).toContain( 'get_products_legal_details' );
+
+		wp( 'plugin', 'deactivate', 'woocommerce-germanized' );
+		try {
+			const off = await names();
+			expect( off ).not.toContain( 'get_products_legal_details' );
+			expect( off ).not.toContain( 'get_delivery_times' );
+		} finally {
+			wp( 'plugin', 'activate', 'woocommerce-germanized' );
 		}
 		await client.dispose();
 	} );

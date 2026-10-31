@@ -8,7 +8,11 @@ defined( 'ABSPATH' ) || exit;
 
 interface TokenRepositoryInterface {
 
-	/** A refresh token is issued exactly when $refresh_expires_at is given. */
+	/**
+	 * A refresh token is issued exactly when $refresh_expires_at is given.
+	 *
+	 * @param list<string> $approved_tools The integration tools the person approved.
+	 */
 	public function create(
 		string $label,
 		GrantedScopeSet $scopes,
@@ -16,7 +20,8 @@ interface TokenRepositoryInterface {
 		?\DateTimeImmutable $expires_at,
 		?string $client_id = null,
 		?string $audience = null,
-		?\DateTimeImmutable $refresh_expires_at = null
+		?\DateTimeImmutable $refresh_expires_at = null,
+		array $approved_tools = []
 	): IssuedTokens;
 
 	/**

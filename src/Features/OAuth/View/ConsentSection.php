@@ -24,12 +24,15 @@ final readonly class ConsentSection {
 		public array $groups,
 	) {}
 
-	/** @param list<ScopeInterface> $requested */
-	public static function from( ToolSection $section, array $requested, PublishedScopes $published ): self {
+	/**
+	 * @param list<ScopeInterface>        $requested
+	 * @param array<string, list<string>> $tools_by_scope
+	 */
+	public static function from( ToolSection $section, array $requested, PublishedScopes $published, array $tools_by_scope = [] ): self {
 		return new self(
 			$section,
 			array_map(
-				static fn ( $group ): ConsentGroup => ConsentGroup::from( $group, $requested, $published ),
+				static fn ( $group ): ConsentGroup => ConsentGroup::from( $group, $requested, $published, $tools_by_scope ),
 				$section->groups()
 			)
 		);

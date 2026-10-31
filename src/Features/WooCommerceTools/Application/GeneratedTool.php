@@ -109,7 +109,8 @@ final readonly class GeneratedTool implements ToolInterface {
 	public function is_available(): bool {
 		$intent = $this->operation->operation->intent();
 
-		return $this->catalog->has( $this->route(), $this->method() )
+		return $this->resource->is_plugin_loaded()
+			&& $this->catalog->has( $this->route(), $this->method() )
 			&& $this->probe->allows( $this->resource->probe_route( $intent ), $intent->probe_method() );
 	}
 

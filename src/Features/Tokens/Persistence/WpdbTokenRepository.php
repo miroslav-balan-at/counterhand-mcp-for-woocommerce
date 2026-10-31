@@ -26,7 +26,8 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 		?\DateTimeImmutable $expires_at,
 		?string $client_id = null,
 		?string $audience = null,
-		?\DateTimeImmutable $refresh_expires_at = null
+		?\DateTimeImmutable $refresh_expires_at = null,
+		array $approved_tools = []
 	): IssuedTokens {
 		global $wpdb;
 
@@ -50,8 +51,9 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 				'refresh_secret_hash' => $refresh?->hash(),
 				'rotated_at'          => null !== $refresh ? current_time( 'mysql', true ) : null,
 				'refresh_expires_at'  => $refresh_expires_at?->format( 'Y-m-d H:i:s' ),
+				'approved_tools'      => implode( ',', $approved_tools ),
 			],
-			[ '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
+			[ '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
 		);
 
 		return new IssuedTokens(
@@ -186,6 +188,8 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 			expires_at: isset( $row['expires_at'] ) && $row['expires_at'] ? new \DateTimeImmutable( (string) $row['expires_at'], new \DateTimeZone( 'UTC' ) ) : null,
 			client_id: isset( $row['client_id'] ) && $row['client_id'] ? (string) $row['client_id'] : null,
 			audience: isset( $row['audience'] ) && $row['audience'] ? (string) $row['audience'] : null,
+			// Never null: a row from before this column approved no integration tool.
+			approved_tools: array_values( array_filter( explode( ',', (string) ( $row['approved_tools'] ?? '' ) ) ) ),
 			refresh_expires_at: isset( $row['refresh_expires_at'] ) && $row['refresh_expires_at'] ? new \DateTimeImmutable( (string) $row['refresh_expires_at'], new \DateTimeZone( 'UTC' ) ) : null,
 		);
 	}

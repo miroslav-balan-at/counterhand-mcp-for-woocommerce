@@ -24,11 +24,14 @@ final readonly class ConsentScopes {
 		public array $sections,
 	) {}
 
-	/** @param list<ScopeInterface> $requested */
-	public static function from( array $requested, PublishedScopes $published ): self {
+	/**
+	 * @param list<ScopeInterface>        $requested
+	 * @param array<string, list<string>> $tools_by_scope Integration tools each scope would approve.
+	 */
+	public static function from( array $requested, PublishedScopes $published, array $tools_by_scope = [] ): self {
 		return new self(
 			array_map(
-				static fn ( ToolSection $section ): ConsentSection => ConsentSection::from( $section, $requested, $published ),
+				static fn ( ToolSection $section ): ConsentSection => ConsentSection::from( $section, $requested, $published, $tools_by_scope ),
 				ToolSection::populated()
 			)
 		);

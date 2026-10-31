@@ -130,4 +130,11 @@ final class IntegrationScopeTest extends TestCase {
 		$this->assertSame( [ 'Products' ], $summary->live_labels() );
 		$this->assertCount( 2, $summary->grants, 'the person reviewing the grant still sees it' );
 	}
+
+	public function test_the_first_source_keeps_its_wording_unless_only_a_later_one_offers_writes(): void {
+		$first = IntegrationGroup::of( 'acf' );
+		\Brain\Monkey\Filters\expectApplied( ScopeGroups::INTEGRATIONS_FILTER )->andReturn( [ $first, IntegrationGroup::of( 'acf' ) ] );
+
+		$this->assertSame( [ $first ], ScopeGroups::integrations() );
+	}
 }

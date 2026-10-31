@@ -145,6 +145,8 @@ final readonly class SettingsFeature implements FeatureInterface {
 			function (): void {
 				$settings      = $this->settings;
 				$tool_sections = ToolSection::populated();
+				// A route namespace, not a plugin name: several plugins bundle the adapter.
+				$other_mcp_server = in_array( 'mcp', rest_get_server()->get_namespaces(), true );
 
 				require __DIR__ . '/views/tab-settings.php';
 			}

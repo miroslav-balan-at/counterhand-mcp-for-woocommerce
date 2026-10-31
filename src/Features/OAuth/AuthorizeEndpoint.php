@@ -9,6 +9,7 @@ use Counterhand\Features\OAuth\Domain\AuthorizationRequest;
 use Counterhand\Features\OAuth\View\ConsentScopes;
 use Counterhand\Features\OAuth\View\FlowPage;
 use Counterhand\Features\Settings\AdminScreen;
+use Counterhand\Features\McpServer\IntegrationToolCatalogInterface;
 use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
@@ -38,6 +39,7 @@ final readonly class AuthorizeEndpoint {
 		private ClientMetadataResolver $client_resolver,
 		private AuthorizationCodeStore $code_store,
 		private PublishedScopes $published,
+		private IntegrationToolCatalogInterface $integration_tools,
 	) {
 		$this->page       = new FlowPage();
 		$this->parser     = new AuthorizationRequestParser();
@@ -144,6 +146,7 @@ final readonly class AuthorizeEndpoint {
 				user_id: get_current_user_id(),
 				resource: $request->resource,
 				issues_refresh_token: $client->issues_refresh_tokens(),
+				approved_tools: array_values( array_unique( array_merge( [], ...array_values( $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::from_values( $granted ) ) ) ) ) ),
 			)
 		);
 
@@ -183,7 +186,7 @@ final readonly class AuthorizeEndpoint {
 			[
 				'client_name'  => $client->client_name,
 				'client_host'  => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'       => ConsentScopes::from( $requested, $this->published ),
+				'scopes'       => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
 				'settings_url' => AdminScreen::Settings->url(),
 				'hidden'       => [
 					'client_id'             => $request->client_id,

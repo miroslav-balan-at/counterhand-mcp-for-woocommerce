@@ -36,6 +36,6 @@ final readonly class GenericIntegrationCopy implements IntegrationCopyInterface 
 
 	public function write_description(): string {
 		/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-		return sprintf( __( 'Use what %s offers to change data on this store. Risky actions need explicit confirmation.', 'counterhand-mcp-for-woocommerce' ), $this->name() );
+		return sprintf( __( 'Use what %s offers to change data on this store. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ), $this->name() );
 	}
 }

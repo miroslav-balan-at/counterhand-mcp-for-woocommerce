@@ -148,7 +148,7 @@ final class Plugin {
 				new SettingSanitizer()
 			),
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),
-			new OAuthFeature( $settings, $repository ),
+			new OAuthFeature( $settings, $repository, $this->tool_registry ),
 			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, $descriptors, $schema_provider, new ServedIntegrationGroups( $descriptors, $route_catalog ) ),
 			new FlamingoFeature( $this->tool_registry, new FlamingoInbox() ),
 			new AbilitiesFeature( $this->tool_registry, new AbilityCatalog() ),

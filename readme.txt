@@ -59,11 +59,15 @@ Visibility is decided by WooCommerce too: before a tool is offered, this plugin 
 
 = Other plugins, through WordPress abilities =
 
-On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Writes that a plugin does not declare as safe need explicit confirmation, and every call is recorded in the action log. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
+On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
 
 = Contact Form 7 and Flamingo =
 
 With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under "Other plugins" in Settings, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
+
+= Advanced Custom Fields =
+
+With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under "Other plugins" in Settings, and it cannot change anything else about those items.
 
 = Two ways to use AI with your store =
 

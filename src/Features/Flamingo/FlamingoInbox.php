@@ -16,10 +16,16 @@ final readonly class FlamingoInbox implements InboxInterface {
 
 	private const POST_TYPE = 'flamingo_inbound';
 
+	private const MINIMUM_VERSION = '2.6.3';
+
 	private const SEARCHED_META = [ '_subject', '_from', '_from_email', '_from_name' ];
 
 	public function is_installed(): bool {
-		return class_exists( \Flamingo_Inbound_Message::class );
+		// Before 2.6.3 its post type had generic capabilities, so a site's tightening of
+		// who may read messages was not on the post type this reads from.
+		return class_exists( \Flamingo_Inbound_Message::class )
+			&& defined( 'FLAMINGO_VERSION' )
+			&& version_compare( (string) constant( 'FLAMINGO_VERSION' ), self::MINIMUM_VERSION, '>=' );
 	}
 
 	public function page( InboundMessageStatus $status, int $per_page, int $page, string $search ): InboundMessagePage {

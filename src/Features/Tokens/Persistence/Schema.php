@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Schema {
 
-	private const VERSION        = '3';
+	private const VERSION        = '4';
 	private const VERSION_OPTION = 'counterhand_tokens_schema_version';
 
 	public static function table_name(): string {
@@ -35,6 +35,7 @@ final class Schema {
 			secret_hash CHAR(64) NOT NULL,
 			label VARCHAR(191) NOT NULL,
 			scopes TEXT NOT NULL,
+			approved_tools TEXT DEFAULT NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'active',
 			owner_user_id BIGINT UNSIGNED NOT NULL,
 			client_id VARCHAR(255) DEFAULT NULL,

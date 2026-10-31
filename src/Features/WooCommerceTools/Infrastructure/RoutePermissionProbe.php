@@ -63,6 +63,16 @@ final class RoutePermissionProbe {
 
 		// Callbacks return true, false, or a WP_Error carrying the reason.
 		// Only the first of those is permission.
-		return true === $callback( $request );
+		try {
+			return true === $callback( $request );
+		} catch ( \Throwable $throwable ) {
+			// Another plugin's bug must cost its own tool, not every tool: this runs while
+			// the whole list is being built. CF7 6.2.0 to 6.2.2 threw on every denial.
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->error( 'A route permission check failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );
+			}
+
+			return false;
+		}
 	}
 }

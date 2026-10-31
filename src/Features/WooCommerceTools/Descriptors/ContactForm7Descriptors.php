@@ -5,13 +5,14 @@ declare( strict_types=1 );
 namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
-use Counterhand\Features\WooCommerceTools\Domain\ContactFormAttachmentPolicy;
+use Counterhand\Features\WooCommerceTools\Domain\ContactFormPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRequestGuards;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
 
 defined( 'ABSPATH' ) || exit;
@@ -32,7 +33,28 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 
 	private const SUMMARY_FIELDS = [ 'id', 'slug', 'title', 'locale' ];
 
-	private const ITEM_FIELDS = [ 'id', 'slug', 'title', 'locale', 'properties', 'config_errors' ];
+	/**
+	 * The properties by name rather than whole, because any add-on can add its own
+	 * keys there, and some keep credentials.
+	 */
+	private const ITEM_FIELDS = [
+		'id',
+		'slug',
+		'title',
+		'locale',
+		'properties.form',
+		'properties.mail',
+		'properties.mail_2',
+		'properties.messages',
+		'properties.additional_settings',
+		'config_errors',
+	];
+
+	private const SAVING = [
+		'context'                                 => 'save',
+		RestRequestGuards::NO_UNFILTERED_HTML     => 1,
+		RestRequestGuards::KEEP_FORM_INTEGRATIONS => 1,
+	];
 
 	/** @return list<ResourceDescriptor> */
 	public function resources(): array {
@@ -62,10 +84,13 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 						'type'        => 'integer',
 						'description' => 'How many forms to return.',
 						'default'     => 20,
+						'minimum'     => 1,
+						'maximum'     => 100,
 					],
 					'offset'   => [
 						'type'        => 'integer',
 						'description' => 'How many forms to skip.',
+						'minimum'     => 0,
 					],
 					'search'   => [
 						'type'        => 'string',
@@ -85,29 +110,29 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 				ToolName::from( 'get_contact_form' ),
 				Operation::GetItem,
 				new FieldProfile( [], self::ITEM_FIELDS, false ),
-				'properties holds the form template, both mail templates, the messages and the additional settings.'
+				'properties holds the form template, both mail templates, the messages and the additional settings. To write form or additional_settings back, send the string in their .content, not the object. Reading needs permission to edit forms, not just to list them.'
 			),
 			new OperationDescriptor(
 				ToolName::from( 'create_contact_form' ),
 				Operation::CreateItem,
 				new FieldProfile( [], self::ITEM_FIELDS ),
-				'Anything you leave out starts from Contact Form 7\'s default template. config_errors in the response lists what its validator found wrong.',
-				forced_params: [ 'context' => 'save' ],
+				'Anything you leave out starts from Contact Form 7\'s default template, in the connected user\'s language rather than locale, and that template\'s mail expects fields named your-name and your-subject. config_errors lists what its validator found wrong; empty can also mean validation is switched off.',
+				forced_params: self::SAVING,
 				// The public feedback route can send mail from any form that exists,
 				// so a new form is as risky as an edited one.
 				requires_confirmation: true,
-				policy: new ContactFormAttachmentPolicy(),
+				policy: new ContactFormPolicy(),
 				declared_arguments: $this->writable_arguments()
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_contact_form' ),
 				Operation::UpdateItem,
 				new FieldProfile( [], self::ITEM_FIELDS ),
-				'config_errors in the response lists what its validator found wrong. mail, mail_2 and messages each replace the stored value whole, so read the form first and send every key you want to keep.',
-				forced_params: [ 'context' => 'save' ],
+				'mail, mail_2, messages and additional_settings each replace the stored value whole, so read the form first and send everything you want to keep, including any attachments. To change a recipient or additional_headers such as Bcc is to change who receives every future submission: say so plainly. A title change also renames its Flamingo channel. config_errors lists what its validator found wrong; empty can also mean validation is switched off.',
+				forced_params: self::SAVING,
 				// Changing a recipient quietly redirects every future submission.
 				requires_confirmation: true,
-				policy: new ContactFormAttachmentPolicy(),
+				policy: new ContactFormPolicy(),
 				declared_arguments: $this->writable_arguments()
 			),
 			new OperationDescriptor(
@@ -123,8 +148,10 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 	/** @return array<string, array<string, mixed>> */
 	private function writable_arguments(): array {
 		$mail = [
-			'type'       => 'object',
-			'properties' => [
+			'type'          => 'object',
+			// CF7 blanks every field of a mail it is sent empty.
+			'minProperties' => 1,
+			'properties'    => [
 				'subject'            => [ 'type' => 'string' ],
 				'sender'             => [ 'type' => 'string' ],
 				'recipient'          => [ 'type' => 'string' ],
@@ -144,16 +171,17 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 			],
 			'form'                => [
 				'type'        => 'string',
-				'description' => 'The form template, in Contact Form 7 form-tag syntax, such as [email* your-email].',
+				'description' => 'A string: the form template in Contact Form 7 form-tag syntax, such as [email* your-email]. This is the .content of what get_contact_form returned. Script is removed; compare the returned form.content.',
 			],
 			'mail'                => [
-				'description' => 'The mail sent when the form is submitted. Sending this also switches it on.',
+				'description' => 'The mail sent when the form is submitted. Sending this also switches it on; skip_mail in additional_settings is the only way off.',
 				...$mail,
 			],
 			'mail_2'              => [
-				'description' => 'The optional second mail, usually an autoresponder. Stays off unless active is true.',
-				'type'        => 'object',
-				'properties'  => [
+				'description'   => 'The optional second mail, usually an autoresponder. Stays off unless active is true.',
+				'type'          => 'object',
+				'minProperties' => 1,
+				'properties'    => [
 					'active' => [ 'type' => 'boolean' ],
 					...$mail['properties'],
 				],
@@ -161,11 +189,12 @@ final readonly class ContactForm7Descriptors implements DescriptorProvider {
 			'messages'            => [
 				'type'                 => 'object',
 				'description'          => 'The messages shown to the person filling in the form, by message id. Any id you leave out becomes blank, so send them all.',
+				'minProperties'        => 1,
 				'additionalProperties' => [ 'type' => 'string' ],
 			],
 			'additional_settings' => [
 				'type'        => 'string',
-				'description' => 'One setting per line, as name: value.',
+				'description' => 'A string: one setting per line, as name: value, replacing all of them. This is the .content of what get_contact_form returned. Careful: demo_mode: on reports success but sends and stores nothing, skip_mail: on sends nothing, do_not_store: on stops Flamingo, subscribers_only: on hides the form from visitors.',
 			],
 		];
 	}

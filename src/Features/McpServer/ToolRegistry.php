@@ -6,8 +6,10 @@ namespace Counterhand\Features\McpServer;
 
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
+use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Shared\Tool\ToolInterface;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
  * at all, the token's scopes say whether this client was granted it, and the
  * tool itself says whether WordPress would let the token owner use it.
  */
-final class ToolRegistry implements ToolRegistrarInterface {
+final class ToolRegistry implements ToolRegistrarInterface, IntegrationToolCatalogInterface {
 
 	/** @var array<string, ToolInterface> */
 	private array $tools = [];
@@ -71,6 +73,25 @@ final class ToolRegistry implements ToolRegistrarInterface {
 	 */
 	public function add_late_source( callable $source ): void {
 		$this->late_sources[] = $source;
+	}
+
+	public function integration_tools_by_scope( GrantedScopeSet $scopes ): array {
+		$this->resolve_late_sources();
+
+		$names = [];
+
+		foreach ( $this->tools as $tool ) {
+			if (
+				ToolSection::Integrations === $tool->group()->section()
+				&& $scopes->contains( $tool->required_scope() )
+				&& $this->is_group_enabled( $tool )
+				&& $tool->is_available()
+			) {
+				$names[ $tool->required_scope()->key() ][] = $tool->name();
+			}
+		}
+
+		return $names;
 	}
 
 	/** @return list<ToolInterface> */
@@ -137,6 +158,7 @@ final class ToolRegistry implements ToolRegistrarInterface {
 	private function passes_gates( ToolInterface $tool, AuthenticatedAgent $agent ): bool {
 		return $this->is_group_enabled( $tool )
 			&& $agent->scopes()->contains( $tool->required_scope() )
+			&& $this->was_approved( $tool, $agent )
 			&& $tool->is_available();
 	}
 
@@ -152,6 +174,15 @@ final class ToolRegistry implements ToolRegistrarInterface {
 		foreach ( $sources as $source ) {
 			$this->add_from( $source );
 		}
+	}
+
+	/**
+	 * A plugin update can add tools under a scope someone already granted. Only those
+	 * on the screen when they approved count, which is what the server's instructions
+	 * promise: a connection only ever holds what it was approved with.
+	 */
+	private function was_approved( ToolInterface $tool, AuthenticatedAgent $agent ): bool {
+		return ToolSection::Integrations !== $tool->group()->section() || $agent->token->has_approved_tool( $tool->name() );
 	}
 
 	/** @param callable(): iterable<ToolInterface> $source */
@@ -178,7 +209,7 @@ final class ToolRegistry implements ToolRegistrarInterface {
 		$scopes = array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $agent->scopes()->all() );
 		sort( $scopes );
 
-		return $agent->token->owner_user_id . '|' . implode( ',', $scopes );
+		return $agent->token->owner_user_id . '|' . implode( ',', $scopes ) . '|' . implode( ',', $agent->token->approved_tools ?? [ '*' ] );
 	}
 
 	private function is_group_enabled( ToolInterface $tool ): bool {

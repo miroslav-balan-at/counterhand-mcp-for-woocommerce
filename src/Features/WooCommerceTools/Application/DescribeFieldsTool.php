@@ -122,7 +122,7 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		$method = $operation->operation->method();
 
 		// A tool whose plugin is off does not exist here, whatever is written down for it.
-		if ( ! $this->schemas->serves( $route, $method ) ) {
+		if ( ! $resource->is_plugin_loaded() || ! $this->schemas->serves( $route, $method ) ) {
 			throw $this->not_describable( $name );
 		}
 

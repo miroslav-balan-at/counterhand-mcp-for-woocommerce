@@ -179,6 +179,12 @@ final class ShippedSurfaceTest extends TestCase {
 		'create_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
 		'update_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
 		'delete_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
+		'get_post_custom_fields'         => [ 'integration:acf', 'integration:acf:read' ],
+		'update_post_custom_fields'      => [ 'integration:acf', 'integration:acf:write' ],
+		'get_page_custom_fields'         => [ 'integration:acf', 'integration:acf:read' ],
+		'update_page_custom_fields'      => [ 'integration:acf', 'integration:acf:write' ],
+		'get_product_custom_fields'      => [ 'integration:acf', 'integration:acf:read' ],
+		'update_product_custom_fields'   => [ 'integration:acf', 'integration:acf:write' ],
 		'list_inbound_messages'          => [ 'integration:flamingo', 'integration:flamingo:read' ],
 		'get_inbound_message'            => [ 'integration:flamingo', 'integration:flamingo:read' ],
 		'trash_inbound_message'          => [ 'integration:flamingo', 'integration:flamingo:write' ],
@@ -253,8 +259,8 @@ final class ShippedSurfaceTest extends TestCase {
 	 * number too, rather than discovering later that a descriptor quietly
 	 * stopped being registered.
 	 */
-	public function test_the_surface_is_one_hundred_and_thirty_six_tools(): void {
-		$this->assertCount( 136, $this->surface() );
+	public function test_the_surface_is_one_hundred_and_forty_two_tools(): void {
+		$this->assertCount( 142, $this->surface() );
 	}
 
 	/**

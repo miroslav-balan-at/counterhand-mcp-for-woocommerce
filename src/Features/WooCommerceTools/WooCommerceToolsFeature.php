@@ -11,6 +11,7 @@ use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Infrastructure\RestRequestGuards;
 use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
 use Counterhand\Shared\FeatureInterface;
 
@@ -46,6 +47,8 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 		$this->tool_registry->add( new DescribeFieldsTool( $this->descriptors, $this->schemas ) );
 
 		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_served_groups' ] );
+
+		( new RestRequestGuards() )->register();
 	}
 
 	/**

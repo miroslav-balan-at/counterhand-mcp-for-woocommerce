@@ -67,8 +67,8 @@ final class ScopeGroups {
 			return [];
 		}
 
-		// One row per plugin however many sources name it. A source offering writes
-		// wins, or a read-only ability would hide a writable REST resource's switch.
+		// One row per plugin however many sources name it. The first keeps it, with its
+		// wording, unless it is read-only and a later source offers writes.
 		$unique = [];
 
 		foreach ( $groups as $group ) {
@@ -76,7 +76,7 @@ final class ScopeGroups {
 				continue;
 			}
 
-			if ( ! isset( $unique[ $group->key() ] ) || $group->has_write() ) {
+			if ( ! isset( $unique[ $group->key() ] ) || ( $group->has_write() && ! $unique[ $group->key() ]->has_write() ) ) {
 				$unique[ $group->key() ] = $group;
 			}
 		}

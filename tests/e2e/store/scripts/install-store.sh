@@ -57,7 +57,7 @@ wp plugin activate woocommerce counterhand-mcp-for-woocommerce --quiet
 
 # Installed unpinned, so a fresh store (every CI run) tests the latest releases.
 # Off unless a spec switches them on: their admin assets would trip admin-ui.spec.
-for integration in contact-form-7 flamingo; do
+for integration in contact-form-7 flamingo advanced-custom-fields wordpress-seo wpforms-lite seo-by-rank-math; do
 	wp plugin is-installed "$integration" 2>/dev/null || wp plugin install "$integration" --quiet
 	wp plugin deactivate "$integration" --quiet 2>/dev/null || true
 done

@@ -49,3 +49,21 @@ class Flamingo_Inbound_Message {
 		return null;
 	}
 }
+
+/** The parts of Contact Form 7 this plugin calls. Never loaded at runtime. */
+class WPCF7_ContactForm {
+
+	/**
+	 * @param  string $name
+	 * @return mixed
+	 */
+	public function prop( $name ) {
+		return null;
+	}
+
+	/**
+	 * @param  array<string, mixed> $properties
+	 * @return void
+	 */
+	public function set_properties( $properties ) {}
+}

@@ -22,26 +22,34 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ConsentGroup {
 
-	/** @param list<ConsentScope> $scopes */
+	/**
+	 * @param list<ConsentScope> $scopes
+	 * @param list<string>       $tool_names Integration tools this row would approve, named because the grant is held to them.
+	 */
 	private function __construct(
 		public ScopeGroupInterface $group,
 		public array $scopes,
+		public array $tool_names = [],
 	) {}
 
 	/**
 	 * Every scope the group has, whether grantable or not — the screen shows
 	 * the catalogue, and availability says why a box is inert.
 	 *
-	 * @param  list<ScopeInterface> $requested
+	 * @param  list<ScopeInterface>        $requested
+	 * @param  array<string, list<string>> $tools_by_scope
 	 */
-	public static function from( ScopeGroupInterface $group, array $requested, PublishedScopes $published ): self {
+	public static function from( ScopeGroupInterface $group, array $requested, PublishedScopes $published, array $tools_by_scope = [] ): self {
 		$scopes = [];
 		$wanted = GrantedScopeSet::of( $requested );
+		$tools  = [];
 
 		foreach ( [ $group->read_scope(), $group->write_scope() ] as $scope ) {
 			if ( null === $scope ) {
 				continue;
 			}
+
+			$tools = [ ...$tools, ...( $tools_by_scope[ $scope->key() ] ?? [] ) ];
 
 			$availability = match ( true ) {
 				! $published->includes( $scope )        => ConsentAvailability::SwitchedOff,
@@ -58,7 +66,7 @@ final readonly class ConsentGroup {
 			);
 		}
 
-		return new self( $group, $scopes );
+		return new self( $group, $scopes, array_values( array_unique( $tools ) ) );
 	}
 
 	/** Only a grantable write warrants the "can change your store" warning. */

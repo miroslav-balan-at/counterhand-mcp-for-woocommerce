@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ApiToken {
 
+	/** @param ?list<string> $approved_tools The integration tools the person approved. */
 	public function __construct(
 		public int $id,
 		public TokenId $token_id,
@@ -24,7 +25,16 @@ final readonly class ApiToken {
 		public ?string $client_id = null,
 		public ?string $audience = null,
 		public ?\DateTimeImmutable $refresh_expires_at = null,
+		public ?array $approved_tools = null,
 	) {}
+
+	/**
+	 * Whether this grant was approved knowing about the integration tool. Null means
+	 * no record to hold it to: only the admin's own chat, never a stored token.
+	 */
+	public function has_approved_tool( string $tool_name ): bool {
+		return null === $this->approved_tools || in_array( $tool_name, $this->approved_tools, true );
+	}
 
 	/** The access token has lapsed; with a refresh token outstanding the connection itself lives on. */
 	public function is_access_expired( \DateTimeImmutable $now ): bool {

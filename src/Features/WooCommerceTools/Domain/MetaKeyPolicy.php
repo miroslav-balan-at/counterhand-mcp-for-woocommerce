@@ -68,6 +68,12 @@ final readonly class MetaKeyPolicy {
 		'password_reset_key',
 	];
 
+	/**
+	 * Germanized keeps direct-debit bank details on the customer with no underscore, so
+	 * nothing marks them private, and an IBAN can be stored unencrypted.
+	 */
+	private const PAYMENT_DETAILS = '/^direct_debit_/i';
+
 	private const KEY_FORMAT = '/^[A-Za-z][A-Za-z0-9_\-]{0,254}$/';
 
 	public function __construct( private string $table_prefix ) {}
@@ -77,6 +83,10 @@ final readonly class MetaKeyPolicy {
 	 * returning a session token is as good as handing over the account.
 	 */
 	public function may_read( string $key, MetaOwner $owner ): Verdict {
+		if ( 1 === preg_match( self::PAYMENT_DETAILS, $key ) ) {
+			return Verdict::deny( sprintf( '"%s" holds bank details and is never readable through this API.', $key ) );
+		}
+
 		if ( $this->is_reserved( $key ) ) {
 			return Verdict::deny(
 				sprintf( '"%s" holds WordPress account or session state and is never readable through this API.', $key )
@@ -96,6 +106,10 @@ final readonly class MetaKeyPolicy {
 	 * @param mixed $value The value as the agent supplied it; null means delete.
 	 */
 	public function may_write( string $key, mixed $value, MetaOwner $owner ): Verdict {
+		if ( 1 === preg_match( self::PAYMENT_DETAILS, $key ) ) {
+			return Verdict::deny( sprintf( '"%s" holds bank details and is never writable through this API.', $key ) );
+		}
+
 		if ( $this->is_reserved( $key ) ) {
 			return Verdict::deny(
 				sprintf( '"%s" controls WordPress accounts, roles or login sessions. Writing it is never permitted, and no rewording of the key will change that.', $key )

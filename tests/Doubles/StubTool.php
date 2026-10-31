@@ -24,8 +24,8 @@ final class StubTool implements ToolInterface {
 
 	public function __construct(
 		private readonly string $name,
-		private readonly ApiScope $scope,
-		private readonly ToolGroup $group,
+		private readonly \Counterhand\Features\Tokens\Domain\ScopeInterface $scope,
+		private readonly \Counterhand\Features\Tokens\Domain\ScopeGroupInterface $group,
 		private readonly array $schema = [ 'type' => 'object' ],
 		private readonly ?\Throwable $throws = null,
 		private readonly bool $available = true,
@@ -44,11 +44,11 @@ final class StubTool implements ToolInterface {
 		return $this->schema;
 	}
 
-	public function required_scope(): ApiScope {
+	public function required_scope(): \Counterhand\Features\Tokens\Domain\ScopeInterface {
 		return $this->scope;
 	}
 
-	public function group(): ToolGroup {
+	public function group(): \Counterhand\Features\Tokens\Domain\ScopeGroupInterface {
 		return $this->group;
 	}
 

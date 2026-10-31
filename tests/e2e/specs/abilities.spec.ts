@@ -79,6 +79,46 @@ test.describe( 'Abilities bridge', () => {
 		}
 	} );
 
+	test( 'a tool a plugin adds later stays out of an existing grant until someone approves it', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const client = await anonymousContext( baseURL as string );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		try {
+			const before = await connect( page, baseURL as string, [ FIXTURE_READ ] );
+
+			wp( 'option', 'update', 'counterhand_e2e_late_ability', '1' );
+
+			const held = before.tokens.access_token;
+			expect( await listToolNames( client, before.discovery.resource, held ), 'the old grant lists what it approved' ).toContain( 'e2e_fixture_list_notes' );
+			expect( await listToolNames( client, before.discovery.resource, held ), 'and not what arrived since' ).not.toContain( 'e2e_fixture_arrived_later' );
+			const refused = await ( await mcpCall( client, before.discovery.resource, held, 'tools/call', { name: 'e2e_fixture_arrived_later', arguments: {} } ) ).json();
+			expect( refused.error ?? refused.result?.isError, 'nor can it call it' ).toBeTruthy();
+
+			const after = await connect( page, baseURL as string, [ FIXTURE_READ ] );
+			expect( await listToolNames( client, after.discovery.resource, after.tokens.access_token ), 'connecting again approves it' ).toContain( 'e2e_fixture_arrived_later' );
+		} finally {
+			wp( 'option', 'delete', 'counterhand_e2e_late_ability' );
+			await page.close();
+			await client.dispose();
+			restore();
+		}
+	} );
+
+	test( 'the consent screen names the tools it approves', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const client = await anonymousContext( baseURL as string );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		try {
+			const { challenge } = pkcePair();
+			await page.goto( authorizationUrl( await discover( client ), { scopes: [ FIXTURE_READ ], verifierChallenge: challenge, state: 'consent-names' } ) );
+			await expect( page.locator( '.counterhand-scope-group__tools code', { hasText: 'e2e_fixture_list_notes' } ).first() ).toBeAttached();
+		} finally {
+			await page.close();
+			await client.dispose();
+			restore();
+		}
+	} );
+
 	test( 'a call returns a structured object whatever shape the ability answers in', async ( { browser, baseURL } ) => {
 		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
 		const client = await anonymousContext( baseURL as string );

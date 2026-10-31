@@ -178,6 +178,9 @@ add_filter(
 	}
 );
 
+// Yoast registers most abilities only in production mode, and this store is not.
+add_filter( 'yoast_seo_development_mode', '__return_true' );
+
 /*
  * Abilities for the bridge to find, one per shape a real plugin can declare.
  * Fixtures rather than Yoast or WPForms, whose admin notices and scripts would
@@ -261,6 +264,18 @@ add_action(
 				],
 			]
 		);
+		// Stands in for what a plugin update adds, so a spec can check it stays out of old grants.
+		if ( get_option( 'counterhand_e2e_late_ability' ) ) {
+			$define(
+				'e2e-fixture/arrived-later',
+				[
+					'annotations' => $read_only,
+					'mcp'         => [ 'public' => true ],
+				],
+				static fn (): array => [ 'late' => true ]
+			);
+		}
+
 		$define( 'e2e-fixture/not-exposed', [ 'annotations' => $read_only ], static fn (): array => [ 'secret' => true ] );
 		$define(
 			'e2e-other/ping',

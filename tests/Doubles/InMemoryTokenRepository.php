@@ -37,7 +37,8 @@ final class InMemoryTokenRepository implements TokenRepositoryInterface {
 		?\DateTimeImmutable $expires_at,
 		?string $client_id = null,
 		?string $audience = null,
-		?\DateTimeImmutable $refresh_expires_at = null
+		?\DateTimeImmutable $refresh_expires_at = null,
+		array $approved_tools = []
 	): IssuedTokens {
 		$id       = count( $this->rows ) + 1;
 		$token_id = TokenId::generate();
@@ -45,7 +46,7 @@ final class InMemoryTokenRepository implements TokenRepositoryInterface {
 		$refresh  = null !== $refresh_expires_at ? TokenSecret::generate() : null;
 
 		$this->rows[ $id ] = new StoredToken(
-			new ApiToken( $id, $token_id, $label, $scopes, TokenStatus::Active, $owner_user_id, new \DateTimeImmutable(), null, $expires_at, $client_id, $audience, $refresh_expires_at ),
+			new ApiToken( $id, $token_id, $label, $scopes, TokenStatus::Active, $owner_user_id, new \DateTimeImmutable(), null, $expires_at, $client_id, $audience, $refresh_expires_at, $approved_tools ),
 			$secret->hash(),
 			$refresh?->hash(),
 			null,

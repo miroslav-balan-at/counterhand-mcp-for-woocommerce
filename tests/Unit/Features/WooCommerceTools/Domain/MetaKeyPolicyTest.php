@@ -174,4 +174,11 @@ final class MetaKeyPolicyTest extends TestCase {
 		$this->assertStringContainsString( self::PREFIX . 'capabilities', $reason );
 		$this->assertStringContainsString( 'never permitted', $reason );
 	}
+
+	public function test_direct_debit_details_can_be_neither_read_nor_written(): void {
+		foreach ( [ 'direct_debit_iban', 'direct_debit_bic', 'direct_debit_holder', 'DIRECT_DEBIT_IBAN' ] as $key ) {
+			$this->assertFalse( $this->policy()->may_read( $key, \Counterhand\Features\WooCommerceTools\Domain\MetaOwner::User )->allowed, $key );
+			$this->assertFalse( $this->policy()->may_write( $key, 'x', \Counterhand\Features\WooCommerceTools\Domain\MetaOwner::User )->allowed, $key );
+		}
+	}
 }

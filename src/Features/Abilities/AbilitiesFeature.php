@@ -46,7 +46,7 @@ final readonly class AbilitiesFeature implements FeatureInterface {
 			$group = $this->catalog->group_of( $ability );
 
 			if ( null !== $group ) {
-				yield new AbilityTool( $ability, $group );
+				yield new AbilityTool( $ability, $group, $this->catalog->policy_of( $ability ) );
 			}
 		}
 	}

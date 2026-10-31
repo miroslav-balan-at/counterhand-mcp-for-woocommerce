@@ -18,6 +18,21 @@ defined( 'ABSPATH' ) || exit;
 	<div class="counterhand-scope-group">
 		<span class="counterhand-scope-group__name"><?php echo esc_html( $counterhand_group->group->label() ); ?></span>
 
+		<?php if ( [] !== $counterhand_group->tool_names ) : ?>
+			<details class="counterhand-scope-group__tools">
+				<summary>
+					<?php
+					printf(
+						/* translators: %d: how many tools the approval covers. */
+						esc_html( _n( 'Approves %d tool. Tools this plugin adds later stay off until you connect again.', 'Approves %d tools. Tools this plugin adds later stay off until you connect again.', count( $counterhand_group->tool_names ), 'counterhand-mcp-for-woocommerce' ) ),
+						(int) count( $counterhand_group->tool_names )
+					);
+					?>
+				</summary>
+				<code><?php echo esc_html( implode( ', ', $counterhand_group->tool_names ) ); ?></code>
+			</details>
+		<?php endif; ?>
+
 		<?php foreach ( $counterhand_group->scopes as $counterhand_row ) : ?>
 			<?php
 			$counterhand_scope = $counterhand_row->scope;

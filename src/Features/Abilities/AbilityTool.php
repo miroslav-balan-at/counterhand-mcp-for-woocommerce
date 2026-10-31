@@ -6,6 +6,7 @@ namespace Counterhand\Features\Abilities;
 
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
+use Counterhand\Features\WooCommerceTools\Domain\ArgumentPolicy;
 use Counterhand\Shared\Exception\ToolCallException;
 use Counterhand\Shared\Tool\ToolInterface;
 
@@ -13,9 +14,6 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Any exposed WordPress ability, as an MCP tool.
- *
- * A destructive ability needs confirmation like any other risky write, because
- * nothing here knows what third-party code will do beyond what it declares.
  */
 final readonly class AbilityTool implements ToolInterface {
 
@@ -23,11 +21,18 @@ final readonly class AbilityTool implements ToolInterface {
 
 	private const WRAPPED_ARGUMENT = 'input';
 
+	/** WPForms Pro returns visitors' IP addresses unless this says otherwise. */
+	private const MASK_IP_FILTER = 'wpforms_abilities_mask_ip_address';
+
+	/** An upsell Yoast asks the model to relay, not store data. */
+	private const DROPPED_RESULT_KEYS = [ 'ai_generate_hint' ];
+
 	private AbilityAnnotations $annotations;
 
 	public function __construct(
 		private \WP_Ability $ability,
 		private IntegrationGroup $group,
+		private ?ArgumentPolicy $policy = null,
 	) {
 		$this->annotations = AbilityAnnotations::of( $ability );
 	}
@@ -60,6 +65,8 @@ final readonly class AbilityTool implements ToolInterface {
 				'required'   => array_key_exists( 'default', $schema ) ? [] : [ self::WRAPPED_ARGUMENT ],
 			];
 		}
+
+		unset( $schema['default'] );
 
 		$schema['type']       = 'object';
 		$schema['properties'] = is_array( $schema['properties'] ?? null ) ? $schema['properties'] : [];
@@ -118,8 +125,13 @@ final readonly class AbilityTool implements ToolInterface {
 		}
 	}
 
+	/**
+	 * Every write, whatever it declares: Rank Math marks set-global-seo-settings and
+	 * fix-site-seo destructive: false, and another plugin's label about itself must
+	 * not decide whether a person gets asked.
+	 */
 	public function requires_confirmation(): bool {
-		return $this->annotations->destructive;
+		return ! $this->annotations->read_only;
 	}
 
 	public function is_read_only(): bool {
@@ -140,15 +152,44 @@ final readonly class AbilityTool implements ToolInterface {
 	}
 
 	public function execute( array $arguments ): array {
-		$result = $this->ability->execute( $this->ability_input( $arguments ) );
+		$verdict = $this->policy?->verdict( $arguments );
+
+		if ( null !== $verdict && ! $verdict->allowed ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
+			throw new ToolCallException( $verdict->reason );
+		}
+
+		add_filter( self::MASK_IP_FILTER, '__return_true' );
+
+		try {
+			$result = $this->ability->execute( $this->ability_input( $arguments ) );
+		} finally {
+			remove_filter( self::MASK_IP_FILTER, '__return_true' );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
-			throw new ToolCallException( $result->get_error_message() );
+			throw new ToolCallException( $this->failure_message( $result ) );
+		}
+
+		// Some plugins report failure as a normal result, Rank Math among them, and it
+		// would otherwise reach the agent and the action log as a success.
+		if ( is_array( $result ) && ! empty( $result['error'] ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
+			throw new ToolCallException( is_string( $result['error'] ) ? $result['error'] : (string) ( $result['error']['message'] ?? wp_json_encode( $result['error'] ) ) );
 		}
 
 		// structuredContent must be a JSON object, and a list or a scalar is not one.
-		return is_array( $result ) && ! array_is_list( $result ) ? $result : [ 'result' => $result ];
+		return is_array( $result ) && ! array_is_list( $result )
+			? array_diff_key( $result, array_flip( self::DROPPED_RESULT_KEYS ) )
+			: [ 'result' => $result ];
+	}
+
+	/** Core checks the output after the callback ran, so this write may already have happened. */
+	private function failure_message( \WP_Error $error ): string {
+		return 'ability_invalid_output' === $error->get_error_code() && ! $this->annotations->read_only
+			? 'The change may already have been made, but the plugin returned an answer that failed its own checks. Check the current state before trying again.'
+			: $error->get_error_message();
 	}
 
 	/** @param array<string, mixed> $schema */

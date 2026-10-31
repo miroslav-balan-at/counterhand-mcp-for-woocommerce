@@ -261,4 +261,102 @@ final class ToolDispatcherTest extends TestCase {
 
 		$this->assertSame( DispatchStatus::Failed, $outcome->status );
 	}
+
+	/**
+	 * @dataProvider shapes
+	 * @param array<string, mixed> $property
+	 */
+	public function test_only_a_wrong_shape_is_refused_before_sanitizing( array $property, mixed $value, bool $reaches_the_tool ): void {
+		Functions\when( 'is_wp_error' )->alias( static fn ( $thing ): bool => $thing instanceof \WP_Error );
+
+		$tool = $this->dispatch(
+			[
+				'type'       => 'object',
+				'properties' => [ 'field' => $property ],
+			],
+			[ 'field' => $value ]
+		);
+
+		$this->assertSame( $reaches_the_tool ? 1 : 0, $tool->calls );
+	}
+
+	/** @return iterable<string, array{array<string, mixed>, mixed, bool}> */
+	public static function shapes(): iterable {
+		yield 'an object for a string, once stored as the word Array' => [ [ 'type' => 'string' ], [ 'content' => 'x' ], false ];
+		yield 'a string for an object, once a blanked mail' => [ [ 'type' => 'object' ], 'send it to sales', false ];
+		yield 'an empty string for an object' => [ [ 'type' => 'object' ], '', false ];
+		yield 'a list for a string, nested' => [
+			[
+				'type'       => 'object',
+				'properties' => [ 'recipient' => [ 'type' => 'string' ] ],
+			],
+			[ 'recipient' => [ 'a@example.test' ] ],
+			false,
+		];
+		yield 'a number for a string, as a model sends a price' => [ [ 'type' => 'string' ], 19.99, true ];
+		yield 'a number for a string id' => [ [ 'type' => 'string' ], 5, true ];
+		yield 'a numeric string for an integer' => [ [ 'type' => 'integer' ], '5', true ];
+		yield 'a comma-separated string for a list, which core reads as one' => [ [ 'type' => 'array' ], '1,2,3', true ];
+		yield 'null for anything' => [ [ 'type' => 'string' ], null, true ];
+		yield 'a string where either fits' => [ [ 'type' => [ 'string', 'object' ] ], 'x', true ];
+		yield 'an undescribed field' => [ [], [ 'x' => 1 ], true ];
+	}
+
+	/** Models add stray arguments to calls that are otherwise right. */
+	public function test_a_closed_schema_still_drops_what_it_does_not_name(): void {
+		$tool = $this->dispatch(
+			[
+				'type'                 => 'object',
+				'properties'           => [ 'id' => [ 'type' => 'integer' ] ],
+				'additionalProperties' => false,
+			],
+			[
+				'id'     => 5,
+				'status' => 'draft',
+			]
+		);
+
+		$this->assertSame( [ 'id' => 5 ], $tool->received );
+	}
+
+	public function test_a_per_property_required_is_published_as_a_list_at_any_depth(): void {
+		[ $dispatcher ] = $this->dispatcher( [ 'type' => 'object' ] );
+
+		$schema = $dispatcher->published_schema(
+			new StubTool(
+				'a_form_tool',
+				ApiScope::ProductsRead,
+				ToolGroup::Products,
+				[
+					'type'       => 'object',
+					'required'   => [ 'form_id' ],
+					'properties' => [
+						'form_id' => [
+							'type'     => 'integer',
+							'required' => true,
+						],
+						'optional' => [
+							'type'     => 'string',
+							'required' => false,
+						],
+						'nested'   => [
+							'type'       => 'object',
+							'properties' => [
+								'inner' => [
+									'type'     => 'string',
+									'required' => true,
+								],
+							],
+						],
+					],
+				]
+			)
+		);
+
+		$this->assertSame( [ 'form_id' ], $schema['required'] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['form_id'] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['optional'] );
+		$this->assertSame( [ 'inner' ], $schema['properties']['nested']['required'] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['nested']['properties']['inner'] );
+	}
 }

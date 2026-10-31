@@ -102,7 +102,8 @@ final readonly class TokenEndpoint {
 			$this->access_expiry( $grant, $now ),
 			$grant->client_id,
 			$grant->resource,
-			$grant->issues_refresh_token ? $now->modify( '+' . self::CONNECTION_LIFETIME_DAYS . ' days' ) : null
+			$grant->issues_refresh_token ? $now->modify( '+' . self::CONNECTION_LIFETIME_DAYS . ' days' ) : null,
+			$grant->approved_tools
 		);
 
 		return $this->tokens( $issued, $grant->scopes, $now );

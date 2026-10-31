@@ -11,9 +11,10 @@ defined( 'ABSPATH' ) || exit;
  *
  * Resolved from the request path, not from our own query var: the
  * /.well-known/ rewrite is a shared namespace and another plugin can win the
- * rule (BackWPup bundles wp-media/mcp-oauth, which registers the same two
- * paths), in which case our query var is never set but the request is still
- * ours to answer.
+ * rule (BackWPup and Rank Math bundle wp-media/mcp-oauth, which registers the same
+ * two paths), in which case our query var is never set but the request is still
+ * ours to answer. Its own 401 points at the same address, so its connector gets our
+ * document and may fail; the settings screen says so, and only one can own the path.
  */
 enum WellKnownDocument: string {
 

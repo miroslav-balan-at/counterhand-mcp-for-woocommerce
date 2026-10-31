@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\OAuth;
 
 use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\McpServer\IntegrationToolCatalogInterface;
 use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
 use Counterhand\Shared\FeatureInterface;
@@ -26,11 +27,12 @@ final readonly class OAuthFeature implements FeatureInterface {
 	public function __construct(
 		private PluginSettings $settings,
 		TokenRepositoryInterface $repository,
+		IntegrationToolCatalogInterface $integration_tools,
 	) {
 		$code_store      = new AuthorizationCodeStore();
 		$published       = new PublishedScopes( $settings );
 		$this->discovery = new DiscoveryController( $published );
-		$this->authorize = new AuthorizeEndpoint( new ClientMetadataResolver(), $code_store, $published );
+		$this->authorize = new AuthorizeEndpoint( new ClientMetadataResolver(), $code_store, $published, $integration_tools );
 		$this->token     = new TokenEndpoint( $repository, $code_store );
 	}
 

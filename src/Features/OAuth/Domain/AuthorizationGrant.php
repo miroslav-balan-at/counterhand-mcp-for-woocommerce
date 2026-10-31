@@ -12,7 +12,10 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class AuthorizationGrant {
 
-	/** @param list<string> $scopes */
+	/**
+	 * @param list<string> $scopes
+	 * @param list<string> $approved_tools The integration tools on the screen when the person approved.
+	 */
 	public function __construct(
 		public string $client_id,
 		public string $redirect_uri,
@@ -21,9 +24,10 @@ final readonly class AuthorizationGrant {
 		public int $user_id,
 		public string $resource, // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound -- "resource" is the RFC 8707 term for the OAuth resource indicator.
 		public bool $issues_refresh_token = false,
+		public array $approved_tools = [],
 	) {}
 
-	/** @return array{client_id: string, redirect_uri: string, code_challenge: string, scopes: list<string>, user_id: int, resource: string, issues_refresh_token: bool} */
+	/** @return array{client_id: string, redirect_uri: string, code_challenge: string, scopes: list<string>, user_id: int, resource: string, issues_refresh_token: bool, approved_tools: list<string>} */
 	public function to_array(): array {
 		return [
 			'client_id'            => $this->client_id,
@@ -33,6 +37,7 @@ final readonly class AuthorizationGrant {
 			'user_id'              => $this->user_id,
 			'resource'             => $this->resource,
 			'issues_refresh_token' => $this->issues_refresh_token,
+			'approved_tools'       => $this->approved_tools,
 		];
 	}
 
@@ -65,6 +70,8 @@ final readonly class AuthorizationGrant {
 			$scope_values[] = $scope;
 		}
 
-		return new self( $client_id, $redirect_uri, $code_challenge, $scope_values, $user_id, $resource, $issues_refresh_token );
+		$approved_tools = is_array( $data['approved_tools'] ?? null ) ? array_values( array_filter( $data['approved_tools'], 'is_string' ) ) : [];
+
+		return new self( $client_id, $redirect_uri, $code_challenge, $scope_values, $user_id, $resource, $issues_refresh_token, $approved_tools );
 	}
 }

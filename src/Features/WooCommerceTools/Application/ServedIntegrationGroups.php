@@ -41,7 +41,7 @@ final class ServedIntegrationGroups {
 		$groups = [];
 
 		foreach ( $this->descriptors->resources() as $resource ) {
-			if ( ToolSection::Integrations === $resource->group->section() && $this->catalog->has( $resource->collection, RestMethod::Get ) ) {
+			if ( ToolSection::Integrations === $resource->group->section() && $resource->is_plugin_loaded() && $this->catalog->has( $resource->collection, RestMethod::Get ) ) {
 				$groups[] = $resource->group;
 			}
 		}

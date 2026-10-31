@@ -282,4 +282,71 @@ final class ToolRegistryTest extends TestCase {
 		$this->assertFalse( $asked );
 		$this->assertSame( 0, $other->availability_checks );
 	}
+
+	private function integration_tool( string $name ): StubTool {
+		return new StubTool( $name, \Counterhand\Features\Tokens\Domain\IntegrationGroup::of( 'acme' )->read_scope(), \Counterhand\Features\Tokens\Domain\IntegrationGroup::of( 'acme' ) );
+	}
+
+	/** @param list<string> $approved */
+	private function agent_who_approved( array $approved ): \Counterhand\Features\Tokens\Authentication\AuthenticatedAgent {
+		return new \Counterhand\Features\Tokens\Authentication\AuthenticatedAgent(
+			new \Counterhand\Features\Tokens\Domain\ApiToken(
+				1,
+				\Counterhand\Features\Tokens\Domain\TokenId::try_from_string( 'abcdef0123456789' ),
+				'Test token',
+				\Counterhand\Features\Tokens\Domain\GrantedScopeSet::from_values( [ 'integration:acme:read', 'products:read' ] ),
+				\Counterhand\Features\Tokens\Domain\TokenStatus::Active,
+				1,
+				new \DateTimeImmutable( '2026-01-01 00:00:00' ),
+				null,
+				null,
+				approved_tools: $approved
+			)
+		);
+	}
+
+	/** A plugin update must not widen what someone already approved. */
+	public function test_an_integration_tool_added_after_approval_stays_out_at_list_and_at_call(): void {
+		$registry = $this->registry(
+			[
+				'integration_acme_read' => true,
+				'products_read'         => true,
+			]
+		);
+		$registry->add( $this->integration_tool( 'acme_old' ) );
+		$registry->add( $this->integration_tool( 'acme_new' ) );
+		$registry->add( $this->read_tool() );
+		$agent = $this->agent_who_approved( [ 'acme_old' ] );
+
+		$this->assertNull( $registry->resolve_for( $agent, 'acme_new' ), 'refused at the call before any list' );
+		$this->assertNotNull( $registry->resolve_for( $agent, 'acme_old' ) );
+		$this->assertSame( [ 'acme_old', 'list_products' ], array_map( static fn ( $tool ): string => $tool->name(), $registry->visible_for( $agent ) ) );
+		$this->assertNull( $registry->resolve_for( $agent, 'acme_new' ), 'and after one' );
+	}
+
+	public function test_a_grant_records_only_the_integration_tools_its_scopes_reach(): void {
+		$registry = $this->registry(
+			[
+				'integration_acme_read' => true,
+				'products_read'         => true,
+			]
+		);
+		$registry->add( $this->integration_tool( 'acme_old' ) );
+		$registry->add( $this->read_tool() );
+
+		$this->assertSame(
+			[ 'integration:acme:read' => [ 'acme_old' ] ],
+			$registry->integration_tools_by_scope( \Counterhand\Features\Tokens\Domain\GrantedScopeSet::from_values( [ 'integration:acme:read', 'products:read' ] ) )
+		);
+		$this->assertSame( [], $registry->integration_tools_by_scope( \Counterhand\Features\Tokens\Domain\GrantedScopeSet::from_values( [ 'products:read' ] ) ) );
+	}
+
+	/** Two tokens of one owner with the same scopes can hold different approvals. */
+	public function test_the_memo_tells_apart_tokens_that_approved_different_tools(): void {
+		$registry = $this->registry( [ 'integration_acme_read' => true ] );
+		$registry->add( $this->integration_tool( 'acme_old' ) );
+
+		$this->assertCount( 1, $registry->visible_for( $this->agent_who_approved( [ 'acme_old' ] ) ) );
+		$this->assertCount( 0, $registry->visible_for( $this->agent_who_approved( [] ) ) );
+	}
 }

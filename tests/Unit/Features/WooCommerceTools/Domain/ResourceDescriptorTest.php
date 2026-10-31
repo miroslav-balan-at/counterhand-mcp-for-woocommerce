@@ -89,4 +89,21 @@ final class ResourceDescriptorTest extends TestCase {
 		$this->assertSame( '/wc/v3/coupons', $resource->probe_route( ToolIntent::Read )->path_template() );
 		$this->assertSame( '/wc/v3/coupons/batch', $resource->probe_route( ToolIntent::Write )->path_template() );
 	}
+
+	public function test_a_resource_is_loaded_unless_it_names_a_function_that_is_missing(): void {
+		$resource = static fn ( ?string $function_name ): ResourceDescriptor => new ResourceDescriptor(
+			'a',
+			\Counterhand\Shared\Tool\ToolGroup::Products,
+			\Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute::wp( '/posts' ),
+			null,
+			'a',
+			'as',
+			[],
+			requires_function: $function_name
+		);
+
+		$this->assertTrue( $resource( null )->is_plugin_loaded() );
+		$this->assertTrue( $resource( 'strlen' )->is_plugin_loaded() );
+		$this->assertFalse( $resource( 'counterhand_no_such_function' )->is_plugin_loaded() );
+	}
 }

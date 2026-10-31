@@ -4,8 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Abilities;
 
-use Counterhand\Features\Tokens\Domain\GenericIntegrationCopy;
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
+use Counterhand\Features\WooCommerceTools\Domain\ArgumentPolicy;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,16 +20,26 @@ final class AbilityCatalog {
 	/**
 	 * woocommerce/*: all seven duplicate generated tools, and bridging them would
 	 * let an integration grant reach products and orders past those groups' scopes.
-	 * core/*: its environment report is what system:read gates, and it is no plugin.
+	 * core/*: core is no plugin, and it would add a separate grant for environment data.
+	 * contact-form-7/*, flamingo/*: served by our own tools with their policies, which
+	 * abilities from either plugin would bypass (CF7 is discussing them).
 	 * mcp-adapter/*: meta-tools that call any ability, which would bypass every gate.
 	 */
-	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand' ];
+	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand', 'contact-form-7', 'flamingo' ];
 
-	/** A namespace's own spelling, where capitalizing its words would misname it. */
-	private const NAMES = [
-		'rank-math' => 'Rank Math',
-		'wpforms'   => 'WPForms',
-		'yoast-seo' => 'Yoast SEO',
+	/**
+	 * Each read and returned more than its plugin's scope should reach:
+	 * get-settings holds facebook_secret; get-system-status the database user, host and
+	 * name, which WordPress marks private; get-seo-scores titles of any post type,
+	 * which for shop_coupon are coupon codes; analyze-post-content full post bodies;
+	 * get-llms-txt sends its own Content-Type header into our response.
+	 */
+	private const SKIPPED_ABILITIES = [
+		'rank-math/get-settings',
+		'rank-math/get-system-status',
+		'rank-math/get-seo-scores',
+		'rank-math/analyze-post-content',
+		'rank-math/get-llms-txt',
 	];
 
 	/** @var ?list<\WP_Ability> */
@@ -101,7 +111,7 @@ final class AbilityCatalog {
 		$groups = [];
 
 		foreach ( $writable as $namespace => $is_writable ) {
-			$group = IntegrationGroup::try_of( $namespace, $is_writable, new GenericIntegrationCopy( $namespace, self::NAMES[ $namespace ] ?? null ) );
+			$group = IntegrationGroup::try_of( $namespace, $is_writable, new KnownPluginCopy( $namespace ) );
 
 			if ( null !== $group ) {
 				$groups[ $namespace ] = $group;
@@ -113,13 +123,31 @@ final class AbilityCatalog {
 		return $groups;
 	}
 
-	/** Plugins mostly set meta.mcp.public, core sets meta.public; either one counts. */
+	/**
+	 * The official adapter's rule: meta.mcp.public decides when set, meta.public is the
+	 * fallback, so a plugin opting out of MCP is respected. A malformed meta.mcp fails
+	 * closed, and a resource or prompt is not a tool.
+	 */
 	private static function is_exposed( \WP_Ability $ability ): bool {
 		$meta = $ability->get_meta();
+		$mcp  = $meta['mcp'] ?? [];
 
-		return ! in_array( self::namespace_of( $ability ), self::SKIPPED_NAMESPACES, true )
-			&& ( true === ( $meta['public'] ?? null ) || true === ( $meta['mcp']['public'] ?? null ) )
-			&& ! self::collides_with_confirmation( $ability );
+		if (
+			in_array( self::namespace_of( $ability ), self::SKIPPED_NAMESPACES, true )
+			|| in_array( $ability->get_name(), self::SKIPPED_ABILITIES, true )
+			|| ! is_array( $mcp )
+			|| 'tool' !== ( $mcp['type'] ?? 'tool' )
+			|| self::collides_with_confirmation( $ability )
+		) {
+			return false;
+		}
+
+		return true === ( $mcp['public'] ?? $meta['public'] ?? null );
+	}
+
+	/** What an ability's arguments must not say, where its own checks do not cover it. */
+	public function policy_of( \WP_Ability $ability ): ?ArgumentPolicy {
+		return 'yoast-seo/update-post-seo-data' === $ability->get_name() ? new YoastFieldPolicy() : null;
 	}
 
 	/**
@@ -129,7 +157,7 @@ final class AbilityCatalog {
 	private static function collides_with_confirmation( \WP_Ability $ability ): bool {
 		$properties = $ability->get_input_schema()['properties'] ?? [];
 
-		return AbilityAnnotations::of( $ability )->destructive && is_array( $properties ) && isset( $properties['confirm'] );
+		return ! AbilityAnnotations::of( $ability )->read_only && is_array( $properties ) && isset( $properties['confirm'] );
 	}
 
 	private static function namespace_of( \WP_Ability $ability ): string {

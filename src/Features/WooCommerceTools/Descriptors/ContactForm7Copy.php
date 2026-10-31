@@ -23,6 +23,6 @@ final readonly class ContactForm7Copy implements IntegrationCopyInterface {
 	}
 
 	public function write_description(): string {
-		return __( 'Create, edit and permanently delete contact forms, including who their submissions are emailed to. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' );
+		return __( 'Create, edit and permanently delete contact forms, including who their submissions are emailed to and any Bcc. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' );
 	}
 }

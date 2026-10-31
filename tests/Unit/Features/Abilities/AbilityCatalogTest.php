@@ -6,6 +6,7 @@ namespace Counterhand\Tests\Unit\Features\Abilities;
 
 use Brain\Monkey\Functions;
 use Counterhand\Features\Abilities\AbilityCatalog;
+use Counterhand\Features\Abilities\YoastFieldPolicy;
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
 use Counterhand\Tests\Unit\TestCase;
 
@@ -106,7 +107,7 @@ final class AbilityCatalogTest extends TestCase {
 		$this->assertSame( [], $catalog->groups() );
 	}
 
-	public function test_a_gated_ability_declaring_its_own_confirm_is_not_offered(): void {
+	public function test_a_write_declaring_its_own_confirm_is_not_offered(): void {
 		$catalog = $this->catalog(
 			[
 				new \WP_Ability(
@@ -116,7 +117,10 @@ final class AbilityCatalogTest extends TestCase {
 						'properties' => [ 'confirm' => [ 'type' => 'string' ] ],
 					],
 					[
-						'annotations' => [ 'readonly' => false ],
+						'annotations' => [
+							'readonly'    => false,
+							'destructive' => false,
+						],
 						'public'      => true,
 					]
 				),
@@ -130,5 +134,83 @@ final class AbilityCatalogTest extends TestCase {
 		[ $group ] = $this->catalog( [ $this->exposed( 'yoast-seo/get' ) ] )->groups();
 
 		$this->assertSame( 'Yoast SEO', $group->label() );
+	}
+
+	/** @dataProvider exposure */
+	public function test_the_exposure_rule_is_the_official_adapters( array $meta, bool $exposed ): void {
+		$this->assertSame( $exposed ? [ 'some-plugin/get' ] : [], $this->names( $this->catalog( [ new \WP_Ability( 'some-plugin/get', [], $meta ) ] ) ) );
+	}
+
+	/** @return iterable<string, array{array<string, mixed>, bool}> */
+	public static function exposure(): iterable {
+		yield 'mcp.public alone' => [ [ 'mcp' => [ 'public' => true ] ], true ];
+		yield 'public alone' => [ [ 'public' => true ], true ];
+		yield 'a plugin opting out of MCP wins' => [
+			[
+				'public' => true,
+				'mcp'    => [ 'public' => false ],
+			],
+			false,
+		];
+		yield 'mcp.public beats public false' => [
+			[
+				'public' => false,
+				'mcp'    => [ 'public' => true ],
+			],
+			true,
+		];
+		yield 'a malformed mcp fails closed' => [
+			[
+				'public' => true,
+				'mcp'    => 'yes',
+			],
+			false,
+		];
+		yield 'a prompt is not a tool' => [
+			[
+				'mcp' => [
+					'public' => true,
+					'type'   => 'prompt',
+				],
+			],
+			false,
+		];
+		yield 'a resource is not a tool' => [
+			[
+				'mcp' => [
+					'public' => true,
+					'type'   => 'resource',
+				],
+			],
+			false,
+		];
+	}
+
+	/** Each of these returned more than a plugin's own scope should reach. */
+	public function test_rank_math_abilities_that_read_too_much_are_never_bridged(): void {
+		$catalog = $this->catalog(
+			[
+				$this->exposed( 'rank-math/get-settings' ),
+				$this->exposed( 'rank-math/get-system-status' ),
+				$this->exposed( 'rank-math/get-seo-scores' ),
+				$this->exposed( 'rank-math/analyze-post-content' ),
+				$this->exposed( 'rank-math/get-llms-txt' ),
+				$this->exposed( 'rank-math/get-post-schema' ),
+			]
+		);
+
+		$this->assertSame( [ 'rank-math/get-post-schema' ], $this->names( $catalog ) );
+	}
+
+	/** Our own tools serve them, with policies a second path would bypass. */
+	public function test_abilities_from_plugins_we_serve_ourselves_are_never_bridged(): void {
+		$this->assertSame( [], $this->catalog( [ $this->exposed( 'contact-form-7/update-form' ), $this->exposed( 'flamingo/get' ) ] )->abilities() );
+	}
+
+	public function test_only_yoasts_update_gets_its_policy(): void {
+		$catalog = $this->catalog( [] );
+
+		$this->assertInstanceOf( YoastFieldPolicy::class, $catalog->policy_of( new \WP_Ability( 'yoast-seo/update-post-seo-data' ) ) );
+		$this->assertNull( $catalog->policy_of( new \WP_Ability( 'yoast-seo/get-post-seo-data' ) ) );
 	}
 }

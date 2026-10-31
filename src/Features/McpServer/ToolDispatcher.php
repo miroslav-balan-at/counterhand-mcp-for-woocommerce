@@ -42,8 +42,50 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	public function published_schema( ToolInterface $tool ): array {
 		$schema = $this->gated_schema( $tool );
 
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			$schema = self::with_required_as_list( $schema );
+		}
+
 		if ( [] === ( $schema['properties'] ?? null ) ) {
 			$schema['properties'] = new \stdClass();
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * WordPress accepts required: true on a property, and JSON Schema does not: strict
+	 * clients and providers reject it, sometimes with the whole request. Core's own
+	 * validators need it, so only the published form changes.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @return array<string, mixed>
+	 */
+	private static function with_required_as_list( array $schema ): array {
+		$required = is_array( $schema['required'] ?? null ) ? $schema['required'] : [];
+
+		foreach ( $schema['properties'] as $name => $property ) {
+			if ( ! is_array( $property ) ) {
+				continue;
+			}
+
+			if ( true === ( $property['required'] ?? null ) ) {
+				$required[] = (string) $name;
+			}
+
+			if ( is_bool( $property['required'] ?? null ) ) {
+				unset( $property['required'] );
+			}
+
+			$schema['properties'][ $name ] = isset( $property['properties'] ) && is_array( $property['properties'] )
+				? self::with_required_as_list( $property )
+				: $property;
+		}
+
+		unset( $schema['required'] );
+
+		if ( [] !== $required ) {
+			$schema['required'] = array_values( array_unique( $required ) );
 		}
 
 		return $schema;
@@ -68,7 +110,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			'description' => 'Must be true. Set it only after telling the user what this will change and getting their agreement.',
 		];
 
-		$schema['required'] = [ ...( $schema['required'] ?? [] ), self::CONFIRM_ARGUMENT ];
+		$schema['required'] = [ ...( is_array( $schema['required'] ?? null ) ? $schema['required'] : [] ), self::CONFIRM_ARGUMENT ];
 
 		return $schema;
 	}
@@ -193,6 +235,12 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		// (e.g. create_product would publish instead of draft).
 		$arguments = $this->apply_schema_defaults( $schema, $arguments );
 		$arguments = $this->parse_encoded_structures( $schema, $arguments );
+		$arguments = $this->without_undeclared( $schema, $arguments );
+
+		$wrong_shape = self::wrong_shape( $schema, $arguments, 'arguments' );
+		if ( null !== $wrong_shape ) {
+			return new \WP_Error( 'counterhand_wrong_shape', $wrong_shape );
+		}
 
 		$sanitized = rest_sanitize_value_from_schema( $arguments, $schema, 'arguments' );
 		if ( is_wp_error( $sanitized ) ) {
@@ -205,6 +253,62 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		}
 
 		return (array) $sanitized;
+	}
+
+	/**
+	 * Checked before sanitizing, which turns a wrong shape into data: an object sent for
+	 * a string becomes the word "Array", a string sent for an object becomes empty, and
+	 * validating the result accepts both. Only shape: sanitizing should still turn the
+	 * number a model sends for a price into the string the field declares.
+	 *
+	 * @param array<string, mixed> $schema
+	 */
+	private static function wrong_shape( array $schema, mixed $value, string $path ): ?string {
+		$types = (array) ( $schema['type'] ?? [] );
+
+		if ( [] === $types || null === $value ) {
+			return null;
+		}
+
+		$takes_structure = [] !== array_intersect( $types, [ 'array', 'object' ] );
+
+		if ( ! is_array( $value ) ) {
+			// Not arrays: core reads "1,2,3" as a list, and models send ids that way.
+			return [] === array_diff( $types, [ 'object', 'null' ] )
+				? sprintf( '%s must be %s.', $path, implode( ' or ', $types ) )
+				: null;
+		}
+
+		if ( ! $takes_structure ) {
+			return sprintf( '%s must be %s, not a list or object.', $path, implode( ' or ', $types ) );
+		}
+
+		foreach ( $value as $key => $item ) {
+			$item_schema = array_is_list( $value ) ? ( $schema['items'] ?? null ) : ( $schema['properties'][ $key ] ?? null );
+			$problem     = is_array( $item_schema ) ? self::wrong_shape( $item_schema, $item, $path . '[' . $key . ']' ) : null;
+
+			if ( null !== $problem ) {
+				return $problem;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * A closed schema has always dropped what it does not name rather than refuse it,
+	 * because models add stray arguments to calls that are otherwise right.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 */
+	private function without_undeclared( array $schema, array $arguments ): array {
+		if ( false !== ( $schema['additionalProperties'] ?? null ) || ! is_array( $schema['properties'] ?? null ) ) {
+			return $arguments;
+		}
+
+		return array_intersect_key( $arguments, $schema['properties'] );
 	}
 
 	/**

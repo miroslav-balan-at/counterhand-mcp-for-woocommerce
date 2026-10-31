@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { listToolNames, mcpCall } from '../support/mcp';
-import { anonymousContext, authorizationUrl, connect, discover, pkcePair } from '../support/oauth';
+import { anonymousContext, authorizationUrl, CLIENT_ID, connect, discover, pkcePair } from '../support/oauth';
 import { adminStatePath, patchSettings, shopManagerStatePath, wp } from '../support/store';
 
 const FIXTURE_READ = 'integration:e2e-fixture:read';
@@ -96,6 +96,24 @@ test.describe( 'Abilities bridge', () => {
 
 			const after = await connect( page, baseURL as string, [ FIXTURE_READ ] );
 			expect( await listToolNames( client, after.discovery.resource, after.tokens.access_token ), 'connecting again approves it' ).toContain( 'e2e_fixture_arrived_later' );
+		} finally {
+			wp( 'option', 'delete', 'counterhand_e2e_late_ability' );
+			await page.close();
+			await client.dispose();
+			restore();
+		}
+	} );
+
+	test( 'a tool arriving while the consent screen is open is not approved with it', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const client = await anonymousContext( baseURL as string );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		try {
+			const { tokens, discovery } = await connect( page, baseURL as string, [ FIXTURE_READ ], CLIENT_ID, () => wp( 'option', 'update', 'counterhand_e2e_late_ability', '1' ) );
+			const names = await listToolNames( client, discovery.resource, tokens.access_token );
+
+			expect( names, 'what was on the screen' ).toContain( 'e2e_fixture_list_notes' );
+			expect( names, 'and nothing that arrived since' ).not.toContain( 'e2e_fixture_arrived_later' );
 		} finally {
 			wp( 'option', 'delete', 'counterhand_e2e_late_ability' );
 			await page.close();

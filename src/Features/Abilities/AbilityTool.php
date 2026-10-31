@@ -172,17 +172,38 @@ final readonly class AbilityTool implements ToolInterface {
 			throw new ToolCallException( $this->failure_message( $result ) );
 		}
 
-		// Some plugins report failure as a normal result, Rank Math among them, and it
-		// would otherwise reach the agent and the action log as a success.
-		if ( is_array( $result ) && ! empty( $result['error'] ) ) {
+		$reported = is_array( $result ) ? self::reported_failure( $result ) : null;
+
+		if ( null !== $reported ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
-			throw new ToolCallException( is_string( $result['error'] ) ? $result['error'] : (string) ( $result['error']['message'] ?? wp_json_encode( $result['error'] ) ) );
+			throw new ToolCallException( $reported );
 		}
 
 		// structuredContent must be a JSON object, and a list or a scalar is not one.
 		return is_array( $result ) && ! array_is_list( $result )
 			? array_diff_key( $result, array_flip( self::DROPPED_RESULT_KEYS ) )
 			: [ 'result' => $result ];
+	}
+
+	/**
+	 * Some plugins report failure as a normal result, Rank Math with error: {code, message},
+	 * and it would otherwise reach the agent and the action log as a success. A string
+	 * beside other data is not one: a log or status record can have a field called error.
+	 *
+	 * @param array<mixed> $result
+	 */
+	private static function reported_failure( array $result ): ?string {
+		$error = $result['error'] ?? null;
+
+		if ( is_array( $error ) && is_string( $error['message'] ?? null ) ) {
+			return $error['message'];
+		}
+
+		if ( true === $error ) {
+			return is_string( $result['message'] ?? null ) ? $result['message'] : 'The plugin reported a failure without saying why.';
+		}
+
+		return is_string( $error ) && '' !== $error && ( 1 === count( $result ) || false === ( $result['success'] ?? null ) ) ? $error : null;
 	}
 
 	/** Core checks the output after the callback ran, so this write may already have happened. */

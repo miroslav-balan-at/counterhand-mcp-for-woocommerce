@@ -31,7 +31,15 @@ final class RestRequestGuards {
 	 */
 	public const KEEP_FORM_INTEGRATIONS = 'counterhand_keep_form_integrations';
 
+	/**
+	 * Germanized resets some fields on any write that omits them, whoever sent it. The
+	 * forced value names them, and they are sent as stored.
+	 */
+	public const KEEP_UNSENT = 'counterhand_keep_unsent';
+
 	private const NESTED_PASSWORD_VALUE = 'acf/rest/format_value_for_rest/type=password';
+
+	private const VALUE_WRITE = 'acf/pre_update_value';
 
 	private const FORM_INTEGRATION_PROPERTIES = [ 'sendinblue' ];
 
@@ -50,9 +58,13 @@ final class RestRequestGuards {
 	 * @return mixed
 	 */
 	public function before( mixed $response, array $handler, \WP_REST_Request $request ): mixed {
+		// First: reading runs this same pair of hooks, and after() would remove what is added below.
+		$this->send_as_stored( $request );
+
 		if ( null !== $request->get_param( self::WITHHOLD_PASSWORDS ) ) {
 			add_filter( 'acf/rest/get_fields', [ $this, 'without_passwords' ] );
 			add_filter( self::NESTED_PASSWORD_VALUE, '__return_null' );
+			add_filter( self::VALUE_WRITE, [ $this, 'keep_stored_password' ], 10, 4 );
 		}
 
 		if ( null !== $request->get_param( self::NO_UNFILTERED_HTML ) ) {
@@ -74,6 +86,7 @@ final class RestRequestGuards {
 	public function after( mixed $response ): mixed {
 		remove_filter( 'acf/rest/get_fields', [ $this, 'without_passwords' ] );
 		remove_filter( self::NESTED_PASSWORD_VALUE, '__return_null' );
+		remove_filter( self::VALUE_WRITE, [ $this, 'keep_stored_password' ] );
 		remove_filter( 'map_meta_cap', [ $this, 'deny_unfiltered_html' ] );
 		remove_action( 'wpcf7_save_contact_form', [ $this, 'remember_form_integrations' ], 9 );
 		remove_action( 'wpcf7_save_contact_form', [ $this, 'restore_form_integrations' ], 11 );
@@ -92,11 +105,45 @@ final class RestRequestGuards {
 	}
 
 	/**
+	 * Top-level passwords never get this far, but a group writes its sub-fields one by
+	 * one through acf_update_value, and only this sees them. Non-null skips the write.
+	 *
+	 * @param  mixed $check   Null to write.
+	 * @param  mixed $value   Unused.
+	 * @param  mixed $post_id Unused.
+	 * @param  mixed $field   ACF's field.
+	 * @return mixed
+	 */
+	public function keep_stored_password( mixed $check, mixed $value, mixed $post_id, mixed $field ): mixed {
+		return is_array( $field ) && 'password' === ( $field['type'] ?? null ) ? true : $check;
+	}
+
+	/**
 	 * @param  array<int, string> $capabilities
 	 * @return array<int, string>
 	 */
 	public function deny_unfiltered_html( array $capabilities, string $capability ): array {
 		return 'unfiltered_html' === $capability ? [ 'do_not_allow' ] : $capabilities;
+	}
+
+	/** Germanized's own answer, so no meta key or term field is copied here. */
+	private function send_as_stored( \WP_REST_Request $request ): void {
+		$names = $request->get_param( self::KEEP_UNSENT );
+
+		if ( ! is_array( $names ) || ! function_exists( 'WC_germanized' ) ) {
+			return;
+		}
+
+		$reading = new \WP_REST_Request( 'GET', $request->get_route() );
+		$reading->set_param( 'context', 'edit' );
+
+		$stored = rest_do_request( $reading )->get_data();
+
+		foreach ( array_filter( $names, 'is_string' ) as $name ) {
+			if ( is_array( $stored ) && array_key_exists( $name, $stored ) && ! $request->has_param( $name ) ) {
+				$request->set_param( $name, $stored[ $name ] );
+			}
+		}
 	}
 
 	public function remember_form_integrations( \WPCF7_ContactForm $form ): void {

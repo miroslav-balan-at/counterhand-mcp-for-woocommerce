@@ -69,8 +69,9 @@ final readonly class FieldProfile {
 	 *
 	 * That is the signature of a descriptor left behind by a WooCommerce
 	 * release — a renamed resource, a rebuilt controller — as opposed to the
-	 * ordinary case of one or two fields having gone. Callers fall back to
-	 * everything() rather than publish a tool with no arguments at all.
+	 * ordinary case of one or two fields having gone. An open profile falls back
+	 * to every argument rather than publish a tool with none; a closed one stays
+	 * closed, because it exists to keep those arguments out.
 	 *
 	 * @param array<string, mixed> $args
 	 */

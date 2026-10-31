@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Application;
 
+use Counterhand\Features\Tokens\Domain\IntegrationGroup;
 use Counterhand\Features\WooCommerceTools\Application\DescribeFieldsTool;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
@@ -151,6 +152,38 @@ final class DescribeFieldsToolTest extends TestCase {
 		$this->expectExceptionMessageMatches( '/exactly as it appears/' );
 
 		$this->tool()->execute( [ 'tool' => 'get_store_overview' ] );
+	}
+
+	/** It would tell a token holding no grant for it which plugins the store runs. */
+	public function test_an_integration_tool_is_refused_as_if_it_did_not_exist(): void {
+		$descriptors = new class() implements DescriptorProvider {
+			public function resources(): array {
+				return [
+					new ResourceDescriptor(
+						'coupons',
+						IntegrationGroup::of( 'some-plugin' ),
+						RestRoute::wc( '/coupons' ),
+						RestRoute::wc( '/coupons/{id}' ),
+						'coupon',
+						'coupons',
+						[
+							new OperationDescriptor(
+								ToolName::from( 'create_coupon' ),
+								Operation::CreateItem,
+								new FieldProfile( [ 'code' ], [], false )
+							),
+						]
+					),
+				];
+			}
+		};
+
+		Functions\when( 'rest_get_server' )->justReturn( new FakeRestServer( $this->routes() ) );
+
+		$this->expectException( ToolCallException::class );
+		$this->expectExceptionMessageMatches( '/exactly as it appears/' );
+
+		( new DescribeFieldsTool( $descriptors, new SchemaProvider( new RouteCatalog() ) ) )->execute( [ 'tool' => 'create_coupon' ] );
 	}
 
 	public function test_an_empty_tool_name_is_refused(): void {

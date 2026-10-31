@@ -348,6 +348,33 @@ final class ToolDispatcherTest extends TestCase {
 								],
 							],
 						],
+						'rows'     => [
+							'type'  => 'array',
+							'items' => [
+								'type'       => 'object',
+								'properties' => [
+									'key' => [
+										'type'     => 'string',
+										'required' => true,
+									],
+								],
+							],
+						],
+						'either'   => [
+							'anyOf' => [
+								[
+									'type'     => 'string',
+									'required' => false,
+								],
+							],
+						],
+						'map'      => [
+							'type'                 => 'object',
+							'additionalProperties' => [
+								'type'     => 'string',
+								'required' => true,
+							],
+						],
 					],
 				]
 			)
@@ -358,5 +385,9 @@ final class ToolDispatcherTest extends TestCase {
 		$this->assertArrayNotHasKey( 'required', $schema['properties']['optional'] );
 		$this->assertSame( [ 'inner' ], $schema['properties']['nested']['required'] );
 		$this->assertArrayNotHasKey( 'required', $schema['properties']['nested']['properties']['inner'] );
+		$this->assertSame( [ 'key' ], $schema['properties']['rows']['items']['required'] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['rows']['items']['properties']['key'] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['either']['anyOf'][0] );
+		$this->assertArrayNotHasKey( 'required', $schema['properties']['map']['additionalProperties'] );
 	}
 }

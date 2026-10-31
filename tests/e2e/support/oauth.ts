@@ -127,7 +127,7 @@ export async function exchangeCode( client: APIRequestContext, discovery: Discov
 }
 
 /** The whole happy path, for specs that only need a working token. */
-export async function connect( page: Page, baseURL: string, scopes: string[], clientId: string = CLIENT_ID ): Promise< { tokens: Tokens; discovery: Discovery } > {
+export async function connect( page: Page, baseURL: string, scopes: string[], clientId: string = CLIENT_ID, whileConsentIsOpen: () => void = () => {} ): Promise< { tokens: Tokens; discovery: Discovery } > {
 	const client = await anonymousContext( baseURL );
 	const discovery = await discover( client );
 	const { verifier, challenge } = pkcePair();
@@ -142,6 +142,7 @@ export async function connect( page: Page, baseURL: string, scopes: string[], cl
 		for ( const scope of scopes ) {
 			await consent.locator( `input[name="counterhand_scopes[]"][value="${ scope }"]` ).check();
 		}
+		whileConsentIsOpen();
 		await consent.getByRole( 'button', { name: 'Approve access' } ).click();
 	} );
 	expect( outcome.code, 'authorization code' ).toBeTruthy();

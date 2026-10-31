@@ -81,12 +81,7 @@ final class ToolRegistry implements ToolRegistrarInterface, IntegrationToolCatal
 		$names = [];
 
 		foreach ( $this->tools as $tool ) {
-			if (
-				ToolSection::Integrations === $tool->group()->section()
-				&& $scopes->contains( $tool->required_scope() )
-				&& $this->is_group_enabled( $tool )
-				&& $tool->is_available()
-			) {
+			if ( ToolSection::Integrations === $tool->group()->section() && $this->is_served( $tool, $scopes ) ) {
 				$names[ $tool->required_scope()->key() ][] = $tool->name();
 			}
 		}
@@ -156,9 +151,13 @@ final class ToolRegistry implements ToolRegistrarInterface, IntegrationToolCatal
 	}
 
 	private function passes_gates( ToolInterface $tool, AuthenticatedAgent $agent ): bool {
+		return $this->was_approved( $tool, $agent ) && $this->is_served( $tool, $agent->scopes() );
+	}
+
+	/** What the consent screen and a connection both ask, so the screen shows what is served. */
+	private function is_served( ToolInterface $tool, GrantedScopeSet $scopes ): bool {
 		return $this->is_group_enabled( $tool )
-			&& $agent->scopes()->contains( $tool->required_scope() )
-			&& $this->was_approved( $tool, $agent )
+			&& $scopes->contains( $tool->required_scope() )
 			&& $tool->is_available();
 	}
 

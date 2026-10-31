@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
+use Counterhand\Features\WooCommerceTools\Domain\AcfFieldNamePolicy;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
@@ -24,8 +25,7 @@ defined( 'ABSPATH' ) || exit;
  * Only `id` is published from the route, and these tools take nothing else. The
  * routes also accept title, status and the rest, and an integration grant must not
  * reach what the products and content scopes gate. `acf` is declared because ACF
- * adds it to the route table only for some requests, and naming only it in the
- * profile would read as stale and publish every argument instead.
+ * adds it to the route table only for some requests.
  */
 final readonly class AcfDescriptors implements DescriptorProvider {
 
@@ -68,6 +68,7 @@ final readonly class AcfDescriptors implements DescriptorProvider {
 						RestRequestGuards::WITHHOLD_PASSWORDS => 1,
 						RestRequestGuards::NO_UNFILTERED_HTML => 1,
 					],
+					policy: new AcfFieldNamePolicy(),
 					declared_arguments: [
 						'acf' => [
 							'type'                 => 'object',

@@ -243,6 +243,7 @@ final readonly class MetaTool implements ToolInterface {
 			RestMethod::Put,
 			[
 				...$this->path_params( $arguments ),
+				...$this->descriptor->meta_write_params,
 				'meta_data' => [ $entry ],
 			]
 		);

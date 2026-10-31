@@ -31,6 +31,11 @@ final readonly class AuthorizeEndpoint {
 
 	public const QUERY_VAR = 'counterhand_authorize';
 
+	private const SHOWN_TOOLS_FIELD = 'counterhand_shown_tools';
+
+	/** One field rather than one per tool, so a long list cannot run into max_input_vars. */
+	private const TOOL_SEPARATOR = ',';
+
 	private FlowPage $page;
 	private AuthorizationRequestParser $parser;
 	private CallbackRedirector $redirector;
@@ -146,7 +151,7 @@ final readonly class AuthorizeEndpoint {
 				user_id: get_current_user_id(),
 				resource: $request->resource,
 				issues_refresh_token: $client->issues_refresh_tokens(),
-				approved_tools: array_values( array_unique( array_merge( [], ...array_values( $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::from_values( $granted ) ) ) ) ) ),
+				approved_tools: $this->approved_tools( $granted ),
 			)
 		);
 
@@ -169,6 +174,24 @@ final readonly class AuthorizeEndpoint {
 				'scope_labels' => $granted_labels,
 			]
 		);
+	}
+
+	/**
+	 * Only what was on the screen: a plugin updated while it was open may offer more by
+	 * now. A crafted POST can only shrink this, because what is served today still bounds it.
+	 *
+	 * @param  list<string> $granted
+	 * @return list<string>
+	 */
+	private function approved_tools( array $granted ): array {
+		$shown = explode( self::TOOL_SEPARATOR, sanitize_text_field( wp_unslash( (string) ( $_POST[ self::SHOWN_TOOLS_FIELD ] ?? '' ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by handle_decision().
+
+		return array_values( array_intersect( $this->tool_names( GrantedScopeSet::from_values( $granted ) ), $shown ) );
+	}
+
+	/** @return list<string> */
+	private function tool_names( GrantedScopeSet $scopes ): array {
+		return array_values( array_unique( array_merge( [], ...array_values( $this->integration_tools->integration_tools_by_scope( $scopes ) ) ) ) );
 	}
 
 	private function render_consent( AuthorizationRequest $request, ClientMetadata $client ): void {
@@ -202,6 +225,7 @@ final readonly class AuthorizeEndpoint {
 					// walk away with a token granting nothing — the screen would
 					// show a full list of ticked boxes and mint an empty grant.
 					'scope'                 => implode( ' ', array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $scopes ) ),
+					self::SHOWN_TOOLS_FIELD => implode( self::TOOL_SEPARATOR, $this->tool_names( GrantedScopeSet::of( $scopes ) ) ),
 				],
 			]
 		);

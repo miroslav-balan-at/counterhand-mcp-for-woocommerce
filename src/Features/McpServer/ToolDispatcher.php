@@ -22,6 +22,10 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 
 	private const CONFIRM_ARGUMENT = 'confirm';
 
+	private const NESTED_SCHEMAS = [ 'items', 'additionalProperties' ];
+
+	private const SCHEMA_LISTS = [ 'anyOf', 'oneOf', 'allOf' ];
+
 	public function __construct( private ToolRegistry $registry ) {}
 
 	/** @return list<ToolInterface> */
@@ -64,7 +68,22 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	private static function with_required_as_list( array $schema ): array {
 		$required = is_array( $schema['required'] ?? null ) ? $schema['required'] : [];
 
-		foreach ( $schema['properties'] as $name => $property ) {
+		foreach ( self::NESTED_SCHEMAS as $keyword ) {
+			if ( is_array( $schema[ $keyword ] ?? null ) ) {
+				$schema[ $keyword ] = self::with_required_as_list( $schema[ $keyword ] );
+			}
+		}
+
+		foreach ( self::SCHEMA_LISTS as $keyword ) {
+			if ( is_array( $schema[ $keyword ] ?? null ) ) {
+				$schema[ $keyword ] = array_map(
+					static fn ( mixed $branch ): mixed => is_array( $branch ) ? self::with_required_as_list( $branch ) : $branch,
+					$schema[ $keyword ]
+				);
+			}
+		}
+
+		foreach ( is_array( $schema['properties'] ?? null ) ? $schema['properties'] : [] as $name => $property ) {
 			if ( ! is_array( $property ) ) {
 				continue;
 			}
@@ -73,13 +92,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 				$required[] = (string) $name;
 			}
 
-			if ( is_bool( $property['required'] ?? null ) ) {
-				unset( $property['required'] );
-			}
-
-			$schema['properties'][ $name ] = isset( $property['properties'] ) && is_array( $property['properties'] )
-				? self::with_required_as_list( $property )
-				: $property;
+			$schema['properties'][ $name ] = self::with_required_as_list( $property );
 		}
 
 		unset( $schema['required'] );

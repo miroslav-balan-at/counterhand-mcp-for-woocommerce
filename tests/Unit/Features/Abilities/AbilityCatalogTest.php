@@ -6,6 +6,7 @@ namespace Counterhand\Tests\Unit\Features\Abilities;
 
 use Brain\Monkey\Functions;
 use Counterhand\Features\Abilities\AbilityCatalog;
+use Counterhand\Features\Abilities\RankMathFieldPolicy;
 use Counterhand\Features\Abilities\YoastFieldPolicy;
 use Counterhand\Features\Tokens\Domain\IntegrationGroup;
 use Counterhand\Tests\Unit\TestCase;
@@ -204,13 +205,18 @@ final class AbilityCatalogTest extends TestCase {
 
 	/** Our own tools serve them, with policies a second path would bypass. */
 	public function test_abilities_from_plugins_we_serve_ourselves_are_never_bridged(): void {
-		$this->assertSame( [], $this->catalog( [ $this->exposed( 'contact-form-7/update-form' ), $this->exposed( 'flamingo/get' ) ] )->abilities() );
+		$this->assertSame( [], $this->catalog( [ $this->exposed( 'contact-form-7/update-form' ), $this->exposed( 'flamingo/get' ), $this->exposed( 'acf/register-field-group' ), $this->exposed( 'acf/view-book' ) ] )->abilities() );
 	}
 
-	public function test_only_yoasts_update_gets_its_policy(): void {
-		$catalog = $this->catalog( [] );
+	/** Named by plugin: its next release can add another write that takes a template. */
+	public function test_every_write_of_a_plugin_with_templates_gets_its_policy(): void {
+		$catalog   = $this->catalog( [] );
+		$read_only = [ 'annotations' => [ 'readonly' => true ] ];
 
 		$this->assertInstanceOf( YoastFieldPolicy::class, $catalog->policy_of( new \WP_Ability( 'yoast-seo/update-post-seo-data' ) ) );
-		$this->assertNull( $catalog->policy_of( new \WP_Ability( 'yoast-seo/get-post-seo-data' ) ) );
+		$this->assertInstanceOf( YoastFieldPolicy::class, $catalog->policy_of( new \WP_Ability( 'yoast-seo/set-something-new' ) ) );
+		$this->assertInstanceOf( RankMathFieldPolicy::class, $catalog->policy_of( new \WP_Ability( 'rank-math/set-post-type-seo-settings' ) ) );
+		$this->assertNull( $catalog->policy_of( new \WP_Ability( 'yoast-seo/get-post-seo-data', [], $read_only ) ) );
+		$this->assertNull( $catalog->policy_of( new \WP_Ability( 'wpforms/update-form' ) ) );
 	}
 }

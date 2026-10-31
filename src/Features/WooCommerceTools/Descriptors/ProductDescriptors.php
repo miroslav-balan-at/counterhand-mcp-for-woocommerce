@@ -131,7 +131,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				$this->operations(),
 				null,
 				null,
-				MetaOwner::Post
+				MetaOwner::Post,
+				meta_write_params: GermanizedDescriptors::KEEP_AGE_CHECK
 			),
 		];
 	}
@@ -171,7 +172,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				ToolName::from( 'update_product' ),
 				Operation::UpdateItem,
 				new FieldProfile( self::UPDATE_FIELDS, self::ITEM_FIELDS ),
-				'Only the fields you pass are changed. Use status "publish" to take a draft live. categories replaces the stored list rather than adding to it.'
+				'Only the fields you pass are changed. Use status "publish" to take a draft live. categories replaces the stored list rather than adding to it.',
+				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product' ),

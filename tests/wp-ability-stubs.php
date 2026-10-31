@@ -16,6 +16,23 @@ class WP_Error {
 }
 
 /**
+ * Yoast's sanitizer as of 28.8, so a policy's unit tests can see what its octet rule does
+ * to %%cf_. The real one is run by tests/e2e/specs/abilities.spec.ts.
+ */
+class WPSEO_Utils {
+
+	public static function sanitize_text_field( string $value ): string {
+		$filtered = trim( (string) preg_replace( '`[\r\n\t ]+`', ' ', strip_tags( $value ) ) );
+
+		while ( preg_match( '`[^%](%[a-f0-9]{2})`i', $filtered, $match ) ) {
+			$filtered = str_replace( $match[1], '', $filtered );
+		}
+
+		return $filtered;
+	}
+}
+
+/**
  * Just enough of core's WP_Ability for the bridge's unit tests. What core really
  * does with these is covered by tests/e2e/specs/abilities.spec.ts.
  */

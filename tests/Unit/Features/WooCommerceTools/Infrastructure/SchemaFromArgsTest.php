@@ -344,6 +344,20 @@ final class SchemaFromArgsTest extends TestCase {
 		$this->assertSame( [ 'code', 'amount' ], array_keys( $built['properties'] ) );
 	}
 
+	/** A closed profile keeps something out, and a Germanized one keeps out regular_price. */
+	public function test_a_closed_profile_matching_nothing_stays_closed(): void {
+		$built = $this->build(
+			[
+				'regular_price' => [ 'type' => 'string' ],
+				'status'        => [ 'type' => 'string' ],
+			],
+			new FieldProfile( [ 'renamed_away' ], [], false )
+		);
+
+		$this->assertSame( [], $built['properties'] );
+		$this->assertFalse( $built['additionalProperties'] );
+	}
+
 	public function test_writes_accept_fields_the_schema_does_not_name(): void {
 		$built = $this->build( [ 'code' => [ 'type' => 'string' ] ], new FieldProfile( [ 'code' ], [], true ) );
 

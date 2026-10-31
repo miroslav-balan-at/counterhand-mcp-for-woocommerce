@@ -27,6 +27,14 @@ final class RestRequestGuardsTest extends TestCase {
 		$this->assertSame( [ 'care_notes' ], array_column( $fields, 'name' ) );
 	}
 
+	/** A group writes its sub-fields one by one, so the top-level filter never sees them. */
+	public function test_writing_a_password_field_is_skipped_and_anything_else_is_not(): void {
+		$guards = new RestRequestGuards();
+
+		$this->assertTrue( $guards->keep_stored_password( null, 'changed', 5, [ 'type' => 'password' ] ) );
+		$this->assertNull( $guards->keep_stored_password( null, 'changed', 5, [ 'type' => 'text' ] ) );
+	}
+
 	public function test_every_acf_operation_forces_the_marker(): void {
 		foreach ( ( new AcfDescriptors() )->resources() as $resource ) {
 			foreach ( $resource->operations as $operation ) {

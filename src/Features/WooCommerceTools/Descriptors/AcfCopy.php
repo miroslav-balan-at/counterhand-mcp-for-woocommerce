@@ -23,6 +23,6 @@ final readonly class AcfCopy implements IntegrationCopyInterface {
 	}
 
 	public function write_description(): string {
-		return __( 'Change those custom field values. If ACF\'s own AI access is switched on, this also reaches its field groups, post types and taxonomies, and the items of any post type or taxonomy allowed there, including deleting them. Every such change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' );
+		return __( 'Change those custom field values. Password fields and fields stored under a protected name cannot be changed.', 'counterhand-mcp-for-woocommerce' );
 	}
 }

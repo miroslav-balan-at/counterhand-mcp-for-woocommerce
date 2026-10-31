@@ -181,6 +181,9 @@ add_filter(
 // Yoast registers most abilities only in production mode, and this store is not.
 add_filter( 'yoast_seo_development_mode', '__return_true' );
 
+// ACF's abilities are off by default, and a spec needs to see them refused when they are on.
+add_filter( 'acf/settings/enable_acf_ai', static fn ( mixed $enabled ): mixed => get_option( 'counterhand_e2e_acf_ai' ) ? true : $enabled );
+
 /*
  * Abilities for the bridge to find, one per shape a real plugin can declare.
  * Fixtures rather than Yoast or WPForms, whose admin notices and scripts would

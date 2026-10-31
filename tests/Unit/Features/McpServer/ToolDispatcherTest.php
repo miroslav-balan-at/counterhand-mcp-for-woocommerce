@@ -219,7 +219,7 @@ final class ToolDispatcherTest extends TestCase {
 				ToolGroup::Products,
 				[
 					'type'       => 'object',
-					'properties' => new \stdClass(),
+					'properties' => [],
 				],
 				confirms: true
 			)
@@ -233,5 +233,32 @@ final class ToolDispatcherTest extends TestCase {
 		[ $dispatcher, $tool ] = $this->dispatcher( [ 'type' => 'object' ] );
 
 		$this->assertSame( [ 'type' => 'object' ], $dispatcher->published_schema( $tool ) );
+	}
+
+	/** Core's sanitizer throws on an object, so only the published form may hold one. */
+	public function test_only_the_published_schema_turns_an_empty_list_into_an_object(): void {
+		[ $dispatcher, $tool ] = $this->dispatcher(
+			[
+				'type'       => 'object',
+				'properties' => [],
+			]
+		);
+
+		$this->assertInstanceOf( \stdClass::class, $dispatcher->published_schema( $tool )['properties'] );
+		$this->assertSame( [], $tool->input_schema()['properties'] );
+	}
+
+	/** An exception from third-party code is a failed call, with its audit row. */
+	public function test_a_throw_during_validation_is_a_failed_call_not_a_protocol_error(): void {
+		[ $dispatcher ] = $this->dispatcher( [ 'type' => 'object' ] );
+		Functions\when( 'rest_sanitize_value_from_schema' )->alias(
+			static function (): never {
+				throw new \Error( 'Cannot use object of type stdClass as array' );
+			}
+		);
+
+		$outcome = $dispatcher->dispatch( 'a_tool', [], AgentFactory::with_scopes( [ 'products:read' ] ) );
+
+		$this->assertSame( DispatchStatus::Failed, $outcome->status );
 	}
 }

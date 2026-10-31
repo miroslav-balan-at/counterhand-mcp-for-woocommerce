@@ -4,7 +4,8 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Application;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOperation;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
@@ -15,7 +16,6 @@ use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
 use Counterhand\Shared\Exception\ToolCallException;
-use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
@@ -46,7 +46,7 @@ final readonly class MetaTool implements ToolInterface {
 		private ResourceDescriptor $descriptor,
 		private MetaOperation $operation,
 		private MetaOwner $owner,
-		private ApiScope $scope,
+		private ScopeInterface $scope,
 		private MetaKeyPolicy $policy,
 		private RestGatewayInterface $gateway,
 		private RoutePermissionProbe $probe,
@@ -108,11 +108,11 @@ final readonly class MetaTool implements ToolInterface {
 		];
 	}
 
-	public function required_scope(): ApiScope {
+	public function required_scope(): ScopeInterface {
 		return $this->scope;
 	}
 
-	public function group(): ToolGroup {
+	public function group(): ScopeGroupInterface {
 		return $this->descriptor->group;
 	}
 

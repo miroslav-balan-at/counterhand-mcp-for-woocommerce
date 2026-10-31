@@ -168,7 +168,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		check_admin_referer( self::TOOLS_NONCE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
-		$posted = map_deep( wp_unslash( $_POST['counterhand_chat_groups'] ?? [] ), 'sanitize_key' );
+		$posted = map_deep( wp_unslash( $_POST['counterhand_chat_groups'] ?? [] ), 'sanitize_text_field' );
 
 		// Unticking every box posts nothing at all, which is a real choice and
 		// saved as one — save_groups() drops anything that is not a live group.
@@ -223,7 +223,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	private function system_prompt(): string {
 		$areas = array_map(
 			static fn ( ScopeGroupInterface $group ): string => $group->noun(),
-			$this->settings->groups()
+			array_filter( $this->settings->groups(), [ ScopeGroups::class, 'is_live' ] )
 		);
 
 		return sprintf(

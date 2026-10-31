@@ -49,7 +49,7 @@ final readonly class DiscoveryController {
 			[
 				'resource'                 => CanonicalUri::mcp(),
 				'authorization_servers'    => [ CanonicalUri::issuer() ],
-				'scopes_supported'         => $this->published->values(),
+				'scopes_supported'         => $this->published->publicly_listed(),
 				'bearer_methods_supported' => [ 'header' ],
 			],
 			200
@@ -65,7 +65,7 @@ final readonly class DiscoveryController {
 				'authorization_response_iss_parameter_supported' => true,
 				'authorization_endpoint'                => home_url( '/mcp-authorize' ),
 				'token_endpoint'                        => rest_url( 'counterhand/v1/oauth/token' ),
-				'scopes_supported'                      => $this->published->values(),
+				'scopes_supported'                      => $this->published->publicly_listed(),
 				'response_types_supported'              => [ 'code' ],
 				'grant_types_supported'                 => [ 'authorization_code', 'refresh_token' ],
 				'code_challenge_methods_supported'      => [ 'S256' ],

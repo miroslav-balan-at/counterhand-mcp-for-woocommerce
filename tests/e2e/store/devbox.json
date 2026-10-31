@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.16.0/.schema/devbox.schema.json",
   "packages": {
     "php": {
-      "version": "8.2",
+      "version": "8.3",
       "disable_plugin": true
     },
     "wp-cli": {
@@ -22,22 +22,22 @@
     "gettext": {
       "version": "latest"
     },
-    "php82Extensions.opcache": {
+    "php83Extensions.opcache": {
       "version": "latest"
     },
-    "php82Extensions.mysqli": {
+    "php83Extensions.mysqli": {
       "version": "latest"
     },
-    "php82Extensions.pdo_mysql": {
+    "php83Extensions.pdo_mysql": {
       "version": "latest"
     },
-    "php82Extensions.intl": {
+    "php83Extensions.intl": {
       "version": "latest"
     },
-    "php82Extensions.zip": {
+    "php83Extensions.zip": {
       "version": "latest"
     },
-    "php82Extensions.gd": {
+    "php83Extensions.gd": {
       "version": "latest"
     }
   },

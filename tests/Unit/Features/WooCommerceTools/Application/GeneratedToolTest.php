@@ -506,7 +506,7 @@ final class GeneratedToolTest extends TestCase {
 		$this->assertEquals(
 			[
 				'type'                 => 'object',
-				'properties'           => new \stdClass(),
+				'properties'           => [],
 				'additionalProperties' => false,
 			],
 			$this->tool( Operation::GetItems, routes: [] )->input_schema()
@@ -565,5 +565,12 @@ final class GeneratedToolTest extends TestCase {
 		$this->tool( Operation::DeleteItem, routes: $routes )->is_available();
 
 		$this->assertSame( [ 'GET /wc/v3/coupons', 'POST /wc/v3/coupons' ], $asked );
+	}
+
+	/** Contact Form 7 only saves under context=save, and would still answer as if it had. */
+	public function test_a_forced_context_beats_the_view_default(): void {
+		$this->tool( Operation::CreateItem, forced_params: [ 'context' => 'save' ] )->execute( [ 'code' => 'x' ] );
+
+		$this->assertSame( 'save', $this->gateway->call()['params']['context'] );
 	}
 }

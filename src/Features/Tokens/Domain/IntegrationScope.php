@@ -47,10 +47,6 @@ final readonly class IntegrationScope implements ScopeInterface {
 	}
 
 	public function description(): string {
-		return $this->is_write
-			/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-			? sprintf( __( 'Use what %s offers to change data on this store. Risky actions need explicit confirmation.', 'counterhand-mcp-for-woocommerce' ), $this->group->label() )
-			/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-			: sprintf( __( 'See the data %s offers to AI clients.', 'counterhand-mcp-for-woocommerce' ), $this->group->label() );
+		return $this->is_write ? $this->group->copy()->write_description() : $this->group->copy()->read_description();
 	}
 }

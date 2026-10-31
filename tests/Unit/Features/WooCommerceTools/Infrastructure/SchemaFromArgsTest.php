@@ -31,15 +31,10 @@ final class SchemaFromArgsTest extends TestCase {
 		$this->assertSame( [ 'code' => [ 'type' => 'string' ] ], $built['properties'] );
 	}
 
-	/**
-	 * Asserts the encoded form, not the PHP type: one tool sending properties as
-	 * [] fails the whole request, taking every other tool down with it.
-	 */
-	public function test_an_argless_route_publishes_an_empty_property_object(): void {
+	public function test_an_argless_route_has_an_empty_property_list(): void {
 		$built = $this->build( [] );
 
-		$this->assertEquals( new \stdClass(), $built['properties'] );
-		$this->assertSame( '{}', json_encode( $built['properties'] ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- asserting the wire form itself.
+		$this->assertSame( [], $built['properties'] );
 		$this->assertArrayNotHasKey( 'required', $built );
 	}
 

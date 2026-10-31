@@ -35,27 +35,40 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	}
 
 	/**
+	 * The one place an empty argument list becomes {}: an empty PHP array would
+	 * encode as [], which providers and strict clients reject, while core's sanitizer
+	 * throws on an object. Everything before this edge keeps properties an array.
+	 */
+	public function published_schema( ToolInterface $tool ): array {
+		$schema = $this->gated_schema( $tool );
+
+		if ( [] === ( $schema['properties'] ?? null ) ) {
+			$schema['properties'] = new \stdClass();
+		}
+
+		return $schema;
+	}
+
+	/**
 	 * A required `confirm` in the schema rather than only in the prose, because a
 	 * model reads the schema far more reliably than a warning, and the first
 	 * attempt then fails loudly rather than succeeding quietly.
+	 *
+	 * @return array<string, mixed>
 	 */
-	public function published_schema( ToolInterface $tool ): array {
+	private function gated_schema( ToolInterface $tool ): array {
 		$schema = $tool->input_schema();
 
 		if ( ! $tool->requires_confirmation() ) {
 			return $schema;
 		}
 
-		// An argument-less tool publishes properties as stdClass; adding a key to
-		// that would throw, and `confirm` makes it non-empty anyway.
-		$properties                           = (array) ( $schema['properties'] ?? [] );
-		$properties[ self::CONFIRM_ARGUMENT ] = [
+		$schema['properties'][ self::CONFIRM_ARGUMENT ] = [
 			'type'        => 'boolean',
 			'description' => 'Must be true. Set it only after telling the user what this will change and getting their agreement.',
 		];
 
-		$schema['properties'] = $properties;
-		$schema['required']   = [ ...( $schema['required'] ?? [] ), self::CONFIRM_ARGUMENT ];
+		$schema['required'] = [ ...( $schema['required'] ?? [] ), self::CONFIRM_ARGUMENT ];
 
 		return $schema;
 	}
@@ -68,12 +81,14 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			return DispatchOutcome::rejected( sprintf( 'Unknown tool "%s".', $tool_name ) );
 		}
 
-		$validated = $this->validate_arguments( $tool, $arguments );
-		if ( is_wp_error( $validated ) ) {
-			return DispatchOutcome::rejected( $validated->get_error_message() );
-		}
+		$validated = $arguments;
 
 		try {
+			$validated = $this->validate_arguments( $tool, $arguments );
+			if ( is_wp_error( $validated ) ) {
+				return DispatchOutcome::rejected( $validated->get_error_message() );
+			}
+
 			// Defense in depth: the registry already filtered by scope, but the
 			// gate inside the dispatch path must hold on its own.
 			$agent->require_scope( $tool->required_scope() );
@@ -171,7 +186,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	}
 
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {
-		$schema = $this->published_schema( $tool );
+		$schema = $this->gated_schema( $tool );
 
 		// rest_sanitize/validate_value_from_schema do NOT apply defaults —
 		// without this, absent args fall through to WooCommerce's own defaults

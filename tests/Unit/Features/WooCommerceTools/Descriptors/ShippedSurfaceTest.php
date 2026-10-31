@@ -4,7 +4,12 @@ declare( strict_types=1 );
 
 namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Descriptors;
 
+use Counterhand\Features\Flamingo\FlamingoInbox;
+use Counterhand\Features\Flamingo\InboundMessageOperation;
+use Counterhand\Features\Flamingo\InboundMessageTool;
 use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\IntegrationGroup;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Features\WooCommerceTools\Application\DescribeFieldsTool;
 use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
 use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
@@ -169,6 +174,14 @@ final class ShippedSurfaceTest extends TestCase {
 		'run_system_status_tool'         => [ 'system', 'system:write' ],
 		'get_store_overview'             => [ 'reports', 'reports:read' ],
 		'describe_woocommerce_fields'    => [ 'products', 'products:read' ],
+		'get_contact_forms'              => [ 'integration:contact-form-7', 'integration:contact-form-7:read' ],
+		'get_contact_form'               => [ 'integration:contact-form-7', 'integration:contact-form-7:read' ],
+		'create_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
+		'update_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
+		'delete_contact_form'            => [ 'integration:contact-form-7', 'integration:contact-form-7:write' ],
+		'list_inbound_messages'          => [ 'integration:flamingo', 'integration:flamingo:read' ],
+		'get_inbound_message'            => [ 'integration:flamingo', 'integration:flamingo:read' ],
+		'trash_inbound_message'          => [ 'integration:flamingo', 'integration:flamingo:write' ],
 	];
 
 	protected function setUp(): void {
@@ -212,6 +225,11 @@ final class ShippedSurfaceTest extends TestCase {
 			}
 		}
 
+		foreach ( InboundMessageOperation::cases() as $operation ) {
+			$tool                         = new InboundMessageTool( $operation, new FlamingoInbox(), IntegrationGroup::of( 'flamingo' ) );
+			$surface[ $tool->name() ]     = [ $tool->group()->key(), $tool->required_scope()->key() ];
+		}
+
 		$overview                     = new StoreOverviewTool();
 		$surface[ $overview->name() ] = [ $overview->group()->value, $overview->required_scope()->value ];
 
@@ -235,8 +253,8 @@ final class ShippedSurfaceTest extends TestCase {
 	 * number too, rather than discovering later that a descriptor quietly
 	 * stopped being registered.
 	 */
-	public function test_the_surface_is_one_hundred_and_twenty_eight_tools(): void {
-		$this->assertCount( 128, $this->surface() );
+	public function test_the_surface_is_one_hundred_and_thirty_six_tools(): void {
+		$this->assertCount( 136, $this->surface() );
 	}
 
 	/**
@@ -247,7 +265,7 @@ final class ShippedSurfaceTest extends TestCase {
 	public function test_the_new_groups_expose_nothing_until_switched_on(): void {
 		$arrived_enabled = array_filter(
 			$this->surface(),
-			static fn ( array $row ): bool => ToolGroup::from( $row[0] )->enabled_by_default()
+			static fn ( array $row ): bool => ( ScopeGroups::try_from( $row[0] )?->enabled_by_default() ?? false )
 				&& ! in_array( $row[0], [ 'products', 'orders', 'reports' ], true )
 		);
 
@@ -341,7 +359,7 @@ final class ShippedSurfaceTest extends TestCase {
 	/** Every group that ships a tool must be one a store owner can actually toggle. */
 	public function test_every_resource_belongs_to_a_real_group(): void {
 		foreach ( $this->resources() as $resource ) {
-			$this->assertContains( $resource->group, ToolGroup::cases() );
+			$this->assertSame( $resource->group->key(), ScopeGroups::try_from( $resource->group->key() )?->key() );
 		}
 	}
 

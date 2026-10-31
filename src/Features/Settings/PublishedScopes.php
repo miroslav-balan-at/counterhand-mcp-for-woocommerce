@@ -39,6 +39,22 @@ final readonly class PublishedScopes {
 		);
 	}
 
+	/**
+	 * What anonymous discovery may say. Integrations stay out: naming them would
+	 * tell anyone which plugins a store runs, and computing them builds the whole
+	 * route table for an unauthenticated request. The consent screen offers them.
+	 *
+	 * @return list<string>
+	 */
+	public function publicly_listed(): array {
+		return array_values(
+			array_map(
+				static fn ( ApiScope $scope ): string => $scope->value,
+				array_filter( ApiScope::cases(), fn ( ApiScope $scope ): bool => $this->includes( $scope ) )
+			)
+		);
+	}
+
 	/** @return list<string> */
 	public function values(): array {
 		return array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $this->all() );

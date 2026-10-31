@@ -47,6 +47,10 @@ final readonly class SchemaProvider {
 		);
 	}
 
+	public function serves( RestRoute $route, RestMethod $method ): bool {
+		return $this->catalog->has( $route, $method );
+	}
+
 	/**
 	 * MCP requires an object schema, and an object with no properties is the
 	 * honest statement that we could not find out what this route takes.
@@ -56,7 +60,7 @@ final readonly class SchemaProvider {
 	private function empty_schema(): array {
 		return [
 			'type'                 => 'object',
-			'properties'           => new \stdClass(),
+			'properties'           => [],
 			'additionalProperties' => false,
 		];
 	}

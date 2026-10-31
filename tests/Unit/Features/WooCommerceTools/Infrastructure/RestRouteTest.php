@@ -4,7 +4,6 @@ declare( strict_types=1 );
 
 namespace Counterhand\Tests\Unit\Features\WooCommerceTools\Infrastructure;
 
-use Counterhand\Features\WooCommerceTools\Infrastructure\RestNamespace;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
 use Counterhand\Shared\Exception\ToolCallException;
 use Counterhand\Tests\Unit\TestCase;
@@ -14,7 +13,7 @@ final class RestRouteTest extends TestCase {
 	public function test_wc_routes_carry_the_wc_v3_namespace(): void {
 		$route = RestRoute::wc( '/products' );
 
-		$this->assertSame( RestNamespace::WcV3, $route->rest_namespace );
+		$this->assertSame( 'wc/v3', $route->rest_namespace );
 		$this->assertSame( '/wc/v3/products', $route->path_template() );
 	}
 
@@ -109,5 +108,22 @@ final class RestRouteTest extends TestCase {
 		];
 
 		$this->assertSame( $params, RestRoute::wc( '/products' )->strip_path_params( $params ) );
+	}
+
+	public function test_a_third_party_namespace_is_a_route_like_any_other(): void {
+		$route = RestRoute::of( 'contact-form-7/v1', '/contact-forms/{id}' );
+
+		$this->assertSame( '/contact-form-7/v1/contact-forms/{id}', $route->path_template() );
+		$this->assertSame( '/contact-form-7/v1/contact-forms/5', $route->bind( [ 'id' => 5 ] ) );
+	}
+
+	public function test_something_that_could_not_be_a_namespace_is_refused(): void {
+		$this->expectException( \InvalidArgumentException::class );
+
+		RestRoute::of( '../wp/v2', '/users' );
+	}
+
+	public function test_a_namespace_wordpress_allows_is_allowed_here(): void {
+		$this->assertSame( '/my_plugin/v1.2/things', RestRoute::of( 'my_plugin/v1.2', '/things' )->path_template() );
 	}
 }

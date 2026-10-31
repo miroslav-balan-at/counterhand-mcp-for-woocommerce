@@ -7,6 +7,8 @@ namespace Counterhand;
 use Counterhand\Features\Abilities\AbilitiesFeature;
 use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
+use Counterhand\Features\Flamingo\FlamingoFeature;
+use Counterhand\Features\Flamingo\FlamingoInbox;
 use Counterhand\Features\McpServer\McpServer;
 use Counterhand\Features\McpServer\McpServerFeature;
 use Counterhand\Features\McpServer\ToolDispatcher;
@@ -29,6 +31,7 @@ use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
 use Counterhand\Features\Tokens\Persistence\Schema;
 use Counterhand\Features\Tokens\Persistence\WpdbTokenRepository;
 use Counterhand\Features\Tokens\TokensFeature;
+use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
 use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
@@ -129,6 +132,8 @@ final class Plugin {
 			new StoreToolPolicy( $settings )
 		);
 
+		$descriptors = new StaticDescriptorCatalog();
+
 		$this->features = [
 			$tokens,
 			$action_log,
@@ -144,7 +149,8 @@ final class Plugin {
 			),
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),
 			new OAuthFeature( $settings, $repository ),
-			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, new StaticDescriptorCatalog(), $schema_provider ),
+			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, $descriptors, $schema_provider, new ServedIntegrationGroups( $descriptors, $route_catalog ) ),
+			new FlamingoFeature( $this->tool_registry, new FlamingoInbox() ),
 			new AbilitiesFeature( $this->tool_registry, new AbilityCatalog() ),
 		];
 

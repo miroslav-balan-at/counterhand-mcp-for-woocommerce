@@ -11,8 +11,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Another plugin's tools, as one group with its own scopes and toggles.
  *
- * Everything here derives from the slug, so a token row can be read back with
- * the plugin deactivated, and a grant for one plugin never reaches another.
+ * Keyed by the slug alone, so a token row can be read back with the plugin
+ * deactivated, and a grant for one plugin never reaches another.
  */
 final readonly class IntegrationGroup implements ScopeGroupInterface {
 
@@ -22,21 +22,29 @@ final readonly class IntegrationGroup implements ScopeGroupInterface {
 
 	private const SLUG_PATTERN = '[a-z0-9][a-z0-9-]*';
 
-	/** A namespace's own spelling, where capitalizing its words would misname it. */
-	private const NAMES = [
-		'rank-math' => 'Rank Math',
-		'wpforms'   => 'WPForms',
-		'yoast-seo' => 'Yoast SEO',
-	];
-
 	public string $value;
 
-	private function __construct( public string $slug, private bool $writable ) {
+	private function __construct(
+		public string $slug,
+		private bool $writable,
+		private IntegrationCopyInterface $copy,
+	) {
 		$this->value = self::VALUE_PREFIX . $slug;
 	}
 
-	public static function try_of( string $slug, bool $writable = true ): ?self {
-		return 1 === preg_match( '/^' . self::SLUG_PATTERN . '$/', $slug ) ? new self( $slug, $writable ) : null;
+	/**
+	 * For a slug written in code, where a bad one is a programmer's error.
+	 *
+	 * @throws \InvalidArgumentException When the slug is malformed.
+	 */
+	public static function of( string $slug, bool $writable = true, ?IntegrationCopyInterface $copy = null ): self {
+		return self::try_of( $slug, $writable, $copy ) ?? throw new \InvalidArgumentException( sprintf( '"%s" is not an integration slug.', esc_html( $slug ) ) );
+	}
+
+	public static function try_of( string $slug, bool $writable = true, ?IntegrationCopyInterface $copy = null ): ?self {
+		return 1 === preg_match( '/^' . self::SLUG_PATTERN . '$/', $slug )
+			? new self( $slug, $writable, $copy ?? new GenericIntegrationCopy( $slug ) )
+			: null;
 	}
 
 	/** Null for anything that is not "integration:<slug>". */
@@ -55,15 +63,15 @@ final readonly class IntegrationGroup implements ScopeGroupInterface {
 	}
 
 	public function label(): string {
-		return self::NAMES[ $this->slug ] ?? ucwords( str_replace( '-', ' ', $this->slug ) );
+		return $this->copy->name();
 	}
 
 	public function description(): string {
-		return sprintf(
-			/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-			__( 'What %s offers to AI clients. It still checks its own permissions on every call.', 'counterhand-mcp-for-woocommerce' ),
-			$this->label()
-		);
+		return $this->copy->description();
+	}
+
+	public function copy(): IntegrationCopyInterface {
+		return $this->copy;
 	}
 
 	public function noun(): string {

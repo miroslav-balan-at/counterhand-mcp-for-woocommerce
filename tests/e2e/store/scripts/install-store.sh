@@ -55,6 +55,13 @@ ln -sfn "$COUNTERHAND_E2E_PLUGIN_DIR" "$wordpress/wp-content/plugins/counterhand
 ln -sf "$COUNTERHAND_E2E_PLUGIN_DIR/tests/e2e/mu-plugins/counterhand-e2e-fixtures.php" "$wordpress/wp-content/mu-plugins/counterhand-e2e-fixtures.php"
 wp plugin activate woocommerce counterhand-mcp-for-woocommerce --quiet
 
+# Installed unpinned, so a fresh store (every CI run) tests the latest releases.
+# Off unless a spec switches them on: their admin assets would trip admin-ui.spec.
+for integration in contact-form-7 flamingo; do
+	wp plugin is-installed "$integration" 2>/dev/null || wp plugin install "$integration" --quiet
+	wp plugin deactivate "$integration" --quiet 2>/dev/null || true
+done
+
 wp rewrite structure '/%postname%/' --quiet
 wp rewrite flush --quiet
 

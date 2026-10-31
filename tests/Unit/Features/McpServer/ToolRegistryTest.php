@@ -22,6 +22,7 @@ final class ToolRegistryTest extends TestCase {
 
 	private function registry( array $settings ): ToolRegistry {
 		Functions\when( 'get_option' )->justReturn( $settings );
+		Functions\when( 'did_action' )->justReturn( 1 );
 
 		return new ToolRegistry( new PluginSettings() );
 	}
@@ -237,5 +238,48 @@ final class ToolRegistryTest extends TestCase {
 		$registry->add_late_source( fn (): array => [ $this->read_tool() ] );
 
 		$this->assertSame( [ 'products' => 1 ], $registry->tool_counts_by_group() );
+	}
+
+	public function test_a_throwing_late_source_leaves_the_rest_standing(): void {
+		$registry = $this->registry( [ 'products_read' => true ] );
+		$registry->add( $this->read_tool() );
+		$registry->add_late_source(
+			static function (): array {
+				throw new \RuntimeException( 'A plugin broke.' );
+			}
+		);
+
+		$this->assertSame( [ 'products' => 1 ], $registry->tool_counts_by_group() );
+	}
+
+	public function test_a_late_source_read_before_init_is_not_used_up(): void {
+		$registry = $this->registry( [ 'products_read' => true ] );
+		$registry->add_late_source( fn (): array => [ $this->read_tool() ] );
+
+		Functions\when( 'did_action' )->justReturn( 0 );
+		$this->assertSame( [], $registry->tool_counts_by_group() );
+
+		Functions\when( 'did_action' )->justReturn( 1 );
+		$this->assertSame( [ 'products' => 1 ], $registry->tool_counts_by_group() );
+	}
+
+	/** Calling a WooCommerce tool must run no other plugin's discovery or permission check. */
+	public function test_resolving_a_held_tool_asks_no_late_source_and_gates_no_other_tool(): void {
+		$registry = $this->registry( [ 'products_read' => true ] );
+		$other    = new StubTool( 'get_coupons', ApiScope::ProductsRead, ToolGroup::Products );
+		$registry->add( $this->read_tool() );
+		$registry->add( $other );
+		$asked = false;
+		$registry->add_late_source(
+			static function () use ( &$asked ): array {
+				$asked = true;
+
+				return [];
+			}
+		);
+
+		$this->assertNotNull( $registry->resolve_for( AgentFactory::with_scopes( [ 'products:read' ] ), 'list_products' ) );
+		$this->assertFalse( $asked );
+		$this->assertSame( 0, $other->availability_checks );
 	}
 }

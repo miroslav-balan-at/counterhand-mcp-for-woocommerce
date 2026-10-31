@@ -34,10 +34,8 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		// unconditionally, and the callback is what decides.
 		add_action( 'counterhand_tool_called', [ $this, 'maybe_log' ], 10, 5 );
 
-		if ( ! $this->settings->is_action_log_enabled() ) {
-			return;
-		}
-
+		// Scheduled whatever the setting says, for the same reason: those rows need
+		// their retention applied on a store that leaves the log off.
 		if ( ! wp_next_scheduled( self::PURGE_HOOK ) ) {
 			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', self::PURGE_HOOK );
 		}

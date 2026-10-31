@@ -48,8 +48,7 @@ final readonly class AbilityTool implements ToolInterface {
 
 	/**
 	 * What MCP requires an inputSchema to be, whatever the ability declared: it may
-	 * be a scalar, or absent. An empty PHP array would encode as [] and strict
-	 * clients reject that.
+	 * be a scalar, or absent.
 	 */
 	public function input_schema(): array {
 		$schema = $this->ability->get_input_schema();
@@ -62,13 +61,36 @@ final readonly class AbilityTool implements ToolInterface {
 			];
 		}
 
-		$schema['type'] = 'object';
+		$schema['type']       = 'object';
+		$schema['properties'] = is_array( $schema['properties'] ?? null ) ? $schema['properties'] : [];
 
-		if ( empty( $schema['properties'] ) ) {
-			$schema['properties'] = new \stdClass();
+		$required = $this->required_names( $schema );
+		unset( $schema['required'] );
+
+		if ( [] !== $required ) {
+			$schema['required'] = $required;
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Core accepts both spellings: a list on the object, and required: true on each
+	 * property. Anything else in that slot is a mistake that must not reach a client.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @return list<string>
+	 */
+	private function required_names( array $schema ): array {
+		$listed = is_array( $schema['required'] ?? null ) ? $schema['required'] : [];
+
+		foreach ( $schema['properties'] as $name => $property ) {
+			if ( is_array( $property ) && true === ( $property['required'] ?? null ) ) {
+				$listed[] = (string) $name;
+			}
+		}
+
+		return array_values( array_unique( array_filter( $listed, 'is_string' ) ) );
 	}
 
 	public function required_scope(): ScopeInterface {

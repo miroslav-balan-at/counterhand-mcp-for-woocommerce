@@ -91,4 +91,44 @@ final class AbilityCatalogTest extends TestCase {
 		$this->assertFalse( $wpforms->has_write() );
 		$this->assertTrue( $yoast->has_write() );
 	}
+
+	public function test_a_throwing_plugin_costs_the_abilities_not_the_store(): void {
+		Functions\when( 'did_action' )->justReturn( 1 );
+		Functions\when( 'wp_get_abilities' )->alias(
+			static function (): array {
+				throw new \RuntimeException( 'A plugin broke.' );
+			}
+		);
+
+		$catalog = new AbilityCatalog();
+
+		$this->assertSame( [], $catalog->abilities() );
+		$this->assertSame( [], $catalog->groups() );
+	}
+
+	public function test_a_gated_ability_declaring_its_own_confirm_is_not_offered(): void {
+		$catalog = $this->catalog(
+			[
+				new \WP_Ability(
+					'some-plugin/wipe',
+					[
+						'type'       => 'object',
+						'properties' => [ 'confirm' => [ 'type' => 'string' ] ],
+					],
+					[
+						'annotations' => [ 'readonly' => false ],
+						'public'      => true,
+					]
+				),
+			]
+		);
+
+		$this->assertSame( [], $catalog->abilities() );
+	}
+
+	public function test_a_known_plugin_keeps_its_own_spelling(): void {
+		[ $group ] = $this->catalog( [ $this->exposed( 'yoast-seo/get' ) ] )->groups();
+
+		$this->assertSame( 'Yoast SEO', $group->label() );
+	}
 }

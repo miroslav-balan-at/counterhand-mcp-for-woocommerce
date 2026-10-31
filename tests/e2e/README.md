@@ -35,6 +35,9 @@ npm run e2e:store:stop
 The store answers on `localhost`, not `127.0.0.1`. The fixture client's callback is on `127.0.0.1`, and
 the plugin treats a callback on its own host as self-hosted and finishes the flow in-page instead.
 
+The store runs PHP 8.3, above the plugin's 8.2 minimum, because the latest Contact Form 7 requires it and
+`integrations.spec.ts` has to run the latest release. The 8.2 minimum is covered by the phpunit matrix, not here.
+
 ## What every run resets
 
 Global setup runs `store/scripts/install-store.sh`, which brings the store to a known state:

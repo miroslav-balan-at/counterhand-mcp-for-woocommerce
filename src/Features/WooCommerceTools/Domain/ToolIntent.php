@@ -4,9 +4,9 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Domain;
 
-use Counterhand\Features\Tokens\Domain\ApiScope;
+use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Features\Tokens\Domain\ScopeInterface;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestMethod;
-use Counterhand\Shared\Tool\ToolGroup;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,7 +28,7 @@ enum ToolIntent: string {
 	 * read-only — a write operation declared on such a group is a descriptor
 	 * bug, and the factory refuses to build it.
 	 */
-	public function scope_of( ToolGroup $group ): ?ApiScope {
+	public function scope_of( ScopeGroupInterface $group ): ?ScopeInterface {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
 			self::Read  => $group->read_scope(),
 			self::Write => $group->write_scope(),

@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\Tokens\Domain;
 
 use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,16 +24,66 @@ final class ScopeGroups {
 	}
 
 	public static function try_from( string $value ): ?ScopeGroupInterface {
-		return ToolGroup::tryFrom( $value ) ?? IntegrationGroup::try_from_string( $value );
+		$shipped = ToolGroup::tryFrom( $value );
+		if ( null !== $shipped ) {
+			return $shipped;
+		}
+
+		$parsed = IntegrationGroup::try_from_string( $value );
+		if ( null === $parsed ) {
+			return null;
+		}
+
+		// The live group knows the plugin's real name and wording; a parsed one only its slug.
+		foreach ( self::integrations() as $group ) {
+			if ( $group->key() === $value ) {
+				return $group;
+			}
+		}
+
+		return $parsed;
+	}
+
+	/** False for an integration whose plugin is off: it has nothing to offer right now. */
+	public static function is_live( ScopeGroupInterface $group ): bool {
+		if ( ToolSection::Integrations !== $group->section() ) {
+			return true;
+		}
+
+		foreach ( self::integrations() as $live ) {
+			if ( $live->key() === $group->key() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/** @return list<ScopeGroupInterface> */
 	public static function integrations(): array {
 		$groups = apply_filters( self::INTEGRATIONS_FILTER, [] );
 
-		return is_array( $groups )
-			? array_values( array_filter( $groups, static fn ( mixed $group ): bool => $group instanceof ScopeGroupInterface ) )
-			: [];
+		if ( ! is_array( $groups ) ) {
+			return [];
+		}
+
+		// One row per plugin however many sources name it. A source offering writes
+		// wins, or a read-only ability would hide a writable REST resource's switch.
+		$unique = [];
+
+		foreach ( $groups as $group ) {
+			if ( ! $group instanceof ScopeGroupInterface ) {
+				continue;
+			}
+
+			if ( ! isset( $unique[ $group->key() ] ) || $group->has_write() ) {
+				$unique[ $group->key() ] = $group;
+			}
+		}
+
+		ksort( $unique );
+
+		return array_values( $unique );
 	}
 
 	/** @return list<ScopeInterface> */

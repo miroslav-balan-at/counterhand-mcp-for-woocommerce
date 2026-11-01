@@ -63,7 +63,7 @@ final readonly class WpmlStrings implements TranslatableStringsInterface {
 
 		$from = "{$wpdb->prefix}icl_strings s LEFT JOIN {$wpdb->prefix}icl_string_translations t ON t.string_id = s.id AND t.language = %s";
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery -- WPML's own tables, no API lists them, and $where holds only placeholders.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- WPML's own tables, no API lists them, and $where holds only placeholders.
 		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$from} WHERE {$where}", $language, ...$parameters ) );
 		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT s.id, s.context, s.name, s.value, s.language, t.value AS translation FROM {$from} WHERE {$where} ORDER BY s.id LIMIT %d OFFSET %d", $language, ...[ ...$parameters, $per_page, ( $page - 1 ) * $per_page ] ) );
 		// phpcs:enable
@@ -76,7 +76,7 @@ final readonly class WpmlStrings implements TranslatableStringsInterface {
 
 		[ $where, $parameters ] = $this->reachable();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery -- as above.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- as above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT s.id, s.context, s.name, s.value, s.language, t.value AS translation FROM {$wpdb->prefix}icl_strings s LEFT JOIN {$wpdb->prefix}icl_string_translations t ON t.string_id = s.id AND t.language = %s WHERE s.id = %d AND {$where}", $language, $id, ...$parameters ) );
 		// phpcs:enable
 

@@ -125,6 +125,7 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 		// Integration tools publish all they accept, and answering about one would tell a
 		// token that holds no grant for it which plugins the store runs.
 		if ( ToolSection::Integrations === $resource->group->section() || ! $this->schemas->serves( $route, $method ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_describable( $name );
 		}
 
@@ -170,6 +171,7 @@ final readonly class DescribeFieldsTool implements ToolInterface {
 			}
 		}
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		throw $this->not_describable( $name );
 	}
 

@@ -152,6 +152,7 @@ final readonly class InboundMessageTool implements ToolInterface {
 
 		// One answer for both, so a caller cannot probe which ids exist.
 		if ( null === $message || ! $this->inbox->user_can_read( $id ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_found( $id );
 		}
 
@@ -166,6 +167,7 @@ final readonly class InboundMessageTool implements ToolInterface {
 		$status = $this->inbox->status_of( $id );
 
 		if ( null === $status || ! $this->inbox->user_can_trash( $id ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_found( $id );
 		}
 

@@ -29,6 +29,6 @@ final readonly class MultilingualRestMode {
 			return $is_rest_request;
 		}
 
-		return $is_rest_request || true === apply_filters( ToolDispatcherInterface::SERVES_TOOLS_FILTER, false );
+		return $is_rest_request || true === apply_filters( ToolDispatcherInterface::SERVES_TOOLS_FILTER, false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- the constant is counterhand_ prefixed.
 	}
 }

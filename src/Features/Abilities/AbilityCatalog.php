@@ -86,7 +86,7 @@ final class AbilityCatalog {
 	 */
 	private function discovered(): array {
 		try {
-			return array_values( array_filter( wp_get_abilities(), [ self::class, 'is_exposed' ] ) );
+			return function_exists( 'wp_get_abilities' ) ? array_values( array_filter( wp_get_abilities(), [ self::class, 'is_exposed' ] ) ) : [];
 		} catch ( \Throwable $throwable ) {
 			if ( function_exists( 'wc_get_logger' ) ) {
 				wc_get_logger()->error( 'Reading abilities failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );

@@ -107,6 +107,7 @@ final readonly class CostOfGoodsTool implements ToolInterface {
 
 		// One answer for both, so a caller cannot probe which ids exist.
 		if ( null === $product ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_found( 'product', $id );
 		}
 
@@ -127,6 +128,7 @@ final readonly class CostOfGoodsTool implements ToolInterface {
 		$product = $this->ledger->user_can_edit_product( $id ) ? $this->ledger->product( $id ) : null;
 
 		if ( null === $product ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_found( 'product', $id );
 		}
 
@@ -144,6 +146,7 @@ final readonly class CostOfGoodsTool implements ToolInterface {
 		$order = $this->ledger->user_can_read_order( $id ) ? $this->ledger->order( $id ) : null;
 
 		if ( null === $order ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw $this->not_found( 'order', $id );
 		}
 

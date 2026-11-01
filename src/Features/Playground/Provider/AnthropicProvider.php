@@ -36,9 +36,10 @@ final readonly class AnthropicProvider extends HttpProvider {
 
 	public function default_models(): array {
 		return [
-			'claude-opus-5'    => 'Claude Opus 5',
-			'claude-sonnet-5'  => 'Claude Sonnet 5',
-			'claude-haiku-4-5' => 'Claude Haiku 4.5',
+			'claude-opus-5-5'   => 'Claude Opus 5.5',
+			'claude-fable-5-1'  => 'Claude Fable 5.1',
+			'claude-sonnet-5-5' => 'Claude Sonnet 5.5',
+			'claude-haiku-5-5'  => 'Claude Haiku 5.5',
 		];
 	}
 
@@ -64,10 +65,12 @@ final readonly class AnthropicProvider extends HttpProvider {
 
 	public function complete( array $messages, array $tools, ProviderConfig $config ): ProviderTurn {
 		$body = [
-			'model'      => $config->model,
-			'max_tokens' => $config->max_tokens,
-			'system'     => $config->system_prompt,
-			'messages'   => $messages,
+			'model'         => $config->model,
+			'max_tokens'    => $config->max_tokens,
+			'system'        => $config->system_prompt,
+			'messages'      => $messages,
+			// Every step of a turn resends tools, system and history, and only the last message is new.
+			'cache_control' => [ 'type' => 'ephemeral' ],
 		];
 
 		if ( [] !== $tools ) {
@@ -106,16 +109,25 @@ final readonly class AnthropicProvider extends HttpProvider {
 			}
 		}
 
+		$stop_reason = $payload['stop_reason'] ?? '';
+
+		if ( 'refusal' === $stop_reason && '' === trim( $text ) ) {
+			$text = __( 'The model declined to answer this.', 'counterhand-mcp-for-woocommerce' );
+		}
+
 		return new ProviderTurn(
 			text: trim( $text ),
 			tool_calls: $tool_calls,
 			// phpcs:ignore WordPress.PHP.YodaConditions.NotYoda -- already Yoda; the sniff misreads the named argument.
-			wants_tools: 'tool_use' === ( $payload['stop_reason'] ?? '' ),
+			wants_tools: 'tool_use' === $stop_reason,
 			raw: $payload,
+			// input_tokens leaves out what the cache served or stored.
 			usage: new TokenUsage(
-				input: (int) ( $payload['usage']['input_tokens'] ?? 0 ),
+				input: (int) ( $payload['usage']['input_tokens'] ?? 0 ) + (int) ( $payload['usage']['cache_read_input_tokens'] ?? 0 ) + (int) ( $payload['usage']['cache_creation_input_tokens'] ?? 0 ),
 				output: (int) ( $payload['usage']['output_tokens'] ?? 0 ),
 			),
+			// Its server-side tool search hit a limit: sending the turn back resumes it.
+			paused: 'pause_turn' === $stop_reason,
 		);
 	}
 

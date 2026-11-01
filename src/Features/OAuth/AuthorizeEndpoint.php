@@ -81,6 +81,8 @@ final readonly class AuthorizeEndpoint {
 
 		$request = $this->parser->parse();
 		if ( null === $request ) {
+			$this->tell_client_if_possible();
+
 			$this->page->render_error(
 				__( 'Incomplete request', 'counterhand-mcp-for-woocommerce' ),
 				__( 'This authorization link is missing required details or has expired. Start the connection again from your AI assistant.', 'counterhand-mcp-for-woocommerce' )
@@ -103,6 +105,31 @@ final readonly class AuthorizeEndpoint {
 
 		$this->render_consent( $request, $client );
 		exit;
+	}
+
+	/** RFC 6749 §4.1.2.1: a client whose redirect address checks out hears why, in its own flow. */
+	private function tell_client_if_possible(): void {
+		$failure = $this->parser->failure();
+		if ( null === $failure ) {
+			return;
+		}
+
+		$client = $this->client_resolver->resolve( $failure->client_id );
+		if ( null === $client || ! $client->allows_redirect_uri( $failure->redirect_uri ) ) {
+			return;
+		}
+
+		$this->redirector->redirect_with(
+			$failure->redirect_uri,
+			[
+				'error' => $failure->error,
+				'iss'   => CanonicalUri::issuer(),
+				'state' => $failure->state,
+			],
+			FlowPage::STATE_ERROR,
+			__( 'Incomplete request', 'counterhand-mcp-for-woocommerce' ),
+			[ 'client_name' => $client->client_name ]
+		);
 	}
 
 	private function handle_decision( AuthorizationRequest $request, ClientMetadata $client ): void {
@@ -207,11 +234,13 @@ final readonly class AuthorizeEndpoint {
 			FlowPage::STATE_CONSENT,
 			__( 'Authorize AI access', 'counterhand-mcp-for-woocommerce' ),
 			[
-				'client_name'  => $client->client_name,
-				'client_host'  => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'       => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
-				'settings_url' => AdminScreen::Settings->url(),
-				'hidden'       => [
+				'client_name'              => $client->client_name,
+				'client_host'              => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
+				'return_host'              => (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ),
+				'returns_to_this_computer' => in_array( (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ), [ 'localhost', '127.0.0.1', '[::1]', '::1' ], true ),
+				'scopes'                   => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
+				'settings_url'             => AdminScreen::Settings->url(),
+				'hidden'                   => [
 					'client_id'             => $request->client_id,
 					'redirect_uri'          => $request->redirect_uri,
 					'code_challenge'        => $request->code_challenge,

@@ -85,7 +85,8 @@ final readonly class RefundDescriptors implements DescriptorProvider {
 				// would advertise a field the route never validates.
 				new FieldProfile( [ 'amount', 'reason', 'api_refund', 'api_restock' ], self::ITEM_FIELDS ),
 				'',
-				'SAFETY: this issues a real refund against the order and cannot be undone here. With api_refund true — WooCommerce\'s default — the payment gateway returns the money to the customer immediately; pass false to record the refund in WooCommerce only, for money already returned by other means. Confirm the order id, the amount and which of the two you mean with the user before calling this. amount is a decimal string in the order currency and may not exceed what remains refundable. This refunds an amount, not particular items — to restock, pass api_restock.'
+				'SAFETY: this issues a real refund against the order and cannot be undone here. With api_refund true — WooCommerce\'s default — the payment gateway returns the money to the customer immediately; pass false to record the refund in WooCommerce only, for money already returned by other means. Confirm the order id, the amount and which of the two you mean with the user before calling this. amount is a decimal string in the order currency and may not exceed what remains refundable. This refunds an amount, not particular items — to restock, pass api_restock.',
+				requires_confirmation: true
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_order_refund' ),

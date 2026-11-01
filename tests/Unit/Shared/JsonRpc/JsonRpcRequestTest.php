@@ -37,6 +37,23 @@ final class JsonRpcRequestTest extends TestCase {
 		}
 	}
 
+	public static function batch_bodies(): array {
+		return [
+			'a list'  => [ '[{"id":1},2]', [ [ 'id' => 1 ], 2 ] ],
+			'empty'   => [ '[]', [] ],
+			'object'  => [ '{"id":1}', null ],
+			'garbage' => [ '{broken', null ],
+		];
+	}
+
+	/**
+	 * @dataProvider batch_bodies
+	 */
+	public function test_a_batch_is_told_from_a_single_request( string $body, ?array $members ): void {
+		self::assertSame( $members, JsonRpcRequest::batch_in( $body ) );
+	}
+
+	/** @return array<string, array{string, JsonRpcErrorCode}> */
 	public static function invalid_bodies(): array {
 		return [
 			'malformed json'    => [ '{broken', JsonRpcErrorCode::ParseError ],

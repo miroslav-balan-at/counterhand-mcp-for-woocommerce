@@ -29,6 +29,7 @@ final readonly class OperationDescriptor {
 	 * @param array<string, mixed>|null $body_schema     JSON Schema for that argument. Hand-written because the route
 	 *                                                   publishes no argument to derive it from.
 	 * @param bool                 $undoable             False where an undo cannot be right: the route reads and writes a different shape, or later work hangs off the record.
+	 * @param list<string>         $confirm_when_sent    Arguments that make one call need confirmation, on a tool most calls to which do not.
 	 * @param array<string, array<string, mixed>> $declared_arguments Argument name => JSON Schema, only for a route that publishes none. The one permitted copy of a schema: there is nothing live to derive from.
 	 */
 	public function __construct(
@@ -45,6 +46,7 @@ final readonly class OperationDescriptor {
 		public ?array $body_schema = null,
 		public array $declared_arguments = [],
 		public bool $undoable = true,
+		public array $confirm_when_sent = [],
 	) {}
 
 	/**

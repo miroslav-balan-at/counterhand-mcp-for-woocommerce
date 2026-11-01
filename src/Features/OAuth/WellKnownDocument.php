@@ -25,8 +25,15 @@ enum WellKnownDocument: string {
 		return match ( strtolower( trim( $path, '/' ) ) ) {
 			'.well-known/oauth-protected-resource'   => self::Resource,
 			'.well-known/oauth-authorization-server' => self::Server,
+			// The one discovery address the spec gives a store in a subfolder that sits inside
+			// WordPress. Answered from the path, so it needs no rewrite on a root install.
+			'.well-known/openid-configuration'       => self::is_in_subfolder() ? self::Server : null,
 			default                                  => null,
 		};
+	}
+
+	private static function is_in_subfolder(): bool {
+		return '' !== trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
 	}
 
 	public static function try_from_query_var( mixed $value ): ?self {

@@ -4,6 +4,9 @@ declare( strict_types=1 );
 
 namespace Counterhand;
 
+// Plugin Check reports this guard as missing when it sits below this file's imports.
+defined( 'ABSPATH' ) || exit;
+
 use Counterhand\Features\Abilities\AbilitiesFeature;
 use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
@@ -11,6 +14,7 @@ use Counterhand\Features\CostOfGoods\CostOfGoodsFeature;
 use Counterhand\Features\CostOfGoods\WooCommerceCostLedger;
 use Counterhand\Features\Flamingo\FlamingoFeature;
 use Counterhand\Features\Flamingo\FlamingoInbox;
+use Counterhand\Features\McpServer\ConfirmationState;
 use Counterhand\Features\McpServer\McpServer;
 use Counterhand\Features\McpServer\McpServerFeature;
 use Counterhand\Features\McpServer\ToolDispatcher;
@@ -23,6 +27,7 @@ use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
 use Counterhand\Features\Playbooks\PlaybookCatalog;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
+use Counterhand\Features\Privacy\PrivacyFeature;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
 use Counterhand\Features\Settings\PluginSettings;
@@ -49,8 +54,6 @@ use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
 use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
 use Counterhand\Features\WooCommerceTools\WooCommerceToolsFeature;
 
-defined( 'ABSPATH' ) || exit;
-
 /**
  * Composition root: wires shared services and boots every feature slice.
  */
@@ -72,7 +75,27 @@ final class Plugin {
 		return self::$instance;
 	}
 
-	public static function activate(): void {
+	/** A network activation reaches every existing site. A site added later installs itself on first use. */
+	public static function activate( bool $network_wide = false ): void {
+		if ( ! $network_wide || ! is_multisite() ) {
+			self::activate_site();
+
+			return;
+		}
+
+		foreach ( get_sites(
+			[
+				'fields' => 'ids',
+				'number' => 0,
+			]
+		) as $site_id ) {
+			switch_to_blog( (int) $site_id );
+			self::activate_site();
+			restore_current_blog();
+		}
+	}
+
+	private static function activate_site(): void {
 		Schema::install();
 		\Counterhand\Features\ActionLog\Persistence\LogSchema::install();
 		ChangeSchema::install();
@@ -85,6 +108,7 @@ final class Plugin {
 		flush_rewrite_rules();
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
 		wp_clear_scheduled_hook( UndoFeature::PURGE_HOOK );
+		wp_clear_scheduled_hook( ConfirmationState::PURGE_HOOK );
 	}
 
 	public function tool_registry(): ?ToolRegistry {
@@ -165,6 +189,7 @@ final class Plugin {
 			new CostOfGoodsFeature( $this->tool_registry, new WooCommerceCostLedger() ),
 			new UrlCouponsFeature( $this->tool_registry, $gateway ),
 			new UndoFeature( $this->tool_registry, $tool_dispatcher, $change_journal ),
+			new PrivacyFeature( $change_journal ),
 			new AbilitiesFeature( $this->tool_registry, new AbilityCatalog() ),
 		];
 

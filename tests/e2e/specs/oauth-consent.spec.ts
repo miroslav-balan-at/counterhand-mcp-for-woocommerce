@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import { listToolNames, mcpCall } from '../support/mcp';
-import { anonymousContext, connect, discover, exchangeCode, pkcePair, runConsent, uniqueClientId } from '../support/oauth';
+import { anonymousContext, authorizationUrl, connect, discover, exchangeCode, pkcePair, REDIRECT_URI, runConsent, uniqueClientId } from '../support/oauth';
 import { shopManagerStatePath } from '../support/store';
 
 const state = () => randomBytes( 16 ).toString( 'base64url' );
@@ -91,6 +91,43 @@ test.describe( 'OAuth consent', () => {
 		expect( outcome.error ).toBe( 'access_denied' );
 		expect( outcome.code ).toBeUndefined();
 		expect( outcome.state ).toBe( sentState );
+		await client.dispose();
+	} );
+
+	test( 'a request that cannot go ahead tells a client it can verify, and nobody else', async ( { page, baseURL } ) => {
+		const client = await anonymousContext( baseURL as string );
+		const discovery = await discover( client );
+		const url = ( change: Record< string, string > ) => {
+			const authorize = new URL( authorizationUrl( discovery, { scopes: [ 'products:read' ], verifierChallenge: pkcePair().challenge, state: 'kept-state' } ) );
+			for ( const [ name, value ] of Object.entries( change ) ) {
+				authorize.searchParams.set( name, value );
+			}
+
+			return authorize.toString();
+		};
+		// Nothing listens on the loopback port, so the navigation fails; its request is what a client would receive.
+		const callbacks: URL[] = [];
+		page.on( 'request', ( request ) => {
+			if ( request.url().startsWith( REDIRECT_URI ) ) {
+				callbacks.push( new URL( request.url() ) );
+			}
+		} );
+
+		for ( const [ change, error ] of [
+			[ { response_type: 'token' }, 'unsupported_response_type' ],
+			[ { code_challenge_method: 'plain' }, 'invalid_request' ],
+			[ { resource: 'https://other.example.test/mcp' }, 'invalid_target' ],
+		] as const ) {
+			await page.goto( url( change ) ).catch( () => null );
+			const callback = callbacks.pop() as URL;
+			expect( callback.searchParams.get( 'error' ), JSON.stringify( change ) ).toBe( error );
+			expect( callback.searchParams.get( 'state' ) ).toBe( 'kept-state' );
+			expect( callback.searchParams.get( 'iss' ) ).toBe( discovery.issuer );
+		}
+
+		await page.goto( url( { response_type: 'token', redirect_uri: 'https://attacker.example.test/callback' } ) );
+		await expect( page.getByRole( 'heading', { name: 'Incomplete request' } ) ).toBeVisible();
+		expect( callbacks ).toEqual( [] );
 		await client.dispose();
 	} );
 

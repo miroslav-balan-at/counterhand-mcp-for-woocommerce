@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Schema {
 
-	private const VERSION        = '4';
+	private const VERSION        = '5';
 	private const VERSION_OPTION = 'counterhand_tokens_schema_version';
 
 	public static function table_name(): string {
@@ -54,7 +54,8 @@ final class Schema {
 		) {$charset_collate};"
 		);
 
-		update_option( self::VERSION_OPTION, self::VERSION, false );
+		// Autoloaded, because maybe_upgrade() reads it on every request.
+		update_option( self::VERSION_OPTION, self::VERSION, true );
 	}
 
 	/** Re-runs dbDelta after plugin updates that bump the schema version. */

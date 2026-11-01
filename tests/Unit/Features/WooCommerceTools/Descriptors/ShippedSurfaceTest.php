@@ -349,6 +349,34 @@ final class ShippedSurfaceTest extends TestCase {
 		$this->assertCount( 208, $this->surface() );
 	}
 
+	/** The skill ships separately, so nothing else would notice a tool it names going away. */
+	public function test_the_agent_skill_names_only_tools_that_ship_and_follows_the_format(): void {
+		$root   = dirname( __DIR__, 5 ) . '/skills/counterhand-woocommerce';
+		$skill  = (string) file_get_contents( $root . '/SKILL.md' );
+		$detail = (string) file_get_contents( $root . '/references/integrations.md' );
+
+		preg_match_all( '/`((?:get|list|create|update|set|delete|add|publish|undo|describe)_[a-z_]+)`/', $skill . $detail, $named );
+		$this->assertGreaterThan( 15, count( array_unique( $named[1] ) ) );
+
+		foreach ( array_diff( array_unique( $named[1] ), [ 'undo_unavailable' ] ) as $tool ) {
+			$this->assertArrayHasKey( $tool, self::SHIPPED, $tool );
+		}
+
+		preg_match( '/^---\n(.*?)\n---\n/s', $skill, $frontmatter );
+		preg_match_all( '/^([a-z-]+):/m', $frontmatter[1], $fields );
+		$this->assertSame( [], array_diff( $fields[1], [ 'name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools' ] ), 'other fields fail on upload' );
+
+		preg_match( '/^name: (.+)$/m', $frontmatter[1], $name );
+		preg_match( '/^description: (.+)$/m', $frontmatter[1], $description );
+		preg_match( '/^compatibility: (.+)$/m', $frontmatter[1], $compatibility );
+		$this->assertSame( basename( $root ), $name[1] );
+		$this->assertMatchesRegularExpression( '/^[a-z0-9]+(-[a-z0-9]+)*$/', $name[1] );
+		$this->assertLessThanOrEqual( 64, strlen( $name[1] ) );
+		$this->assertLessThanOrEqual( 1024, strlen( $description[1] ) );
+		$this->assertLessThanOrEqual( 500, strlen( $compatibility[1] ) );
+		$this->assertLessThan( 500, substr_count( $skill, "\n" ) );
+	}
+
 	/** A playbook names tools in prose too, where no compiler would notice a rename. */
 	public function test_every_playbook_names_tools_that_exist(): void {
 		Functions\when( '__' )->returnArg();
@@ -493,5 +521,11 @@ final class ShippedSurfaceTest extends TestCase {
 		}
 
 		$this->fail( 'create_product is no longer in the catalogue.' );
+	}
+
+	public function test_the_tools_chat_keeps_at_hand_are_shipped(): void {
+		foreach ( \Counterhand\Features\Playground\AgentLoop::COMMON_TOOLS as $name ) {
+			self::assertArrayHasKey( $name, self::SHIPPED );
+		}
 	}
 }

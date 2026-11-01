@@ -141,6 +141,28 @@ final class AgentLoopTest extends TestCase {
 		);
 	}
 
+	public function test_the_final_answer_stays_in_the_history(): void {
+		$provider = new ScriptedProvider( [ new ProviderTurn( 'Two products.', [], false ) ] );
+
+		$result = $this->loop()->run( $provider, $this->config(), [], 'how many?', $this->agent() );
+
+		self::assertCount( 2, $result->messages );
+	}
+
+	public function test_a_paused_turn_is_sent_back_rather_than_ending_the_answer(): void {
+		$provider = new ScriptedProvider(
+			[
+				new ProviderTurn( '', [], false, paused: true ),
+				new ProviderTurn( 'Found it.', [], false ),
+			]
+		);
+
+		$result = $this->loop()->run( $provider, $this->config(), [], 'find it', $this->agent() );
+
+		self::assertSame( 'Found it.', $result->transcript[ count( $result->transcript ) - 1 ]['text'] );
+		self::assertCount( 3, $result->messages, 'the question, the paused turn and the answer' );
+	}
+
 	private function loop(): AgentLoop {
 		$registry = new ToolRegistry( new PluginSettings() );
 		$registry->add( $this->guarded );

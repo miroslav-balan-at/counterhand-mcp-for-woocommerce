@@ -132,7 +132,8 @@ final readonly class CouponDescriptors implements DescriptorProvider {
 				ToolName::from( 'create_coupon' ),
 				Operation::CreateItem,
 				new FieldProfile( self::WRITABLE_FIELDS, self::ITEM_FIELDS ),
-				'code is required and must be unique. amount is a decimal string read according to discount_type: a currency amount for fixed discounts, a percentage for percent.'
+				'code is required and must be unique. amount is a decimal string read according to discount_type: a currency amount for fixed discounts, a percentage for percent.',
+				requires_confirmation: true
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_coupon' ),

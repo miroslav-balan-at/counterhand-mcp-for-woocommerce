@@ -17,6 +17,7 @@ final readonly class ProviderTurn {
 	 * @param bool                $wants_tools Whether the loop should continue.
 	 * @param array<string,mixed> $raw         Provider payload, for assistant_message().
 	 * @param TokenUsage          $usage       Token usage, best effort.
+	 * @param bool                $paused      Whether the provider stopped mid-turn and wants it sent back.
 	 */
 	public function __construct(
 		public string $text,
@@ -24,5 +25,6 @@ final readonly class ProviderTurn {
 		public bool $wants_tools,
 		public array $raw = [],
 		public TokenUsage $usage = new TokenUsage(),
+		public bool $paused = false,
 	) {}
 }

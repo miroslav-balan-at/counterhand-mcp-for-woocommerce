@@ -176,7 +176,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 				<input type="text" id="counterhand-chat-model" name="counterhand_chat_model" class="regular-text"
 					list="counterhand-chat-model-list"
 					value="<?php echo esc_attr( $chat_settings->model() ); ?>"
-					placeholder="<?php esc_attr_e( 'e.g. claude-opus-5', 'counterhand-mcp-for-woocommerce' ); ?>">
+					placeholder="<?php esc_attr_e( 'e.g. claude-opus-5-5', 'counterhand-mcp-for-woocommerce' ); ?>">
 				<datalist id="counterhand-chat-model-list">
 					<?php
 					foreach ( $chat_own_providers as $counterhand_provider ) {

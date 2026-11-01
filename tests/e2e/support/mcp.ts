@@ -40,7 +40,7 @@ export function statelessCall(
 	accessToken: string,
 	method: string,
 	params: Record< string, unknown > = {},
-	options: { version?: string; headers?: Record< string, string | undefined > } = {}
+	options: { version?: string; headers?: Record< string, string | undefined >; capabilities?: Record< string, unknown > } = {}
 ): Promise< APIResponse > {
 	const version = options.version ?? STATELESS_VERSION;
 	const name = ( params.name ?? params.uri ) as string | undefined;
@@ -64,7 +64,7 @@ export function statelessCall(
 				...params,
 				_meta: {
 					'io.modelcontextprotocol/protocolVersion': version,
-					'io.modelcontextprotocol/clientCapabilities': {},
+					'io.modelcontextprotocol/clientCapabilities': options.capabilities ?? {},
 					'io.modelcontextprotocol/clientInfo': { name: 'counterhand-e2e', version: '0' },
 				},
 			},

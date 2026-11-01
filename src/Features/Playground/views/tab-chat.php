@@ -130,6 +130,6 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 	<?php require __DIR__ . '/partial-chat-tools.php'; ?>
 
 	<p class="description counterhand-chat__note">
-		<?php esc_html_e( 'The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Your store data is sent to the model provider you configured.', 'counterhand-mcp-for-woocommerce' ); ?>
+		<?php esc_html_e( 'The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ); ?>
 	</p>
 </div>

@@ -146,7 +146,8 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 				Operation::UpdateItem,
 				new FieldProfile( [ 'status' ], [ 'id', 'number', 'status' ], false ),
 				'',
-				'Move an order to a different status. This may email the customer — "completed" sends the completion email — so only do it when the user has asked for the change. The allowed statuses are this store\'s own, including any a plugin has added. To record why the status changed, follow up with add_order_note.'
+				'Move an order to a different status. This may email the customer — "completed" sends the completion email — so only do it when the user has asked for the change. The allowed statuses are this store\'s own, including any a plugin has added. To record why the status changed, follow up with add_order_note.',
+				requires_confirmation: true
 			),
 		];
 	}
@@ -171,7 +172,8 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 				Operation::CreateItem,
 				new FieldProfile( [ 'note', 'customer_note' ], self::NOTE_FIELDS ),
 				'',
-				'Attach a note to an order, identified by order_id. Notes are private to the store by default; customer_note=true emails the note to the customer, so only pass it when the user explicitly wants them notified.'
+				'Attach a note to an order, identified by order_id. Notes are private to the store by default; customer_note=true emails the note to the customer, so only pass it when the user explicitly wants them notified.',
+				confirm_when_sent: [ 'customer_note' ]
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_order_note' ),

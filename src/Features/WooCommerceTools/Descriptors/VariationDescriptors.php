@@ -136,7 +136,8 @@ final readonly class VariationDescriptors implements DescriptorProvider {
 				Operation::UpdateItem,
 				new FieldProfile( self::WRITABLE_FIELDS, self::ITEM_FIELDS ),
 				'This is where a variable product\'s price and stock are changed — setting them on the parent has no effect.',
-				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK
+				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK,
+				confirm_when_sent: [ 'regular_price', 'sale_price' ]
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product_variation' ),

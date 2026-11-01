@@ -11,15 +11,21 @@ defined( 'ABSPATH' ) || exit;
  *
  * Hardening (SSRF / open-redirect):
  * - client_id must be HTTPS with a path, without credentials, fragment or dot-segments
- * - the fetch goes through wp_safe_remote_get(), so core's URL validation
- *   refuses private and loopback hosts and non-standard ports; a local
+ * - the fetch goes through wp_safe_remote_get(), so core's URL validation refuses
+ *   private and loopback hosts and non-standard ports, and from WordPress 7.1 link-local
+ *   and shared address space too; a local
  *   development client opts back in with core's http_request_host_is_external
  * - the fetched document's client_id must equal the URL it was fetched from
  * - redirect URIs must be HTTPS or loopback-HTTP
  */
 final readonly class ClientMetadataResolver {
 
-	private const CACHE_TTL = 5 * MINUTE_IN_SECONDS;
+	private const DEFAULT_CACHE_SECONDS = 5 * MINUTE_IN_SECONDS;
+
+	private const MINIMUM_CACHE_SECONDS = MINUTE_IN_SECONDS;
+
+	/** The address a person approves can change, so a long max-age is not taken at its word. */
+	private const MAXIMUM_CACHE_SECONDS = HOUR_IN_SECONDS;
 
 	/** The draft recommends 5 KB; this leaves room for a logo and policy URIs while still bounding the read. */
 	private const MAXIMUM_DOCUMENT_BYTES = 64 * KB_IN_BYTES;
@@ -73,22 +79,44 @@ final readonly class ClientMetadataResolver {
 			return null;
 		}
 
-		$client_name = sanitize_text_field( (string) ( $document['client_name'] ?? wp_parse_url( $client_id_url, PHP_URL_HOST ) ) );
+		$client_name = sanitize_text_field( is_string( $document['client_name'] ?? null ) ? $document['client_name'] : '' );
+
+		// Required by the spec, and the name a person is asked to trust on the consent screen.
+		if ( '' === $client_name ) {
+			return null;
+		}
+
 		$grant_types = is_array( $document['grant_types'] ?? null )
 			? array_values( array_filter( $document['grant_types'], 'is_string' ) )
 			: ClientMetadata::DEFAULT_GRANT_TYPES;
 
-		set_transient(
-			$cache_key,
-			[
-				'client_name'   => $client_name,
-				'redirect_uris' => $redirect_uris,
-				'grant_types'   => $grant_types,
-			],
-			self::CACHE_TTL
-		);
+		$lifetime = self::cache_seconds( (string) wp_remote_retrieve_header( $response, 'cache-control' ) );
+		if ( 0 < $lifetime ) {
+			set_transient(
+				$cache_key,
+				[
+					'client_name'   => $client_name,
+					'redirect_uris' => $redirect_uris,
+					'grant_types'   => $grant_types,
+				],
+				$lifetime
+			);
+		}
 
 		return new ClientMetadata( $client_id_url, $client_name, $redirect_uris, $grant_types );
+	}
+
+	/** The CIMD draft asks that cache headers be respected, and leaves the bounds to the server. */
+	private static function cache_seconds( string $cache_control ): int {
+		if ( 1 === preg_match( '/(?:^|[\s,])no-(?:store|cache)\b/i', $cache_control ) ) {
+			return 0;
+		}
+
+		if ( 1 !== preg_match( '/(?:^|[\s,])max-age=(\d+)/i', $cache_control, $matches ) ) {
+			return self::DEFAULT_CACHE_SECONDS;
+		}
+
+		return min( self::MAXIMUM_CACHE_SECONDS, max( self::MINIMUM_CACHE_SECONDS, (int) $matches[1] ) );
 	}
 
 	private function is_acceptable_client_id_url( string $url ): bool {
@@ -97,10 +125,11 @@ final readonly class ClientMetadataResolver {
 		return is_array( $parsed )
 			&& 'https' === ( $parsed['scheme'] ?? '' )
 			&& '' !== ( $parsed['host'] ?? '' )
-			&& ! isset( $parsed['user'], $parsed['pass'] )
+			&& ! isset( $parsed['user'] )
+			&& ! isset( $parsed['pass'] )
 			&& ! isset( $parsed['fragment'] )
 			&& '' !== ( $parsed['path'] ?? '' )
-			&& ! str_contains( $parsed['path'] ?? '', '..' );
+			&& [] === array_intersect( explode( '/', $parsed['path'] ?? '' ), [ '.', '..' ] );
 	}
 
 	public function is_acceptable_redirect_uri( mixed $uri ): bool {
@@ -109,7 +138,7 @@ final readonly class ClientMetadataResolver {
 		}
 
 		$parsed = wp_parse_url( $uri );
-		if ( ! is_array( $parsed ) || isset( $parsed['user'], $parsed['pass'] ) ) {
+		if ( ! is_array( $parsed ) || isset( $parsed['user'] ) || isset( $parsed['pass'] ) ) {
 			return false;
 		}
 

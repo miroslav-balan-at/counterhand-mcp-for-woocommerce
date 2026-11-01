@@ -8,6 +8,13 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 * Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and the abilities other plugins offer to AI clients. All ship off, each with its own grant.
 * Added: `preview` on catalog, content, shipping and tax writes, and `undo_change` and `get_recent_changes` behind a new "Undo history" grant.
 * Added: support for the MCP 2026-07-28 protocol revision alongside the earlier one.
+* Added: an Agent Skill, `counterhand-woocommerce`, under `skills/`, separate from the plugin.
+* Changed: WordPress 6.6 is now required. The filter that loads the bundled translations arrived in that version.
+* Changed: text a model reads stays in English whatever the site's language, and the chat is told to answer in the language the person writes in.
+* Added: JSON-RPC batches for clients on the 2025-03-26 revision, up to 20 requests, each counted against the rate limit.
+* Changed: an authorization request that cannot go ahead now returns its error to the client when the redirect address checks out, instead of stopping on a page.
+* Changed: a client's metadata document is cached as its `Cache-Control` says, between one minute and one hour.
+* Added: chat with Claude uses prompt caching and keeps the most common tools loaded, resumes a paused turn, and says when the model declines.
 * Added: MCP prompts for common store routines, a `counterhand://store/profile` resource, and envelope output schemas on read tools.
 
 ## 1.2.1

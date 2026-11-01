@@ -73,8 +73,8 @@ test.describe( 'Prompts, resources and output schemas', () => {
 
 		const none = await connected( browser, baseURL as string, [ 'products:read' ] );
 		expect( ( await none.legacy( 'resources/list' ) ).result.resources ).toEqual( [] );
-		expect( ( await none.legacy( 'resources/read', { uri: PROFILE } ) ).error.code ).toBe( -32602 );
-		expect( ( await reports.legacy( 'resources/read', { uri: 'file:///etc/passwd' } ) ).error.code ).toBe( -32602 );
+		expect( ( await none.legacy( 'resources/read', { uri: PROFILE } ) ).error.code, 'what 2025-era clients expect' ).toBe( -32002 );
+		expect( ( await reports.legacy( 'resources/read', { uri: 'file:///etc/passwd' } ) ).error.code ).toBe( -32002 );
 	} );
 
 	test( 'read tools publish an output schema their results really match, and writes publish none', async ( { browser, baseURL } ) => {

@@ -32,6 +32,25 @@ final readonly class JsonRpcRequest {
 			throw new JsonRpcEnvelopeException( JsonRpcErrorCode::InvalidRequest, 'Batch requests are not supported.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}
 
+		return self::from_decoded( $decoded );
+	}
+
+	/**
+	 * The members of a batch, or null when the body is not one.
+	 *
+	 * @return list<mixed>|null
+	 */
+	public static function batch_in( string $body ): ?array {
+		$decoded = json_decode( $body, true );
+
+		return is_array( $decoded ) && array_is_list( $decoded ) ? $decoded : null;
+	}
+
+	/**
+	 * @param  array<mixed> $decoded One decoded request.
+	 * @throws JsonRpcEnvelopeException When it is not a valid JSON-RPC 2.0 request.
+	 */
+	public static function from_decoded( array $decoded ): self {
 		if ( ( $decoded['jsonrpc'] ?? null ) !== '2.0' ) {
 			throw new JsonRpcEnvelopeException( JsonRpcErrorCode::InvalidRequest, 'Missing or invalid "jsonrpc" version; expected "2.0".' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}

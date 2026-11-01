@@ -173,7 +173,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				Operation::UpdateItem,
 				new FieldProfile( self::UPDATE_FIELDS, self::ITEM_FIELDS ),
 				'Only the fields you pass are changed. Use status "publish" to take a draft live. categories replaces the stored list rather than adding to it.',
-				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK
+				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK,
+				confirm_when_sent: [ 'regular_price', 'sale_price' ]
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product' ),

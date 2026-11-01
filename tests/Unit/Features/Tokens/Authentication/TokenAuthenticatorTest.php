@@ -42,6 +42,7 @@ final class TokenAuthenticatorTest extends TestCase {
 		Functions\when( 'wp_set_current_user' )->justReturn( null );
 		Functions\when( 'apply_filters' )->returnArg( 2 );
 		Functions\when( 'home_url' )->justReturn( 'https://store.example/mcp' );
+		Functions\when( 'rest_url' )->justReturn( 'https://store.example/wp-json/counterhand/v1/mcp' );
 		Functions\when( 'untrailingslashit' )->alias( static fn ( string $value ): string => rtrim( $value, '/' ) );
 	}
 

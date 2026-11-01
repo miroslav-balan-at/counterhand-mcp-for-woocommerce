@@ -21,6 +21,7 @@ use Counterhand\Features\Playground\ChatSettings;
 use Counterhand\Features\Playground\ModelConnect;
 use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
+use Counterhand\Features\Playbooks\PlaybookCatalog;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
@@ -38,6 +39,7 @@ use Counterhand\Features\Undo\UndoFeature;
 use Counterhand\Features\Undo\WpdbChangeJournal;
 use Counterhand\Features\UrlCoupons\UrlCouponsFeature;
 use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
+use Counterhand\Features\WooCommerceTools\Application\StoreProfileResource;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
 use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
@@ -123,7 +125,7 @@ final class Plugin {
 		// skips the JSON-RPC framing.
 		$change_journal  = new WpdbChangeJournal();
 		$tool_dispatcher = new ToolDispatcher( $this->tool_registry, $change_journal );
-		$mcp_server      = new McpServer( $tool_dispatcher );
+		$mcp_server      = new McpServer( $tool_dispatcher, new PlaybookCatalog( $tool_dispatcher ), new StoreProfileResource( $tool_dispatcher ) );
 
 		$tokens     = new TokensFeature( $repository );
 		$action_log = new ActionLogFeature( $settings );

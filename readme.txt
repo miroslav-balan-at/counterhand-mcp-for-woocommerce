@@ -40,16 +40,16 @@ Once connected, an AI agent works your store through plain requests, and the Cha
 * **Automation of repetitive work** — rewriting product descriptions, tidying categories or drafting posts and pages becomes one instruction instead of a hundred clicks; every change still passes WooCommerce's own validation, and the risky ones need your confirmation.
 * **Store setup** — shipping zones and rates, tax rates and, behind Advanced, settings, payment gateways and maintenance tools.
 
-= 127 tools, in groups you switch on individually =
+= 132 tools, in groups you switch on individually =
 
 Every group is a separate switch in Settings, with read and write as separate axes. A fresh install exposes **Products, Orders and Reports, read-only** — everything else is off until you turn it on, and upgrading never widens what your store exposes.
 
-* **Catalog** — Products (9), Categories & tags (25), Variations (5), Reviews (5), Coupons (8)
-* **Sales** — Orders (10), Refunds (4), Customers (3)
+* **Catalog** — Products (11), Categories & tags (25), Variations (5), Reviews (5), Coupons (8)
+* **Sales** — Orders (11), Refunds (4), Customers (3)
 * **Insights** — Reports (8)
 * **Content** — Posts & pages (10)
 * **Store setup** — Shipping (14), Taxes (8), Reference data (7)
-* **Advanced** — Store settings (4), Payment gateways (3), System & maintenance (4)
+* **Advanced** — Store settings (4), Payment gateways (3), System & maintenance (4), Undo history (2)
 
 Tools delegate to WooCommerce's own REST controllers, so validation, stock handling and HPOS compatibility behave exactly like the standard API. Their input schemas are read from those controllers at runtime rather than copied into this plugin, so a WooCommerce update that adds a field surfaces it automatically, and one that removes a field cannot leave a tool advertising it.
 
@@ -91,6 +91,10 @@ Each of these is off until you switch it on under "Other plugins" in Settings.
 = Preview and undo =
 
 An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Settings and granted to a connection, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
+
+= Ready-made routines =
+
+Clients that support MCP prompts can offer these as slash commands: sales review, restock list, order triage, refund review, catalog check and coupon review, plus missing translations with WPML and a legal details check with Germanized. Each appears only if the connection can reach every tool it needs, and each proposes rather than changes anything. Clients can also read a short store profile, so an assistant knows the currency, tax setup and what it can reach before it starts.
 
 = Two ways to use AI with your store =
 
@@ -211,6 +215,14 @@ Bugs and feature requests: the [GitHub issue tracker](https://github.com/mirosla
 4. Action log — every tool call, with personal data masked before it is stored.
 
 == Changelog ==
+
+= Unreleased =
+* Fixed: on a store with WPML, a product changed through any tool now updates its translations, and a translation sent with a language is saved in that language and linked. Before, prices stayed old on translations with no error.
+* Changed: tools can no longer write protected custom fields (names starting with an underscore) through `meta_data`, which went past the rule the custom field tools follow. A client setting them that way now gets an error.
+* Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and abilities that other plugins offer to AI clients, such as Yoast SEO. All are off until you switch them on.
+* Added: an assistant can preview a change before saving it, and with "Undo history" switched on and granted, undo a connection's own changes for 30 days.
+* Added: support for the MCP 2026-07-28 protocol revision alongside the earlier one.
+* Added: MCP prompts for common store routines, a store profile resource, and output schemas on read tools.
 
 = 1.3.2 =
 * Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending; WooCommerce sends no email of its own for it.

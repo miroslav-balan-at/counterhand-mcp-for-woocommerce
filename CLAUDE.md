@@ -59,6 +59,12 @@ Read the spec source, not summaries: `github.com/modelcontextprotocol/modelconte
 - **Deprecated in 2026-07-28** (do not adopt): Roots, Sampling, Logging, the HTTP+SSE transport, and Dynamic Client Registration (CIMD replaces it, and we already use it).
 - **Conformance:** `tests/e2e/specs/conformance.spec.ts` runs the pinned official suite through a local proxy that adds a token minted by the real consent flow (never an auth bypass in the plugin), for both eras. Checks that need the reference server's diagnostic tools, or capabilities we do not offer yet, are baselined per check with a reason in `tests/e2e/conformance-baseline.yml`; the runner fails when a baselined check starts passing, so delete the entry when a feature lands. `npx conformance authorization --url <store>` covers our OAuth server.
 
+## Prompts, resources and output schemas
+- **McpServer spells them; other slices publish data through `PromptSourceInterface`, `ResourceSourceInterface` and `OutputSchemaToolInterface`.** Both lists vary by authorization, which the spec allows, so they are `cacheScope: private`, in a stable order.
+- **A playbook is offered only while its connection can reach every tool it names** (`Features/Playbooks`), and `ShippedSurfaceTest` holds the prose to the shipped names, because no compiler checks a tool named in a sentence. Playbooks read and propose; a change goes back to the person. Prompt arguments must match a pattern, never free text: a value lands in text a model acts on.
+- **The store profile answers only for what the connection reaches.** It lists this grant's areas, not the store's, so it cannot fingerprint plugins. Out of reach reads the same as unknown: `-32602`.
+- **`outputSchema` promises only the envelope, on reads only.** A client may reject a result that does not conform, and WooCommerce's own schemas call a date a string when it can be null, so typing a row would break calls that are right. A write's result varies by outcome: `change_id`, `undo_unavailable`, a preview. Do not tighten this without checking real results against a validating client.
+
 ## Adding a tool
 Tools are **declared, not written**. `GeneratedTool` serves the whole wc/v3 and wp/v2 surface; a new resource is a `DescriptorProvider` under `Features/WooCommerceTools/Descriptors/` plus one line in `StaticDescriptorCatalog::shipped()`.
 

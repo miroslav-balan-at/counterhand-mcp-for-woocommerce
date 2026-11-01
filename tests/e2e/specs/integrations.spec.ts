@@ -1150,6 +1150,19 @@ test.describe( 'WPML with the real plugins', () => {
 		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '-1' } } } ) ).isError ).toBe( true );
 	} );
 
+	test( 'its playbook appears once the connection can reach its tool', async ( { browser, baseURL } ) => {
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		const { tokens, discovery } = await connect( page, baseURL as string, [ READ ] );
+		await page.close();
+		const client = await anonymousContext( baseURL as string );
+		const prompts = ( await ( await mcpCall( client, discovery.resource, tokens.access_token, 'prompts/list' ) ).json() ).result.prompts;
+
+		expect( prompts.map( ( prompt: { name: string } ) => prompt.name ) ).toEqual( [ 'missing_translations' ] );
+
+		const text = ( await ( await mcpCall( client, discovery.resource, tokens.access_token, 'prompts/get', { name: 'missing_translations', arguments: { language: 'de' } } ) ).json() ).result.messages[ 0 ].content.text;
+		expect( text ).toContain( 'translation into de' );
+	} );
+
 	test( 'a WPML grant reaches nothing else', async ( { browser, baseURL } ) => {
 		const { names } = await caller( browser, baseURL as string, [ READ, WRITE ] );
 		const offered = await names();

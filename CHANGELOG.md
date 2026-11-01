@@ -2,6 +2,14 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## Unreleased
+* Fixed: on a store with WPML, tool calls missed WooCommerce Multilingual's REST hooks. A product changed through any tool now updates its translations, and a translation sent with a language is saved in that language and linked.
+* Changed: tools can no longer write protected custom fields through `meta_data`. A client setting underscore keys that way, such as Yoast fields through `update_product`, now gets an error.
+* Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and the abilities other plugins offer to AI clients. All ship off, each with its own grant.
+* Added: `preview` on catalog, content, shipping and tax writes, and `undo_change` and `get_recent_changes` behind a new "Undo history" grant.
+* Added: support for the MCP 2026-07-28 protocol revision alongside the earlier one.
+* Added: MCP prompts for common store routines, a `counterhand://store/profile` resource, and envelope output schemas on read tools.
+
 ## 1.2.1
 * The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.
 * The readme now documents every external service the plugin can contact, what is sent to each and when.

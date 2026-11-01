@@ -3,8 +3,10 @@ import { anonymousContext, authorizationUrl, discover, pkcePair } from '../suppo
 
 const screens = [
 	{ name: 'Chat', path: '/wp-admin/admin.php?page=counterhand-mcp' },
+	{ name: 'Dashboard', path: '/wp-admin/admin.php?page=counterhand-mcp-dashboard' },
 	{ name: 'Connect AI apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect' },
 	{ name: 'Connected apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect&view=connections' },
+	{ name: 'Other plugins', path: '/wp-admin/admin.php?page=counterhand-mcp-integrations' },
 	{ name: 'Settings', path: '/wp-admin/admin.php?page=counterhand-mcp-settings' },
 	{ name: 'Action log', path: '/wp-admin/admin.php?page=counterhand-mcp-log' },
 ];

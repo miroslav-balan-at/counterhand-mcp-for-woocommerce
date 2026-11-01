@@ -1,37 +1,38 @@
 <?php
 /**
- * Settings tab: master switch, per-group read/write toggles, limits, log.
+ * Settings screen: master switch, per-group read/write toggles, limits, log.
  *
- * The chat model is deliberately not here — it lives on the Chat tab, with the
- * thing that needs it. This tab is only about what the store exposes and how
- * much of it.
+ * The chat model is deliberately not here — it lives on the Chat screen, with the
+ * thing that needs it. This screen is only about what the store exposes and how
+ * much of it. Other plugins have their own screen.
  *
  * One idea per card, following WooCommerce's extension settings guidance.
  *
  * @var \Counterhand\Features\Settings\PluginSettings $settings
  * @var list<\Counterhand\Shared\Tool\ToolSection>    $tool_sections
  * @var bool                                         $other_mcp_server
+ * @var bool                                         $can_save
  */
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\SettingsAccess;
+use Counterhand\Features\Settings\SettingsForm;
 
 defined( 'ABSPATH' ) || exit;
 
 $counterhand_values = $settings->all();
 $counterhand_option = PluginSettings::OPTION;
 ?>
-<?php if ( $other_mcp_server ) : ?>
-	<div class="notice notice-warning inline counterhand-other-server">
-		<p>
-			<strong><?php esc_html_e( 'Another MCP server is running on this store.', 'counterhand-mcp-for-woocommerce' ); ?></strong>
-			<?php esc_html_e( 'A plugin such as Rank Math or the MCP Adapter has started its own, under /wp-json/mcp/. It lets a logged-in user reach abilities directly, including WooCommerce\'s own, without the switches, permissions and confirmations below. To turn it off, return false from the mcp_adapter_create_default_server and wpmedia_mcp_oauth_server_enabled filters. While its OAuth server is on, its connector may also not work beside this plugin, because both answer the same discovery address.', 'counterhand-mcp-for-woocommerce' ); ?>
-		</p>
-	</div>
-<?php endif; ?>
+<?php require __DIR__ . '/other-server-notice.php'; ?>
+<?php require __DIR__ . '/read-only-notice.php'; ?>
 <form method="post" action="options.php" class="counterhand-settings-form">
-	<?php settings_fields( 'counterhand_settings_group' ); ?>
+	<?php if ( $can_save ) : ?>
+		<?php settings_fields( SettingsAccess::OPTION_GROUP ); ?>
+		<input type="hidden" name="<?php echo esc_attr( $counterhand_option ); ?>[form]" value="<?php echo esc_attr( SettingsForm::Store->value ); ?>">
+	<?php endif; ?>
 
 	<div class="counterhand-card">
 		<div class="counterhand-card__head">
@@ -42,7 +43,7 @@ $counterhand_option = PluginSettings::OPTION;
 		</div>
 		<div class="counterhand-card__body">
 			<label class="counterhand-master-switch">
-				<input type="checkbox" name="<?php echo esc_attr( $counterhand_option ); ?>[enabled]" value="1" <?php checked( (bool) $counterhand_values['enabled'] ); ?>>
+				<input type="checkbox" name="<?php echo esc_attr( $counterhand_option ); ?>[enabled]" value="1" <?php checked( (bool) $counterhand_values['enabled'] ); ?> <?php disabled( ! $can_save ); ?>>
 				<strong><?php esc_html_e( 'Enable the MCP connector', 'counterhand-mcp-for-woocommerce' ); ?></strong>
 			</label>
 		</div>
@@ -91,7 +92,7 @@ $counterhand_option = PluginSettings::OPTION;
 									<input type="checkbox"
 										id="counterhand-<?php echo esc_attr( $counterhand_group->read_option_key() ); ?>"
 										name="<?php echo esc_attr( $counterhand_option ); ?>[<?php echo esc_attr( $counterhand_group->read_option_key() ); ?>]"
-										value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->read_option_key() ] ?? false ) ); ?>>
+										value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->read_option_key() ] ?? false ) ); ?> <?php disabled( ! $can_save ); ?>>
 								</td>
 								<td>
 									<?php if ( ! $counterhand_group->has_write() ) : ?>
@@ -110,7 +111,7 @@ $counterhand_option = PluginSettings::OPTION;
 										<input type="checkbox"
 											id="counterhand-<?php echo esc_attr( $counterhand_group->write_option_key() ); ?>"
 											name="<?php echo esc_attr( $counterhand_option ); ?>[<?php echo esc_attr( $counterhand_group->write_option_key() ); ?>]"
-											value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->write_option_key() ] ?? false ) ); ?>>
+											value="1" <?php checked( (bool) ( $counterhand_values[ $counterhand_group->write_option_key() ] ?? false ) ); ?> <?php disabled( ! $can_save ); ?>>
 									<?php endif; ?>
 								</td>
 							</tr>
@@ -118,6 +119,9 @@ $counterhand_option = PluginSettings::OPTION;
 					</tbody>
 				<?php endforeach; ?>
 			</table>
+		</div>
+		<div class="counterhand-card__foot">
+			<a href="<?php echo esc_url( AdminScreen::Integrations->url() ); ?>"><?php esc_html_e( 'Tools from other plugins have their own screen.', 'counterhand-mcp-for-woocommerce' ); ?></a>
 		</div>
 	</div>
 
@@ -133,7 +137,7 @@ $counterhand_option = PluginSettings::OPTION;
 				<label class="counterhand-label" for="counterhand-rate-limit"><?php esc_html_e( 'Requests per minute per connection', 'counterhand-mcp-for-woocommerce' ); ?></label>
 				<input type="number" id="counterhand-rate-limit" min="1" max="1000"
 					name="<?php echo esc_attr( $counterhand_option ); ?>[rate_limit_per_minute]"
-					value="<?php echo esc_attr( (string) $counterhand_values['rate_limit_per_minute'] ); ?>">
+					value="<?php echo esc_attr( (string) $counterhand_values['rate_limit_per_minute'] ); ?>" <?php disabled( ! $can_save ); ?>>
 			</div>
 		</div>
 	</div>
@@ -149,7 +153,7 @@ $counterhand_option = PluginSettings::OPTION;
 			<div class="counterhand-field">
 				<label>
 					<input type="checkbox" name="<?php echo esc_attr( $counterhand_option ); ?>[action_log_enabled]" value="1"
-						<?php checked( (bool) ( $counterhand_values['action_log_enabled'] ?? false ) ); ?>>
+						<?php checked( (bool) ( $counterhand_values['action_log_enabled'] ?? false ) ); ?> <?php disabled( ! $can_save ); ?>>
 					<?php esc_html_e( 'Record every tool call', 'counterhand-mcp-for-woocommerce' ); ?>
 				</label>
 			</div>
@@ -158,10 +162,12 @@ $counterhand_option = PluginSettings::OPTION;
 				<label class="counterhand-label" for="counterhand-retention"><?php esc_html_e( 'Keep log entries for (days)', 'counterhand-mcp-for-woocommerce' ); ?></label>
 				<input type="number" id="counterhand-retention" min="1" max="365"
 					name="<?php echo esc_attr( $counterhand_option ); ?>[log_retention_days]"
-					value="<?php echo esc_attr( (string) ( $counterhand_values['log_retention_days'] ?? 30 ) ); ?>">
+					value="<?php echo esc_attr( (string) ( $counterhand_values['log_retention_days'] ?? 30 ) ); ?>" <?php disabled( ! $can_save ); ?>>
 			</div>
 		</div>
 	</div>
 
-	<?php submit_button(); ?>
+	<?php if ( $can_save ) : ?>
+		<?php submit_button(); ?>
+	<?php endif; ?>
 </form>

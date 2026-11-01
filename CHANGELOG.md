@@ -3,6 +3,12 @@
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
 ## Unreleased
+
+* New: a Dashboard says whether the connector is on, how many apps are connected, which areas can be changed, and what happened today. With the action log off it says calls are not recorded rather than showing a zero.
+* New: tools from other plugins have their own screen, with one card per plugin. Existing choices carry over, and saving either screen leaves the other's alone.
+* Fixed: screens now follow the admin colour scheme. Almost none of the WordPress design token names we read existed, so accents stayed one blue on every scheme.
+* Changed: shop managers now see Settings and Other plugins as read-only, with a note saying why. Saving was already limited to administrators and used to end on an error page.
+* Changed: the Connect screen's two views use a plain link navigation in place of WordPress's older tab bar.
 * Fixed: on a store with WPML, tool calls missed WooCommerce Multilingual's REST hooks. A product changed through any tool now updates its translations, and a translation sent with a language is saved in that language and linked.
 * Changed: tools can no longer write protected custom fields through `meta_data`. A client setting underscore keys that way, such as Yoast fields through `update_product`, now gets an error.
 * Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and the abilities other plugins offer to AI clients. All ship off, each with its own grant.

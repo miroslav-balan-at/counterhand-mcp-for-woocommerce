@@ -6,7 +6,7 @@ namespace Counterhand\Features\ActionLog;
 
 use Counterhand\Features\ActionLog\Persistence\LogSchema;
 use Counterhand\Features\Settings\PluginSettings;
-use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Settings\ScreenBodyInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\FeatureInterface;
 
@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Opt-in audit log: subscribes to tool calls, purges by retention, admin tab.
  */
-final readonly class ActionLogFeature implements FeatureInterface, SettingsTabInterface {
+final readonly class ActionLogFeature implements FeatureInterface, ScreenBodyInterface {
 
 	private const PURGE_HOOK = 'counterhand_purge_log';
 
@@ -101,7 +101,7 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		exit;
 	}
 
-	public function render_tab(): void {
+	public function render_body(): void {
 		global $wpdb;
 
 		$table_name = LogSchema::table_name();
@@ -137,6 +137,6 @@ final readonly class ActionLogFeature implements FeatureInterface, SettingsTabIn
 		$is_enabled  = $this->settings->is_action_log_enabled();
 		$clear_nonce = wp_create_nonce( 'counterhand_clear_log' );
 
-		include __DIR__ . '/Admin/views/tab-log.php';
+		include __DIR__ . '/Admin/views/log.php';
 	}
 }

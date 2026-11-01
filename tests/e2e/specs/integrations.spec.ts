@@ -206,7 +206,7 @@ test.describe( 'Integrations with the real plugins', () => {
 			expect( ( await call( 'describe_woocommerce_fields', { tool: 'get_contact_forms' } ) ) ?? { isError: true } ).toMatchObject( { isError: true } );
 
 			const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
-			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp-settings' );
+			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp-integrations' );
 			await expect( page.locator( '#counterhand-integration_contact-form-7_read' ) ).toHaveCount( 0 );
 			await page.close();
 		} finally {

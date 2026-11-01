@@ -119,6 +119,8 @@ test.describe( 'OAuth consent', () => {
 			[ { resource: 'https://other.example.test/mcp' }, 'invalid_target' ],
 		] as const ) {
 			await page.goto( url( change ) ).catch( () => null );
+			// The browser's error page would otherwise interrupt the next navigation.
+			await page.waitForURL( /^chrome-error:/ );
 			const callback = callbacks.pop() as URL;
 			expect( callback.searchParams.get( 'error' ), JSON.stringify( change ) ).toBe( error );
 			expect( callback.searchParams.get( 'state' ) ).toBe( 'kept-state' );

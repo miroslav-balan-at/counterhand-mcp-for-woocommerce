@@ -9,7 +9,7 @@ use Counterhand\Features\Playground\Provider\ProviderConfig;
 use Counterhand\Features\Playground\Provider\ProviderInterface;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\AdminScreen;
-use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Settings\ScreenBodyInterface;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
@@ -32,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
  * authenticated administrator, so we build a synthetic in-memory agent scoped
  * to their own capabilities.
  */
-final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabInterface {
+final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyInterface {
 
 	private const NONCE       = 'counterhand_chat_send';
 	private const TOOLS_NONCE = 'counterhand_save_chat_tools';
@@ -62,16 +62,16 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		return null !== $provider && $provider->is_ready( $this->config() );
 	}
 
-	public function render_tab(): void {
+	public function render_body(): void {
 		// "Change" in the chat footer reopens the chooser without disconnecting
 		// anything, so switching models never means leaving the tab.
 		$changing = isset( $_GET['counterhand_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
 
-		$tools              = $this->tools->visible_for( $this->synthetic_agent() );
-		$chat_groups        = $this->settings->groups();
-		$tool_sections      = ToolSection::populated();
-		$chat_areas         = $this->areas( $chat_groups );
-		$store_settings_url = $this->store_policy->settings_url();
+		$tools         = $this->tools->visible_for( $this->synthetic_agent() );
+		$chat_groups   = $this->settings->groups();
+		$tool_sections = ToolSection::populated();
+		$chat_areas    = $this->areas( $chat_groups );
+		$store_policy  = $this->store_policy;
 		// Null when the connected model can search a deferred catalogue, in
 		// which case there is no count for the panel to warn about.
 		$tool_limit         = $this->providers->get( $this->settings->provider_id() )?->max_eager_tools();
@@ -85,7 +85,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		$core_state         = $this->model_connect->core_state();
 		$core_connectors    = $this->model_connect->connectors();
 
-		include __DIR__ . '/views/tab-chat.php';
+		include __DIR__ . '/views/chat.php';
 	}
 
 	public function serves_tools_here( mixed $serves ): bool {

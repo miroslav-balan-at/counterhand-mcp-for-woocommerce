@@ -31,7 +31,8 @@ final readonly class ScreenAssets {
 		wp_enqueue_style(
 			'counterhand-tokens',
 			$base_url . '/assets/shared/tokens.css',
-			[],
+			// New in WordPress 7.1, and a missing dependency stops a sheet printing at all.
+			wp_style_is( 'wp-theme', 'registered' ) ? [ 'wp-theme' ] : [],
 			(string) filemtime( $base_path . '/assets/shared/tokens.css' )
 		);
 

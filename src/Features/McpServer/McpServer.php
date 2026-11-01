@@ -30,7 +30,11 @@ final readonly class McpServer {
 	 */
 	private const CACHE_TTL_MILLISECONDS = 60000;
 
-	public function __construct( private ToolDispatcher $dispatcher ) {}
+	public function __construct(
+		private ToolDispatcher $dispatcher,
+		private ?PromptSourceInterface $prompts = null,
+		private ?ResourceSourceInterface $resources = null,
+	) {}
 
 	/** A legacy (initialize-era) request. Its wire shape is what 2025-era clients rely on: keep it unchanged. */
 	public function handle( JsonRpcRequest $request, AuthenticatedAgent $agent ): ?JsonRpcResponse {
@@ -43,7 +47,8 @@ final readonly class McpServer {
 			'ping'       => JsonRpcResponse::result( $request->id, [] ),
 			'tools/list' => JsonRpcResponse::result( $request->id, $this->tool_list( $agent ) ),
 			'tools/call' => $this->call_tool( $request, $agent, static fn ( array $result ): JsonRpcResponse => JsonRpcResponse::result( $request->id, $result ) ),
-			default      => JsonRpcResponse::error( $request->id, JsonRpcErrorCode::MethodNotFound, sprintf( 'Method "%s" is not supported.', $request->method ) ),
+			default      => $this->handle_content( $request, $agent, static fn ( array $result ): JsonRpcResponse => JsonRpcResponse::result( $request->id, $result ) )
+				?? JsonRpcResponse::error( $request->id, JsonRpcErrorCode::MethodNotFound, sprintf( 'Method "%s" is not supported.', $request->method ) ),
 		};
 	}
 
@@ -61,8 +66,125 @@ final readonly class McpServer {
 			'server/discover' => McpReply::json( $this->complete( $request, $this->discovery( $agent ), true ) ),
 			'tools/list'      => McpReply::json( $this->complete( $request, $this->tool_list( $agent ), true ) ),
 			'tools/call'      => McpReply::json( $this->call_tool( $request, $agent, fn ( array $result ): JsonRpcResponse => $this->complete( $request, $result, false ) ) ),
-			default           => McpReply::json( JsonRpcResponse::error( $request->id, JsonRpcErrorCode::MethodNotFound, sprintf( 'Method "%s" is not supported.', $request->method ) ), 404 ),
+			default           => $this->stateless_content( $request, $agent ),
 		};
+	}
+
+	private function stateless_content( JsonRpcRequest $request, AuthenticatedAgent $agent ): McpReply {
+		$response = $this->handle_content(
+			$request,
+			$agent,
+			fn ( array $result ): JsonRpcResponse => $this->complete( $request, $result, 'prompts/get' !== $request->method )
+		);
+
+		return null === $response
+			? McpReply::json( JsonRpcResponse::error( $request->id, JsonRpcErrorCode::MethodNotFound, sprintf( 'Method "%s" is not supported.', $request->method ) ), 404 )
+			: McpReply::json( $response );
+	}
+
+	/**
+	 * Prompts and resources, the same in both eras but for how a result is framed.
+	 * Null for any other method, or one whose capability this server does not declare.
+	 *
+	 * @param callable(array<string, mixed>): JsonRpcResponse $frame
+	 */
+	private function handle_content( JsonRpcRequest $request, AuthenticatedAgent $agent, callable $frame ): ?JsonRpcResponse {
+		return match ( true ) {
+			null !== $this->prompts && 'prompts/list' === $request->method => $frame( [ 'prompts' => array_map( [ self::class, 'prompt_listing' ], $this->prompts->prompts_for( $agent ) ) ] ),
+			null !== $this->prompts && 'prompts/get' === $request->method => $this->get_prompt( $this->prompts, $request, $agent, $frame ),
+			null !== $this->resources && 'resources/list' === $request->method => $frame( [ 'resources' => array_map( [ self::class, 'resource_listing' ], $this->resources->resources_for( $agent ) ) ] ),
+			null !== $this->resources && 'resources/templates/list' === $request->method => $frame( [ 'resourceTemplates' => [] ] ),
+			null !== $this->resources && 'resources/read' === $request->method => $this->read_resource( $this->resources, $request, $agent, $frame ),
+			default => null,
+		};
+	}
+
+	/** @return array<string, mixed> */
+	private static function prompt_listing( PromptDefinition $prompt ): array {
+		return [
+			'name'        => $prompt->name,
+			'title'       => $prompt->title,
+			'description' => $prompt->description,
+			'arguments'   => array_map(
+				static fn ( PromptArgument $argument ): array => [
+					'name'        => $argument->name,
+					'description' => $argument->description,
+					'required'    => $argument->required,
+				],
+				$prompt->arguments
+			),
+		];
+	}
+
+	/** @return array<string, string> */
+	private static function resource_listing( ResourceDefinition $definition ): array {
+		return [
+			'uri'         => $definition->uri,
+			'name'        => $definition->name,
+			'title'       => $definition->title,
+			'description' => $definition->description,
+			'mimeType'    => $definition->mime_type,
+		];
+	}
+
+	/** @param callable(array<string, mixed>): JsonRpcResponse $frame */
+	private function get_prompt( PromptSourceInterface $source, JsonRpcRequest $request, AuthenticatedAgent $agent, callable $frame ): JsonRpcResponse {
+		$name   = $request->params['name'] ?? null;
+		$values = $request->params['arguments'] ?? [];
+
+		foreach ( $source->prompts_for( $agent ) as $prompt ) {
+			if ( $prompt->name !== $name ) {
+				continue;
+			}
+
+			$refusal = is_array( $values ) ? $prompt->refusal( $values ) : '"arguments" must be an object.';
+
+			if ( null !== $refusal ) {
+				return JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InvalidParams, $refusal );
+			}
+
+			return $frame(
+				[
+					'description' => $prompt->description,
+					'messages'    => [
+						[
+							'role'    => 'user',
+							'content' => [
+								'type' => 'text',
+								'text' => $prompt->message( (array) $values ),
+							],
+						],
+					],
+				]
+			);
+		}
+
+		return JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InvalidParams, 'Unknown prompt.' );
+	}
+
+	/** @param callable(array<string, mixed>): JsonRpcResponse $frame */
+	private function read_resource( ResourceSourceInterface $source, JsonRpcRequest $request, AuthenticatedAgent $agent, callable $frame ): JsonRpcResponse {
+		$uri = $request->params['uri'] ?? null;
+
+		foreach ( $source->resources_for( $agent ) as $definition ) {
+			$text = $definition->uri === $uri ? $source->read( $definition->uri, $agent ) : null;
+
+			if ( null !== $text ) {
+				return $frame(
+					[
+						'contents' => [
+							[
+								'uri'      => $definition->uri,
+								'mimeType' => $definition->mime_type,
+								'text'     => $text,
+							],
+						],
+					]
+				);
+			}
+		}
+
+		return JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InvalidParams, 'Resource not found.' );
 	}
 
 	private function initialize( JsonRpcRequest $request, AuthenticatedAgent $agent ): JsonRpcResponse {
@@ -73,7 +195,7 @@ final readonly class McpServer {
 			$request->id,
 			[
 				'protocolVersion' => $agreed_version,
-				'capabilities'    => self::capabilities(),
+				'capabilities'    => $this->capabilities(),
 				'serverInfo'      => self::server_info(),
 				'instructions'    => $this->instructions( $agent ),
 			]
@@ -85,14 +207,19 @@ final readonly class McpServer {
 		return [
 			// Only stateless revisions: a legacy one is negotiated through initialize, not named here.
 			'supportedVersions' => ProtocolVersion::MODERN,
-			'capabilities'      => self::capabilities(),
+			'capabilities'      => $this->capabilities(),
 			'instructions'      => $this->instructions( $agent ),
 		];
 	}
 
-	/** @return array<string, array<string, bool>> */
-	private static function capabilities(): array {
-		return [ 'tools' => [ 'listChanged' => false ] ];
+	/** @return array<string, mixed> */
+	private function capabilities(): array {
+		return [
+			'tools' => [ 'listChanged' => false ],
+			...( null === $this->prompts ? [] : [ 'prompts' => [ 'listChanged' => false ] ] ),
+			// An object even when empty: a PHP empty array would encode as a list.
+			...( null === $this->resources ? [] : [ 'resources' => new \stdClass() ] ),
+		];
 	}
 
 	/** @return array{name: string, version: string} */
@@ -138,6 +265,7 @@ final readonly class McpServer {
 						'idempotentHint'  => $tool->is_idempotent(),
 						'openWorldHint'   => $tool->is_open_world(),
 					],
+					...( $tool instanceof OutputSchemaToolInterface && null !== $tool->output_schema() ? [ 'outputSchema' => $tool->output_schema() ] : [] ),
 				],
 				$this->dispatcher->visible_for( $agent )
 			),

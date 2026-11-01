@@ -131,3 +131,10 @@ class WC_Order {
 function wc_get_is_paid_statuses(): array {
 	return [];
 }
+
+class WC_Shipping_Zones {
+	/** @return array<int, array<string, mixed>> */
+	public static function get_zones(): array {
+		return [];
+	}
+}

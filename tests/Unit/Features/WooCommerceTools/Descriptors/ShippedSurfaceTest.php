@@ -349,6 +349,26 @@ final class ShippedSurfaceTest extends TestCase {
 		$this->assertCount( 208, $this->surface() );
 	}
 
+	/** A playbook names tools in prose too, where no compiler would notice a rename. */
+	public function test_every_playbook_names_tools_that_exist(): void {
+		Functions\when( '__' )->returnArg();
+
+		foreach ( \Counterhand\Features\Playbooks\PlaybookCatalog::playbooks() as $playbook ) {
+			$this->assertNotSame( [], $playbook->tools, $playbook->prompt->name );
+
+			foreach ( $playbook->tools as $tool ) {
+				$this->assertArrayHasKey( $tool, self::SHIPPED, $playbook->prompt->name );
+				$this->assertStringContainsString( $tool, $playbook->prompt->template, $playbook->prompt->name );
+			}
+
+			preg_match_all( '/\\b(?:get|list)_[a-z_]+\\b/', $playbook->prompt->template, $named );
+
+			foreach ( $named[0] as $tool ) {
+				$this->assertContains( $tool, $playbook->tools, $playbook->prompt->name . ' names a tool it does not require' );
+			}
+		}
+	}
+
 	/**
 	 * Nothing outside the four original groups may ship enabled, so a store
 	 * that upgrades into this release exposes exactly what it exposed before

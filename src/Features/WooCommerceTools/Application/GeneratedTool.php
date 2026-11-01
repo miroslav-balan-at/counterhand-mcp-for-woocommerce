@@ -6,6 +6,7 @@ namespace Counterhand\Features\WooCommerceTools\Application;
 
 use Counterhand\Features\McpServer\ChangeKind;
 use Counterhand\Features\McpServer\ChangePlan;
+use Counterhand\Features\McpServer\OutputSchemaToolInterface;
 use Counterhand\Features\McpServer\ReversibleToolInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
@@ -37,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
  * answer an agent actually reads — the argument names, their types, enums,
  * defaults and descriptions — is asked of the running WooCommerce.
  */
-final readonly class GeneratedTool implements ToolInterface, ReversibleToolInterface {
+final readonly class GeneratedTool implements ToolInterface, ReversibleToolInterface, OutputSchemaToolInterface {
 
 	/**
 	 * Never read for a preview or kept in a history, even though the routes accept them.
@@ -150,6 +151,34 @@ final readonly class GeneratedTool implements ToolInterface, ReversibleToolInter
 		$result = $this->gateway->dispatch( $this->route(), $this->method(), $this->params( $arguments ), $body );
 
 		return $this->shape( $result );
+	}
+
+	/**
+	 * Reads only, and only the envelope. WooCommerce's own schemas say a date is a string
+	 * when it can be null, and a client may reject what does not conform, so saying more
+	 * about a row would break calls that are right. A write's result varies by outcome.
+	 */
+	public function output_schema(): ?array {
+		if ( ToolIntent::Read !== $this->operation->operation->intent() ) {
+			return null;
+		}
+
+		if ( ! $this->operation->operation->returns_collection() ) {
+			return [
+				'type'       => 'object',
+				'properties' => [ $this->resource->singular => new \stdClass() ],
+				'required'   => [ $this->resource->singular ],
+			];
+		}
+
+		return [
+			'type'       => 'object',
+			'properties' => [
+				$this->resource->plural => [ 'type' => 'array' ],
+				'count'                 => [ 'type' => 'integer' ],
+			],
+			'required'   => [ $this->resource->plural, 'count' ],
+		];
 	}
 
 	public function is_reversible(): bool {

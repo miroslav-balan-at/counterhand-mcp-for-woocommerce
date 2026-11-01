@@ -91,7 +91,7 @@ test.describe( 'MCP protocol (2026-07-28, stateless)', () => {
 	test( 'a method the server does not serve is a 404, and so is initialize', async ( { baseURL } ) => {
 		const client = await anonymousContext( baseURL as string );
 
-		for ( const method of [ 'prompts/list', 'initialize' ] ) {
+		for ( const method of [ 'no/such/method', 'initialize' ] ) {
 			const response = await statelessCall( client, endpoint, accessToken, method );
 
 			expect( response.status(), method ).toBe( 404 );
@@ -103,7 +103,7 @@ test.describe( 'MCP protocol (2026-07-28, stateless)', () => {
 	test( 'the legacy era keeps HTTP 200 for its errors, so 2025-era clients never mistake it for a missing server', async ( { baseURL } ) => {
 		const client = await anonymousContext( baseURL as string );
 
-		const response = await mcpCall( client, endpoint, accessToken, 'prompts/list' );
+		const response = await mcpCall( client, endpoint, accessToken, 'no/such/method' );
 
 		expect( response.status() ).toBe( 200 );
 		expect( ( await response.json() ).error.code ).toBe( -32601 );

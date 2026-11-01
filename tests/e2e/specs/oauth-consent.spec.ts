@@ -105,31 +105,39 @@ test.describe( 'OAuth consent', () => {
 
 			return authorize.toString();
 		};
-		// Nothing listens on the loopback port, so the navigation fails; its request is what a client would receive.
-		const callbacks: URL[] = [];
-		page.on( 'request', ( request ) => {
-			if ( request.url().startsWith( REDIRECT_URI ) ) {
-				callbacks.push( new URL( request.url() ) );
-			}
-		} );
+		// Nothing listens on the loopback port, so the navigation fails; its request is what a
+		// client would receive. A page each, because a failed navigation's error page can still
+		// arrive and interrupt the next one.
+		const visit = async ( address: string ) => {
+			const visitor = await page.context().newPage();
+			const callbacks: URL[] = [];
+			visitor.on( 'request', ( request ) => {
+				if ( request.url().startsWith( REDIRECT_URI ) ) {
+					callbacks.push( new URL( request.url() ) );
+				}
+			} );
+			await visitor.goto( address ).catch( () => null );
+
+			return { visitor, callbacks };
+		};
 
 		for ( const [ change, error ] of [
 			[ { response_type: 'token' }, 'unsupported_response_type' ],
 			[ { code_challenge_method: 'plain' }, 'invalid_request' ],
 			[ { resource: 'https://other.example.test/mcp' }, 'invalid_target' ],
 		] as const ) {
-			await page.goto( url( change ) ).catch( () => null );
-			// The browser's error page would otherwise interrupt the next navigation.
-			await page.waitForURL( /^chrome-error:/ );
+			const { visitor, callbacks } = await visit( url( change ) );
 			const callback = callbacks.pop() as URL;
 			expect( callback.searchParams.get( 'error' ), JSON.stringify( change ) ).toBe( error );
 			expect( callback.searchParams.get( 'state' ) ).toBe( 'kept-state' );
 			expect( callback.searchParams.get( 'iss' ) ).toBe( discovery.issuer );
+			await visitor.close();
 		}
 
-		await page.goto( url( { response_type: 'token', redirect_uri: 'https://attacker.example.test/callback' } ) );
-		await expect( page.getByRole( 'heading', { name: 'Incomplete request' } ) ).toBeVisible();
+		const { visitor, callbacks } = await visit( url( { response_type: 'token', redirect_uri: 'https://attacker.example.test/callback' } ) );
+		await expect( visitor.getByRole( 'heading', { name: 'Incomplete request' } ) ).toBeVisible();
 		expect( callbacks ).toEqual( [] );
+		await visitor.close();
 		await client.dispose();
 	} );
 

@@ -40,4 +40,7 @@ interface ScopeGroupInterface {
 	public function is_always_logged(): bool;
 
 	public function in_chat_by_default(): bool;
+
+	/** Whether a write here can be recorded and undone. */
+	public function keeps_changes(): bool;
 }

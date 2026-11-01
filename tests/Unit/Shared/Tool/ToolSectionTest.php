@@ -88,9 +88,9 @@ final class ToolSectionTest extends TestCase {
 	 * pre-checked. Nothing routine should be hiding in there — a group that
 	 * lands here has to be one a shop assistant would have no business opening.
 	 */
-	public function test_advanced_holds_only_store_configuration(): void {
+	public function test_advanced_holds_only_what_must_never_be_pre_ticked(): void {
 		$this->assertSame(
-			[ ToolGroup::Gateways, ToolGroup::Settings, ToolGroup::System ],
+			[ ToolGroup::Gateways, ToolGroup::Settings, ToolGroup::System, ToolGroup::Changes ],
 			ToolSection::Advanced->groups()
 		);
 	}

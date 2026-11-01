@@ -47,6 +47,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 	) {}
 
 	public function register(): void {
+		add_filter( ToolDispatcherInterface::SERVES_TOOLS_FILTER, [ $this, 'serves_tools_here' ] );
 		add_action( 'wp_ajax_counterhand_chat_send', [ $this, 'handle_send' ] );
 		add_action( 'wp_ajax_counterhand_chat_resume', [ $this, 'handle_resume' ] );
 		add_action( 'admin_post_' . self::TOOLS_NONCE, [ $this, 'handle_save_tools' ] );
@@ -84,6 +85,12 @@ final readonly class PlaygroundFeature implements FeatureInterface, SettingsTabI
 		$core_connectors    = $this->model_connect->connectors();
 
 		include __DIR__ . '/views/tab-chat.php';
+	}
+
+	public function serves_tools_here( mixed $serves ): bool {
+		$action = $_REQUEST['action'] ?? ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput, WordPress.Security.NonceVerification -- compared against fixed names; the handlers verify the nonce.
+
+		return true === $serves || ( wp_doing_ajax() && in_array( $action, [ 'counterhand_chat_send', 'counterhand_chat_resume' ], true ) );
 	}
 
 	public function handle_send(): void {

@@ -1,7 +1,11 @@
+import { existsSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { listToolNames, mcpCall } from '../support/mcp';
 import { anonymousContext, connect } from '../support/oauth';
-import { adminStatePath, patchSettings, shopManagerStatePath, wp } from '../support/store';
+import { adminStatePath, patchOption, patchSettings, shopManagerStatePath, stateDirectory, wp } from '../support/store';
+
+const hasPaidPlugin = ( slug: string ) => existsSync( join( stateDirectory, 'wordpress', 'wp-content', 'plugins', slug ) );
 
 const CONTACT_FORM_READ = 'integration:contact-form-7:read';
 const CONTACT_FORM_WRITE = 'integration:contact-form-7:write';
@@ -689,5 +693,778 @@ test.describe( 'Germanized with the real plugin', () => {
 			wp( 'plugin', 'activate', 'woocommerce-germanized' );
 		}
 		await client.dispose();
+	} );
+} );
+
+/*
+ * WooCommerce Multilingual is free, so a fresh store has the current release. WPML is
+ * paid and is not, so everything below that needs both runs only on a store given a
+ * licensed copy (COUNTERHAND_E2E_PAID_PLUGINS, see the README). These two hold what is
+ * left to the daily run to the release: the hooks we rely on are still there, and the
+ * tools stay away while it runs without WPML, where it ignores lang.
+ */
+test.describe( 'WooCommerce Multilingual without WPML', () => {
+	test.beforeAll( () => {
+		wp( 'plugin', 'activate', 'woocommerce-multilingual' );
+	} );
+
+	test.afterAll( () => {
+		wp( 'plugin', 'deactivate', 'woocommerce-multilingual' );
+	} );
+
+	test( 'the current release still answers what these tools rely on', () => {
+		const source = ( file: string ) => wp( 'eval', `echo file_get_contents( WP_PLUGIN_DIR . '/woocommerce-multilingual/classes/Rest/${ file }' );` );
+
+		expect( source( 'Functions.php' ) ).toContain( "'woocommerce_rest_is_request_to_rest_api'" );
+		expect( source( 'Wrapper/Products/Products.php' ) ).toContain( "'translation_of'" );
+		expect( source( 'Wrapper/ProductTerms.php' ) ).toContain( "'translation_of'" );
+		expect( source( 'Hooks.php' ) ).toContain( 'woocommerce_rest_prepare_{$type}_object' );
+	} );
+
+	test( 'no tool is offered, because it would ignore lang and answer success', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { integration_wpml_read: true, integration_wpml_write: true } );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		await page.goto( '/wp-admin/' );
+		const { tokens, discovery } = await connect( page, baseURL as string, [ 'products:read' ] );
+		await page.close();
+		const names = await listToolNames( await anonymousContext( baseURL as string ), discovery.resource, tokens.access_token );
+		restore();
+
+		expect( names ).toContain( 'list_products' );
+		expect( names ).not.toContain( 'get_product_translations' );
+	} );
+} );
+
+test.describe( 'WPML with the real plugins', () => {
+	const READ = 'integration:wpml:read';
+	const WRITE = 'integration:wpml:write';
+
+	let restore: () => void;
+	let original: number;
+	let translated: number;
+	let untranslated: number;
+	let variable: number;
+
+	const installed = hasPaidPlugin( 'sitepress-multilingual-cms' );
+
+	// In a file, because devbox hands arguments to a shell, which would expand $wpdb.
+	const evaluate = ( code: string ) => {
+		const script = join( stateDirectory, 'e2e-wpml-eval.php' );
+		writeFileSync( script, `<?php ${ code }` );
+
+		return wp( 'eval-file', script );
+	};
+	const language = ( id: number ) => evaluate( `global $sitepress; echo $sitepress->get_language_for_element( ${ id }, 'post_product' );` );
+
+	test.beforeAll( () => {
+		if ( ! installed ) {
+			return;
+		}
+
+		wp( 'plugin', 'activate', 'sitepress-multilingual-cms', 'woocommerce-multilingual', 'wpml-string-translation' );
+		evaluate( `
+			global $sitepress, $wpdb, $woocommerce_wpml;
+			$wpdb->query( "UPDATE {$wpdb->prefix}icl_languages SET active = 0" );
+			$wpdb->query( "UPDATE {$wpdb->prefix}icl_languages SET active = 1 WHERE code IN ('de','en')" );
+			$sitepress->set_setting( 'default_language', 'en' );
+			$sitepress->set_setting( 'active_languages', [ 'de', 'en' ] );
+			$sitepress->set_setting( 'setup_complete', 1 );
+			$sync = (array) $sitepress->get_setting( 'custom_posts_sync_option' );
+			$sync['product'] = 1; $sync['product_variation'] = 1;
+			$sitepress->set_setting( 'custom_posts_sync_option', $sync );
+			$tax = (array) $sitepress->get_setting( 'taxonomies_sync_option' );
+			$tax['product_cat'] = 1; $tax['product_tag'] = 1;
+			$sitepress->set_setting( 'taxonomies_sync_option', $tax );
+			$sitepress->save_settings();
+			$settings = $woocommerce_wpml->get_settings();
+			$settings['set_up_wizard_run'] = 1;
+			$settings['set_up_wizard_splash'] = 1;
+			$settings['enable_multi_currency'] = 2;
+			$settings['currency_options']['EUR'] = [ 'rate' => 0.9, 'position' => 'left', 'thousand_sep' => ',', 'decimal_sep' => '.', 'num_decimals' => 2, 'rounding' => 'disabled', 'rounding_increment' => 1, 'auto_subtract' => 0, 'languages' => [ 'de' => 1, 'en' => 1 ] ];
+			$woocommerce_wpml->update_settings( $settings );
+		` );
+		restore = patchSettings( { integration_wpml_read: true, integration_wpml_write: true, products_read: true, products_write: true } );
+
+		const [ first, second, third, fourth ] = JSON.parse( evaluate( `
+			global $sitepress;
+			$make = static function ( string $name, string $lang, $trid = null, $source = null, string $class = 'WC_Product_Simple' ) use ( $sitepress ) {
+				$product = new $class();
+				$product->set_name( $name );
+				$product->set_regular_price( '10' );
+				$product->set_status( 'publish' );
+				$id = $product->save();
+				$sitepress->set_element_language_details( $id, 'post_product', $trid, $lang, $source );
+				return $id;
+			};
+			$original = $make( 'E2E WPML EN', 'en' );
+			$translation = $make( 'E2E WPML DE', 'de', $sitepress->get_element_trid( $original, 'post_product' ), 'en' );
+			$solo = $make( 'E2E WPML only EN', 'en' );
+			$variable = $make( 'E2E WPML variable', 'en', null, null, 'WC_Product_Variable' );
+			echo wp_json_encode( [ $original, $translation, $solo, $variable ] );
+		` ) ) as number[];
+		original = first;
+		translated = second;
+		untranslated = third;
+		variable = fourth;
+	} );
+
+	test.afterAll( () => {
+		if ( ! installed ) {
+			return;
+		}
+
+		evaluate( `
+			global $wpdb;
+			foreach ( $wpdb->get_col( "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'product' AND post_title LIKE 'E2E WPML%'" ) as $id ) {
+				wp_delete_post( (int) $id, true );
+			}
+			foreach ( get_terms( [ 'taxonomy' => 'product_cat', 'hide_empty' => false, 'search' => 'E2E WPML', 'suppress_filter' => true ] ) as $term ) {
+				wp_delete_term( $term->term_id, 'product_cat' );
+			}
+		` );
+		restore();
+		wp( 'plugin', 'deactivate', 'wpml-string-translation', 'woocommerce-multilingual', 'sitepress-multilingual-cms' );
+	} );
+
+	async function caller( browser: import('@playwright/test').Browser, baseURL: string, scopes: string[] ) {
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		const { tokens, discovery } = await connect( page, baseURL, scopes );
+		await page.close();
+		const client = await anonymousContext( baseURL );
+
+		return {
+			names: () => listToolNames( client, discovery.resource, tokens.access_token ),
+			call: async ( name: string, args: Record< string, unknown > ) => ( await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name, arguments: args } ) ).json() ).result,
+		};
+	}
+
+	test.beforeEach( () => {
+		test.skip( ! installed, 'WPML is paid: set COUNTERHAND_E2E_PAID_PLUGINS to run these' );
+	} );
+
+	test( 'a price changed through update_product reaches the translation', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
+
+		await call( 'update_product', { id: original, regular_price: '77' } );
+
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '77' );
+	} );
+
+	test( 'so does one made through the REST fallback', async ( { browser, baseURL } ) => {
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		const { tokens } = await connect( page, baseURL as string, [ 'products:read', 'products:write' ] );
+		await page.close();
+		const client = await anonymousContext( baseURL as string );
+
+		const reply = await mcpCall( client, new URL( '/wp-json/counterhand/v1/mcp', baseURL ).href, tokens.access_token, 'tools/call', { name: 'update_product', arguments: { id: original, regular_price: '78' } } );
+
+		expect( reply.status(), 'WooCommerce\'s authentication must not take this for its own' ).toBe( 200 );
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '78' );
+	} );
+
+	test( 'and one made in the admin chat', async ( { browser, baseURL } ) => {
+		const restoreChat = patchOption( 'counterhand_chat', { provider: 'e2e-scripted', model: 'e2e-model' } );
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
+		await page.locator( '#counterhand-chat-input' ).fill( `set product ${ original } to 79` );
+		await page.locator( '#counterhand-chat-send' ).click();
+		await expect( page.locator( '#counterhand-chat-log' ) ).toContainText( 'E2E model read the tool result.' );
+		await page.close();
+		restoreChat();
+
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '79' );
+	} );
+
+	test( 'a translation is listed by language, created as a draft and linked', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		const inEnglish = ( await call( 'get_product_translations', { search: 'E2E WPML' } ) ).structuredContent.products;
+		expect( inEnglish.map( ( row: { id: number } ) => row.id ) ).toContain( untranslated );
+		expect( inEnglish.map( ( row: { id: number } ) => row.id ), 'the default language only' ).not.toContain( translated );
+		const missing = inEnglish.find( ( row: { id: number } ) => row.id === untranslated );
+		expect( missing.lang ).toBe( 'en' );
+		expect( Object.keys( missing.translations ) ).not.toContain( 'de' );
+
+		const inGerman = ( await call( 'get_product_translations', { search: 'E2E WPML', lang: 'de' } ) ).structuredContent.products;
+		expect( inGerman.map( ( row: { id: number } ) => row.id ) ).toEqual( [ translated ] );
+
+		const created = ( await call( 'create_product_translation', { translation_of: untranslated, lang: 'de', name: 'E2E WPML only DE', description: 'Auf Deutsch<script>alert(1)</script>' } ) ).structuredContent.product;
+		expect( created.status ).toBe( 'draft' );
+		expect( created.lang ).toBe( 'de' );
+		expect( created.translations.en ).toBe( String( untranslated ) );
+		expect( created.description, 'a token stores no script' ).not.toContain( '<script' );
+		expect( language( created.id ) ).toBe( 'de' );
+		expect( evaluate( `echo get_post_meta( ${ created.id }, '_regular_price', true );` ), 'the price comes from the original' ).toBe( '10' );
+
+		const again = await call( 'create_product_translation', { translation_of: untranslated, lang: 'de', name: 'E2E WPML second' } );
+		expect( again.isError, 'a second would orphan the first' ).toBe( true );
+
+		const updated = ( await call( 'update_product_translation', { id: created.id, name: 'E2E WPML renamed' } ) ).structuredContent.product;
+		expect( updated.name ).toBe( 'E2E WPML renamed' );
+		expect( language( created.id ) ).toBe( 'de' );
+		expect( evaluate( `echo get_the_title( ${ untranslated } );` ), 'the original keeps its text' ).toBe( 'E2E WPML only EN' );
+
+		const unconfirmed = await call( 'publish_product_translation', { id: created.id, confirm: false } );
+		expect( unconfirmed.isError ).toBe( true );
+		expect( evaluate( `echo get_post_status( ${ created.id } );` ) ).toBe( 'draft' );
+		await call( 'publish_product_translation', { id: created.id, confirm: true } );
+		expect( evaluate( `echo get_post_status( ${ created.id } );` ) ).toBe( 'publish' );
+	} );
+
+	test( 'a translation of a variable product is variable too', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		const created = ( await call( 'create_product_translation', { translation_of: variable, lang: 'de', name: 'E2E WPML variable DE' } ) ).structuredContent.product;
+
+		expect( evaluate( `echo wc_get_product( ${ created.id } )->get_type();` ) ).toBe( 'variable' );
+	} );
+
+	test( 'an original cannot be changed or published, and a price cannot be sent', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const before = evaluate( `echo get_the_title( ${ original } );` );
+
+		expect( ( await call( 'update_product_translation', { id: original, name: 'E2E WPML hijacked' } ) ).isError ).toBe( true );
+		expect( ( await call( 'publish_product_translation', { id: original, confirm: true } ) ).isError ).toBe( true );
+		expect( evaluate( `echo get_the_title( ${ original } );` ) ).toBe( before );
+
+		await call( 'update_product_translation', { id: translated, regular_price: '1', status: 'draft' } );
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ), 'dropped, because the tool is closed' ).not.toBe( '1' );
+		expect( evaluate( `echo get_post_status( ${ translated } );` ) ).toBe( 'publish' );
+	} );
+
+	test( 'a category translation is linked, and one with no language is refused before anything is saved', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		const source = Number( evaluate( `
+			global $sitepress;
+			$term = wp_insert_term( 'E2E WPML Category ' . wp_rand(), 'product_cat' );
+			$sitepress->set_element_language_details( $term['term_taxonomy_id'], 'tax_product_cat', null, 'en' );
+			echo $term['term_id'];
+		` ) );
+
+		const created = ( await call( 'create_product_category_translation', { translation_of: source, lang: 'de', name: `E2E WPML Kategorie ${ Date.now() }` } ) ).structuredContent[ 'product category' ];
+		expect( created.lang ).toBe( 'de' );
+		expect( Number( created.translations.en ) ).toBe( source );
+
+		expect( ( await call( 'create_product_category_translation', { translation_of: source, lang: 'de', name: 'E2E WPML second' } ) ).isError ).toBe( true );
+
+		const renamed = `E2E WPML Renamed ${ Date.now() }`;
+		expect( ( await call( 'update_product_category_translation', { id: created.id, name: renamed } ) ).structuredContent[ 'product category' ].name ).toBe( renamed );
+		expect( ( await call( 'update_product_category_translation', { id: source, name: 'E2E WPML hijacked' } ) ).isError ).toBe( true );
+
+		const unrecorded = Number( evaluate( `
+			global $wpdb;
+			$term = wp_insert_term( 'E2E WPML Unrecorded ' . wp_rand(), 'product_cat' );
+			$wpdb->delete( $wpdb->prefix . 'icl_translations', [ 'element_type' => 'tax_product_cat', 'element_id' => $term['term_taxonomy_id'] ] );
+			echo $term['term_id'];
+		` ) );
+		const before = evaluate( `echo wp_count_terms( [ 'taxonomy' => 'product_cat', 'hide_empty' => false, 'suppress_filter' => true ] );` );
+		expect( ( await call( 'create_product_category_translation', { translation_of: unrecorded, lang: 'de', name: 'E2E WPML orphan' } ) ).isError ).toBe( true );
+		expect( evaluate( `echo wp_count_terms( [ 'taxonomy' => 'product_cat', 'hide_empty' => false, 'suppress_filter' => true ] );` ) ).toBe( before );
+	} );
+
+	test( 'a translated variable product gets its variations, and only their text can be changed', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const ids = JSON.parse( evaluate( `
+			$product = new WC_Product_Variable();
+			$product->set_name( 'E2E WPML with variation' );
+			$product->set_status( 'publish' );
+			$id = $product->save();
+			global $sitepress;
+			$sitepress->set_element_language_details( $id, 'post_product', null, 'en' );
+			$variation = new WC_Product_Variation();
+			$variation->set_parent_id( $id );
+			$variation->set_regular_price( '9' );
+			$variation->set_description( 'In English' );
+			$variation_id = $variation->save();
+			$sitepress->set_element_language_details( $variation_id, 'post_product_variation', null, 'en' );
+			echo wp_json_encode( [ $id, $variation_id ] );
+		` ) ) as number[];
+
+		const created = ( await call( 'create_product_translation', { translation_of: ids[ 0 ], lang: 'de', name: 'E2E WPML mit Variante' } ) ).structuredContent.product;
+		const listed = ( await call( 'get_product_variation_translations', { product_id: created.id, lang: 'de' } ) ).structuredContent.variations;
+		expect( listed ).toHaveLength( 1 );
+		expect( listed[ 0 ].lang ).toBe( 'de' );
+
+		const updated = ( await call( 'update_product_variation_translation', { product_id: created.id, id: listed[ 0 ].id, description: 'Auf Deutsch' } ) ).structuredContent[ 'product variation' ];
+		expect( updated.description ).toContain( 'Auf Deutsch' );
+		expect( evaluate( `echo get_post_meta( ${ ids[ 1 ] }, '_variation_description', true );` ), 'the original keeps its text' ).toBe( 'In English' );
+
+		expect( ( await call( 'update_product_variation_translation', { product_id: ids[ 0 ], id: ids[ 1 ], description: 'hijacked' } ) ).isError ).toBe( true );
+	} );
+
+	test( 'an attribute term translation is linked, and a term in the default language is refused', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const attribute = Number( evaluate( `
+			global $wpdb;
+			$id = (int) $wpdb->get_var( "SELECT attribute_id FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name = 'e2ewpml'" );
+			if ( ! $id ) {
+				$id = wc_create_attribute( [ 'name' => 'e2ewpml', 'slug' => 'e2ewpml' ] );
+			}
+			global $sitepress;
+			$sync = (array) $sitepress->get_setting( 'taxonomies_sync_option' );
+			$sync['pa_e2ewpml'] = 1;
+			$sitepress->set_setting( 'taxonomies_sync_option', $sync, true );
+			echo $id;
+		` ) );
+		const source = Number( evaluate( `
+			global $sitepress;
+			register_taxonomy( 'pa_e2ewpml', 'product' );
+			$term = wp_insert_term( 'Red ' . wp_rand(), 'pa_e2ewpml' );
+			$sitepress->set_element_language_details( $term['term_taxonomy_id'], 'tax_pa_e2ewpml', null, 'en' );
+			echo $term['term_id'];
+		` ) );
+
+		const created = ( await call( 'create_attribute_term_translation', { attribute_id: attribute, translation_of: source, lang: 'de', name: `Rot ${ Date.now() }` } ) ).structuredContent[ 'attribute term' ];
+		expect( created.lang ).toBe( 'de' );
+		expect( Number( created.translations.en ) ).toBe( source );
+
+		expect( ( await call( 'update_attribute_term_translation', { attribute_id: attribute, id: source, name: 'hijacked' } ) ).isError ).toBe( true );
+		expect( ( await call( 'create_attribute_term_translation', { attribute_id: attribute, translation_of: source, lang: 'de', name: 'second' } ) ).isError, 'a second would orphan the first' ).toBe( true );
+	} );
+
+	test( 'a string is listed and translated, and payment settings stay out of reach', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const stamp = Date.now();
+		const [ title, bank, gateway ] = JSON.parse( evaluate( `
+			global $wpdb;
+			$title = icl_register_string( 'woocommerce', 'e2e_title_${ stamp }', 'E2E Title ${ stamp }' );
+			$bank = icl_register_string( 'admin_texts_woocommerce_bacs_accounts', 'e2e_iban_${ stamp }', 'AT00 E2E ${ stamp }' );
+			$gateway = icl_register_string( 'admin_texts_woocommerce_gateways', 'e2e_gateway_${ stamp }', 'E2E Gateway ${ stamp }' );
+			echo wp_json_encode( [ $title, $bank, $gateway ] );
+		` ) ) as number[];
+
+		const missing = ( await call( 'get_translatable_strings', { language: 'de', search: `${ stamp }`, only_missing: true } ) ).structuredContent.strings;
+		expect( missing.map( ( text: { id: number } ) => text.id ), 'only what is reachable' ).toEqual( [ title ] );
+
+		const unconfirmed = await call( 'set_string_translation', { id: title, language: 'de', value: 'E2E Titel', confirm: false } );
+		expect( unconfirmed.isError ).toBe( true );
+
+		await call( 'set_string_translation', { id: title, language: 'de', value: 'E2E Titel<script>alert(1)</script>', confirm: true } );
+		const translated = evaluate( `echo apply_filters( 'wpml_translate_single_string', 'E2E Title ${ stamp }', 'woocommerce', 'e2e_title_${ stamp }', 'de' );` );
+		expect( translated ).toContain( 'E2E Titel' );
+		expect( translated, 'a token stores no script' ).not.toContain( '<script' );
+
+		expect( ( await call( 'get_translatable_strings', { language: 'de', search: `${ stamp }`, only_missing: true } ) ).structuredContent.strings ).toEqual( [] );
+
+		for ( const id of [ bank, gateway ] ) {
+			expect( ( await call( 'set_string_translation', { id, language: 'de', value: 'AT99 ATTACKER', confirm: true } ) ).isError, 'money would go elsewhere' ).toBe( true );
+		}
+		expect( ( await call( 'set_string_translation', { id: title, language: 'fr', value: 'x', confirm: true } ) ).isError, 'not an active language' ).toBe( true );
+	} );
+
+	test( 'a translated text field is set, and what is not text cannot be', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		evaluate( `update_post_meta( ${ original }, '_purchase_note', 'Thanks for buying' ); update_post_meta( ${ original }, '_downloadable_files', [ 'a' => [ 'file' => 'https://example.test/real.zip' ] ] ); update_post_meta( ${ translated }, '_purchase_note', '' );` );
+
+		const fields = ( await call( 'get_product_translation_fields', { id: translated } ) ).structuredContent.fields;
+		const note = fields.find( ( field: { key: string } ) => field.key === '_purchase_note' );
+		expect( note ).toEqual( { key: '_purchase_note', original: 'Thanks for buying', translation: '' } );
+
+		await call( 'set_product_translation_field', { id: translated, key: '_purchase_note', value: 'Danke<script>alert(1)</script>' } );
+		const stored = evaluate( `echo get_post_meta( ${ translated }, '_purchase_note', true );` );
+		expect( stored ).toContain( 'Danke' );
+		expect( stored ).not.toContain( '<script' );
+		expect( evaluate( `echo get_post_meta( ${ original }, '_purchase_note', true );` ) ).toBe( 'Thanks for buying' );
+
+		for ( const key of [ '_downloadable_files', '_product_url', '_price', '_regular_price', '_yoast_wpseo_title', 'direct_debit_iban', 'wp_capabilities' ] ) {
+			expect( ( await call( 'set_product_translation_field', { id: translated, key, value: 'x' } ) ).isError, key ).toBe( true );
+		}
+		expect( ( await call( 'set_product_translation_field', { id: original, key: '_purchase_note', value: 'hijacked' } ) ).isError, 'an original' ).toBe( true );
+		expect( ( await call( 'get_product_translation_fields', { id: original } ) ).isError, 'an original' ).toBe( true );
+	} );
+
+	test( 'a product\'s own currency prices are set and kept, and what the route would ignore is refused', async ( { browser, baseURL } ) => {
+		const { call, names } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
+		expect( await names() ).toContain( 'set_product_currency_prices' );
+
+		const before = ( await call( 'get_product_currency_prices', { id: untranslated } ) ).structuredContent;
+		expect( before.own_prices ).toBe( false );
+
+		const set = ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33', sale_price: '30' } } } ) ).structuredContent;
+		expect( set.own_prices ).toBe( true );
+		expect( set.prices.EUR ).toEqual( { regular_price: '33', sale_price: '30' } );
+		expect( evaluate( `echo get_post_meta( ${ untranslated }, '_price_EUR', true );` ) ).toBe( '30' );
+
+		await call( 'update_product', { id: untranslated, name: 'E2E WPML only EN' } );
+		expect( ( await call( 'get_product_currency_prices', { id: untranslated } ) ).structuredContent.prices.EUR.regular_price, 'kept by a write that omits it' ).toBe( '33' );
+
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { XXX: { regular_price: '1' } } } ) ).isError, 'not set up' ).toBe( true );
+		expect( ( await call( 'set_product_currency_prices', { id: variable, prices: { EUR: { regular_price: '1' } } } ) ).isError, 'variable' ).toBe( true );
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: 'free' } } } ) ).isError, 'not a number' ).toBe( true );
+	} );
+
+	test( 'a translation of an unpublished original cannot go on sale', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const draft = Number( evaluate( `
+			global $sitepress;
+			$product = new WC_Product_Simple();
+			$product->set_name( 'E2E WPML unreleased' );
+			$product->set_status( 'draft' );
+			$id = $product->save();
+			$sitepress->set_element_language_details( $id, 'post_product', null, 'en' );
+			echo $id;
+		` ) );
+		const created = ( await call( 'create_product_translation', { translation_of: draft, lang: 'de', name: 'E2E WPML unveröffentlicht' } ) ).structuredContent.product;
+
+		expect( ( await call( 'publish_product_translation', { id: created.id, confirm: true } ) ).isError ).toBe( true );
+		expect( evaluate( `echo get_post_status( ${ created.id } );` ) ).toBe( 'draft' );
+	} );
+
+	test( 'all languages are not offered, because that would leak into the rest of a chat turn', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+		expect( ( await call( 'get_product_translations', { lang: 'all' } ) ).isError ).toBe( true );
+		expect( ( await call( 'get_product_translations', { lang: 'xx' } ) ).isError ).toBe( true );
+	} );
+
+	test( 'a string translation that could break a page or lose an order number is refused', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const stamp = Date.now();
+		const id = Number( evaluate( `echo icl_register_string( 'woocommerce', 'e2e_rules_${ stamp }', 'Order {order_number} for %s' );` ) );
+
+		for ( const value of [ '', '   ', 'Bestellung', 'Bestellung {order_number}', 'Bestellung {order_number} für %s %s', '50% Rabatt {order_number} %s' ] ) {
+			expect( ( await call( 'set_string_translation', { id, language: 'de', value, confirm: true } ) ).isError, JSON.stringify( value ) ).toBe( true );
+		}
+
+		expect( ( await call( 'set_string_translation', { id, language: 'de', value: 'Bestellung {order_number} für %s', confirm: true } ) ).isError ).toBeFalsy();
+	} );
+
+	test( 'an undone price reaches the translation too', async ( { browser, baseURL } ) => {
+		const undo = patchSettings( { changes_read: true, changes_write: true } );
+		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write', 'changes:write' ] );
+		const before = evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` );
+
+		const changed = ( await call( 'update_product', { id: original, regular_price: '123' } ) ).structuredContent;
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '123' );
+		await call( 'undo_change', { change_id: changed.change_id, confirm: true } );
+		undo();
+
+		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( before );
+	} );
+
+	test( 'a currency with no price of its own still follows the exchange rate', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
+
+		await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33' } } } );
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '-1' } } } ) ).isError ).toBe( true );
+	} );
+
+	test( 'a WPML grant reaches nothing else', async ( { browser, baseURL } ) => {
+		const { names } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+		const offered = await names();
+
+		expect( offered ).toContain( 'create_product_translation' );
+		expect( offered ).not.toContain( 'update_product' );
+		expect( offered ).not.toContain( 'list_products' );
+		expect( offered, 'prices sit under products' ).not.toContain( 'set_product_currency_prices' );
+	} );
+} );
+
+/* Paid, so these run only on a store given a licensed copy. See the README. */
+test.describe( 'Paid plugins', () => {
+	async function caller( browser: import('@playwright/test').Browser, baseURL: string, scopes: string[] ) {
+		const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+		const { tokens, discovery } = await connect( page, baseURL, scopes );
+		await page.close();
+		const client = await anonymousContext( baseURL );
+
+		return {
+			names: () => listToolNames( client, discovery.resource, tokens.access_token ),
+			call: async ( name: string, args: Record< string, unknown > ) => {
+				const reply = await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name, arguments: args } ) ).json();
+				expect( reply.result, JSON.stringify( reply ) ).toBeDefined();
+
+				return reply.result;
+			},
+		};
+	}
+
+	const evaluate = ( code: string ) => {
+		const script = join( stateDirectory, 'e2e-paid-eval.php' );
+		writeFileSync( script, `<?php ${ code }` );
+
+		return wp( 'eval-file', script );
+	};
+
+	// Left behind, a newer product than the fixtures would be what chat.spec lists first.
+	test.afterAll( () => {
+		evaluate( `
+			foreach ( get_posts( [ 'post_type' => 'product', 'post_status' => 'any', 'title' => 'E2E paid', 'numberposts' => -1 ] ) as $product ) {
+				wp_delete_post( $product->ID, true );
+			}
+			foreach ( wc_get_orders( [ 'billing_email' => 'buyer@example.test', 'limit' => -1 ] ) as $order ) {
+				$order->delete( true );
+			}
+			delete_option( 'e2e_paid_product' );
+		` );
+	} );
+
+	const newOrder = () => Number( evaluate( `
+		$product = new WC_Product_Simple();
+		$product->set_name( 'E2E paid' );
+		$product->set_regular_price( '20' );
+		$product->update_meta_data( '_wc_cog_cost', '7.5' );
+		$id = $product->save();
+		$order = wc_create_order( [ 'status' => 'processing' ] );
+		$order->add_product( wc_get_product( $id ), 2 );
+		$order->set_billing_email( 'buyer@example.test' );
+		$order->calculate_totals();
+		$order->save();
+		update_option( 'e2e_paid_product', $id );
+		echo $order->get_id();
+	` ) );
+
+	test.describe( 'Shipment Tracking', () => {
+		const READ = 'integration:woocommerce-shipment-tracking:read';
+		const WRITE = 'integration:woocommerce-shipment-tracking:write';
+		let restore: () => void;
+		let order: number;
+
+		test.beforeAll( () => {
+			if ( ! hasPaidPlugin( 'woocommerce-shipment-tracking' ) ) {
+				return;
+			}
+			wp( 'plugin', 'activate', 'woocommerce-shipment-tracking' );
+			restore = patchSettings( { 'integration_woocommerce-shipment-tracking_read': true, 'integration_woocommerce-shipment-tracking_write': true } );
+			order = newOrder();
+		} );
+
+		test.afterAll( () => {
+			if ( hasPaidPlugin( 'woocommerce-shipment-tracking' ) ) {
+				restore();
+				wp( 'plugin', 'deactivate', 'woocommerce-shipment-tracking' );
+			}
+		} );
+
+		test( 'a tracking number is added and removed, and one that would show nothing is refused', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-shipment-tracking' ), 'paid' );
+			const { call, names } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+			expect( await names(), 'the plugin\'s abilities are not a second way in' ).not.toContain( 'woocommerce-shipment-tracking_list-tracking-items' );
+
+			const unconfirmed = await call( 'add_order_tracking', { order_id: order, tracking_provider: 'dhl', tracking_number: 'E2E1', confirm: false } );
+			expect( unconfirmed.isError ).toBe( true );
+
+			const added = await call( 'add_order_tracking', { order_id: order, tracking_provider: 'dhl', tracking_number: 'E2E1', confirm: true } );
+			expect( added.isError, JSON.stringify( added ) ).toBeFalsy();
+			const stored = ( await call( 'get_order_trackings', { order_id: order } ) ).structuredContent[ 'tracking numbers' ];
+			expect( stored.map( ( row: { tracking_number: string } ) => row.tracking_number ) ).toEqual( [ 'E2E1' ] );
+			expect( stored[ 0 ].tracking_link ).toContain( 'E2E1' );
+
+			expect( ( await call( 'add_order_tracking', { order_id: order, tracking_provider: 'dhl', tracking_number: 'E2E1', confirm: true } ) ).isError, 'customers would see it twice' ).toBe( true );
+
+			for ( const args of [ { tracking_provider: 'no-such' }, { tracking_provider: 'dhl', date_shipped: 'tomorrow' }, { custom_tracking_provider: 'X', custom_tracking_link: 'http://evil.test' }, { custom_tracking_provider: 'X', custom_tracking_link: 'javascript:alert(1)' } ] ) {
+				expect( ( await call( 'add_order_tracking', { order_id: order, tracking_number: 'E2E2', confirm: true, ...args } ) ).isError, JSON.stringify( args ) ).toBe( true );
+			}
+			expect( ( await call( 'get_order_trackings', { order_id: order } ) ).structuredContent[ 'tracking numbers' ] ).toHaveLength( 1 );
+
+			await call( 'delete_order_tracking', { order_id: order, id: stored[ 0 ].tracking_id, confirm: true } );
+			expect( ( await call( 'get_order_trackings', { order_id: order } ) ).structuredContent[ 'tracking numbers' ] ).toEqual( [] );
+		} );
+	} );
+
+	test.describe( 'Cost of Goods', () => {
+		const READ = 'integration:woocommerce-cost-of-goods:read';
+		const WRITE = 'integration:woocommerce-cost-of-goods:write';
+		let restore: () => void;
+		let order: number;
+		let product: number;
+
+		test.beforeAll( () => {
+			if ( ! hasPaidPlugin( 'woocommerce-cost-of-goods' ) ) {
+				return;
+			}
+			wp( 'plugin', 'activate', 'woocommerce-cost-of-goods' );
+			restore = patchSettings( { 'integration_woocommerce-cost-of-goods_read': true, 'integration_woocommerce-cost-of-goods_write': true } );
+			order = newOrder();
+			product = Number( evaluate( `echo get_option( 'e2e_paid_product' );` ) );
+		} );
+
+		test.afterAll( () => {
+			if ( hasPaidPlugin( 'woocommerce-cost-of-goods' ) ) {
+				restore();
+				wp( 'plugin', 'deactivate', 'woocommerce-cost-of-goods' );
+			}
+		} );
+
+		test( 'a cost is read and set without touching the price, and an order shows its profit', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-cost-of-goods' ), 'paid' );
+			const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+
+			const read = ( await call( 'get_product_cost', { id: product } ) ).structuredContent;
+			expect( read.cost ).toBe( '7.5' );
+			expect( read.price ).toBe( '20' );
+
+			const set = ( await call( 'set_product_cost', { id: product, cost: '8.25' } ) ).structuredContent;
+			expect( set.cost ).toBe( '8.25' );
+			expect( set.price, 'the price stays' ).toBe( '20' );
+
+			const earned = ( await call( 'get_order_cost', { id: order } ) ).structuredContent;
+			expect( earned.lines ).toHaveLength( 1 );
+			expect( earned.lines[ 0 ].cost, 'as recorded when it was placed' ).toBe( 15 );
+			expect( earned.profit ).toBe( 25 );
+			expect( JSON.stringify( earned ), 'no customer details' ).not.toContain( 'buyer@example.test' );
+
+			evaluate( `
+				$order = wc_get_order( ${ order } );
+				foreach ( $order->get_items() as $item ) {
+					wc_create_refund( [ 'order_id' => ${ order }, 'amount' => '40', 'line_items' => [ $item->get_id() => [ 'qty' => 2, 'refund_total' => 40 ] ] ] );
+				}
+			` );
+			expect( ( await call( 'get_order_cost', { id: order } ) ).structuredContent.profit, 'a refunded order earned nothing' ).toBe( 0 );
+
+			const noCost = Number( evaluate( `
+				$product = new WC_Product_Simple();
+				$product->set_name( 'E2E paid' );
+				$product->set_regular_price( '20' );
+				$order = wc_create_order( [ 'status' => 'processing' ] );
+				$order->add_product( wc_get_product( $product->save() ), 1 );
+				$order->set_billing_email( 'buyer@example.test' );
+				$order->calculate_totals();
+				$order->save();
+				echo $order->get_id();
+			` ) );
+			const unknown = ( await call( 'get_order_cost', { id: noCost } ) ).structuredContent;
+			expect( unknown.profit, 'an unset cost is not free' ).toBeNull();
+			expect( unknown.profit_not_stated ).toContain( 'no cost' );
+
+			const yen = Number( evaluate( `
+				$order = wc_get_order( ${ order } );
+				$copy = wc_create_order( [ 'status' => 'processing' ] );
+				$copy->set_currency( 'JPY' );
+				$copy->add_product( wc_get_product( ${ product } ), 1 );
+				$copy->set_billing_email( 'buyer@example.test' );
+				$copy->calculate_totals();
+				$copy->save();
+				echo $copy->get_id();
+			` ) );
+			expect( ( await call( 'get_order_cost', { id: yen } ) ).structuredContent.profit, 'yen less dollars is no number' ).toBeNull();
+
+			expect( ( await call( 'set_product_cost', { id: product, cost: '-1' } ) ).isError ).toBe( true );
+			expect( ( await call( 'get_product_cost', { id: 99999999 } ) ).isError ).toBe( true );
+			expect( ( await call( 'get_product_cost', { id: order } ) ).isError, 'an order is no product' ).toBe( true );
+		} );
+
+		test( 'a read grant offers no write and reaches nothing else', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-cost-of-goods' ), 'paid' );
+			const { names } = await caller( browser, baseURL as string, [ READ ] );
+			const offered = await names();
+
+			expect( offered ).toContain( 'get_product_cost' );
+			expect( offered ).not.toContain( 'set_product_cost' );
+			expect( offered ).not.toContain( 'get_order' );
+		} );
+	} );
+
+	test.describe( 'URL Coupons', () => {
+		const READ = 'integration:woocommerce-url-coupons:read';
+		const WRITE = 'integration:woocommerce-url-coupons:write';
+		let restore: () => void;
+		let coupon: number;
+		let page: number;
+
+		test.beforeAll( () => {
+			if ( ! hasPaidPlugin( 'woocommerce-url-coupons' ) ) {
+				return;
+			}
+			wp( 'plugin', 'activate', 'woocommerce-url-coupons' );
+			restore = patchSettings( { 'integration_woocommerce-url-coupons_read': true, 'integration_woocommerce-url-coupons_write': true } );
+			[ coupon, page ] = JSON.parse( evaluate( `
+				$coupon = new WC_Coupon();
+				$coupon->set_code( 'e2e' . wp_rand() );
+				$coupon->set_amount( 5 );
+				echo wp_json_encode( [ $coupon->save(), wc_get_page_id( 'shop' ) ] );
+			` ) ) as number[];
+		} );
+
+		test.afterAll( () => {
+			if ( hasPaidPlugin( 'woocommerce-url-coupons' ) ) {
+				restore();
+				wp( 'plugin', 'deactivate', 'woocommerce-url-coupons' );
+			}
+		} );
+
+		test( 'a link applies a coupon and sends visitors on, and cannot take over a real page', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-url-coupons' ), 'paid' );
+			const { call } = await caller( browser, baseURL as string, [ READ, WRITE ] );
+			const slug = `e2e-deal-${ Date.now() }`;
+
+			expect( ( await call( 'set_coupon_url', { id: coupon, url: slug, redirect_page: page, confirm: false } ) ).isError ).toBe( true );
+
+			const set = await call( 'set_coupon_url', { id: coupon, url: slug, redirect_page: page, confirm: true } );
+			expect( set.isError, JSON.stringify( set ) ).toBeFalsy();
+			const listed = ( await call( 'get_coupon_urls', {} ) ).structuredContent.links;
+			expect( listed.find( ( link: { coupon_id: number } ) => link.coupon_id === coupon ).url ).toBe( slug );
+
+			const visitor = await anonymousContext( baseURL as string );
+			const visit = await visitor.get( `/${ slug }`, { maxRedirects: 0 } );
+			expect( visit.status() ).toBe( 302 );
+			expect( visit.headers().location ).toContain( '/shop' );
+
+			for ( const url of [ 'shop', 'sho', 'checkout', 'checkou', 'product', 'prod', 'product-category', 'wp-admin', 'wp-json', 'mcp', '/leading', 'UPPER', '../up' ] ) {
+				expect( ( await call( 'set_coupon_url', { id: coupon, url, redirect_page: page, confirm: true } ) ).isError, url ).toBe( true );
+			}
+			expect( ( await call( 'set_coupon_url', { id: coupon, url: `${ slug }-2`, redirect_page: 99999999, confirm: true } ) ).isError, 'no such page' ).toBe( true );
+
+			await call( 'set_coupon_url', { id: coupon, url: '', confirm: true } );
+			expect( ( await call( 'get_coupon_urls', {} ) ).structuredContent.links.find( ( link: { coupon_id: number } ) => link.coupon_id === coupon ) ).toBeUndefined();
+		} );
+	} );
+
+	test.describe( 'Germanized Pro invoices', () => {
+		const READ = 'integration:germanized-pro:read';
+		let restore: () => void;
+
+		test.beforeAll( () => {
+			if ( ! hasPaidPlugin( 'woocommerce-germanized-pro' ) ) {
+				return;
+			}
+			wp( 'plugin', 'activate', 'woocommerce-germanized', 'woocommerce-germanized-pro' );
+			wp( 'option', 'update', 'woocommerce_gzdp_invoice_enable', 'yes' );
+			restore = patchSettings( { 'integration_germanized-pro_read': true } );
+		} );
+
+		test.afterAll( () => {
+			if ( hasPaidPlugin( 'woocommerce-germanized-pro' ) ) {
+				restore();
+				wp( 'option', 'delete', 'woocommerce_gzdp_invoice_enable' );
+				wp( 'plugin', 'deactivate', 'woocommerce-germanized-pro', 'woocommerce-germanized' );
+			}
+		} );
+
+		test( 'an invoice search cannot confirm an address', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-germanized-pro' ), 'paid' );
+			const page = await browser.newPage( { baseURL, storageState: adminStatePath } );
+			const { tokens, discovery } = await connect( page, baseURL as string, [ READ ] );
+			await page.close();
+			const tools = ( await ( await mcpCall( await anonymousContext( baseURL as string ), discovery.resource, tokens.access_token, 'tools/list' ) ).json() ).result.tools;
+
+			expect( Object.keys( tools.find( ( tool: { name: string } ) => tool.name === 'get_invoices' ).inputSchema.properties ) ).not.toContain( 'search' );
+		} );
+
+		test( 'invoices are listed with no address or file, and nothing can write', async ( { browser, baseURL } ) => {
+			test.skip( ! hasPaidPlugin( 'woocommerce-germanized-pro' ), 'paid' );
+			const { call, names } = await caller( browser, baseURL as string, [ READ ] );
+
+			expect( await names() ).toEqual( expect.arrayContaining( [ 'get_invoices', 'get_invoice' ] ) );
+
+			const order = newOrder();
+			evaluate( `
+				$sync = \\Vendidero\\StoreaBill\\WooCommerce\\Helper::get_order( wc_get_order( ${ order } ) );
+				$sync->sync_order();
+				$sync->finalize( true );
+			` );
+
+			const listed = ( await call( 'get_invoices', {} ) ).structuredContent.invoices;
+			expect( listed.length, 'the invoice just issued' ).toBeGreaterThan( 0 );
+			const invoice = listed[ 0 ].id;
+
+			const one = ( await call( 'get_invoice', { id: invoice } ) ).structuredContent.invoice;
+			expect( one.total ).toBeDefined();
+			for ( const field of [ 'address', 'path', 'filename', 'relative_path', 'primary_path', 'formatted_address' ] ) {
+				expect( one[ field ], field ).toBeUndefined();
+			}
+		} );
 	} );
 } );

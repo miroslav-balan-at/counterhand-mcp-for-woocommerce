@@ -79,6 +79,9 @@ final readonly class StaticDescriptorCatalog implements DescriptorProvider {
 			new ContactForm7Descriptors(),
 			new AcfDescriptors(),
 			new GermanizedDescriptors(),
+			new WpmlDescriptors(),
+			new ShipmentTrackingDescriptors(),
+			new InvoiceDescriptors(),
 		];
 	}
 }

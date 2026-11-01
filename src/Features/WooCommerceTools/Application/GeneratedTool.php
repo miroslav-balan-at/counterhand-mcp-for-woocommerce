@@ -4,8 +4,14 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Application;
 
+use Counterhand\Features\McpServer\ChangeKind;
+use Counterhand\Features\McpServer\ChangePlan;
+use Counterhand\Features\McpServer\ReversibleToolInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
+use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
+use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
+use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ToolIntent;
@@ -31,7 +37,19 @@ defined( 'ABSPATH' ) || exit;
  * answer an agent actually reads — the argument names, their types, enums,
  * defaults and descriptions — is asked of the running WooCommerce.
  */
-final readonly class GeneratedTool implements ToolInterface {
+final readonly class GeneratedTool implements ToolInterface, ReversibleToolInterface {
+
+	/**
+	 * Never read for a preview or kept in a history, even though the routes accept them.
+	 * Private meta, customers' emails, post passwords, and paid download links: open tools
+	 * accept any route field, and asking for an old value must not become a way to read one.
+	 * And a product's type, because changing it deletes what the old type held, such as
+	 * variations. A call sending one simply has no undo.
+	 */
+	private const NEVER_KEPT = [ 'meta_data', 'email_restrictions', 'reviewer_email', 'used_by', 'password', 'downloads', 'type' ];
+
+	/** Differ from one read to the next with nobody having touched the record: WooCommerce picks related products at random. */
+	private const CHANGES_BY_ITSELF = [ '_links', 'related_ids' ];
 
 	public function __construct(
 		// phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound -- "resource" is what wc/v3 calls the thing a controller exposes; renaming it here would leave the code speaking a different language from the API it wraps.
@@ -42,6 +60,7 @@ final readonly class GeneratedTool implements ToolInterface {
 		private RouteCatalog $catalog,
 		private RoutePermissionProbe $probe,
 		private SchemaProvider $schemas,
+		private MetaKeyPolicy $meta_policy,
 	) {}
 
 	public function name(): string {
@@ -133,6 +152,108 @@ final readonly class GeneratedTool implements ToolInterface {
 		return $this->shape( $result );
 	}
 
+	public function is_reversible(): bool {
+		return $this->resource->group->keeps_changes()
+			&& in_array( $this->operation->operation, [ Operation::UpdateItem, Operation::CreateItem ], true )
+			&& null === $this->operation->body_argument
+			&& null !== $this->resource->item;
+	}
+
+	public function is_undoable(): bool {
+		return $this->is_reversible() && $this->operation->undoable;
+	}
+
+	public function watched_fields(): array {
+		$route = $this->item_route();
+
+		return array_values(
+			array_diff(
+				$this->catalog->find( $route, RestMethod::Put )?->names() ?? [],
+				$route->parameters(),
+				self::NEVER_KEPT
+			)
+		);
+	}
+
+	public function change_plan( array $arguments ): ChangePlan {
+		$this->guard( $arguments );
+
+		$route = $this->route();
+		$path  = array_intersect_key( $arguments, array_flip( $route->parameters() ) );
+
+		return new ChangePlan(
+			Operation::UpdateItem === $this->operation->operation ? ChangeKind::Updated : ChangeKind::Created,
+			$path,
+			array_values( array_map( 'strval', array_keys( array_diff_key( $arguments, $path ) ) ) )
+		);
+	}
+
+	/**
+	 * Raw values, which are what can be sent back: the view context gives a post's title
+	 * after filters, and a price without its stored precision. A create is watched as a
+	 * whole, because a sale or a rename since then must stop an undo deleting it.
+	 */
+	public function read_state( ChangePlan $plan ): array {
+		$created = ChangeKind::Created === $plan->kind;
+		$fields  = array_values( array_intersect( $plan->fields, $this->watched_fields() ) );
+
+		if ( ! $created && [] === $fields ) {
+			return [];
+		}
+
+		$item = $this->gateway->dispatch(
+			$this->item_route(),
+			RestMethod::Get,
+			[
+				...$plan->path,
+				'context' => 'edit',
+				...( $created ? [] : [ '_fields' => implode( ',', $fields ) ] ),
+			]
+		)->item();
+
+		$state = json_decode( (string) wp_json_encode( $item ), true );
+		$state = is_array( $state ) ? $state : [];
+
+		return array_map(
+			static fn ( mixed $value ): mixed => is_array( $value ) && array_key_exists( 'raw', $value ) ? $value['raw'] : $value,
+			$created ? array_diff_key( $state, array_flip( [ ...self::NEVER_KEPT, ...self::CHANGES_BY_ITSELF ] ) ) : array_intersect_key( $state, array_flip( $fields ) )
+		);
+	}
+
+	public function with_result( ChangePlan $plan, array $result ): ?ChangePlan {
+		if ( ChangeKind::Updated === $plan->kind ) {
+			return $plan;
+		}
+
+		$item = $result[ $this->resource->singular ] ?? null;
+		$id   = is_array( $item ) ? ( $item['id'] ?? null ) : null;
+
+		return is_numeric( $id ) ? $plan->naming( (int) $id ) : null;
+	}
+
+	/** WooCommerce skips a null, so an empty field comes back only if it is sent as empty. */
+	public function restore( ChangePlan $plan, array $before ): void {
+		if ( ChangeKind::Updated === $plan->kind ) {
+			$this->execute( [ ...$plan->path, ...array_map( static fn ( mixed $value ): mixed => $value ?? '', $before ) ] );
+
+			return;
+		}
+
+		$this->gateway->dispatch(
+			$this->item_route(),
+			RestMethod::Delete,
+			[
+				...$plan->path,
+				'force' => true,
+			]
+		);
+	}
+
+	/** Checked by is_reversible() for anything that gets this far. */
+	private function item_route(): RestRoute {
+		return $this->resource->item ?? $this->route();
+	}
+
 	/**
 	 * The value of the argument this operation sends as its whole JSON body.
 	 *
@@ -158,6 +279,16 @@ final readonly class GeneratedTool implements ToolInterface {
 		if ( null !== $verdict && ! $verdict->allowed ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw new ToolCallException( $verdict->reason );
+		}
+
+		// Open tools accept meta_data, which would otherwise go past what the meta tools refuse.
+		foreach ( is_array( $arguments['meta_data'] ?? null ) ? $arguments['meta_data'] : [] as $entry ) {
+			$verdict = $this->meta_policy->may_write( (string) ( is_array( $entry ) ? ( $entry['key'] ?? '' ) : '' ), is_array( $entry ) ? ( $entry['value'] ?? null ) : null, $this->resource->meta ?? MetaOwner::Post );
+
+			if ( ! $verdict->allowed ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- as above.
+				throw new ToolCallException( $verdict->reason );
+			}
 		}
 	}
 

@@ -19,6 +19,9 @@ defined( 'ABSPATH' ) || exit;
  */
 interface ToolDispatcherInterface {
 
+	/** Answers whether this request will run tools, for a plugin that sets up per URL. */
+	public const SERVES_TOOLS_FILTER = 'counterhand_serves_tools_on_this_request';
+
 	/** @return list<ToolInterface> */
 	public function visible_for( AuthenticatedAgent $agent ): array;
 
@@ -39,6 +42,18 @@ interface ToolDispatcherInterface {
 	 * @return array<string, int> Group slug => tool count.
 	 */
 	public function tool_counts_by_group(): array;
+
+	/** The tool as this connection can reach it now, or null if it no longer can. */
+	public function reversible_for( AuthenticatedAgent $agent, string $tool_name ): ?ReversibleToolInterface;
+
+	/**
+	 * Puts a change back, in the one place scope and the audit hook run. Its values came
+	 * from the route, in the shape the route returns, so they skip argument validation.
+	 *
+	 * @param array<string, mixed> $before
+	 * @throws \Counterhand\Shared\Exception\ToolCallException When the tool is out of reach, or the store refuses.
+	 */
+	public function restore( AuthenticatedAgent $agent, string $tool_name, ChangePlan $plan, array $before ): void;
 
 	/**
 	 * Never throws: every way a call can go wrong is an outcome, because the

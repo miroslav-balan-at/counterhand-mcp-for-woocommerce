@@ -11,6 +11,7 @@ use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\StoreOverviewTool;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
+use Counterhand\Features\WooCommerceTools\Infrastructure\MultilingualRestMode;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRequestGuards;
 use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
 use Counterhand\Shared\FeatureInterface;
@@ -40,6 +41,10 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 			$this->tool_registry->add( $tool );
 		}
 
+		foreach ( $this->factory->multilingual_tools() as $tool ) {
+			$this->tool_registry->add( $tool );
+		}
+
 		// The one tool with no route behind it, so no descriptor can describe it.
 		$this->tool_registry->add( new StoreOverviewTool() );
 
@@ -49,6 +54,7 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_served_groups' ] );
 
 		( new RestRequestGuards() )->register();
+		( new MultilingualRestMode() )->register();
 	}
 
 	/**

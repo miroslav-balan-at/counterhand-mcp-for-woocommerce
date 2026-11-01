@@ -22,11 +22,20 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 
 	private const CONFIRM_ARGUMENT = 'confirm';
 
+	private const PREVIEW_ARGUMENT = 'preview';
+
+	private const UNDO_UNAVAILABLE = 'undo_unavailable';
+
+	private const NO_UNDO_MESSAGE = 'This change was saved, but it has no undo. Tell the user if they may need to reverse it.';
+
 	private const NESTED_SCHEMAS = [ 'items', 'additionalProperties' ];
 
 	private const SCHEMA_LISTS = [ 'anyOf', 'oneOf', 'allOf' ];
 
-	public function __construct( private ToolRegistry $registry ) {}
+	public function __construct(
+		private ToolRegistry $registry,
+		private ?ChangeJournalInterface $journal = null,
+	) {}
 
 	/** @return list<ToolInterface> */
 	public function visible_for( AuthenticatedAgent $agent ): array {
@@ -114,6 +123,13 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	private function gated_schema( ToolInterface $tool ): array {
 		$schema = $tool->input_schema();
 
+		if ( $tool instanceof ReversibleToolInterface && $tool->is_reversible() ) {
+			$schema['properties'][ self::PREVIEW_ARGUMENT ] = [
+				'type'        => 'boolean',
+				'description' => 'Set true to see what this would change, field by field, without saving anything. Needs no confirmation.',
+			];
+		}
+
 		if ( ! $tool->requires_confirmation() ) {
 			return $schema;
 		}
@@ -136,6 +152,10 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			return DispatchOutcome::rejected( sprintf( 'Unknown tool "%s".', $tool_name ) );
 		}
 
+		if ( self::asks_unsupported_preview( $tool, $arguments ) ) {
+			return $this->failure( $tool, $agent, $arguments, sprintf( '%s has no preview, and nothing was saved. Without the preview argument this call makes the change for real.', $tool->name() ) );
+		}
+
 		$validated = $arguments;
 
 		try {
@@ -148,7 +168,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			// gate inside the dispatch path must hold on its own.
 			$agent->require_scope( $tool->required_scope() );
 
-			$data = $tool->execute( $this->confirmed_arguments( $tool, $validated ) );
+			$data = $tool instanceof ReversibleToolInterface && self::is_preview( $tool, $validated ) ? $this->preview( $tool, $validated ) : $this->run( $tool, $this->confirmed_arguments( $tool, $validated ), $agent );
 
 			/**
 			 * Fires after every tool call (success or failure) — the ActionLog
@@ -180,6 +200,188 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 				$validated,
 				'The tool failed unexpectedly. This is a fault in the store, not in the request — retrying the same call is unlikely to help.'
 			);
+		}
+	}
+
+	/**
+	 * A model asking for a dry run must never get the real write. A closed schema would
+	 * drop the argument and an open one pass it on, and either way the change would run.
+	 *
+	 * @param array<string, mixed> $arguments
+	 */
+	private static function asks_unsupported_preview( ToolInterface $tool, array $arguments ): bool {
+		if ( ! array_key_exists( self::PREVIEW_ARGUMENT, $arguments ) || in_array( $arguments[ self::PREVIEW_ARGUMENT ], [ false, 0, '0', 'false', '', null ], true ) ) {
+			return false;
+		}
+
+		$declares_its_own = isset( $tool->input_schema()['properties'][ self::PREVIEW_ARGUMENT ] );
+
+		return ! $tool->is_read_only() && ! $declares_its_own && ! ( $tool instanceof ReversibleToolInterface && $tool->is_reversible() );
+	}
+
+	/** @param array<string, mixed> $arguments */
+	private static function is_preview( ToolInterface $tool, array $arguments ): bool {
+		return true === ( $arguments[ self::PREVIEW_ARGUMENT ] ?? false ) && $tool instanceof ReversibleToolInterface && $tool->is_reversible();
+	}
+
+	/**
+	 * What a write would change, against what is stored. The tool's own rules run, so a
+	 * call it would refuse is refused here too.
+	 *
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 */
+	private function preview( ReversibleToolInterface $tool, array $arguments ): array {
+		unset( $arguments[ self::PREVIEW_ARGUMENT ], $arguments[ self::CONFIRM_ARGUMENT ] );
+
+		$plan    = $tool->change_plan( $arguments );
+		$before  = ChangeKind::Updated === $plan->kind ? $tool->read_state( $plan ) : [];
+		$changes = [];
+
+		foreach ( $plan->fields as $field ) {
+			$after     = $arguments[ $field ] ?? null;
+			$changes[] = [
+				'field'  => $field,
+				'before' => $before[ $field ] ?? null,
+				'after'  => is_array( $after ) && isset( $after['raw'] ) ? $after['raw'] : $after,
+			];
+		}
+
+		return [
+			'preview' => true,
+			'saved'   => false,
+			'action'  => $plan->kind->value,
+			'changes' => $changes,
+		];
+	}
+
+	/**
+	 * Runs the tool, keeping what an undo needs when this connection keeps a history.
+	 *
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 */
+	private function run( ToolInterface $tool, array $arguments, AuthenticatedAgent $agent ): array {
+		unset( $arguments[ self::PREVIEW_ARGUMENT ] );
+
+		if ( $tool instanceof AgentAwareToolInterface ) {
+			return $tool->execute_as( $agent, $arguments );
+		}
+
+		if ( ! $tool instanceof ReversibleToolInterface || ! $tool->is_reversible() || ! $this->keeps_history_for( $agent ) ) {
+			return $tool->execute( $arguments );
+		}
+
+		if ( ! $tool->is_undoable() ) {
+			return [
+				...$tool->execute( $arguments ),
+				self::UNDO_UNAVAILABLE => self::NO_UNDO_MESSAGE,
+			];
+		}
+
+		$plan     = $tool->change_plan( $arguments );
+		$watching = $plan->with_fields( array_values( array_unique( [ ...$plan->fields, ...$tool->watched_fields() ] ) ) );
+		$before   = $this->state_before( $tool, $plan, $watching );
+		$data     = $tool->execute( $arguments );
+
+		if ( null === $before ) {
+			return [
+				...$data,
+				self::UNDO_UNAVAILABLE => self::NO_UNDO_MESSAGE,
+			];
+		}
+
+		$change_id = $this->record( $tool, $plan, $watching, $before, $data, $agent );
+
+		return null === $change_id
+			? [
+				...$data,
+				self::UNDO_UNAVAILABLE => self::NO_UNDO_MESSAGE,
+			]
+			: [
+				...$data,
+				'change_id' => $change_id,
+			];
+	}
+
+	private function keeps_history_for( AuthenticatedAgent $agent ): bool {
+		return null !== $this->journal && null !== $this->registry->resolve_for( $agent, ChangeJournalInterface::UNDO_TOOL );
+	}
+
+	public function reversible_for( AuthenticatedAgent $agent, string $tool_name ): ?ReversibleToolInterface {
+		$tool = $this->registry->resolve_for( $agent, $tool_name );
+
+		return $tool instanceof ReversibleToolInterface ? $tool : null;
+	}
+
+	public function restore( AuthenticatedAgent $agent, string $tool_name, ChangePlan $plan, array $before ): void {
+		$tool = $this->registry->resolve_for( $agent, $tool_name );
+
+		if ( ! $tool instanceof ReversibleToolInterface ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
+			throw new ToolCallException( sprintf( 'This connection can no longer use %s, which made this change.', $tool_name ) );
+		}
+
+		$agent->require_scope( $tool->required_scope() );
+		$tool->restore( $plan, $before );
+
+		/** This action is documented in dispatch(). */
+		do_action( 'counterhand_tool_called', $tool->name(), $agent->token->label, false, [ ...$plan->path, ...$before ], $tool->group()->key() );
+	}
+
+	/**
+	 * Null when it cannot be put back, and the write still goes ahead: a route may accept a
+	 * field it does not return, and the agent is then told there is no undo.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function state_before( ReversibleToolInterface $tool, ChangePlan $plan, ChangePlan $watching ): ?array {
+		if ( ChangeKind::Created === $plan->kind ) {
+			return [];
+		}
+
+		try {
+			$before = $tool->read_state( $watching );
+		} catch ( ToolCallException ) {
+			return null;
+		}
+
+		return [] === array_diff( $plan->fields, array_keys( $before ) ) ? $before : null;
+	}
+
+	/**
+	 * A failure here must not turn a write that succeeded into a reported failure.
+	 *
+	 * @param array<string, mixed> $before
+	 * @param array<string, mixed> $data
+	 */
+	private function record( ReversibleToolInterface&ToolInterface $tool, ChangePlan $plan, ChangePlan $watching, array $before, array $data, AuthenticatedAgent $agent ): ?string {
+		try {
+			$done = $tool->with_result( ChangeKind::Created === $plan->kind ? $plan : $watching, $data );
+
+			if ( null === $done || null === $this->journal ) {
+				return null;
+			}
+
+			$after = $tool->read_state( $done );
+
+			if ( ChangeKind::Created === $plan->kind ) {
+				return $this->journal->record( $agent, $tool->name(), $done, [], $after );
+			}
+
+			$changed = array_values(
+				array_filter(
+					array_keys( $after ),
+					static fn ( string $field ): bool => in_array( $field, $plan->fields, true ) || wp_json_encode( $before[ $field ] ?? null ) !== wp_json_encode( $after[ $field ] )
+				)
+			);
+			$fields  = array_flip( $changed );
+
+			return $this->journal->record( $agent, $tool->name(), $plan->with_fields( $changed ), array_intersect_key( $before, $fields ), array_intersect_key( $after, $fields ) );
+		} catch ( \Throwable $throwable ) {
+			$this->log_failure( $tool, $throwable );
+
+			return null;
 		}
 	}
 
@@ -242,6 +444,11 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {
 		$schema = $this->gated_schema( $tool );
+
+		// A preview changes nothing, so there is nothing yet to confirm.
+		if ( self::is_preview( $tool, $arguments ) && is_array( $schema['required'] ?? null ) ) {
+			$schema['required'] = array_values( array_diff( $schema['required'], [ self::CONFIRM_ARGUMENT ] ) );
+		}
 
 		// rest_sanitize/validate_value_from_schema do NOT apply defaults —
 		// without this, absent args fall through to WooCommerce's own defaults

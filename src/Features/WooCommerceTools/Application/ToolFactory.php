@@ -4,15 +4,19 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\WooCommerceTools\Application;
 
+use Counterhand\Features\WooCommerceTools\Descriptors\WpmlDescriptors;
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOperation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
+use Counterhand\Features\WooCommerceTools\Domain\TranslatableMetaRules;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestGatewayInterface;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RouteCatalog;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RoutePermissionProbe;
 use Counterhand\Features\WooCommerceTools\Infrastructure\SchemaProvider;
+use Counterhand\Features\WooCommerceTools\Infrastructure\WooCommerceMultilingualCurrency;
+use Counterhand\Features\WooCommerceTools\Infrastructure\WpmlStrings;
 use Counterhand\Shared\Tool\ToolInterface;
 
 defined( 'ABSPATH' ) || exit;
@@ -49,6 +53,21 @@ final readonly class ToolFactory {
 		}
 
 		return $tools;
+	}
+
+	/**
+	 * What WPML and Multilingual offer with no REST field to declare.
+	 *
+	 * @return list<ToolInterface>
+	 */
+	public function multilingual_tools(): array {
+		$group = WpmlDescriptors::group();
+
+		return [
+			...TranslatableStringTool::both( new WpmlStrings(), $group ),
+			...ProductTranslationMetaTool::both( new TranslatableMetaRules( $this->meta_policy ), $group, $this->gateway, $this->probe ),
+			...ProductCurrencyPricesTool::both( new WooCommerceMultilingualCurrency(), $this->gateway, $this->probe ),
+		];
 	}
 
 	/**
@@ -121,7 +140,8 @@ final readonly class ToolFactory {
 			$this->gateway,
 			$this->catalog,
 			$this->probe,
-			$this->schemas
+			$this->schemas,
+			$this->meta_policy
 		);
 	}
 }

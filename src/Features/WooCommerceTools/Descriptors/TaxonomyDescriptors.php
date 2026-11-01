@@ -120,7 +120,9 @@ final readonly class TaxonomyDescriptors implements DescriptorProvider {
 					ToolName::from( 'create_product_attribute' ),
 					Operation::CreateItem,
 					new FieldProfile( [ 'name', 'slug', 'type', 'order_by', 'has_archives' ], self::ATTRIBUTE_FIELDS ),
-					'Creating the attribute only creates the definition. Add its values with create_attribute_term.'
+					'Creating the attribute only creates the definition. Add its values with create_attribute_term.',
+					// Terms and products attach to it with no change to the attribute itself.
+					undoable: false
 				),
 				new OperationDescriptor(
 					ToolName::from( 'update_product_attribute' ),

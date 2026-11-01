@@ -43,8 +43,28 @@ final class LegalDetailsPolicyTest extends TestCase {
 		yield 'clearing, as validation hands it over' => [ [ 'unit' => [] ], true ];
 		yield 'an id of nothing' => [ [ 'unit' => [ 'id' => 0 ] ], false ];
 		yield 'a slug, which would create a term if wrong' => [ [ 'unit' => [ 'slug' => 'kg' ] ], false ];
-		yield 'a country with a known id' => [ [ 'country_specific_delivery_times' => [ [ 'country' => 'AT', 'id' => 7 ] ] ], true ];
-		yield 'a country with an unknown id' => [ [ 'country_specific_delivery_times' => [ [ 'country' => 'AT', 'id' => 99 ] ] ], false ];
+		yield 'a country with a known id' => [
+			[
+				'country_specific_delivery_times' => [
+					[
+						'country' => 'AT',
+						'id'      => 7,
+					],
+				],
+			],
+			true,
+		];
+		yield 'a country with an unknown id' => [
+			[
+				'country_specific_delivery_times' => [
+					[
+						'country' => 'AT',
+						'id'      => 99,
+					],
+				],
+			],
+			false,
+		];
 		yield 'clearing every country' => [ [ 'country_specific_delivery_times' => [] ], true ];
 		yield 'a deposit type' => [ [ 'food' => [ 'deposit_type' => [ 'id' => 9 ] ] ], true ];
 		yield 'an unknown deposit type' => [ [ 'food' => [ 'deposit_type' => [ 'id' => 99 ] ] ], false ];

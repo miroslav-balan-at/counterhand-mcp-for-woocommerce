@@ -52,6 +52,8 @@ enum ApiScope: string implements ScopeInterface {
 	case ContentWrite    = 'content:write';
 	case SystemRead      = 'system:read';
 	case SystemWrite     = 'system:write';
+	case ChangesRead     = 'changes:read';
+	case ChangesWrite    = 'changes:write';
 
 	public function key(): string {
 		return $this->value; // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.

@@ -14,16 +14,19 @@ final class Uninstall {
 
 		// Plugin-owned tables.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_tokens" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_changes" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- plugin-owned table on uninstall.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_action_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 
 		delete_option( 'counterhand_settings' );
 		delete_option( 'counterhand_chat' );
 		delete_option( 'counterhand_tokens_schema_version' );
 		delete_option( 'counterhand_action_log_schema_version' );
+		delete_option( 'counterhand_changes_schema_version' );
 
 		// No transient sweep: every transient this plugin sets lives five minutes
 		// or less, and core's daily delete_expired_transients job removes the rows.
 
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
+		wp_clear_scheduled_hook( 'counterhand_purge_changes' );
 	}
 }

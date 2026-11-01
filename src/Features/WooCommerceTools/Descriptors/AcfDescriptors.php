@@ -78,7 +78,7 @@ final readonly class AcfDescriptors implements DescriptorProvider {
 					]
 				),
 			],
-			requires_function: self::PLUGIN_FUNCTION
+			requires_functions: [ self::PLUGIN_FUNCTION ]
 		);
 	}
 }

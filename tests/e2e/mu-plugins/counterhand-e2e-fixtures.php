@@ -114,6 +114,23 @@ add_filter(
 					return new ProviderTurn( '', [ new ToolCall( 'e2e-call-1', 'list_products', [ 'per_page' => 1 ] ) ], true );
 				}
 
+				if ( 1 === preg_match( '/set product (\d+) to (\d+)/', $text, $matches ) ) {
+					return new ProviderTurn(
+						'',
+						[
+							new ToolCall(
+								'e2e-call-3',
+								'update_product',
+								[
+									'id'            => (int) $matches[1],
+									'regular_price' => $matches[2],
+								]
+							),
+						],
+						true
+					);
+				}
+
 				if ( str_contains( $text, 'change the store address' ) ) {
 					return new ProviderTurn(
 						'',

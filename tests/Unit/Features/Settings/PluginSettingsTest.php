@@ -129,6 +129,8 @@ final class PluginSettingsTest extends TestCase {
 				'content_write'         => false,
 				'system_read'           => false,
 				'system_write'          => false,
+				'changes_read'          => false,
+				'changes_write'         => false,
 				'rate_limit_per_minute' => 60,
 				'action_log_enabled'    => false,
 				'log_retention_days'    => 30,

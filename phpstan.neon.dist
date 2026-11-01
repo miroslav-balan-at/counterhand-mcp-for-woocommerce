@@ -10,6 +10,7 @@ parameters:
         - tests/phpstan-wc-stubs.php
         - tests/phpstan-core-ai-stubs.php
         - tests/phpstan-flamingo-stubs.php
+        - tests/phpstan-premium-stubs.php
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false

@@ -16,7 +16,6 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || exit;
 
 $counterhand_scopes         = $context['scopes'];
-$counterhand_withheld       = $context['withheld'];
 $counterhand_settings_url   = $context['settings_url'];
 $counterhand_has_write      = $counterhand_scopes->has_write();
 $counterhand_client_name    = $context['client_name'];

@@ -36,6 +36,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 	case Settings   = 'settings';
 	case Content    = 'content';
 	case System     = 'system';
+	case Changes    = 'changes';
 
 	/*
 	 * The three methods below are deliberately exhaustive, with no default arm.
@@ -70,6 +71,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 			self::Settings   => __( 'Store settings', 'counterhand-mcp-for-woocommerce' ),
 			self::Content    => __( 'Posts & pages', 'counterhand-mcp-for-woocommerce' ),
 			self::System     => __( 'System & maintenance', 'counterhand-mcp-for-woocommerce' ),
+			self::Changes    => __( 'Undo history', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
@@ -92,6 +94,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 			self::Settings   => __( 'Store configuration values, including currency, tax behaviour and checkout options.', 'counterhand-mcp-for-woocommerce' ),
 			self::Content    => __( 'WordPress blog posts and pages. Products and orders are not affected.', 'counterhand-mcp-for-woocommerce' ),
 			self::System     => __( 'Environment report and WooCommerce\'s maintenance tools. The most dangerous group here.', 'counterhand-mcp-for-woocommerce' ),
+			self::Changes    => __( 'A record of the catalog, coupon, content, shipping and tax changes a connection makes, and undoing them. Records keep what was changed, for 30 days.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
@@ -121,6 +124,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 			self::Settings   => __( 'store settings', 'counterhand-mcp-for-woocommerce' ),
 			self::Content    => __( 'posts and pages', 'counterhand-mcp-for-woocommerce' ),
 			self::System     => __( 'system tools', 'counterhand-mcp-for-woocommerce' ),
+			self::Changes    => __( 'undo history', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
@@ -133,9 +137,23 @@ enum ToolGroup: string implements ScopeGroupInterface {
 			self::Reports                                => ToolSection::Insights,
 			self::Content                                => ToolSection::Content,
 			self::Shipping, self::Taxes, self::Data      => ToolSection::Store,
-			// Both can change how the store charges money, so both stay behind
-			// the collapsed heading and are never pre-ticked on consent.
-			self::Gateways, self::Settings, self::System => ToolSection::Advanced,
+			// The first three can change how the store charges money, and undoing reaches every
+			// area a connection wrote to, so all stay behind the collapsed heading and are
+			// never pre-ticked on consent.
+			self::Gateways, self::Settings, self::System, self::Changes => ToolSection::Advanced,
+		};
+	}
+
+	/**
+	 * Whether a write here can be recorded and undone. Not orders, refunds or customers,
+	 * whose writes send emails, move stock and move money, none of which a restore takes
+	 * back; not reviews, which are people's names and words kept for 30 days; not gateways
+	 * or settings, where restoring an old value can be its own harm.
+	 */
+	public function keeps_changes(): bool {
+		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+			self::Products, self::Coupons, self::Taxonomy, self::Variations, self::Shipping, self::Taxes, self::Content => true,
+			default => false,
 		};
 	}
 

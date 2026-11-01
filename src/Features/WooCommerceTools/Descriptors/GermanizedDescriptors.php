@@ -148,7 +148,7 @@ final readonly class GermanizedDescriptors implements DescriptorProvider {
 					policy: new LegalDetailsPolicy()
 				),
 			],
-			requires_function: self::PLUGIN_FUNCTION
+			requires_functions: [ self::PLUGIN_FUNCTION ]
 		);
 	}
 

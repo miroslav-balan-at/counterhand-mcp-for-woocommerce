@@ -331,7 +331,7 @@ final class ToolDispatcherTest extends TestCase {
 					'type'       => 'object',
 					'required'   => [ 'form_id' ],
 					'properties' => [
-						'form_id' => [
+						'form_id'  => [
 							'type'     => 'integer',
 							'required' => true,
 						],

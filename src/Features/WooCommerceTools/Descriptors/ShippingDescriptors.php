@@ -71,7 +71,9 @@ final readonly class ShippingDescriptors implements DescriptorProvider {
 					ToolName::from( 'create_shipping_zone' ),
 					Operation::CreateItem,
 					new FieldProfile( [ 'name', 'order' ], self::ZONE_FIELDS ),
-					'A new zone covers nowhere and offers nothing until you set its locations and add a method.'
+					'A new zone covers nowhere and offers nothing until you set its locations and add a method.',
+					// Its locations and methods are added with no change to the zone itself.
+					undoable: false
 				),
 				new OperationDescriptor(
 					ToolName::from( 'update_shipping_zone' ),
@@ -173,13 +175,17 @@ final readonly class ShippingDescriptors implements DescriptorProvider {
 					ToolName::from( 'create_shipping_zone_method' ),
 					Operation::CreateItem,
 					new FieldProfile( [ 'method_id', 'order', 'enabled', 'settings' ], self::METHOD_INSTANCE_FIELDS ),
-					'method_id names the kind of method to add — get_shipping_methods lists what this store has available. Adding one makes it selectable at checkout for that zone straight away.'
+					'method_id names the kind of method to add — get_shipping_methods lists what this store has available. Adding one makes it selectable at checkout for that zone straight away.',
+					// The route reads settings as objects and writes them as plain values.
+					undoable: false
 				),
 				new OperationDescriptor(
 					ToolName::from( 'update_shipping_zone_method' ),
 					Operation::UpdateItem,
 					new FieldProfile( [ 'order', 'enabled', 'settings' ], self::METHOD_INSTANCE_FIELDS ),
-					'SAFETY: changing settings changes what customers are charged for delivery. Pass enabled=false to take a method out of use without deleting its configuration.'
+					'SAFETY: changing settings changes what customers are charged for delivery. Pass enabled=false to take a method out of use without deleting its configuration.',
+					// The route reads settings as objects and writes them as plain values.
+					undoable: false
 				),
 				new OperationDescriptor(
 					ToolName::from( 'delete_shipping_zone_method' ),

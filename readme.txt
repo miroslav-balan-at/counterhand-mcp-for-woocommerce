@@ -73,6 +73,25 @@ With ACF active, an assistant can read and change custom field values on posts, 
 
 With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under "Other plugins" in Settings. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
 
+= WPML =
+
+With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on under "Other plugins" in Settings. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
+
+Have a person check any translated legal wording, such as withdrawal or safety text. Whatever you switch on, a product changed through any tool now updates its translations too, as it does in the WooCommerce REST API. With Multilingual's multi-currency mode on, the product tools can also read and set a product's own price in each currency.
+
+= Other paid plugins =
+
+Each of these is off until you switch it on under "Other plugins" in Settings.
+
+* WooCommerce Shipment Tracking: read, add and remove tracking numbers on orders. Changes need explicit confirmation.
+* Germanized Pro: look up issued invoices. Read-only, with no addresses or files.
+* WooCommerce Cost of Goods: read and set what products cost, and see what an order earned. Profit is left out when it cannot be right, such as for an order in another currency.
+* WooCommerce URL Coupons: list coupon links, and give a coupon a link. Changes need explicit confirmation, and anything that is the start of an address the store already uses is refused, because a link captures every address starting with it.
+
+= Preview and undo =
+
+An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Settings and granted to a connection, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
+
 = Two ways to use AI with your store =
 
 **Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.

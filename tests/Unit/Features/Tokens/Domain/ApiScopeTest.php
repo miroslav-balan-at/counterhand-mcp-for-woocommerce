@@ -48,6 +48,8 @@ final class ApiScopeTest extends TestCase {
 				'content:write',
 				'system:read',
 				'system:write',
+				'changes:read',
+				'changes:write',
 			],
 			ApiScope::values()
 		);
@@ -154,6 +156,8 @@ final class ApiScopeTest extends TestCase {
 				'content:write'    => 'Manage posts and pages',
 				'system:read'      => 'Read system tools',
 				'system:write'     => 'Manage system tools',
+				'changes:read'     => 'Read undo history',
+				'changes:write'    => 'Manage undo history',
 			],
 			array_combine(
 				ApiScope::values(),

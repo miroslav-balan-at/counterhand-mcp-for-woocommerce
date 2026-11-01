@@ -30,9 +30,9 @@ Code and Claude Code connect from your machine and work with a local site.
   no tokens to copy, no client secrets, no manual registration.
 - **Consent per connection.** The assistant asks for scopes; you narrow them on a
   consent screen in your browser. Write never implies read. One click revokes.
-- **127 tools in 16 switchable groups** — products, orders, customers, coupons,
+- **132 tools in 17 switchable groups** — products, orders, customers, coupons,
   reviews, variations, refunds, reports, shipping, tax, posts and pages, plus
-  store settings, payment gateways and maintenance behind an Advanced heading
+  store settings, payment gateways, maintenance and undo history behind an Advanced heading
   that is off by default. A fresh install exposes Products, Orders and Reports,
   read-only.
 - **Schemas derived from WooCommerce at runtime**, not copied: tools delegate to

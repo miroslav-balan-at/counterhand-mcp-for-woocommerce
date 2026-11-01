@@ -114,4 +114,9 @@ final readonly class IntegrationGroup implements ScopeGroupInterface {
 	public function in_chat_by_default(): bool {
 		return false;
 	}
+
+	/** What another plugin's write does beyond its route is not known here, so nothing promises to undo it. */
+	public function keeps_changes(): bool {
+		return false;
+	}
 }

@@ -30,7 +30,7 @@ final readonly class ResourceDescriptor {
 	 * @param RestRoute|null            $read_probe  Route to ask about read permission, when the collection cannot answer.
 	 * @param RestRoute|null            $write_probe Same for writes.
 	 * @param MetaOwner|null            $meta        Which metadata table this resource's custom fields live in; null offers none.
-	 * @param string|null               $requires_function A function the plugin defines, for a resource on routes that exist without it.
+	 * @param list<string>              $requires_functions Functions the plugins define, for a resource on routes that exist without them.
 	 * @param array<string, mixed>      $meta_write_params Sent with every custom field write, which goes through the item route.
 	 */
 	public function __construct(
@@ -44,13 +44,13 @@ final readonly class ResourceDescriptor {
 		public ?RestRoute $read_probe = null,
 		public ?RestRoute $write_probe = null,
 		public ?MetaOwner $meta = null,
-		public ?string $requires_function = null,
+		public array $requires_functions = [],
 		public array $meta_write_params = [],
 	) {}
 
-	/** False while the plugin behind a route that exists anyway is off. */
+	/** False while a plugin behind a route that exists anyway is off. */
 	public function is_plugin_loaded(): bool {
-		return null === $this->requires_function || function_exists( $this->requires_function );
+		return [] === array_filter( $this->requires_functions, static fn ( string $name ): bool => ! function_exists( $name ) );
 	}
 
 	/**

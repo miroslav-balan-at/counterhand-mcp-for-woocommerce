@@ -126,7 +126,13 @@ final class InboundMessageToolTest extends TestCase {
 		$this->assertTrue( $tool->requires_confirmation() );
 		$this->assertTrue( $tool->is_destructive() );
 		$this->assertSame( 'integration:flamingo:write', $tool->required_scope()->key() );
-		$this->assertSame( [ 'id' => 7, 'trashed' => true ], $tool->execute( [ 'id' => 7 ] ) );
+		$this->assertSame(
+			[
+				'id'      => 7,
+				'trashed' => true,
+			],
+			$tool->execute( [ 'id' => 7 ] )
+		);
 		$this->assertSame( [ 7 ], $inbox->trashed );
 	}
 

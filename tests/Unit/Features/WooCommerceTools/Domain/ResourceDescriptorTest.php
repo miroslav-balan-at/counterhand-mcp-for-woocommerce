@@ -91,7 +91,7 @@ final class ResourceDescriptorTest extends TestCase {
 	}
 
 	public function test_a_resource_is_loaded_unless_it_names_a_function_that_is_missing(): void {
-		$resource = static fn ( ?string $function_name ): ResourceDescriptor => new ResourceDescriptor(
+		$resource = static fn ( array $function_names ): ResourceDescriptor => new ResourceDescriptor(
 			'a',
 			\Counterhand\Shared\Tool\ToolGroup::Products,
 			\Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute::wp( '/posts' ),
@@ -99,11 +99,11 @@ final class ResourceDescriptorTest extends TestCase {
 			'a',
 			'as',
 			[],
-			requires_function: $function_name
+			requires_functions: $function_names
 		);
 
-		$this->assertTrue( $resource( null )->is_plugin_loaded() );
-		$this->assertTrue( $resource( 'strlen' )->is_plugin_loaded() );
-		$this->assertFalse( $resource( 'counterhand_no_such_function' )->is_plugin_loaded() );
+		$this->assertTrue( $resource( [] )->is_plugin_loaded() );
+		$this->assertTrue( $resource( [ 'strlen' ] )->is_plugin_loaded() );
+		$this->assertFalse( $resource( [ 'strlen', 'counterhand_no_such_function' ] )->is_plugin_loaded() );
 	}
 }

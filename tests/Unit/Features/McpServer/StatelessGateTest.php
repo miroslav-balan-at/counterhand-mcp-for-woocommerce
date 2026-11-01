@@ -94,7 +94,13 @@ final class StatelessGateTest extends TestCase {
 	}
 
 	public function test_a_complete_matching_request_passes(): void {
-		$request = $this->request( 'tools/call', [ ...self::meta(), 'name' => 'list_products' ] );
+		$request = $this->request(
+			'tools/call',
+			[
+				...self::meta(),
+				'name' => 'list_products',
+			]
+		);
 
 		$this->assertNull( $this->gate->reject( $request, self::http( self::headers_for( 'tools/call', 'list_products' ) ) ) );
 	}
@@ -133,7 +139,16 @@ final class StatelessGateTest extends TestCase {
 
 	/** @dataProvider mismatched_headers */
 	public function test_headers_that_disagree_with_the_body_are_refused( array $headers ): void {
-		$reply = $this->gate->reject( $this->request( 'tools/call', [ ...self::meta(), 'name' => 'list_products' ] ), self::http( $headers ) );
+		$reply = $this->gate->reject(
+			$this->request(
+				'tools/call',
+				[
+					...self::meta(),
+					'name' => 'list_products',
+				]
+			),
+			self::http( $headers )
+		);
 
 		$this->assertSame( 400, $reply?->status );
 		$this->assertSame( -32020, $reply->body['error']['code'] );
@@ -142,7 +157,12 @@ final class StatelessGateTest extends TestCase {
 	/** @return \Generator<string, array{array<string, string>}> */
 	public static function mismatched_headers(): \Generator {
 		yield 'no headers'            => [ [] ];
-		yield 'version disagrees'     => [ [ ...self::headers_for( 'tools/call', 'list_products' ), 'MCP-Protocol-Version' => '2025-11-25' ] ];
+		yield 'version disagrees'     => [
+			[
+				...self::headers_for( 'tools/call', 'list_products' ),
+				'MCP-Protocol-Version' => '2025-11-25',
+			],
+		];
 		yield 'method disagrees'      => [ self::headers_for( 'tools/list', 'list_products' ) ];
 		yield 'name missing'          => [ self::headers_for( 'tools/call' ) ];
 		yield 'name disagrees'        => [ self::headers_for( 'tools/call', 'delete_product' ) ];
@@ -150,7 +170,13 @@ final class StatelessGateTest extends TestCase {
 	}
 
 	public function test_a_base64_encoded_name_is_decoded_before_it_is_compared(): void {
-		$request = $this->request( 'tools/call', [ ...self::meta(), 'name' => 'Grüße' ] );
+		$request = $this->request(
+			'tools/call',
+			[
+				...self::meta(),
+				'name' => 'Grüße',
+			]
+		);
 		$encoded = '=?base64?' . base64_encode( 'Grüße' ) . '?=';
 
 		$this->assertNull( $this->gate->reject( $request, self::http( self::headers_for( 'tools/call', $encoded ) ) ) );

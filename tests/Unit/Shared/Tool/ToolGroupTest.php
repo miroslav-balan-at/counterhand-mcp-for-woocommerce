@@ -33,6 +33,7 @@ final class ToolGroupTest extends TestCase {
 				'settings',
 				'content',
 				'system',
+				'changes',
 			],
 			array_map( static fn ( ToolGroup $group ): string => $group->value, ToolGroup::cases() )
 		);

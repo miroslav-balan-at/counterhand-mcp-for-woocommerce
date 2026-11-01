@@ -13,6 +13,12 @@
             "tools": 14
         },
         {
+            "slug": "products",
+            "label": "Products",
+            "description": "Names, prices, stock, categories and images.",
+            "tools": 11
+        },
+        {
             "slug": "orders",
             "label": "Orders",
             "description": "Orders, totals, line items and customer addresses.",
@@ -23,12 +29,6 @@
             "label": "Posts & pages",
             "description": "WordPress blog posts and pages. Products and orders are not affected.",
             "tools": 10
-        },
-        {
-            "slug": "products",
-            "label": "Products",
-            "description": "Names, prices, stock, categories and images.",
-            "tools": 9
         },
         {
             "slug": "reports",
@@ -95,10 +95,16 @@
             "label": "Payment gateways",
             "description": "Which payment methods exist and whether each is enabled. Credentials are never returned.",
             "tools": 3
+        },
+        {
+            "slug": "changes",
+            "label": "Undo history",
+            "description": "A record of the catalog, coupon, content, shipping and tax changes a connection makes, and undoing them. Records keep what was changed, for 30 days.",
+            "tools": 2
         }
     ],
     "totals": {
-        "groups": 16,
-        "tools": 128
+        "groups": 17,
+        "tools": 132
     }
 }

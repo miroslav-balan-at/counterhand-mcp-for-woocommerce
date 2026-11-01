@@ -131,7 +131,9 @@ final readonly class TaxDescriptors implements DescriptorProvider {
 					ToolName::from( 'create_tax_class' ),
 					Operation::CreateItem,
 					new FieldProfile( [ 'name' ], self::CLASS_FIELDS ),
-					'A new class starts with no rates in it, so nothing is charged under it until you add some with create_tax_rate.'
+					'A new class starts with no rates in it, so nothing is charged under it until you add some with create_tax_rate.',
+					// It is named by a slug, not an id.
+					undoable: false
 				),
 				new OperationDescriptor(
 					ToolName::from( 'delete_tax_class' ),

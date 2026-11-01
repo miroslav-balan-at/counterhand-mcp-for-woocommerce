@@ -57,10 +57,20 @@ wp plugin activate woocommerce counterhand-mcp-for-woocommerce --quiet
 
 # Installed unpinned, so a fresh store (every CI run) tests the latest releases.
 # Off unless a spec switches them on: their admin assets would trip admin-ui.spec.
-for integration in contact-form-7 flamingo advanced-custom-fields wordpress-seo wpforms-lite seo-by-rank-math woocommerce-germanized; do
+for integration in contact-form-7 flamingo advanced-custom-fields wordpress-seo wpforms-lite seo-by-rank-math woocommerce-germanized woocommerce-multilingual; do
 	wp plugin is-installed "$integration" 2>/dev/null || wp plugin install "$integration" --quiet
 	wp plugin deactivate "$integration" --quiet 2>/dev/null || true
 done
+
+# Paid plugins cannot be downloaded here. Point this at a folder holding your own licensed
+# copies to run the specs that need them; without one, those specs skip.
+if [ -n "${COUNTERHAND_E2E_PAID_PLUGINS:-}" ]; then
+	for paid in sitepress-multilingual-cms wpml-string-translation woocommerce-shipment-tracking woocommerce-cost-of-goods woocommerce-url-coupons woocommerce-germanized-pro; do
+		[ -d "$COUNTERHAND_E2E_PAID_PLUGINS/$paid" ] || continue
+		rm -rf "$wordpress/wp-content/plugins/$paid"
+		cp -R "$COUNTERHAND_E2E_PAID_PLUGINS/$paid" "$wordpress/wp-content/plugins/"
+	done
+fi
 
 wp rewrite structure '/%postname%/' --quiet
 wp rewrite flush --quiet

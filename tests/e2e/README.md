@@ -69,3 +69,14 @@ Specs that change settings restore them in `finally`/`afterAll`.
 - Use `wp()` and `patchSettings()` only for state a spec is not trying to prove, and restore it.
 - Assert on real tool names. A `not.toContain` against a name that does not exist passes for the wrong
   reason; prove the name with a positive case first, as the fail-closed spec does.
+
+## Paid plugins
+
+WPML, Shipment Tracking, Cost of Goods, URL Coupons and Germanized Pro are paid, so a store cannot download them and their specs skip. To run them, point the store at a folder holding your licensed copies, and install again:
+
+```bash
+COUNTERHAND_E2E_PAID_PLUGINS=/path/to/wp-content/plugins npm run e2e:store:install
+npx playwright test tests/e2e/specs/integrations.spec.ts -g 'WPML|Paid plugins'
+```
+
+The copies stay in the store's state folder, outside the repository. Never commit them or store them in CI.

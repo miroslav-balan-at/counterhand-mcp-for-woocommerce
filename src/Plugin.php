@@ -7,6 +7,8 @@ namespace Counterhand;
 use Counterhand\Features\Abilities\AbilitiesFeature;
 use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
+use Counterhand\Features\CostOfGoods\CostOfGoodsFeature;
+use Counterhand\Features\CostOfGoods\WooCommerceCostLedger;
 use Counterhand\Features\Flamingo\FlamingoFeature;
 use Counterhand\Features\Flamingo\FlamingoInbox;
 use Counterhand\Features\McpServer\McpServer;
@@ -31,6 +33,10 @@ use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
 use Counterhand\Features\Tokens\Persistence\Schema;
 use Counterhand\Features\Tokens\Persistence\WpdbTokenRepository;
 use Counterhand\Features\Tokens\TokensFeature;
+use Counterhand\Features\Undo\Persistence\ChangeSchema;
+use Counterhand\Features\Undo\UndoFeature;
+use Counterhand\Features\Undo\WpdbChangeJournal;
+use Counterhand\Features\UrlCoupons\UrlCouponsFeature;
 use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
 use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
@@ -67,6 +73,7 @@ final class Plugin {
 	public static function activate(): void {
 		Schema::install();
 		\Counterhand\Features\ActionLog\Persistence\LogSchema::install();
+		ChangeSchema::install();
 		McpServerFeature::register_rewrite();
 		OAuthFeature::register_rewrites();
 		flush_rewrite_rules();
@@ -75,6 +82,7 @@ final class Plugin {
 	public static function deactivate(): void {
 		flush_rewrite_rules();
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
+		wp_clear_scheduled_hook( UndoFeature::PURGE_HOOK );
 	}
 
 	public function tool_registry(): ?ToolRegistry {
@@ -113,7 +121,8 @@ final class Plugin {
 		// One pipeline shared by the HTTP endpoint and the admin playground, so
 		// both dispatch through exactly the same gates — the playground just
 		// skips the JSON-RPC framing.
-		$tool_dispatcher = new ToolDispatcher( $this->tool_registry );
+		$change_journal  = new WpdbChangeJournal();
+		$tool_dispatcher = new ToolDispatcher( $this->tool_registry, $change_journal );
 		$mcp_server      = new McpServer( $tool_dispatcher );
 
 		$tokens     = new TokensFeature( $repository );
@@ -151,6 +160,9 @@ final class Plugin {
 			new OAuthFeature( $settings, $repository, $this->tool_registry ),
 			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, $descriptors, $schema_provider, new ServedIntegrationGroups( $descriptors, $route_catalog ) ),
 			new FlamingoFeature( $this->tool_registry, new FlamingoInbox() ),
+			new CostOfGoodsFeature( $this->tool_registry, new WooCommerceCostLedger() ),
+			new UrlCouponsFeature( $this->tool_registry, $gateway ),
+			new UndoFeature( $this->tool_registry, $tool_dispatcher, $change_journal ),
 			new AbilitiesFeature( $this->tool_registry, new AbilityCatalog() ),
 		];
 

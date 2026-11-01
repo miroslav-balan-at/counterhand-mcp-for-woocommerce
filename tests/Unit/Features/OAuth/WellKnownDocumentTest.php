@@ -16,17 +16,17 @@ final class WellKnownDocumentTest extends TestCase {
 
 	public static function paths(): array {
 		return [
-			'resource'                => [ '.well-known/oauth-protected-resource', WellKnownDocument::Resource ],
+			'resource'                 => [ '.well-known/oauth-protected-resource', WellKnownDocument::Resource ],
 			'resource, trailing slash' => [ '.well-known/oauth-protected-resource/', WellKnownDocument::Resource ],
-			'resource, leading slash' => [ '/.well-known/oauth-protected-resource', WellKnownDocument::Resource ],
-			'resource, mixed case'    => [ '.well-known/OAuth-Protected-Resource', WellKnownDocument::Resource ],
-			'server'                  => [ '.well-known/oauth-authorization-server', WellKnownDocument::Server ],
-			'server, trailing slash'  => [ '.well-known/oauth-authorization-server/', WellKnownDocument::Server ],
-			'empty request'           => [ '', null ],
-			'unrelated page'          => [ 'shop/product', null ],
-			'sibling well-known'      => [ '.well-known/ucp', null ],
-			'prefix only'             => [ '.well-known', null ],
-			'deeper path'             => [ '.well-known/oauth-protected-resource/mcp', null ],
+			'resource, leading slash'  => [ '/.well-known/oauth-protected-resource', WellKnownDocument::Resource ],
+			'resource, mixed case'     => [ '.well-known/OAuth-Protected-Resource', WellKnownDocument::Resource ],
+			'server'                   => [ '.well-known/oauth-authorization-server', WellKnownDocument::Server ],
+			'server, trailing slash'   => [ '.well-known/oauth-authorization-server/', WellKnownDocument::Server ],
+			'empty request'            => [ '', null ],
+			'unrelated page'           => [ 'shop/product', null ],
+			'sibling well-known'       => [ '.well-known/ucp', null ],
+			'prefix only'              => [ '.well-known', null ],
+			'deeper path'              => [ '.well-known/oauth-protected-resource/mcp', null ],
 		];
 	}
 

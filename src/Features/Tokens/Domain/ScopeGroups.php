@@ -61,7 +61,7 @@ final class ScopeGroups {
 
 	/** @return list<ScopeGroupInterface> */
 	public static function integrations(): array {
-		$groups = apply_filters( self::INTEGRATIONS_FILTER, [] );
+		$groups = apply_filters( self::INTEGRATIONS_FILTER, [] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- the constant is counterhand_ prefixed.
 
 		if ( ! is_array( $groups ) ) {
 			return [];

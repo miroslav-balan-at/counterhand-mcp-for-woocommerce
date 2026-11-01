@@ -19,6 +19,10 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	private const QUERY_VAR = 'counterhand_mcp';
 
+	private const REST_FALLBACK_NAMESPACE = 'counterhand/v1';
+
+	private const REST_FALLBACK_ROUTE = self::REST_FALLBACK_NAMESPACE . '/' . CanonicalUri::MCP_PATH;
+
 	private McpEndpoint $endpoint;
 
 	public function __construct(
@@ -39,6 +43,18 @@ final readonly class McpServerFeature implements FeatureInterface {
 		add_filter( 'query_vars', [ $this, 'add_query_var' ] );
 		add_action( 'parse_request', [ $this, 'maybe_handle_pretty_route' ] );
 		add_action( 'rest_api_init', [ $this, 'register_rest_fallback' ] );
+		add_filter( ToolDispatcherInterface::SERVES_TOOLS_FILTER, [ $this, 'serves_tools_here' ] );
+	}
+
+	public function serves_tools_here( mixed $serves ): bool {
+		$request_uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- compared against fixed paths, never output.
+		$path        = untrailingslashit( (string) wp_parse_url( $request_uri, PHP_URL_PATH ) );
+		$rest_route  = (string) ( $_GET['rest_route'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput, WordPress.Security.NonceVerification -- same.
+
+		return true === $serves
+			|| untrailingslashit( (string) wp_parse_url( CanonicalUri::mcp(), PHP_URL_PATH ) ) === $path
+			|| untrailingslashit( (string) wp_parse_url( home_url( '/' . rest_get_url_prefix() . '/' . self::REST_FALLBACK_ROUTE ), PHP_URL_PATH ) ) === $path
+			|| '/' . self::REST_FALLBACK_ROUTE === untrailingslashit( $rest_route );
 	}
 
 	public static function register_rewrite(): void {
@@ -80,8 +96,8 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	public function register_rest_fallback(): void {
 		register_rest_route(
-			'counterhand/v1',
-			'/mcp',
+			self::REST_FALLBACK_NAMESPACE,
+			'/' . CanonicalUri::MCP_PATH,
 			[
 				[
 					'methods'             => [ 'POST', 'GET' ],

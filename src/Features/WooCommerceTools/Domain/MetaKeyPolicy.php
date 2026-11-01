@@ -79,6 +79,11 @@ final readonly class MetaKeyPolicy {
 
 	public function __construct( private string $table_prefix ) {}
 
+	/** Bank details and account state, which no tool may touch whatever else it allows. */
+	public function is_off_limits( string $key ): bool {
+		return 1 === preg_match( self::PAYMENT_DETAILS, $key ) || $this->is_reserved( $key );
+	}
+
 	/**
 	 * Reads are looser than writes, but never looser about the reserved keys:
 	 * returning a session token is as good as handing over the account.

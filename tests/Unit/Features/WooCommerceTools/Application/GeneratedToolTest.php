@@ -129,7 +129,8 @@ final class GeneratedToolTest extends TestCase {
 			$this->gateway,
 			$catalog,
 			new RoutePermissionProbe( $catalog ),
-			new SchemaProvider( $catalog )
+			new SchemaProvider( $catalog ),
+			new \Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy( 'wp_' )
 		);
 	}
 

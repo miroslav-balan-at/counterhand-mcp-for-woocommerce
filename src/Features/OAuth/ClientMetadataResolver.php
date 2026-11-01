@@ -20,7 +20,12 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ClientMetadataResolver {
 
-	private const CACHE_TTL = 5 * MINUTE_IN_SECONDS;
+	private const DEFAULT_CACHE_SECONDS = 5 * MINUTE_IN_SECONDS;
+
+	private const MINIMUM_CACHE_SECONDS = MINUTE_IN_SECONDS;
+
+	/** The address a person approves can change, so a long max-age is not taken at its word. */
+	private const MAXIMUM_CACHE_SECONDS = HOUR_IN_SECONDS;
 
 	/** The draft recommends 5 KB; this leaves room for a logo and policy URIs while still bounding the read. */
 	private const MAXIMUM_DOCUMENT_BYTES = 64 * KB_IN_BYTES;
@@ -85,17 +90,33 @@ final readonly class ClientMetadataResolver {
 			? array_values( array_filter( $document['grant_types'], 'is_string' ) )
 			: ClientMetadata::DEFAULT_GRANT_TYPES;
 
-		set_transient(
-			$cache_key,
-			[
-				'client_name'   => $client_name,
-				'redirect_uris' => $redirect_uris,
-				'grant_types'   => $grant_types,
-			],
-			self::CACHE_TTL
-		);
+		$lifetime = self::cache_seconds( (string) wp_remote_retrieve_header( $response, 'cache-control' ) );
+		if ( 0 < $lifetime ) {
+			set_transient(
+				$cache_key,
+				[
+					'client_name'   => $client_name,
+					'redirect_uris' => $redirect_uris,
+					'grant_types'   => $grant_types,
+				],
+				$lifetime
+			);
+		}
 
 		return new ClientMetadata( $client_id_url, $client_name, $redirect_uris, $grant_types );
+	}
+
+	/** The CIMD draft asks that cache headers be respected, and leaves the bounds to the server. */
+	private static function cache_seconds( string $cache_control ): int {
+		if ( 1 === preg_match( '/(?:^|[\s,])no-(?:store|cache)\b/i', $cache_control ) ) {
+			return 0;
+		}
+
+		if ( 1 !== preg_match( '/(?:^|[\s,])max-age=(\d+)/i', $cache_control, $matches ) ) {
+			return self::DEFAULT_CACHE_SECONDS;
+		}
+
+		return min( self::MAXIMUM_CACHE_SECONDS, max( self::MINIMUM_CACHE_SECONDS, (int) $matches[1] ) );
 	}
 
 	private function is_acceptable_client_id_url( string $url ): bool {

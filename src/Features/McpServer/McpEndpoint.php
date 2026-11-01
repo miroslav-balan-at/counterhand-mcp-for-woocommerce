@@ -33,6 +33,12 @@ final readonly class McpEndpoint {
 
 	private OriginPolicy $origins;
 
+	/** The revisions that had batches. 2025-06-18 removed them, and earlier clients may send no header. */
+	private const BATCHING_REVISIONS = [ '2025-03-26', '2024-11-05' ];
+
+	/** Each member can be a tool call, so one request must not stand in for many unseen. */
+	private const MAXIMUM_BATCH_SIZE = 20;
+
 	public function __construct(
 		private TokenAuthenticator $authenticator,
 		private McpServer $server,
@@ -88,6 +94,12 @@ final readonly class McpEndpoint {
 			);
 		}
 
+		$batch = JsonRpcRequest::batch_in( $http->body );
+		$claim = $http->header( 'MCP-Protocol-Version' );
+		if ( null !== $batch && ( null === $claim || in_array( $claim, self::BATCHING_REVISIONS, true ) ) ) {
+			return $this->batch( $batch, $agent );
+		}
+
 		try {
 			$request = JsonRpcRequest::from_body( $http->body );
 		} catch ( JsonRpcEnvelopeException $exception ) {
@@ -117,6 +129,59 @@ final readonly class McpEndpoint {
 			$this->log_internal_error( $throwable );
 
 			return McpReply::json( JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InternalError, 'Internal server error.' ) );
+		}
+	}
+
+	/** @param list<mixed> $members */
+	private function batch( array $members, AuthenticatedAgent $agent ): McpReply {
+		if ( [] === $members || count( $members ) > self::MAXIMUM_BATCH_SIZE ) {
+			return McpReply::json( JsonRpcResponse::error( null, JsonRpcErrorCode::InvalidRequest, sprintf( 'A batch holds between 1 and %d requests.', self::MAXIMUM_BATCH_SIZE ) ) );
+		}
+
+		try {
+			$this->authenticator->charge( $agent, count( $members ) - 1 );
+		} catch ( RateLimitExceededException $exception ) {
+			return new McpReply(
+				429,
+				[ 'error' => $exception->getMessage() ],
+				[ 'Retry-After' => (string) $exception->retry_after_seconds ]
+			);
+		}
+
+		$responses = [];
+		foreach ( $members as $member ) {
+			$response = $this->batch_member( $member, $agent );
+
+			if ( null !== $response ) {
+				$responses[] = $response->payload;
+			}
+		}
+
+		return [] === $responses ? McpReply::accepted() : new McpReply( 200, $responses );
+	}
+
+	private function batch_member( mixed $member, AuthenticatedAgent $agent ): ?JsonRpcResponse {
+		if ( ! is_array( $member ) ) {
+			return JsonRpcResponse::error( null, JsonRpcErrorCode::InvalidRequest, 'A batch member must be a request object.' );
+		}
+
+		try {
+			$request = JsonRpcRequest::from_decoded( $member );
+		} catch ( JsonRpcEnvelopeException $exception ) {
+			return JsonRpcResponse::error( null, $exception->error_code, $exception->getMessage() );
+		}
+
+		// 2025-03-26 lifecycle: initialization comes before anything else, so it stands alone.
+		if ( 'initialize' === $request->method ) {
+			return JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InvalidRequest, 'initialize must not be part of a batch.' );
+		}
+
+		try {
+			return $this->server->handle( $request, $agent );
+		} catch ( \Throwable $throwable ) {
+			$this->log_internal_error( $throwable );
+
+			return JsonRpcResponse::error( $request->id, JsonRpcErrorCode::InternalError, 'Internal server error.' );
 		}
 	}
 

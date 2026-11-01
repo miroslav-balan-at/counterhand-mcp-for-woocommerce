@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 final readonly class McpReply {
 
 	/**
-	 * @param array<string, mixed>|null $body
+	 * @param array<mixed>|null     $body
 	 * @param array<string, string>     $headers
 	 */
 	public function __construct(

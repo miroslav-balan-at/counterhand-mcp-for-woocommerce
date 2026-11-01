@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth;
 
+use Counterhand\Features\OAuth\Domain\AuthorizationFailure;
 use Counterhand\Features\OAuth\Domain\AuthorizationRequest;
 use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
@@ -14,8 +15,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Reads the OAuth 2.1 authorize parameters off the current request and
  * validates them (response_type, PKCE S256, RFC 8707 resource). Anything
- * short of a fully valid request yields null — the endpoint renders one
- * generic "incomplete request" page rather than leaking which check failed.
+ * short of a fully valid request yields null, and failure() says what the
+ * client is told, if its redirect address turns out to be its own.
  */
 final readonly class AuthorizationRequestParser {
 
@@ -47,7 +48,7 @@ final readonly class AuthorizationRequestParser {
 			return null;
 		}
 
-		if ( ! is_string( $state ) || strlen( $state ) > self::MAXIMUM_STATE_BYTES || 1 === preg_match( '/[\x00-\x1F\x7F]/', $state ) ) {
+		if ( ! self::is_returnable_state( $state ) ) {
 			return null;
 		}
 
@@ -61,5 +62,35 @@ final readonly class AuthorizationRequestParser {
 			resource: untrailingslashit( $resource ),
 			scopes: array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $requested->all() ),
 		);
+	}
+
+	/** For a request parse() refused. Null when it does not say who is asking or where to answer. */
+	public function failure(): ?AuthorizationFailure {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- as in parse().
+		$client_id     = esc_url_raw( wp_unslash( $_REQUEST['client_id'] ?? '' ) );
+		$redirect_uri  = esc_url_raw( wp_unslash( $_REQUEST['redirect_uri'] ?? '' ) );
+		$response_type = sanitize_text_field( wp_unslash( $_REQUEST['response_type'] ?? '' ) );
+		$resource      = esc_url_raw( wp_unslash( $_REQUEST['resource'] ?? '' ) );
+		$state         = wp_unslash( $_REQUEST['state'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated before it is returned.
+		// phpcs:enable
+
+		if ( '' === $client_id || '' === $redirect_uri ) {
+			return null;
+		}
+
+		return new AuthorizationFailure(
+			$client_id,
+			$redirect_uri,
+			match ( true ) {
+				'code' !== $response_type => 'unsupported_response_type',
+				'' !== $resource && ! CanonicalUri::is_this_server( $resource ) => 'invalid_target',
+				default => 'invalid_request',
+			},
+			self::is_returnable_state( $state ) ? $state : ''
+		);
+	}
+
+	private static function is_returnable_state( mixed $state ): bool {
+		return is_string( $state ) && strlen( $state ) <= self::MAXIMUM_STATE_BYTES && 1 !== preg_match( '/[\x00-\x1F\x7F]/', $state );
 	}
 }

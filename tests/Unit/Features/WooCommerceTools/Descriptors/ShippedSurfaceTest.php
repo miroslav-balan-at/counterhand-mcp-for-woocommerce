@@ -522,4 +522,10 @@ final class ShippedSurfaceTest extends TestCase {
 
 		$this->fail( 'create_product is no longer in the catalogue.' );
 	}
+
+	public function test_the_tools_chat_keeps_at_hand_are_shipped(): void {
+		foreach ( \Counterhand\Features\Playground\AgentLoop::COMMON_TOOLS as $name ) {
+			self::assertArrayHasKey( $name, self::SHIPPED );
+		}
+	}
 }

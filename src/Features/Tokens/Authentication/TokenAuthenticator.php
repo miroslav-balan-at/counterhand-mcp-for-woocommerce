@@ -29,6 +29,17 @@ final readonly class TokenAuthenticator {
 	) {}
 
 	/**
+	 * Counts requests beyond the one authenticate() charged, so a batch costs what its members would.
+	 *
+	 * @throws RateLimitExceededException When they would put the token over budget.
+	 */
+	public function charge( AuthenticatedAgent $agent, int $requests ): void {
+		if ( $requests > 0 ) {
+			$this->rate_limiter->hit( $agent->token->token_id->value, $requests );
+		}
+	}
+
+	/**
 	 * @throws AuthenticationFailedException On any verification failure.
 	 * @throws RateLimitExceededException When the token is over budget.
 	 */

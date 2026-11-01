@@ -41,6 +41,47 @@ test.describe( 'MCP protocol (2025-11-25)', () => {
 		await client.dispose();
 	} );
 
+	test.describe( 'batches, from the 2025-03-26 revision', () => {
+		const post = async ( baseURL: string, data: unknown, version?: string ) => {
+			const client = await anonymousContext( baseURL );
+			const response = await client.post( endpoint, {
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${ accessToken }`, ...( version ? { 'MCP-Protocol-Version': version } : {} ) },
+				data,
+			} );
+			const text = await response.text();
+			await client.dispose();
+
+			return { status: response.status(), body: text ? JSON.parse( text ) : null };
+		};
+		const ping = ( id: number ) => ( { jsonrpc: '2.0', id, method: 'ping' } );
+
+		test( 'answers each request in order, and nothing for a notification', async ( { baseURL } ) => {
+			const { status, body } = await post( baseURL as string, [ ping( 1 ), { jsonrpc: '2.0', method: 'notifications/initialized' }, { jsonrpc: '2.0', id: 2, method: 'tools/list' }, 7 ], '2025-03-26' );
+
+			expect( status ).toBe( 200 );
+			expect( body.map( ( row: { id: number | null } ) => row.id ) ).toEqual( [ 1, 2, null ] );
+			expect( body[ 1 ].result.tools.map( ( tool: { name: string } ) => tool.name ) ).toContain( 'list_products' );
+			expect( body[ 2 ].error.code ).toBe( -32600 );
+		} );
+
+		test( 'a client sending no version header is served too, and only notifications get 202', async ( { baseURL } ) => {
+			expect( ( await post( baseURL as string, [ ping( 1 ) ] ) ).body[ 0 ].id ).toBe( 1 );
+			expect( ( await post( baseURL as string, [ { jsonrpc: '2.0', method: 'notifications/initialized' } ] ) ).status ).toBe( 202 );
+		} );
+
+		test( 'initialize stands alone', async ( { baseURL } ) => {
+			const { body } = await post( baseURL as string, [ { jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'e2e', version: '0' } } } ] );
+
+			expect( body[ 0 ].error.code ).toBe( -32600 );
+		} );
+
+		test( 'a later revision, an empty batch and an oversized one are refused', async ( { baseURL } ) => {
+			expect( ( await post( baseURL as string, [ ping( 1 ) ], PROTOCOL_VERSION ) ).body.error.code ).toBe( -32600 );
+			expect( ( await post( baseURL as string, [] ) ).body.error.code ).toBe( -32600 );
+			expect( ( await post( baseURL as string, Array.from( { length: 21 }, ( _, index ) => ping( index ) ) ) ).body.error.code ).toBe( -32600 );
+		} );
+	} );
+
 	test( 'notifications get no response body', async ( { baseURL } ) => {
 		const client = await anonymousContext( baseURL as string );
 

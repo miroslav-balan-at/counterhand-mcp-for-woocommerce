@@ -26,6 +26,40 @@ final class ClientMetadataResolverTest extends TestCase {
 		Functions\when( 'apply_filters' )->returnArg( 2 );
 		Functions\when( 'is_wp_error' )->justReturn( false );
 		Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
+		Functions\when( 'wp_remote_retrieve_header' )->justReturn( '' );
+	}
+
+	/**
+	 * @dataProvider cache_headers
+	 */
+	public function test_the_cache_follows_the_document_within_bounds( string $header, ?int $seconds ): void {
+		Functions\when( 'wp_safe_remote_get' )->justReturn( [] );
+		Functions\when( 'wp_remote_retrieve_body' )->justReturn( $this->document() );
+		Functions\when( 'wp_remote_retrieve_header' )->justReturn( $header );
+		$stored = null;
+		Functions\when( 'set_transient' )->alias(
+			static function ( string $key, array $value, int $lifetime ) use ( &$stored ): bool {
+				$stored = $lifetime;
+				return true;
+			}
+		);
+
+		self::assertNotNull( ( new ClientMetadataResolver() )->resolve( self::CLIENT_ID ) );
+		self::assertSame( $seconds, $stored );
+	}
+
+	/** @return array<string, array{string, ?int}> */
+	public static function cache_headers(): array {
+		return [
+			'no header'      => [ '', 300 ],
+			'no directive'   => [ 'public', 300 ],
+			'within bounds'  => [ 'public, max-age=600', 600 ],
+			'too short'      => [ 'max-age=5', 60 ],
+			'too long'       => [ 'max-age=31536000', 3600 ],
+			'no-store'       => [ 'no-store', null ],
+			'no-cache wins'  => [ 'max-age=600, no-cache', null ],
+			's-maxage alone' => [ 's-maxage=600', 300 ],
+		];
 	}
 
 	public function test_fetches_through_the_safe_http_function(): void {

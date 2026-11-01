@@ -81,6 +81,8 @@ final readonly class AuthorizeEndpoint {
 
 		$request = $this->parser->parse();
 		if ( null === $request ) {
+			$this->tell_client_if_possible();
+
 			$this->page->render_error(
 				__( 'Incomplete request', 'counterhand-mcp-for-woocommerce' ),
 				__( 'This authorization link is missing required details or has expired. Start the connection again from your AI assistant.', 'counterhand-mcp-for-woocommerce' )
@@ -103,6 +105,31 @@ final readonly class AuthorizeEndpoint {
 
 		$this->render_consent( $request, $client );
 		exit;
+	}
+
+	/** RFC 6749 §4.1.2.1: a client whose redirect address checks out hears why, in its own flow. */
+	private function tell_client_if_possible(): void {
+		$failure = $this->parser->failure();
+		if ( null === $failure ) {
+			return;
+		}
+
+		$client = $this->client_resolver->resolve( $failure->client_id );
+		if ( null === $client || ! $client->allows_redirect_uri( $failure->redirect_uri ) ) {
+			return;
+		}
+
+		$this->redirector->redirect_with(
+			$failure->redirect_uri,
+			[
+				'error' => $failure->error,
+				'iss'   => CanonicalUri::issuer(),
+				'state' => $failure->state,
+			],
+			FlowPage::STATE_ERROR,
+			__( 'Incomplete request', 'counterhand-mcp-for-woocommerce' ),
+			[ 'client_name' => $client->client_name ]
+		);
 	}
 
 	private function handle_decision( AuthorizationRequest $request, ClientMetadata $client ): void {

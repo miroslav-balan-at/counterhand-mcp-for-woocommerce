@@ -2,7 +2,7 @@
 Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
 Tags: woocommerce, mcp, mcp-server, claude, chatgpt
-Requires at least: 6.5
+Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
 Stable tag: 1.3.2
@@ -210,6 +210,10 @@ Clients that support MCP prompts can offer these as slash commands: sales review
 = Where do I report a bug or a security issue? =
 
 Bugs and feature requests: the [GitHub issue tracker](https://github.com/miroslav-balan-at/counterhand-mcp-for-woocommerce/issues) or the support forum here. Security issues: please report them privately as described in the repository's SECURITY.md rather than in a public thread.
+
+= Does it work in a subfolder or on a multisite network? =
+
+Yes. Each site of a network has its own connections, its own switch and its own tables, and starts switched off. In a subfolder, or on a subsite, assistants look for `/your-folder/.well-known/...`, so a web server that blocks every path starting with a dot must let `.well-known` through at that level too.
 
 == Screenshots ==
 

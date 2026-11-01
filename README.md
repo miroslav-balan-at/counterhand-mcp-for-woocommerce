@@ -20,7 +20,7 @@ Or with WP-CLI:
 wp plugin install counterhand-mcp-for-woocommerce --activate
 ```
 
-WooCommerce ≥ 8.0, WordPress ≥ 6.5, PHP ≥ 8.2. For cloud assistants (Claude,
+WooCommerce ≥ 8.0, WordPress ≥ 6.6, PHP ≥ 8.2. For cloud assistants (Claude,
 ChatGPT) the store must be reachable over HTTPS from the internet; Cursor, VS
 Code and Claude Code connect from your machine and work with a local site.
 

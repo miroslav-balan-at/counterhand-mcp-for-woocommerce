@@ -32,6 +32,9 @@ final readonly class AgentLoop {
 	/** Hard stop so a misbehaving model cannot bill indefinitely. */
 	private const MAX_ITERATIONS = 12;
 
+	/** What most questions start from, so a provider that defers the rest keeps these at hand. */
+	public const COMMON_TOOLS = [ 'get_store_overview', 'list_products', 'get_product', 'list_orders', 'get_order' ];
+
 	/**
 	 * The ceiling used when a provider declines to name one.
 	 *
@@ -117,7 +120,17 @@ final readonly class AgentLoop {
 				];
 			}
 
+			if ( $turn->paused ) {
+				$messages[] = $provider->assistant_message( $turn );
+				continue;
+			}
+
 			if ( ! $turn->wants_tools || [] === $turn->tool_calls ) {
+				// The browser sends this back next time, and a model forgets what it left out.
+				if ( '' !== $turn->text ) {
+					$messages[] = $provider->assistant_message( $turn );
+				}
+
 				return new AgentLoopResult( $messages, $transcript, $usage );
 			}
 
@@ -246,6 +259,12 @@ final readonly class AgentLoop {
 		);
 	}
 
+	private static function commonness( ToolInterface $tool ): int {
+		$position = array_search( $tool->name(), self::COMMON_TOOLS, true );
+
+		return false === $position ? count( self::COMMON_TOOLS ) : $position;
+	}
+
 	/**
 	 * Built once per exchange and reused across iterations: the visible set
 	 * cannot change mid-conversation, and input_schema() asks WooCommerce for
@@ -269,6 +288,9 @@ final readonly class AgentLoop {
 				)
 			);
 		}
+
+		// Stable, so a provider's prompt cache survives from one turn to the next.
+		usort( $tools, static fn ( ToolInterface $first, ToolInterface $second ): int => self::commonness( $first ) <=> self::commonness( $second ) );
 
 		$definitions = array_map(
 			fn ( ToolInterface $tool ): array => $provider->describe_tool(

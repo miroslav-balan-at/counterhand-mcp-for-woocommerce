@@ -44,7 +44,7 @@ final class Uninstall {
 		delete_option( 'counterhand_changes_schema_version' );
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'counterhand\\_confirmed\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- spent one-time approvals, which no core API lists.
 
-		// No transient sweep: every transient this plugin sets lives five minutes
+		// No transient sweep: every transient this plugin sets lives an hour
 		// or less, and core's daily delete_expired_transients job removes the rows.
 
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );

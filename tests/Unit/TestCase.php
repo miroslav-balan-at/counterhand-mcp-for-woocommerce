@@ -18,6 +18,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 		Functions\when( '__' )->returnArg( 1 );
 		Functions\when( 'esc_html__' )->returnArg( 1 );
 		Functions\when( '_x' )->returnArg( 1 );
+		Functions\when( 'switch_to_locale' )->justReturn( false );
 		// Stubbed once one test defines it, it stays defined for the whole run, so every
 		// test gets a logger rather than only those that happen to run after it.
 		Functions\when( 'wc_get_logger' )->justReturn(

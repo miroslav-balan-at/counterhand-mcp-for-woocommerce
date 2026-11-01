@@ -46,6 +46,8 @@ Code and Claude Code connect from your machine and work with a local site.
   connectors, or with your own Anthropic / OpenAI / Gemini / Ollama key.
 - **An opt-in action log** with PII masked before storage.
 
+An optional [Agent Skill](skills/README.md) teaches assistants the safe way to work with these tools, for Claude Code, Cursor and Claude.ai.
+
 ## How it differs from WooCommerce's built-in MCP
 
 WooCommerce ≥ 10.3 ships an experimental, feature-flagged MCP server exposing a

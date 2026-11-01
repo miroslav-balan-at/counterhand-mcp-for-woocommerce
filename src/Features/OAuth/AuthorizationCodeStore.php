@@ -28,7 +28,11 @@ final readonly class AuthorizationCodeStore {
 		$transient_key = 'counterhand_authorization_code_' . hash( 'sha256', $code );
 
 		$grant = get_transient( $transient_key );
-		delete_transient( $transient_key );
+
+		// Only the request whose delete took effect holds the code, so two at once cannot both spend it.
+		if ( ! delete_transient( $transient_key ) ) {
+			return null;
+		}
 
 		return AuthorizationGrant::from_array( $grant );
 	}

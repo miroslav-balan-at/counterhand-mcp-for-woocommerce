@@ -48,6 +48,15 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 		<code><?php echo esc_html( $context['client_host'] ); ?></code>
 	</p>
 
+	<p class="counterhand-origin">
+		<span class="counterhand-origin__label"><?php esc_html_e( 'Access goes to', 'counterhand-mcp-for-woocommerce' ); ?></span>
+		<code><?php echo esc_html( $context['return_host'] ); ?></code>
+	</p>
+
+	<?php if ( $context['returns_to_this_computer'] ) : ?>
+		<p class="counterhand-origin"><strong><?php esc_html_e( "This hands access to a program on your own computer. Approve only if you just started this connection yourself: any program there could ask under this app's name.", 'counterhand-mcp-for-woocommerce' ); ?></strong></p>
+	<?php endif; ?>
+
 	<form method="post" class="counterhand-form">
 		<?php
 		wp_nonce_field( 'counterhand_authorize' );

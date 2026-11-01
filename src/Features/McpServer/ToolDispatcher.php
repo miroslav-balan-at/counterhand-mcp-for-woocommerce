@@ -130,6 +130,15 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			];
 		}
 
+		if ( ! $tool->requires_confirmation() && $tool instanceof ConditionalConfirmationInterface && [] !== $tool->fields_needing_confirmation() ) {
+			$schema['properties'][ self::CONFIRM_ARGUMENT ] = [
+				'type'        => 'boolean',
+				'description' => sprintf( 'Must be true when sending %s. Set it only after telling the user what this will change and getting their agreement.', implode( ' or ', $tool->fields_needing_confirmation() ) ),
+			];
+
+			return $schema;
+		}
+
 		if ( ! $tool->requires_confirmation() ) {
 			return $schema;
 		}
@@ -159,10 +168,12 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		$validated = $arguments;
 
 		try {
-			$validated = $this->validate_arguments( $tool, $arguments );
-			if ( is_wp_error( $validated ) ) {
-				return DispatchOutcome::rejected( $validated->get_error_message() );
+			$checked = $this->validate_arguments( $tool, $arguments );
+			if ( is_wp_error( $checked ) ) {
+				// The spec lists input validation among tool errors, so the model can read and correct it.
+				return $this->failure( $tool, $agent, $arguments, $checked->get_error_message() );
 			}
+			$validated = $checked;
 
 			// Defense in depth: the registry already filtered by scope, but the
 			// gate inside the dispatch path must hold on its own.
@@ -394,11 +405,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	 * @throws ToolCallException When a call needing confirmation does not carry confirm set to true.
 	 */
 	private function confirmed_arguments( ToolInterface $tool, array $arguments ): array {
-		if ( ! $tool->requires_confirmation() ) {
-			return $arguments;
-		}
-
-		if ( true !== ( $arguments[ self::CONFIRM_ARGUMENT ] ?? false ) ) {
+		if ( $this->needs_confirmation( $tool, $arguments ) && true !== ( $arguments[ self::CONFIRM_ARGUMENT ] ?? false ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 			throw new ToolCallException(
 				'This changes the store in a way that is not easily undone. Tell the user exactly what will happen, and call it again with confirm set to true only once they have agreed.'
@@ -408,6 +415,58 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		unset( $arguments[ self::CONFIRM_ARGUMENT ] );
 
 		return $arguments;
+	}
+
+	public function needs_confirmation( ToolInterface $tool, array $arguments ): bool {
+		if ( self::is_preview( $tool, $arguments ) ) {
+			return false;
+		}
+
+		if ( $tool->requires_confirmation() ) {
+			return true;
+		}
+
+		if ( ! $tool instanceof ConditionalConfirmationInterface ) {
+			return false;
+		}
+
+		foreach ( $tool->fields_needing_confirmation() as $field ) {
+			if ( array_key_exists( $field, $arguments ) && false !== $arguments[ $field ] ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function resolve_for( AuthenticatedAgent $agent, string $tool_name ): ?ToolInterface {
+		return $this->registry->resolve_for( $agent, $tool_name );
+	}
+
+	/**
+	 * Core's validator raises a notice on a schema with no type, and some routes publish
+	 * one. Core takes the first type a value passes, so the order keeps a value as sent:
+	 * "array" first would wrap a string in a list, "boolean" before "integer" turns 1 into true, and "number" alone turns 5 into 5.0.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @return array<string, mixed>
+	 */
+	private static function with_explicit_types( array $schema ): array {
+		if ( ! array_key_exists( 'type', $schema ) ) {
+			$schema['type'] = [ 'string', 'integer', 'number', 'boolean', 'array', 'object', 'null' ];
+		}
+
+		if ( is_array( $schema['properties'] ?? null ) ) {
+			$schema['properties'] = array_map( static fn ( mixed $property ): mixed => is_array( $property ) ? self::with_explicit_types( $property ) : $property, $schema['properties'] );
+		}
+
+		foreach ( self::NESTED_SCHEMAS as $keyword ) {
+			if ( is_array( $schema[ $keyword ] ?? null ) ) {
+				$schema[ $keyword ] = self::with_explicit_types( $schema[ $keyword ] );
+			}
+		}
+
+		return $schema;
 	}
 
 	/**
@@ -445,8 +504,9 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 	private function validate_arguments( ToolInterface $tool, array $arguments ): array|\WP_Error {
 		$schema = $this->gated_schema( $tool );
 
-		// A preview changes nothing, so there is nothing yet to confirm.
-		if ( self::is_preview( $tool, $arguments ) && is_array( $schema['required'] ?? null ) ) {
+		// Enforced by confirmed_arguments(), whose refusal tells the model what to do. Core's
+		// "is a required property" would not, and a preview needs no confirmation at all.
+		if ( is_array( $schema['required'] ?? null ) ) {
 			$schema['required'] = array_values( array_diff( $schema['required'], [ self::CONFIRM_ARGUMENT ] ) );
 		}
 
@@ -462,6 +522,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 			return new \WP_Error( 'counterhand_wrong_shape', $wrong_shape );
 		}
 
+		$schema    = self::with_explicit_types( $schema );
 		$sanitized = rest_sanitize_value_from_schema( $arguments, $schema, 'arguments' );
 		if ( is_wp_error( $sanitized ) ) {
 			return $sanitized;

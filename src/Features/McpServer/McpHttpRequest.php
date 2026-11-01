@@ -20,6 +20,7 @@ final readonly class McpHttpRequest {
 		public string $method,
 		public string $body,
 		array $headers,
+		public bool $through_rest_fallback = false,
 	) {
 		$this->headers = array_change_key_case( $headers, CASE_LOWER );
 	}

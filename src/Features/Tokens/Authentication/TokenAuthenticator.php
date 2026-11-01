@@ -65,7 +65,7 @@ final readonly class TokenAuthenticator {
 		// RFC 8707 audience binding (spec MUST): an OAuth-minted token carries the
 		// resource it was issued for; reject it if presented to a different one.
 		// Legacy/manual tokens (audience null) are not audience-bound.
-		if ( null !== $stored->token->audience && ! CanonicalUri::matches( $stored->token->audience, CanonicalUri::mcp() ) ) {
+		if ( null !== $stored->token->audience && ! CanonicalUri::is_this_server( $stored->token->audience ) ) {
 			throw new AuthenticationFailedException();
 		}
 

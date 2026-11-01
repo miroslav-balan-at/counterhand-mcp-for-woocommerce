@@ -8,6 +8,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 * Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and the abilities other plugins offer to AI clients. All ship off, each with its own grant.
 * Added: `preview` on catalog, content, shipping and tax writes, and `undo_change` and `get_recent_changes` behind a new "Undo history" grant.
 * Added: support for the MCP 2026-07-28 protocol revision alongside the earlier one.
+* Added: an Agent Skill, `counterhand-woocommerce`, under `skills/`, separate from the plugin.
 * Added: MCP prompts for common store routines, a `counterhand://store/profile` resource, and envelope output schemas on read tools.
 
 ## 1.2.1

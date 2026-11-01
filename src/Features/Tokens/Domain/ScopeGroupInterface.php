@@ -41,6 +41,9 @@ interface ScopeGroupInterface {
 
 	public function in_chat_by_default(): bool;
 
+	/** Whether its results hold what customers wrote, which could carry instructions aimed at a model. */
+	public function holds_customer_text(): bool;
+
 	/** Whether a write here can be recorded and undone. */
 	public function keeps_changes(): bool;
 }

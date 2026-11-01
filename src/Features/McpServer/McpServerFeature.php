@@ -19,9 +19,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	private const QUERY_VAR = 'counterhand_mcp';
 
-	private const REST_FALLBACK_NAMESPACE = 'counterhand/v1';
-
-	private const REST_FALLBACK_ROUTE = self::REST_FALLBACK_NAMESPACE . '/' . CanonicalUri::MCP_PATH;
+	private const REST_FALLBACK_ROUTE = CanonicalUri::REST_NAMESPACE . '/' . CanonicalUri::MCP_PATH;
 
 	private McpEndpoint $endpoint;
 
@@ -44,6 +42,11 @@ final readonly class McpServerFeature implements FeatureInterface {
 		add_action( 'parse_request', [ $this, 'maybe_handle_pretty_route' ] );
 		add_action( 'rest_api_init', [ $this, 'register_rest_fallback' ] );
 		add_filter( ToolDispatcherInterface::SERVES_TOOLS_FILTER, [ $this, 'serves_tools_here' ] );
+		add_action( ConfirmationState::PURGE_HOOK, [ new ConfirmationState(), 'purge_expired' ] );
+
+		if ( ! wp_next_scheduled( ConfirmationState::PURGE_HOOK ) ) {
+			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', ConfirmationState::PURGE_HOOK );
+		}
 	}
 
 	public function serves_tools_here( mixed $serves ): bool {
@@ -96,7 +99,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 
 	public function register_rest_fallback(): void {
 		register_rest_route(
-			self::REST_FALLBACK_NAMESPACE,
+			CanonicalUri::REST_NAMESPACE,
 			'/' . CanonicalUri::MCP_PATH,
 			[
 				[
@@ -117,7 +120,7 @@ final readonly class McpServerFeature implements FeatureInterface {
 			$headers[ str_replace( '_', '-', (string) $name ) ] = (string) ( is_array( $values ) ? reset( $values ) : $values );
 		}
 
-		$reply = $this->endpoint->process( new McpHttpRequest( $request->get_method(), (string) $request->get_body(), $headers ) );
+		$reply = $this->endpoint->process( new McpHttpRequest( $request->get_method(), (string) $request->get_body(), $headers, true ) );
 
 		$response = new \WP_REST_Response( $reply->body, $reply->status );
 

@@ -103,7 +103,7 @@ final readonly class ProductCurrencyPricesTool implements ToolInterface {
 	}
 
 	public function requires_confirmation(): bool {
-		return false;
+		return ! $this->is_read_only();
 	}
 
 	public function is_read_only(): bool {

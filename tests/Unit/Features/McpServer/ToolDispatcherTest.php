@@ -140,6 +140,29 @@ final class ToolDispatcherTest extends TestCase {
 		$this->assertArrayNotHasKey( 'reviewer_email', $tool->received );
 	}
 
+	public function test_a_property_with_no_type_keeps_a_string_as_sent(): void {
+		[ $dispatcher, $tool ] = $this->dispatcher(
+			[
+				'type'       => 'object',
+				'properties' => [ 'tracking_number' => [ 'description' => 'A route that declares no type.' ] ],
+			]
+		);
+
+		$offered = [];
+		Functions\when( 'rest_sanitize_value_from_schema' )->alias(
+			static function ( array $arguments, array $schema ) use ( &$offered ): array {
+				$offered = $schema['properties']['tracking_number']['type'];
+
+				return $arguments;
+			}
+		);
+
+		$dispatcher->dispatch( 'a_tool', [ 'tracking_number' => '{"a":1}' ], AgentFactory::with_scopes( [ 'products:read' ] ) );
+
+		$this->assertSame( '{"a":1}', $tool->received['tracking_number'] );
+		$this->assertSame( [ 'string', 'integer', 'number', 'boolean', 'array', 'object', 'null' ], $offered );
+	}
+
 	public function test_a_real_default_is_still_applied(): void {
 		$tool = $this->dispatch(
 			[

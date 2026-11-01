@@ -19,6 +19,8 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class AuthorizationRequestParser {
 
+	private const MAXIMUM_STATE_BYTES = 2048;
+
 	public function parse(): ?AuthorizationRequest {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- OAuth authorize params, not a WP form; CSRF handled by state + POST nonce on decision.
 		$client_id      = esc_url_raw( wp_unslash( $_REQUEST['client_id'] ?? '' ) );
@@ -26,9 +28,10 @@ final readonly class AuthorizationRequestParser {
 		$response_type  = sanitize_text_field( wp_unslash( $_REQUEST['response_type'] ?? '' ) );
 		$code_challenge = sanitize_text_field( wp_unslash( $_REQUEST['code_challenge'] ?? '' ) );
 		$method         = sanitize_text_field( wp_unslash( $_REQUEST['code_challenge_method'] ?? '' ) );
-		$state          = sanitize_text_field( wp_unslash( $_REQUEST['state'] ?? '' ) );
-		$resource       = esc_url_raw( wp_unslash( $_REQUEST['resource'] ?? '' ) );
-		$scope          = sanitize_text_field( wp_unslash( $_REQUEST['scope'] ?? '' ) );
+		// Returned to the client byte for byte, so it is checked rather than cleaned.
+		$state    = wp_unslash( $_REQUEST['state'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated below and escaped on output.
+		$resource = esc_url_raw( wp_unslash( $_REQUEST['resource'] ?? '' ) );
+		$scope    = sanitize_text_field( wp_unslash( $_REQUEST['scope'] ?? '' ) );
 		// phpcs:enable
 
 		if ( 'code' !== $response_type || 'S256' !== $method || '' === $client_id || '' === $redirect_uri ) {
@@ -40,7 +43,11 @@ final readonly class AuthorizationRequestParser {
 		}
 
 		// RFC 8707: the resource must be our canonical MCP URI.
-		if ( '' === $resource || ! CanonicalUri::matches( $resource, CanonicalUri::mcp() ) ) {
+		if ( '' === $resource || ! CanonicalUri::is_this_server( $resource ) ) {
+			return null;
+		}
+
+		if ( ! is_string( $state ) || strlen( $state ) > self::MAXIMUM_STATE_BYTES || 1 === preg_match( '/[\x00-\x1F\x7F]/', $state ) ) {
 			return null;
 		}
 
@@ -51,7 +58,7 @@ final readonly class AuthorizationRequestParser {
 			redirect_uri: $redirect_uri,
 			code_challenge: $code_challenge,
 			state: $state,
-			resource: CanonicalUri::mcp(),
+			resource: untrailingslashit( $resource ),
 			scopes: array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $requested->all() ),
 		);
 	}

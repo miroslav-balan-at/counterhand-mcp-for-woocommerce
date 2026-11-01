@@ -119,4 +119,9 @@ final readonly class IntegrationGroup implements ScopeGroupInterface {
 	public function keeps_changes(): bool {
 		return false;
 	}
+
+	/** Each plugin's own descriptions say so where it matters: Flamingo's do. */
+	public function holds_customer_text(): bool {
+		return false;
+	}
 }

@@ -29,7 +29,8 @@ test.describe( 'Preview and undo', () => {
 		return {
 			names: () => listToolNames( client, discovery.resource, tokens.access_token ),
 			call: async ( name: string, args: Record< string, unknown > ) => {
-				const reply = await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name, arguments: args } ) ).json();
+				// Prices and coupons ask first; what is asked is tested in confirmation.spec.ts.
+				const reply = await ( await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name, arguments: { confirm: true, ...args } } ) ).json();
 				expect( reply.result, JSON.stringify( reply ) ).toBeDefined();
 
 				return reply.result;

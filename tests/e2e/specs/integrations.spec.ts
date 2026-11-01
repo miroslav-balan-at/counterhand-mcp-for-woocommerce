@@ -93,10 +93,10 @@ test.describe( 'Integrations with the real plugins', () => {
 
 		// A wrong type used to be stored as the word "Array", or blank the whole mail, and report success.
 		const sentBack = await call( 'update_contact_form', { id, form: read.properties.form, confirm: true } );
-		expect( sentBack, 'an object where a string belongs is refused' ).toBeUndefined();
+		expect( sentBack.isError, 'an object where a string belongs is refused' ).toBe( true );
 		expect( form() ).toContain( 'your-name' );
 		const mailAsText = await call( 'update_contact_form', { id, mail: 'send it to sales@example.test', confirm: true } );
-		expect( mailAsText ).toBeUndefined();
+		expect( mailAsText.isError ).toBe( true );
 		expect( wp( 'post', 'meta', 'get', String( id ), '_mail', '--format=json' ) ).not.toContain( '"recipient":""' );
 
 		const hash = await call( 'update_contact_form', { id, form: '[hidden h default:user_user_pass][submit]', confirm: true } );
@@ -845,7 +845,7 @@ test.describe( 'WPML with the real plugins', () => {
 	test( 'a price changed through update_product reaches the translation', async ( { browser, baseURL } ) => {
 		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
 
-		await call( 'update_product', { id: original, regular_price: '77' } );
+		await call( 'update_product', { id: original, regular_price: '77', confirm: true } );
 
 		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '77' );
 	} );
@@ -856,7 +856,7 @@ test.describe( 'WPML with the real plugins', () => {
 		await page.close();
 		const client = await anonymousContext( baseURL as string );
 
-		const reply = await mcpCall( client, new URL( '/wp-json/counterhand/v1/mcp', baseURL ).href, tokens.access_token, 'tools/call', { name: 'update_product', arguments: { id: original, regular_price: '78' } } );
+		const reply = await mcpCall( client, new URL( '/wp-json/counterhand/v1/mcp', baseURL ).href, tokens.access_token, 'tools/call', { name: 'update_product', arguments: { id: original, regular_price: '78', confirm: true } } );
 
 		expect( reply.status(), 'WooCommerce\'s authentication must not take this for its own' ).toBe( 200 );
 		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '78' );
@@ -868,6 +868,7 @@ test.describe( 'WPML with the real plugins', () => {
 		await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
 		await page.locator( '#counterhand-chat-input' ).fill( `set product ${ original } to 79` );
 		await page.locator( '#counterhand-chat-send' ).click();
+		await page.locator( '.counterhand-confirm .button-primary' ).click();
 		await expect( page.locator( '#counterhand-chat-log' ) ).toContainText( 'E2E model read the tool result.' );
 		await page.close();
 		restoreChat();
@@ -1081,7 +1082,7 @@ test.describe( 'WPML with the real plugins', () => {
 		const before = ( await call( 'get_product_currency_prices', { id: untranslated } ) ).structuredContent;
 		expect( before.own_prices ).toBe( false );
 
-		const set = ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33', sale_price: '30' } } } ) ).structuredContent;
+		const set = ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33', sale_price: '30' } }, confirm: true } ) ).structuredContent;
 		expect( set.own_prices ).toBe( true );
 		expect( set.prices.EUR ).toEqual( { regular_price: '33', sale_price: '30' } );
 		expect( evaluate( `echo get_post_meta( ${ untranslated }, '_price_EUR', true );` ) ).toBe( '30' );
@@ -1089,9 +1090,9 @@ test.describe( 'WPML with the real plugins', () => {
 		await call( 'update_product', { id: untranslated, name: 'E2E WPML only EN' } );
 		expect( ( await call( 'get_product_currency_prices', { id: untranslated } ) ).structuredContent.prices.EUR.regular_price, 'kept by a write that omits it' ).toBe( '33' );
 
-		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { XXX: { regular_price: '1' } } } ) ).isError, 'not set up' ).toBe( true );
-		expect( ( await call( 'set_product_currency_prices', { id: variable, prices: { EUR: { regular_price: '1' } } } ) ).isError, 'variable' ).toBe( true );
-		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: 'free' } } } ) ).isError, 'not a number' ).toBe( true );
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { XXX: { regular_price: '1' } }, confirm: true } ) ).isError, 'not set up' ).toBe( true );
+		expect( ( await call( 'set_product_currency_prices', { id: variable, prices: { EUR: { regular_price: '1' } }, confirm: true } ) ).isError, 'variable' ).toBe( true );
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: 'free' } }, confirm: true } ) ).isError, 'not a number' ).toBe( true );
 	} );
 
 	test( 'a translation of an unpublished original cannot go on sale', async ( { browser, baseURL } ) => {
@@ -1135,7 +1136,7 @@ test.describe( 'WPML with the real plugins', () => {
 		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write', 'changes:write' ] );
 		const before = evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` );
 
-		const changed = ( await call( 'update_product', { id: original, regular_price: '123' } ) ).structuredContent;
+		const changed = ( await call( 'update_product', { id: original, regular_price: '123', confirm: true } ) ).structuredContent;
 		expect( evaluate( `echo get_post_meta( ${ translated }, '_regular_price', true );` ) ).toBe( '123' );
 		await call( 'undo_change', { change_id: changed.change_id, confirm: true } );
 		undo();
@@ -1146,8 +1147,8 @@ test.describe( 'WPML with the real plugins', () => {
 	test( 'a currency with no price of its own still follows the exchange rate', async ( { browser, baseURL } ) => {
 		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
 
-		await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33' } } } );
-		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '-1' } } } ) ).isError ).toBe( true );
+		await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '33' } }, confirm: true } );
+		expect( ( await call( 'set_product_currency_prices', { id: untranslated, prices: { EUR: { regular_price: '-1' } }, confirm: true } ) ).isError ).toBe( true );
 	} );
 
 	test( 'its playbook appears once the connection can reach its tool', async ( { browser, baseURL } ) => {

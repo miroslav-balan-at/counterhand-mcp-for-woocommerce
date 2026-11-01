@@ -56,6 +56,13 @@ interface ToolDispatcherInterface {
 	public function restore( AuthenticatedAgent $agent, string $tool_name, ChangePlan $plan, array $before ): void;
 
 	/**
+	 * Whether this call, with these arguments, needs a person's agreement first.
+	 *
+	 * @param array<string, mixed> $arguments
+	 */
+	public function needs_confirmation( ToolInterface $tool, array $arguments ): bool;
+
+	/**
 	 * Never throws: every way a call can go wrong is an outcome, because the
 	 * caller is mid-conversation and needs something to hand back to the model.
 	 *

@@ -13,7 +13,7 @@ The WooCommerce-native MCP server. Let Claude, ChatGPT and Cursor read sales, ma
 
 == Description ==
 
-Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature. It is free, open source (GPL) and self-hosted: nothing about your store passes through a third-party service.
+Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature. It is free, open source (GPL) and self-hosted: Counterhand runs no service of its own in between. Store data reaches only the AI apps you connect, and the provider you choose for the built-in chat.
 
 Home page and documentation: [counterhand.app](https://counterhand.app/).
 
@@ -57,44 +57,9 @@ Each tool offers the ten or so fields that matter rather than all hundred WooCom
 
 Visibility is decided by WooCommerce too: before a tool is offered, this plugin runs WooCommerce's own permission check for that endpoint. A shop manager therefore sees a different set of tools from an administrator, without this plugin keeping a list of who may do what.
 
-= Other plugins, through WordPress abilities =
+= Works with your other plugins =
 
-On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
-
-= Contact Form 7 and Flamingo =
-
-With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under "Other plugins" in Settings, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
-
-= Advanced Custom Fields =
-
-With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under "Other plugins" in Settings, and it cannot change anything else about those items.
-
-= Germanized =
-
-With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under "Other plugins" in Settings. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
-
-= WPML =
-
-With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on under "Other plugins" in Settings. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
-
-Have a person check any translated legal wording, such as withdrawal or safety text. Whatever you switch on, a product changed through any tool now updates its translations too, as it does in the WooCommerce REST API. With Multilingual's multi-currency mode on, the product tools can also read and set a product's own price in each currency.
-
-= Other paid plugins =
-
-Each of these is off until you switch it on under "Other plugins" in Settings.
-
-* WooCommerce Shipment Tracking: read, add and remove tracking numbers on orders. Changes need explicit confirmation.
-* Germanized Pro: look up issued invoices. Read-only, with no addresses or files.
-* WooCommerce Cost of Goods: read and set what products cost, and see what an order earned. Profit is left out when it cannot be right, such as for an order in another currency.
-* WooCommerce URL Coupons: list coupon links, and give a coupon a link. Changes need explicit confirmation, and anything that is the start of an address the store already uses is refused, because a link captures every address starting with it.
-
-= Preview and undo =
-
-An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Settings and granted to a connection, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
-
-= Ready-made routines =
-
-Clients that support MCP prompts can offer these as slash commands: sales review, restock list, order triage, refund review, catalog check and coupon review, plus missing translations with WPML and a legal details check with Germanized. Each appears only if the connection can reach every tool it needs, and each proposes rather than changes anything. Clients can also read a short store profile, so an assistant knows the currency, tax setup and what it can reach before it starts.
+Off until you switch each on: WPML, Germanized and Germanized Pro, Contact Form 7, Flamingo, Advanced Custom Fields, Shipment Tracking, Cost of Goods, URL Coupons, and abilities from Yoast SEO, Rank Math, WPForms and others. An assistant can preview most catalog changes, and undo them for 30 days. The FAQ has the details.
 
 = Two ways to use AI with your store =
 
@@ -202,6 +167,45 @@ The things that could are gated separately. Store settings, payment gateways and
 = Can I connect a client that only supports bearer headers? =
 
 The security model is OAuth-first. If you need a raw bearer token for a script or CI job, use the `counterhand_rate_limit` and related filters documented in the plugin, or open an issue on GitHub — a developer token path may be added.
+
+= Does it work with other plugins, through WordPress abilities? =
+
+On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
+
+= Does it work with Contact Form 7 and Flamingo? =
+
+With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under "Other plugins" in Settings, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
+
+= Does it work with Advanced Custom Fields? =
+
+With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under "Other plugins" in Settings, and it cannot change anything else about those items.
+
+= Does it work with Germanized? =
+
+With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under "Other plugins" in Settings. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
+
+= Does it work with WPML? =
+
+With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on under "Other plugins" in Settings. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
+
+Have a person check any translated legal wording, such as withdrawal or safety text. Whatever you switch on, a product changed through any tool now updates its translations too, as it does in the WooCommerce REST API. With Multilingual's multi-currency mode on, the product tools can also read and set a product's own price in each currency.
+
+= Which other paid plugins does it work with? =
+
+Each of these is off until you switch it on under "Other plugins" in Settings.
+
+* WooCommerce Shipment Tracking: read, add and remove tracking numbers on orders. Changes need explicit confirmation.
+* Germanized Pro: look up issued invoices. Read-only, with no addresses or files.
+* WooCommerce Cost of Goods: read and set what products cost, and see what an order earned. Profit is left out when it cannot be right, such as for an order in another currency.
+* WooCommerce URL Coupons: list coupon links, and give a coupon a link. Changes need explicit confirmation, and anything that is the start of an address the store already uses is refused, because a link captures every address starting with it.
+
+= Can an assistant preview a change, or undo one? =
+
+An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Settings and granted to a connection, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
+
+= Are there ready-made routines? =
+
+Clients that support MCP prompts can offer these as slash commands: sales review, restock list, order triage, refund review, catalog check and coupon review, plus missing translations with WPML and a legal details check with Germanized. Each appears only if the connection can reach every tool it needs, and each proposes rather than changes anything. Clients can also read a short store profile, so an assistant knows the currency, tax setup and what it can reach before it starts.
 
 = Where do I report a bug or a security issue? =
 

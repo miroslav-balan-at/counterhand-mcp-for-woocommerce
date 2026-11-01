@@ -33,9 +33,9 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 			label: static fn (): string => __( 'ChatGPT (OpenAI)', 'counterhand-mcp-for-woocommerce' ),
 			default_base_url: 'https://api.openai.com/v1', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- fallback for WordPress below 7.0; the AI Client is preferred when present.
 			models: [
-				'gpt-5'      => 'GPT-5',
-				'gpt-5-mini' => 'GPT-5 mini',
-				'gpt-4.1'    => 'GPT-4.1',
+				'gpt-5.6-sol'   => 'GPT-5.6 Sol',
+				'gpt-5.6-terra' => 'GPT-5.6 Terra',
+				'gpt-6-luna'    => 'GPT-6 Luna',
 			],
 			base_url_required: false,
 			key_url: 'https://platform.openai.com/api-keys',
@@ -54,8 +54,8 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 			// Google renames models often; the picker is a starting point and
 			// the field accepts whatever the account actually offers.
 			models: [
-				'gemini-3-flash-preview' => 'Gemini 3 Flash',
-				'gemini-2.5-pro'         => 'Gemini 2.5 Pro',
+				'gemini-3.8-flash'      => 'Gemini 3.8 Flash',
+				'gemini-3.5-flash-lite' => 'Gemini 3.5 Flash-Lite',
 			],
 			base_url_required: false,
 			key_url: 'https://aistudio.google.com/apikey',

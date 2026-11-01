@@ -30,18 +30,16 @@ final readonly class RateLimiter {
 		 */
 		$limit = (int) apply_filters( 'counterhand_rate_limit', $this->settings->rate_limit_per_minute(), $token_id );
 
-		$transient_key = 'counterhand_rl_' . $token_id;
+		// The window is in the key, because writing a transient restarts its expiry, which
+		// would let a steady agent be refused while well under its per-minute budget.
+		$now           = time();
+		$transient_key = 'counterhand_rl_' . $token_id . '_' . (int) floor( $now / self::WINDOW_SECONDS );
 		$current_count = (int) get_transient( $transient_key );
 
 		if ( $current_count >= $limit ) {
-			throw new RateLimitExceededException( self::WINDOW_SECONDS ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
+			throw new RateLimitExceededException( self::WINDOW_SECONDS - ( $now % self::WINDOW_SECONDS ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- message is emitted as JSON via wp_json_encode(), never HTML.
 		}
 
-		if ( 0 === $current_count ) {
-			set_transient( $transient_key, 1, self::WINDOW_SECONDS );
-			return;
-		}
-
-		set_transient( $transient_key, $current_count + 1, self::WINDOW_SECONDS );
+		set_transient( $transient_key, $current_count + 1, 2 * self::WINDOW_SECONDS );
 	}
 }

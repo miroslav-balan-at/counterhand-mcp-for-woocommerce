@@ -32,6 +32,18 @@ final readonly class DiscoveryController {
 
 		register_rest_route(
 			'counterhand/v1',
+			'/oauth-protected-resource-fallback',
+			[
+				[
+					'methods'             => 'GET',
+					'callback'            => [ $this, 'protected_resource_through_fallback' ],
+					'permission_callback' => '__return_true',
+				],
+			]
+		);
+
+		register_rest_route(
+			'counterhand/v1',
 			'/oauth-authorization-server',
 			[
 				[
@@ -45,9 +57,18 @@ final readonly class DiscoveryController {
 
 	/** RFC 9728 — points clients at the authorization server. */
 	public function protected_resource(): \WP_REST_Response {
+		return $this->resource_document( CanonicalUri::mcp() );
+	}
+
+	/** The same, for a client that reached the server through the REST route. */
+	public function protected_resource_through_fallback(): \WP_REST_Response {
+		return $this->resource_document( CanonicalUri::rest_fallback() );
+	}
+
+	private function resource_document( string $resource_url ): \WP_REST_Response {
 		return new \WP_REST_Response(
 			[
-				'resource'                 => CanonicalUri::mcp(),
+				'resource'                 => $resource_url,
 				'authorization_servers'    => [ CanonicalUri::issuer() ],
 				'scopes_supported'         => $this->published->publicly_listed(),
 				'bearer_methods_supported' => [ 'header' ],

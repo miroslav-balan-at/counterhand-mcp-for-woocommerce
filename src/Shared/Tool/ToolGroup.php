@@ -157,6 +157,13 @@ enum ToolGroup: string implements ScopeGroupInterface {
 		};
 	}
 
+	public function holds_customer_text(): bool {
+		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
+			self::Orders, self::Customers, self::Reviews, self::Refunds => true,
+			default => false,
+		};
+	}
+
 	public function read_scope(): ApiScope {
 		return ApiScope::from( $this->value . ':read' ); // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
 	}
@@ -202,7 +209,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 	 */
 	public function is_always_logged(): bool {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::System, self::Settings, self::Gateways => true,
+			self::System, self::Settings, self::Gateways, self::Refunds => true,
 			default => false,
 		};
 	}

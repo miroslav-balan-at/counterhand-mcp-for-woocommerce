@@ -7,13 +7,15 @@ namespace Counterhand\Features\Undo;
 use Counterhand\Features\McpServer\ChangeJournalInterface;
 use Counterhand\Features\McpServer\ChangeKind;
 use Counterhand\Features\McpServer\ChangePlan;
+use Counterhand\Features\Privacy\ChangeHistoryInterface;
+use Counterhand\Features\Privacy\PersonalChange;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Undo\Persistence\ChangeSchema;
 
 defined( 'ABSPATH' ) || exit;
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- plugin-owned table, no core API covers it, and its name is plugin-owned.
-final readonly class WpdbChangeJournal implements ChangeJournalInterface, ChangeRepositoryInterface {
+final readonly class WpdbChangeJournal implements ChangeJournalInterface, ChangeRepositoryInterface, ChangeHistoryInterface {
 
 	public const RETENTION_DAYS = 30;
 
@@ -100,6 +102,28 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 		$table = ChangeSchema::table_name();
 
 		$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET undone_at = NULL WHERE change_key = %s", $key ) );
+	}
+
+	public function made_by( int $user_id ): array {
+		global $wpdb;
+
+		$table = ChangeSchema::table_name();
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d ORDER BY id DESC", $user_id ) );
+
+		return array_map(
+			static function ( object $row ): PersonalChange {
+				$change = self::from_row( $row );
+
+				return new PersonalChange( $change->key, $change->tool_name, $change->created_at, $change->plan->fields );
+			},
+			(array) $rows
+		);
+	}
+
+	public function forget( int $user_id ): int {
+		global $wpdb;
+
+		return (int) $wpdb->delete( ChangeSchema::table_name(), [ 'user_id' => $user_id ], [ '%d' ] );
 	}
 
 	public function purge_expired(): void {

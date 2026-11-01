@@ -24,6 +24,7 @@ build
 dist
 
 # Development tooling and tests
+skills
 tests
 bin
 composer.json

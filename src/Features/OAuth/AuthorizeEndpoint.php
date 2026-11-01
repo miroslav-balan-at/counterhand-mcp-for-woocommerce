@@ -207,11 +207,13 @@ final readonly class AuthorizeEndpoint {
 			FlowPage::STATE_CONSENT,
 			__( 'Authorize AI access', 'counterhand-mcp-for-woocommerce' ),
 			[
-				'client_name'  => $client->client_name,
-				'client_host'  => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
-				'scopes'       => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
-				'settings_url' => AdminScreen::Settings->url(),
-				'hidden'       => [
+				'client_name'              => $client->client_name,
+				'client_host'              => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),
+				'return_host'              => (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ),
+				'returns_to_this_computer' => in_array( (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ), [ 'localhost', '127.0.0.1', '[::1]', '::1' ], true ),
+				'scopes'                   => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
+				'settings_url'             => AdminScreen::Settings->url(),
+				'hidden'                   => [
 					'client_id'             => $request->client_id,
 					'redirect_uri'          => $request->redirect_uri,
 					'code_challenge'        => $request->code_challenge,

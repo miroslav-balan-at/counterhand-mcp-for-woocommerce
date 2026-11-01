@@ -14,8 +14,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ActionLogger {
 
+	private const PERSONAL_FIELDS = [ 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'postcode', 'state', 'vat_id', 'customer_note', 'note', 'reviewer', 'review', 'username', 'display_name' ];
+
 	public function log( string $tool_name, string $token_label, bool $is_error, array $arguments ): void {
 		global $wpdb;
+
+		// A site of a network, or an update nobody has opened the admin since, may not have it yet.
+		LogSchema::maybe_upgrade();
 
 		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			LogSchema::table_name(),
@@ -24,10 +29,31 @@ final readonly class ActionLogger {
 				'tool_name'   => substr( $tool_name, 0, 64 ),
 				'token_label' => substr( $token_label, 0, 191 ),
 				'outcome'     => $is_error ? 'error' : 'success',
-				'summary'     => $this->mask_pii( (string) wp_json_encode( $arguments ) ),
+				'summary'     => $this->mask_pii( (string) wp_json_encode( self::without_personal_fields( $arguments ) ) ),
 			],
 			[ '%s', '%s', '%s', '%s', '%s' ]
 		);
+	}
+
+	/**
+	 * Names and addresses have no pattern to mask, so they are recognised by their field.
+	 *
+	 * @param  array<mixed> $arguments
+	 * @return array<mixed>
+	 */
+	private static function without_personal_fields( array $arguments ): array {
+		foreach ( $arguments as $key => $value ) {
+			if ( in_array( (string) $key, self::PERSONAL_FIELDS, true ) ) {
+				$arguments[ $key ] = '***';
+				continue;
+			}
+
+			if ( is_array( $value ) ) {
+				$arguments[ $key ] = self::without_personal_fields( $value );
+			}
+		}
+
+		return $arguments;
 	}
 
 	public function mask_pii( string $text ): string {

@@ -2,61 +2,50 @@
  * Counterhand MCP — design tokens, shared by the wp-admin screens and the
  * front-end OAuth flow pages so both surfaces read as one product.
  *
- * Every value maps to a WordPress Design System token (--wpds-*) with the
- * current WordPress admin palette as the fallback. WooCommerce's 2026 guidance
- * for extensions is to "map every value to a semantic --wpds-* token rather
- * than a raw color or size", because those tokens carry the user's admin colour
- * scheme and the eventual dark mode. Sites without the design system simply get
- * the fallback and look exactly as before.
+ * Names checked against wp-includes/css/dist/theme/design-tokens.css in WordPress
+ * 7.1; admin-ui.spec.ts fails if a release renames one. Older versions and the
+ * OAuth pages, which print only this plugin's styles, get the fallbacks.
  *
- * The --wpds-* names below follow the documented namespace but have not been
- * verified against a shipped WordPress 7.x / WooCommerce 10.9 build. A wrong
- * name degrades silently to its fallback rather than breaking the page, so this
- * is safe to ship — but confirm the spellings before relying on theming.
+ * The accent comes from --wp-admin-theme-color rather than the design system's
+ * brand tokens. In 7.1 those stay blue on every scheme outside the Site Editor,
+ * while core's buttons follow the user's choice, as this does.
  *
- * Brand colour comes from --wpds-color-brand or not at all. WooCommerce purple
- * is deliberately never hardcoded: #7f54b3 fails AA contrast on light surfaces
- * and would fight the user's chosen colour scheme.
+ * WooCommerce purple is deliberately never hardcoded: #7f54b3 fails AA contrast on
+ * light surfaces and would fight the user's chosen colour scheme.
  */
 
 :root {
 	/* Surfaces ----------------------------------------------------------- */
-	--counterhand-surface: var(--wpds-color-background-surface, #fff);
+	--counterhand-surface: var(--wpds-color-background-surface-neutral-strong, #fff);
 	--counterhand-surface-neutral: var(--wpds-color-background-surface-neutral, #f6f7f7);
-	--counterhand-surface-sunken: var(--wpds-color-background-surface-sunken, #f0f0f1);
-	--counterhand-surface-inverse: var(--wpds-color-background-surface-inverse, #1d2327);
+	--counterhand-surface-sunken: var(--wpds-color-background-surface-neutral-weak, #f0f0f1);
+	--counterhand-surface-inverse: #1d2327;
 
 	/* Text --------------------------------------------------------------- */
-	--counterhand-text: var(--wpds-color-text-primary, #1d2327);
-	--counterhand-text-muted: var(--wpds-color-text-secondary, #50575e);
-	--counterhand-text-subtle: var(--wpds-color-text-tertiary, #6a6e73);
-	--counterhand-text-inverse: var(--wpds-color-text-inverse, #f0f0f1);
+	--counterhand-text: var(--wpds-color-foreground-content-neutral, #1d2327);
+	--counterhand-text-muted: var(--wpds-color-foreground-content-neutral-weak, #50575e);
+	--counterhand-text-subtle: var(--wpds-color-foreground-content-neutral-weak, #6a6e73);
+	--counterhand-text-inverse: #f0f0f1;
 
 	/* Borders ------------------------------------------------------------ */
-	--counterhand-border: var(--wpds-color-stroke-subtle, #dcdcde);
-	--counterhand-border-strong: var(--wpds-color-stroke, #a7aaad);
-	--counterhand-border-field: var(--wpds-color-stroke-field, #8c8f94);
-
-	/* Accent / interactive ----------------------------------------------- */
-	--counterhand-accent: var(--wpds-color-brand, #2271b1);
-	--counterhand-accent-hover: var(--wpds-color-brand-hover, #135e96);
-	--counterhand-accent-active: var(--wpds-color-brand-active, #0a4b78);
-	--counterhand-accent-surface: var(--wpds-color-background-brand-subtle, #f0f6fc);
+	--counterhand-border: var(--wpds-color-stroke-surface-neutral, #dcdcde);
+	--counterhand-border-strong: var(--wpds-color-stroke-surface-neutral-strong, #a7aaad);
+	--counterhand-border-field: var(--wpds-color-stroke-interactive-neutral, #8c8f94);
 
 	/* Status triplets: surface / stroke / foreground ---------------------- */
-	--counterhand-success: var(--wpds-color-text-success, #00a32a);
-	--counterhand-success-surface: var(--wpds-color-background-success-subtle, #edfaef);
+	--counterhand-success: var(--wpds-color-foreground-content-success-weak, #00a32a);
+	--counterhand-success-surface: var(--wpds-color-background-surface-success-weak, #edfaef);
 	/* --counterhand-success is 3.4:1 on white: a fill colour, not a text colour. Small
 	   text says "active"/"connected" in this instead, as warning and error do. */
-	--counterhand-success-text: var(--wpds-color-text-success-strong, #005c12);
+	--counterhand-success-text: var(--wpds-color-foreground-content-success, #005c12);
 
-	--counterhand-warning: var(--wpds-color-stroke-warning, #dba617);
-	--counterhand-warning-surface: var(--wpds-color-background-warning-subtle, #fcf9e8);
-	--counterhand-warning-text: var(--wpds-color-text-warning, #614a00);
+	--counterhand-warning: var(--wpds-color-stroke-surface-warning, #dba617);
+	--counterhand-warning-surface: var(--wpds-color-background-surface-warning-weak, #fcf9e8);
+	--counterhand-warning-text: var(--wpds-color-foreground-content-warning, #614a00);
 
-	--counterhand-error: var(--wpds-color-text-error, #d63638);
-	--counterhand-error-surface: var(--wpds-color-background-error-subtle, #fcf0f1);
-	--counterhand-error-text: var(--wpds-color-text-error-strong, #8a1f21);
+	--counterhand-error: var(--wpds-color-foreground-content-error-weak, #d63638);
+	--counterhand-error-surface: var(--wpds-color-background-surface-error-weak, #fcf0f1);
+	--counterhand-error-text: var(--wpds-color-foreground-content-error, #8a1f21);
 
 	/* Dimensions --------------------------------------------------------- */
 	/* Prose measure — the cap on a paragraph, not on the page. WordPress core
@@ -64,13 +53,13 @@
 	   full width, so the screens do too; only running text is held back to a
 	   readable line. */
 	--counterhand-prose: 68ch;
-	--counterhand-radius: var(--wpds-dimension-radius-small, 4px);
-	--counterhand-radius-card: var(--wpds-dimension-radius-medium, 6px);
-	--counterhand-gap-small: var(--wpds-dimension-gap-small, 8px);
-	--counterhand-gap: var(--wpds-dimension-gap-medium, 16px);
-	--counterhand-gap-large: var(--wpds-dimension-gap-large, 24px);
-	--counterhand-pad: var(--wpds-dimension-padding-large, 24px);
-	--counterhand-pad-small: var(--wpds-dimension-padding-small, 12px);
+	--counterhand-radius: var(--wpds-border-radius-sm, 4px);
+	--counterhand-radius-card: var(--wpds-border-radius-lg, 6px);
+	--counterhand-gap-small: var(--wpds-dimension-gap-sm, 8px);
+	--counterhand-gap: var(--wpds-dimension-gap-lg, 16px);
+	--counterhand-gap-large: var(--wpds-dimension-gap-xl, 24px);
+	--counterhand-pad: var(--wpds-dimension-padding-2xl, 24px);
+	--counterhand-pad-small: var(--wpds-dimension-padding-md, 12px);
 
 	/* Elevation: two layers so cards lift off the neutral background without
 	   a hard edge. Not tokenised upstream, so these stay literal. */
@@ -92,9 +81,6 @@
 	 * rules inherit theming for free without rewriting 500 lines of working,
 	 * shipped CSS. New rules should use the semantic names above.
 	 */
-	--counterhand-blue-50: var(--counterhand-accent);
-	--counterhand-blue-60: var(--counterhand-accent-hover);
-	--counterhand-blue-70: var(--counterhand-accent-active);
 	--counterhand-gray-0: var(--counterhand-surface-neutral);
 	--counterhand-gray-5: var(--counterhand-border);
 	--counterhand-gray-20: var(--counterhand-border-strong);
@@ -104,4 +90,20 @@
 	--counterhand-green-50: var(--counterhand-success);
 	--counterhand-yellow-5: var(--counterhand-warning-surface);
 	--counterhand-yellow-40: var(--counterhand-warning);
+}
+
+/*
+ * On body, not :root: core sets the scheme's colours on body.admin-color-*, and a
+ * property declared on :root would resolve to the default blue before inheriting.
+ */
+body {
+	/* Accent / interactive ----------------------------------------------- */
+	--counterhand-accent: var(--wp-admin-theme-color, #2271b1);
+	--counterhand-accent-hover: var(--wp-admin-theme-color-darker-10, #135e96);
+	--counterhand-accent-active: var(--wp-admin-theme-color-darker-20, #0a4b78);
+	--counterhand-accent-surface: rgba(var(--wp-admin-theme-color--rgb, 34, 113, 177), .08);
+
+	--counterhand-blue-50: var(--counterhand-accent);
+	--counterhand-blue-60: var(--counterhand-accent-hover);
+	--counterhand-blue-70: var(--counterhand-accent-active);
 }

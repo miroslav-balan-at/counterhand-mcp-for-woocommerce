@@ -5,9 +5,14 @@ declare( strict_types=1 );
 namespace Counterhand\Tests\Unit\Features\Settings;
 
 use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Settings\SettingsForm;
 use Counterhand\Features\Settings\SettingSanitizer;
+use Counterhand\Features\Tokens\Domain\IntegrationGroup;
+use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Tests\Unit\TestCase;
+use Brain\Monkey\Filters;
+use Brain\Monkey\Functions;
 
 /**
  * This runs on every settings save, against whatever was posted. An unchecked
@@ -127,5 +132,67 @@ final class SettingSanitizerTest extends TestCase {
 		$this->assertArrayNotHasKey( 'integration_yoast-seo_write', $sanitized );
 		$this->assertArrayNotHasKey( 'integration_yoast-seo_admin', $sanitized );
 		$this->assertArrayNotHasKey( 'something_else_read', $sanitized );
+	}
+
+	/** Saving the plugins' form must not touch the connector, which it never posted. */
+	public function test_the_integrations_form_keeps_every_other_setting(): void {
+		Functions\when( 'get_option' )->justReturn(
+			[
+				'enabled'                => true,
+				'orders_write'           => true,
+				'rate_limit_per_minute'  => 7,
+				'integration_old_read'   => true,
+			]
+		);
+
+		$sanitized = $this->sanitizer->sanitize(
+			[
+				'form'                 => SettingsForm::Integrations->value,
+				'integration_new_read' => '1',
+				'enabled'              => '',
+			]
+		);
+
+		self::assertTrue( $sanitized['enabled'] );
+		self::assertTrue( $sanitized['orders_write'] );
+		self::assertSame( 7, $sanitized['rate_limit_per_minute'] );
+		self::assertTrue( $sanitized['integration_new_read'] );
+		self::assertArrayNotHasKey( 'integration_old_read', $sanitized );
+		self::assertArrayNotHasKey( 'form', $sanitized );
+	}
+
+	public function test_the_integrations_form_keeps_a_group_that_defaults_on_when_nothing_is_stored(): void {
+		Functions\when( 'get_option' )->justReturn( [] );
+
+		$sanitized = $this->sanitizer->sanitize( [ 'form' => SettingsForm::Integrations->value ] );
+
+		self::assertSame( PluginSettings::defaults(), $sanitized );
+	}
+
+	public function test_the_store_form_keeps_ticks_of_plugins_still_offered_and_no_others(): void {
+		Functions\when( 'get_option' )->justReturn(
+			[
+				'integration_active_read'      => true,
+				'integration_deactivated_read' => true,
+			]
+		);
+		Filters\expectApplied( ScopeGroups::INTEGRATIONS_FILTER )->andReturn( [ IntegrationGroup::of( 'active' ) ] );
+
+		$sanitized = $this->sanitizer->sanitize( [ 'form' => SettingsForm::Store->value ] );
+
+		self::assertTrue( $sanitized['integration_active_read'] );
+		self::assertArrayNotHasKey( 'integration_deactivated_read', $sanitized );
+	}
+
+	public function test_a_form_value_that_is_not_text_is_read_as_no_form(): void {
+		$sanitized = $this->sanitizer->sanitize(
+			[
+				'form'                 => [ 'integrations' ],
+				'integration_new_read' => '1',
+			]
+		);
+
+		self::assertFalse( $sanitized['enabled'] );
+		self::assertTrue( $sanitized['integration_new_read'] );
 	}
 }

@@ -28,8 +28,8 @@ final class ChatAreaTest extends TestCase {
 				return $this->write;
 			}
 
-			public function settings_url(): string {
-				return 'https://store.example/wp-admin/admin.php?page=counterhand-mcp-settings';
+			public function switch_for( \Counterhand\Features\Tokens\Domain\ScopeGroupInterface $group ): \Counterhand\Features\Playground\StoreSwitchLink {
+				return new \Counterhand\Features\Playground\StoreSwitchLink( '', '' );
 			}
 		};
 	}

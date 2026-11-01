@@ -16,7 +16,7 @@ final class AdminScreenTest extends TestCase {
 	public function test_slugs_are_stable(): void {
 		self::assertSame( 'counterhand-mcp', AdminScreen::Chat->value );
 		self::assertSame(
-			[ 'counterhand-mcp', 'counterhand-mcp-connect', 'counterhand-mcp-settings', 'counterhand-mcp-log' ],
+			[ 'counterhand-mcp', 'counterhand-mcp-dashboard', 'counterhand-mcp-connect', 'counterhand-mcp-integrations', 'counterhand-mcp-settings', 'counterhand-mcp-log' ],
 			array_column( AdminScreen::cases(), 'value' )
 		);
 	}

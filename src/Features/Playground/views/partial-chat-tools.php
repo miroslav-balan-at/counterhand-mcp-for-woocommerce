@@ -15,7 +15,7 @@
  * @var list<\Counterhand\Shared\Tool\ToolGroup>                  $chat_groups
  * @var list<\Counterhand\Shared\Tool\ToolSection>                $tool_sections
  * @var array<string, \Counterhand\Features\Playground\ChatArea>  $chat_areas
- * @var string                                                   $store_settings_url
+ * @var \Counterhand\Features\Playground\ChatToolPolicy           $store_policy
  * @var int|null                                                 $tool_limit Null when the model searches its tools.
  */
 
@@ -119,12 +119,29 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 						?>
 					</strong>
 					<p class="counterhand-callout__text">
-						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until the store exposes it. Settings decides what every AI client may touch; this panel only narrows it further for chat.', 'counterhand-mcp-for-woocommerce' ); ?>
+						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until the store exposes it. The store decides what every AI client may touch; this panel only narrows it further for chat.', 'counterhand-mcp-for-woocommerce' ); ?>
 					</p>
-					<a class="counterhand-callout__action" href="<?php echo esc_url( $store_settings_url ); ?>">
-						<?php esc_html_e( 'Switch it on in Settings', 'counterhand-mcp-for-woocommerce' ); ?>
-						<span aria-hidden="true">&rarr;</span>
-					</a>
+					<?php
+					$counterhand_switches = [];
+					foreach ( $counterhand_overruled as $counterhand_area ) {
+						$counterhand_switch = $store_policy->switch_for( $counterhand_area->group );
+						if ( null !== $counterhand_switch ) {
+							$counterhand_switches[ $counterhand_switch->url ] = $counterhand_switch;
+						}
+					}
+					?>
+					<?php foreach ( $counterhand_switches as $counterhand_switch ) : ?>
+						<a class="counterhand-callout__action" href="<?php echo esc_url( $counterhand_switch->url ); ?>">
+							<?php
+							printf(
+								/* translators: %s: name of an admin screen, e.g. "Settings". */
+								esc_html__( 'Switch it on in %s', 'counterhand-mcp-for-woocommerce' ),
+								esc_html( $counterhand_switch->screen_title )
+							);
+							?>
+							<span aria-hidden="true">&rarr;</span>
+						</a>
+					<?php endforeach; ?>
 				</div>
 			</div>
 		<?php endif; ?>
@@ -134,7 +151,7 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 				<?php
 				printf(
 					/* translators: %s: comma-separated list of area names. */
-					esc_html__( 'The chat can read but not change %s — writing is still off for it in Settings.', 'counterhand-mcp-for-woocommerce' ),
+					esc_html__( 'The chat can read but not change %s — writing is still switched off for it on this store.', 'counterhand-mcp-for-woocommerce' ),
 					esc_html(
 						implode( ', ', array_map( static fn ( $area ): string => $area->group->label(), $counterhand_readonly ) )
 					)

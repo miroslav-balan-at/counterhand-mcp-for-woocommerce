@@ -21,6 +21,6 @@ interface ChatToolPolicy {
 
 	public function allows_write( ScopeGroupInterface $group ): bool;
 
-	/** Where an administrator goes to change the answer. */
-	public function settings_url(): string;
+	/** Where this user goes to change the answer for this area, or null when they cannot. */
+	public function switch_for( ScopeGroupInterface $group ): ?StoreSwitchLink;
 }

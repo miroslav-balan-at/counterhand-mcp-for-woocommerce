@@ -1,6 +1,6 @@
 <?php
 /**
- * Tab nav for the Connect screen.
+ * Navigation between the Connect screen's two views.
  *
  * @var \Counterhand\Features\Settings\ConnectTab $active
  * @var array<string, int>                         $counts
@@ -12,13 +12,12 @@ use Counterhand\Features\Settings\ConnectTab;
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<nav class="nav-tab-wrapper counterhand-connect-tabs">
+<nav class="counterhand-subnav" aria-label="<?php esc_attr_e( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ); ?>">
 	<?php foreach ( ConnectTab::cases() as $counterhand_tab ) : ?>
-		<a href="<?php echo esc_url( $counterhand_tab->url() ); ?>"
-			class="nav-tab <?php echo $active === $counterhand_tab ? 'nav-tab-active' : ''; ?>">
+		<a href="<?php echo esc_url( $counterhand_tab->url() ); ?>" class="counterhand-subnav__link"<?php echo $active === $counterhand_tab ? ' aria-current="page"' : ''; ?>>
 			<?php echo esc_html( $counterhand_tab->label() ); ?>
 			<?php if ( ! empty( $counts[ $counterhand_tab->value ] ) ) : ?>
-				<span class="counterhand-tab-count"><?php echo esc_html( (string) $counts[ $counterhand_tab->value ] ); ?></span>
+				<span class="counterhand-subnav__count"><?php echo esc_html( (string) $counts[ $counterhand_tab->value ] ); ?></span>
 			<?php endif; ?>
 		</a>
 	<?php endforeach; ?>

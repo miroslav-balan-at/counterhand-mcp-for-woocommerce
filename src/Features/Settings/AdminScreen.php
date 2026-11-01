@@ -17,35 +17,43 @@ defined( 'ABSPATH' ) || exit;
  */
 enum AdminScreen: string {
 
-	case Chat     = 'counterhand-mcp';
-	case Connect  = 'counterhand-mcp-connect';
-	case Settings = 'counterhand-mcp-settings';
-	case Log      = 'counterhand-mcp-log';
+	case Chat         = 'counterhand-mcp';
+	case Dashboard    = 'counterhand-mcp-dashboard';
+	case Connect      = 'counterhand-mcp-connect';
+	case Integrations = 'counterhand-mcp-integrations';
+	case Settings     = 'counterhand-mcp-settings';
+	case Log          = 'counterhand-mcp-log';
 
 	public function menu_title(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Chat     => __( 'Chat', 'counterhand-mcp-for-woocommerce' ),
-			self::Connect  => __( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ),
-			self::Settings => __( 'Settings', 'counterhand-mcp-for-woocommerce' ),
-			self::Log      => __( 'Action Log', 'counterhand-mcp-for-woocommerce' ),
+			self::Chat         => __( 'Chat', 'counterhand-mcp-for-woocommerce' ),
+			self::Dashboard    => __( 'Dashboard', 'counterhand-mcp-for-woocommerce' ),
+			self::Connect      => __( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'Other plugins', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings     => __( 'Settings', 'counterhand-mcp-for-woocommerce' ),
+			self::Log          => __( 'Action Log', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	public function page_title(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Chat     => __( 'Chat with your store', 'counterhand-mcp-for-woocommerce' ),
-			self::Connect  => __( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ),
-			self::Settings => __( 'Counterhand MCP settings', 'counterhand-mcp-for-woocommerce' ),
-			self::Log      => __( 'Action Log', 'counterhand-mcp-for-woocommerce' ),
+			self::Chat         => __( 'Chat with your store', 'counterhand-mcp-for-woocommerce' ),
+			self::Dashboard    => __( 'Dashboard', 'counterhand-mcp-for-woocommerce' ),
+			self::Connect      => __( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'Other plugins', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings     => __( 'Counterhand MCP settings', 'counterhand-mcp-for-woocommerce' ),
+			self::Log          => __( 'Action Log', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 
 	public function subtitle(): string {
 		return match ( $this ) { // phpcs:ignore PHPCompatibility.Variables.ForbiddenThisUseContexts.OutsideObjectContext -- $this is valid in enum methods (PHP 8.1+), sniff false positive.
-			self::Chat     => __( 'Use AI here, inside WooCommerce, on a model you connect.', 'counterhand-mcp-for-woocommerce' ),
-			self::Connect  => __( 'Let AI apps you already use work with this store, and manage what they may do.', 'counterhand-mcp-for-woocommerce' ),
-			self::Settings => __( 'What this store exposes, and how much of it.', 'counterhand-mcp-for-woocommerce' ),
-			self::Log      => __( 'What each connected app actually did.', 'counterhand-mcp-for-woocommerce' ),
+			self::Chat         => __( 'Use AI here, inside WooCommerce, on a model you connect.', 'counterhand-mcp-for-woocommerce' ),
+			self::Dashboard    => __( 'What AI can reach on this store right now, and what it has been doing.', 'counterhand-mcp-for-woocommerce' ),
+			self::Connect      => __( 'Let AI apps you already use work with this store, and manage what they may do.', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'What other plugins on this store offer to AI clients.', 'counterhand-mcp-for-woocommerce' ),
+			self::Settings     => __( 'What this store exposes, and how much of it.', 'counterhand-mcp-for-woocommerce' ),
+			self::Log          => __( 'What each connected app actually did.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

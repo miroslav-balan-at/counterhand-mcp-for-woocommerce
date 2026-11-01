@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
 use Counterhand\Features\Abilities\AbilitiesFeature;
 use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
+use Counterhand\Features\ActionLog\Persistence\WpdbActivityReport;
 use Counterhand\Features\CostOfGoods\CostOfGoodsFeature;
 use Counterhand\Features\CostOfGoods\WooCommerceCostLedger;
 use Counterhand\Features\Flamingo\FlamingoFeature;
@@ -28,11 +29,16 @@ use Counterhand\Features\Playground\PlaygroundFeature;
 use Counterhand\Features\Playbooks\PlaybookCatalog;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Privacy\PrivacyFeature;
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
+use Counterhand\Features\Settings\ConnectScreen;
+use Counterhand\Features\Settings\DashboardScreen;
+use Counterhand\Features\Settings\IntegrationsScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingSanitizer;
 use Counterhand\Features\Settings\SettingsFeature;
+use Counterhand\Features\Settings\SettingsScreen;
 use Counterhand\Features\Settings\StoreToolPolicy;
 use Counterhand\Features\Tokens\Authentication\RateLimiter;
 use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
@@ -167,19 +173,24 @@ final class Plugin {
 			new StoreToolPolicy( $settings )
 		);
 
-		$descriptors = new StaticDescriptorCatalog();
+		$descriptors        = new StaticDescriptorCatalog();
+		$connection_matcher = new ConnectionMatcher( $repository );
 
 		$this->features = [
 			$tokens,
 			$action_log,
 			$playground,
 			new SettingsFeature(
-				$settings,
-				$tokens->admin(),
-				$action_log,
-				$playground,
+				[
+					AdminScreen::Chat->value         => $playground,
+					AdminScreen::Dashboard->value    => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport() ),
+					AdminScreen::Connect->value      => new ConnectScreen( $tokens->admin(), $connection_matcher ),
+					AdminScreen::Integrations->value => new IntegrationsScreen( $settings ),
+					AdminScreen::Settings->value     => new SettingsScreen( $settings ),
+					AdminScreen::Log->value          => $action_log,
+				],
 				new ConnectReadiness(),
-				new ConnectionMatcher( $repository ),
+				$connection_matcher,
 				new SettingSanitizer()
 			),
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),

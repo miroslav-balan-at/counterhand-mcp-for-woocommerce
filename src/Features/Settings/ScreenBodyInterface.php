@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * The shell renders the page chrome and delegates the body through this
  * contract, so it can hold sibling features without naming their classes.
  */
-interface SettingsTabInterface {
+interface ScreenBodyInterface {
 
-	public function render_tab(): void;
+	public function render_body(): void;
 }

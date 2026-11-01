@@ -170,29 +170,29 @@ The security model is OAuth-first. If you need a raw bearer token for a script o
 
 = Does it work with other plugins, through WordPress abilities? =
 
-On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under "Other plugins" in Settings. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
+On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools on the "Other plugins" screen. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
 
 = Does it work with Contact Form 7 and Flamingo? =
 
-With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under "Other plugins" in Settings, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
+With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on in the "Other plugins" screen, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
 
 = Does it work with Advanced Custom Fields? =
 
-With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under "Other plugins" in Settings, and it cannot change anything else about those items.
+With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on in the "Other plugins" screen, and it cannot change anything else about those items.
 
 = Does it work with Germanized? =
 
-With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under "Other plugins" in Settings. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
+With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on in the "Other plugins" screen. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
 
 = Does it work with WPML? =
 
-With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on under "Other plugins" in Settings. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
+With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on in the "Other plugins" screen. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
 
 Have a person check any translated legal wording, such as withdrawal or safety text. Whatever you switch on, a product changed through any tool now updates its translations too, as it does in the WooCommerce REST API. With Multilingual's multi-currency mode on, the product tools can also read and set a product's own price in each currency.
 
 = Which other paid plugins does it work with? =
 
-Each of these is off until you switch it on under "Other plugins" in Settings.
+Each of these is off until you switch it on in the "Other plugins" screen.
 
 * WooCommerce Shipment Tracking: read, add and remove tracking numbers on orders. Changes need explicit confirmation.
 * Germanized Pro: look up issued invoices. Read-only, with no addresses or files.

@@ -202,13 +202,13 @@ test.describe( 'Abilities bridge', () => {
 		}
 	} );
 
-	test( 'the settings screen switches one plugin on, and every call is logged', async ( { browser, baseURL } ) => {
+	test( 'the plugins screen switches one plugin on, and every call is logged', async ( { browser, baseURL } ) => {
 		const restoreLog = patchSettings( { action_log_enabled: false } );
 		const client = await anonymousContext( baseURL as string );
 		const context = await browser.newContext( { baseURL, storageState: adminStatePath } );
 		const page = await context.newPage();
 		try {
-			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp-settings' );
+			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp-integrations' );
 			await page.locator( '#counterhand-integration_e2e-fixture_read' ).check();
 			await expect( page.locator( '#counterhand-integration_e2e-other_read' ) ).not.toBeChecked();
 			await page.getByRole( 'button', { name: /save/i } ).first().click();

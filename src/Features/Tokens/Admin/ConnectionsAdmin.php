@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Tokens\Admin;
 
-use Counterhand\Features\Settings\SettingsTabInterface;
+use Counterhand\Features\Settings\ScreenBodyInterface;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
 
 defined( 'ABSPATH' ) || exit;
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  * there is no create form and no display-once secret — only listing and
  * revocation.
  */
-final readonly class ConnectionsAdmin implements SettingsTabInterface {
+final readonly class ConnectionsAdmin implements ScreenBodyInterface {
 
 	private const NONCE_REVOKE = 'counterhand_revoke_connection';
 
@@ -26,11 +26,11 @@ final readonly class ConnectionsAdmin implements SettingsTabInterface {
 		add_action( 'admin_post_counterhand_revoke_connection', [ $this, 'handle_revoke' ] );
 	}
 
-	public function render_tab(): void {
+	public function render_body(): void {
 		$list_table = new ConnectionsListTable( $this->repository );
 		$list_table->prepare_items();
 
-		include __DIR__ . '/views/tab-connections.php';
+		include __DIR__ . '/views/connections.php';
 	}
 
 	public function handle_revoke(): void {

@@ -5,7 +5,9 @@ declare( strict_types=1 );
 namespace Counterhand\Features\Settings;
 
 use Counterhand\Features\Playground\ChatToolPolicy;
+use Counterhand\Features\Playground\StoreSwitchLink;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
+use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,7 +26,13 @@ final readonly class StoreToolPolicy implements ChatToolPolicy {
 		return $this->settings->is_group_write_enabled( $group );
 	}
 
-	public function settings_url(): string {
-		return AdminScreen::Settings->url();
+	public function switch_for( ScopeGroupInterface $group ): ?StoreSwitchLink {
+		if ( ! SettingsAccess::can_save() ) {
+			return null;
+		}
+
+		$screen = ToolSection::Integrations === $group->section() ? AdminScreen::Integrations : AdminScreen::Settings;
+
+		return new StoreSwitchLink( $screen->url(), $screen->menu_title() );
 	}
 }

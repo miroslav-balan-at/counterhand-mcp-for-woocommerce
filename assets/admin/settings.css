@@ -14,16 +14,36 @@
  * shows more at once rather than one control stranded beside empty space.
  */
 
-.counterhand-wrap .nav-tab-wrapper {
-	margin-bottom: var(--counterhand-gap);
+/* Links between two views of one screen, the current one marked by weight and rule as well as colour. */
+.counterhand-subnav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--counterhand-gap);
+	margin: var(--counterhand-gap) 0;
+	border-bottom: 1px solid var(--counterhand-border);
 }
 
-.counterhand-connect-tabs {
-	margin-top: var(--counterhand-gap);
+.counterhand-subnav__link {
+	margin-bottom: -1px;
+	padding: var(--counterhand-gap-small) 2px;
+	border-bottom: 2px solid transparent;
+	color: var(--counterhand-text-muted);
+	font-size: 14px;
+	text-decoration: none;
 }
 
-/* Live-connection count, so the tab says whether there is anything to review. */
-.counterhand-tab-count {
+.counterhand-subnav__link:hover {
+	color: var(--counterhand-accent-hover);
+}
+
+.counterhand-subnav__link[aria-current="page"] {
+	border-bottom-color: var(--counterhand-accent);
+	color: var(--counterhand-text);
+	font-weight: 600;
+}
+
+/* Live-connection count, so the view says whether there is anything to review. */
+.counterhand-subnav__count {
 	display: inline-block;
 	min-width: 18px;
 	margin-left: 4px;
@@ -34,11 +54,6 @@
 	font-size: 11px;
 	line-height: 18px;
 	text-align: center;
-}
-
-.nav-tab-active .counterhand-tab-count {
-	background: var(--counterhand-accent);
-	color: var(--counterhand-text-inverse);
 }
 
 /* Running text keeps a measure even though the page does not: a subtitle read
@@ -93,6 +108,7 @@
  */
 
 .counterhand-clients,
+.counterhand-dashboard,
 .counterhand-settings-form {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
@@ -102,6 +118,7 @@
 
 /* The grid supplies the rhythm; the cards' own bottom margin would double it. */
 .counterhand-clients > .counterhand-card,
+.counterhand-dashboard > .counterhand-card,
 .counterhand-settings-form > .counterhand-card {
 	margin-bottom: 0;
 }
@@ -436,6 +453,48 @@
 
 .counterhand-muted {
 	color: var(--counterhand-text-subtle);
+}
+
+/* Dashboard -------------------------------------------------------------- */
+
+.counterhand-stat {
+	margin: 0;
+	color: var(--counterhand-text);
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.counterhand-stat--on {
+	color: var(--counterhand-success-text);
+}
+
+.counterhand-stat--off {
+	color: var(--counterhand-text-muted);
+}
+
+.counterhand-dashboard__note {
+	max-width: var(--counterhand-prose);
+	margin: var(--counterhand-gap-small) 0 0;
+	color: var(--counterhand-text-muted);
+}
+
+.counterhand-dashboard__list {
+	margin: 0;
+}
+
+.counterhand-dashboard__list li {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 2px var(--counterhand-gap);
+	margin: 0;
+	padding: var(--counterhand-gap-small) 0;
+	border-top: 1px solid var(--counterhand-surface-sunken);
+}
+
+.counterhand-dashboard__list li:first-child {
+	border-top: 0;
 }
 
 /* Connected marker on a client card -------------------------------------- */

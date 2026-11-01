@@ -4,9 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Settings;
 
-use Counterhand\Shared\CanonicalUri;
 use Counterhand\Shared\FeatureInterface;
-use Counterhand\Shared\Tool\ToolSection;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,11 +18,9 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	private ScreenAssets $assets;
 
+	/** @param array<string, ScreenBodyInterface> $bodies Keyed by AdminScreen value. */
 	public function __construct(
-		private PluginSettings $settings,
-		private SettingsTabInterface $connections_tab,
-		private SettingsTabInterface $log_tab,
-		private SettingsTabInterface $chat_tab,
+		private array $bodies,
 		private ConnectReadiness $readiness,
 		private ConnectionMatcher $matcher,
 		private SettingSanitizer $sanitizer,
@@ -78,26 +74,20 @@ final readonly class SettingsFeature implements FeatureInterface {
 			__( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
 			$chat->value,
-			[ $this, 'render_chat' ],
+			fn () => $this->render( $chat ),
 			$icon,
 			56
 		);
 
-		$screens = [
-			[ AdminScreen::Chat, [ $this, 'render_chat' ] ],
-			[ AdminScreen::Connect, [ $this, 'render_connect' ] ],
-			[ AdminScreen::Settings, [ $this, 'render_settings' ] ],
-			[ AdminScreen::Log, [ $this, 'render_log' ] ],
-		];
-
-		foreach ( $screens as [$screen, $callback] ) {
+		foreach ( [ AdminScreen::Chat, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ] as $screen ) {
 			add_submenu_page(
 				$chat->value,
 				$screen->page_title(),
 				$screen->menu_title(),
 				self::CAPABILITY,
 				$screen->value,
-				$callback
+				// The top-level entry already renders the chat; a second callback would print it twice.
+				AdminScreen::Chat === $screen ? '' : fn () => $this->render( $screen )
 			);
 		}
 
@@ -110,60 +100,13 @@ final readonly class SettingsFeature implements FeatureInterface {
 		);
 	}
 
-	public function render_chat(): void {
-		$this->render( AdminScreen::Chat, fn () => $this->chat_tab->render_tab() );
-	}
-
-	public function render_connect(): void {
-		$this->render(
-			AdminScreen::Connect,
-			function (): void {
-				$active = ConnectTab::current();
-				$counts = [ ConnectTab::Connections->value => $this->matcher->live_count() ];
-
-				require __DIR__ . '/views/connect-tabs.php';
-
-				if ( ConnectTab::Connections === $active ) {
-					$this->connections_tab->render_tab();
-
-					return;
-				}
-
-				$endpoint_url      = CanonicalUri::mcp();
-				$fallback_url      = rest_url( 'counterhand/v1/mcp' );
-				$connect_clients   = McpClient::all( $endpoint_url );
-				$connected_clients = $this->matcher->connected( $connect_clients );
-
-				require __DIR__ . '/views/tab-connect.php';
-			}
-		);
-	}
-
-	public function render_settings(): void {
-		$this->render(
-			AdminScreen::Settings,
-			function (): void {
-				$settings      = $this->settings;
-				$tool_sections = ToolSection::populated();
-				// A route namespace, not a plugin name: several plugins bundle the adapter.
-				$other_mcp_server = in_array( 'mcp', rest_get_server()->get_namespaces(), true );
-
-				require __DIR__ . '/views/tab-settings.php';
-			}
-		);
-	}
-
-	public function render_log(): void {
-		$this->render( AdminScreen::Log, fn () => $this->log_tab->render_tab() );
-	}
-
 	/**
 	 * Shared page chrome: the brand mark, heading and subtitle, then the
 	 * screen's own body. The mark is the same prompt tile the product wears
 	 * everywhere — a chevron and a cursor, because you type and the shop
 	 * answers — drawn inline so it needs no asset request.
 	 */
-	private function render( AdminScreen $screen, callable $body ): void {
+	private function render( AdminScreen $screen ): void {
 		printf(
 			'<div class="wrap counterhand-wrap%s">
 			<header class="counterhand-page-head">
@@ -180,14 +123,14 @@ final readonly class SettingsFeature implements FeatureInterface {
 			esc_html( $screen->subtitle() )
 		);
 
-		$body();
+		$this->bodies[ $screen->value ]->render_body();
 
 		echo '</div>';
 	}
 
 	public function register_settings(): void {
 		register_setting(
-			'counterhand_settings_group',
+			SettingsAccess::OPTION_GROUP,
 			PluginSettings::OPTION,
 			[
 				'type'              => 'array',

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T12:10:12+00:00\n"
+"POT-Creation-Date: 2026-11-01T20:47:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -88,74 +88,74 @@ msgstr ""
 msgid "Older ›"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:21
+#: src/Features/ActionLog/Admin/views/log.php:21
 msgid "The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:26
+#: src/Features/ActionLog/Admin/views/log.php:26
 msgid "Log cleared."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:32
+#: src/Features/ActionLog/Admin/views/log.php:32
 msgid "Every call, newest first"
 msgstr ""
 
 #. translators: %s: number of recorded calls.
-#: src/Features/ActionLog/Admin/views/tab-log.php:37
+#: src/Features/ActionLog/Admin/views/log.php:37
 #, php-format
 msgid "%s recorded call"
 msgid_plural "%s recorded calls"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:47
+#: src/Features/ActionLog/Admin/views/log.php:47
 msgid "Clear log"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:55
+#: src/Features/ActionLog/Admin/views/log.php:55
 msgid "Time (UTC)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:56
+#: src/Features/ActionLog/Admin/views/log.php:56
 #: src/Features/Privacy/PrivacyFeature.php:83
 msgid "Tool"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:57
+#: src/Features/ActionLog/Admin/views/log.php:57
 msgid "Connection"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:58
+#: src/Features/ActionLog/Admin/views/log.php:58
 msgid "Outcome"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:59
+#: src/Features/ActionLog/Admin/views/log.php:59
 msgid "Arguments (PII masked)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:68
+#: src/Features/ActionLog/Admin/views/log.php:68
 msgid "Nothing recorded yet. The next tool call an assistant makes will appear here."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:69
+#: src/Features/ActionLog/Admin/views/log.php:69
 msgid "Nothing recorded. Switch the log on in Settings to start keeping the record."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:84
+#: src/Features/ActionLog/Admin/views/log.php:84
 msgid "Failed"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:85
+#: src/Features/ActionLog/Admin/views/log.php:85
 msgid "Succeeded"
 msgstr ""
 
 #. translators: 1: current page number, 2: total number of pages.
-#: src/Features/ActionLog/Admin/views/tab-log.php:102
+#: src/Features/ActionLog/Admin/views/log.php:102
 #, php-format
 msgid "Page %1$s of %2$s"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/tab-log.php:108
+#: src/Features/ActionLog/Admin/views/log.php:108
 msgid "Log pages"
 msgstr ""
 
@@ -515,8 +515,8 @@ msgid "That approval has expired. Send your message again."
 msgstr ""
 
 #: src/Features/Playground/PlaygroundFeature.php:127
-#: src/Features/Settings/SettingsFeature.php:213
-#: src/Features/Settings/SettingsFeature.php:227
+#: src/Features/Settings/SettingsFeature.php:156
+#: src/Features/Settings/SettingsFeature.php:170
 msgid "Not allowed."
 msgstr ""
 
@@ -602,6 +602,76 @@ msgstr ""
 msgid "Claude (Anthropic)"
 msgstr ""
 
+#: src/Features/Playground/views/chat.php:40
+msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:57
+msgid "Ask about your store"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:58
+msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:62
+msgid "How many orders are waiting to be processed?"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:63
+msgid "Show me my 5 best selling products this month"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:64
+msgid "Which products are out of stock?"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:65
+msgid "What were my sales last week?"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:79
+msgid "Message"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:85
+msgid "Ask about products, orders, customers or sales…"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:86
+msgid "Connect a model above, then ask your first question here…"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:91
+msgid "Send"
+msgstr ""
+
+#. translators: 1: Enter key name, 2: Shift+Enter key combination
+#: src/Features/Playground/views/chat.php:102
+#, php-format
+msgid "%1$s to send · %2$s for a new line"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:103
+msgid "Enter"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:104
+msgid "Shift+Enter"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:119
+msgid "Change"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:124
+msgid "Clear conversation"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:133
+msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
+msgstr ""
+
 #. translators: %d: how many tools the chat can currently call.
 #: src/Features/Playground/views/partial-chat-tools.php:41
 #, php-format
@@ -653,28 +723,30 @@ msgid "%s is switched off for the whole store"
 msgstr ""
 
 #: src/Features/Playground/views/partial-chat-tools.php:122
-msgid "Picking it here is remembered, but the chat cannot reach it until the store exposes it. Settings decides what every AI client may touch; this panel only narrows it further for chat."
+msgid "Picking it here is remembered, but the chat cannot reach it until the store exposes it. The store decides what every AI client may touch; this panel only narrows it further for chat."
 msgstr ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:125
-msgid "Switch it on in Settings"
+#. translators: %s: name of an admin screen, e.g. "Settings".
+#: src/Features/Playground/views/partial-chat-tools.php:138
+#, php-format
+msgid "Switch it on in %s"
 msgstr ""
 
 #. translators: %s: comma-separated list of area names.
-#: src/Features/Playground/views/partial-chat-tools.php:137
+#: src/Features/Playground/views/partial-chat-tools.php:154
 #, php-format
-msgid "The chat can read but not change %s — writing is still off for it in Settings."
+msgid "The chat can read but not change %s — writing is still switched off for it on this store."
 msgstr ""
 
 #. translators: %d: how many tools this area would add.
-#: src/Features/Playground/views/partial-chat-tools.php:166
+#: src/Features/Playground/views/partial-chat-tools.php:183
 #, php-format
 msgid "%d tool off"
 msgid_plural "%d tools off"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:178
+#: src/Features/Playground/views/partial-chat-tools.php:195
 msgid "Save areas"
 msgstr ""
 
@@ -831,76 +903,6 @@ msgstr ""
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr ""
 
-#: src/Features/Playground/views/tab-chat.php:40
-msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:57
-msgid "Ask about your store"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:58
-msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:62
-msgid "How many orders are waiting to be processed?"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:63
-msgid "Show me my 5 best selling products this month"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:64
-msgid "Which products are out of stock?"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:65
-msgid "What were my sales last week?"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:79
-msgid "Message"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:85
-msgid "Ask about products, orders, customers or sales…"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:86
-msgid "Connect a model above, then ask your first question here…"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:91
-msgid "Send"
-msgstr ""
-
-#. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/tab-chat.php:102
-#, php-format
-msgid "%1$s to send · %2$s for a new line"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:103
-msgid "Enter"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:104
-msgid "Shift+Enter"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:119
-msgid "Change"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:124
-msgid "Clear conversation"
-msgstr ""
-
-#: src/Features/Playground/views/tab-chat.php:133
-msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
-msgstr ""
-
 #: src/Features/Privacy/PrivacyFeature.php:39
 msgid "AI assistants you connect to this store can read and change the data you grant them, which can include customers' names, addresses, orders and messages. That data goes to the assistant's provider under your agreement with them. If you use the built-in chat, store data you ask about is sent to the AI provider you configured. A log of assistant actions, with names, addresses, email addresses and phone numbers masked, is kept if you switch it on, and always for maintenance, settings, payment and refund actions. If you grant undo history, the previous values of changed catalog, content, shipping and tax records are kept for 30 days. Check whether you need a data processing agreement with your AI providers, and describe this use in your own words."
 msgstr ""
@@ -922,45 +924,67 @@ msgstr ""
 msgid "Fields"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:27
+#: src/Features/Settings/AdminScreen.php:29
 msgid "Chat"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:28
-#: src/Features/Settings/AdminScreen.php:37
+#: src/Features/Settings/AdminScreen.php:30
+#: src/Features/Settings/AdminScreen.php:41
+msgid "Dashboard"
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:31
+#: src/Features/Settings/AdminScreen.php:42
+#: src/Features/Settings/views/connect-navigation.php:15
 msgid "Connect AI apps"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:29
+#: src/Features/Settings/AdminScreen.php:32
+#: src/Features/Settings/AdminScreen.php:43
+#: src/Features/Settings/views/dashboard.php:136
+#: src/Shared/Tool/ToolSection.php:39
+msgid "Other plugins"
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:33
+#: src/Features/Settings/views/dashboard.php:45
 msgid "Settings"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:30
-#: src/Features/Settings/AdminScreen.php:39
+#: src/Features/Settings/AdminScreen.php:34
+#: src/Features/Settings/AdminScreen.php:45
 msgid "Action Log"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:36
+#: src/Features/Settings/AdminScreen.php:40
 msgid "Chat with your store"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:38
+#: src/Features/Settings/AdminScreen.php:44
 msgid "Counterhand MCP settings"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:45
+#: src/Features/Settings/AdminScreen.php:51
 msgid "Use AI here, inside WooCommerce, on a model you connect."
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:46
+#: src/Features/Settings/AdminScreen.php:52
+msgid "What AI can reach on this store right now, and what it has been doing."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:53
 msgid "Let AI apps you already use work with this store, and manage what they may do."
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:47
+#: src/Features/Settings/AdminScreen.php:54
+msgid "What other plugins on this store offer to AI clients."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:55
 msgid "What this store exposes, and how much of it."
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:48
+#: src/Features/Settings/AdminScreen.php:56
 msgid "What each connected app actually did."
 msgstr ""
 
@@ -1051,6 +1075,7 @@ msgid "Add an app"
 msgstr ""
 
 #: src/Features/Settings/ConnectTab.php:24
+#: src/Features/Settings/views/dashboard.php:52
 msgid "Connected apps"
 msgstr ""
 
@@ -1210,241 +1235,345 @@ msgstr ""
 msgid "Approve the scopes on this store's consent screen."
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:89
-#: src/Features/Settings/views/tab-connect.php:57
+#: src/Features/Settings/ScreenAssets.php:90
+#: src/Features/Settings/views/connect.php:57
 msgid "Checking the store…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:90
+#: src/Features/Settings/ScreenAssets.php:91
 msgid "The check could not be run."
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:91
+#: src/Features/Settings/ScreenAssets.php:92
 msgid "Waiting for the app to connect…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:92
+#: src/Features/Settings/ScreenAssets.php:93
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:39
 msgid "Connected"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:125
+#: src/Features/Settings/ScreenAssets.php:126
 msgid "You"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:126
+#: src/Features/Settings/ScreenAssets.php:127
 msgid "Assistant"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:127
+#: src/Features/Settings/ScreenAssets.php:128
 msgid "Thinking…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:128
+#: src/Features/Settings/ScreenAssets.php:129
 msgid "The request failed."
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:129
+#: src/Features/Settings/ScreenAssets.php:130
 msgid "Arguments"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:130
+#: src/Features/Settings/ScreenAssets.php:131
 msgid "Result"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:131
+#: src/Features/Settings/ScreenAssets.php:132
 msgid "ran"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:132
+#: src/Features/Settings/ScreenAssets.php:133
 msgid "failed"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:133
+#: src/Features/Settings/ScreenAssets.php:134
 msgid "declined"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:134
+#: src/Features/Settings/ScreenAssets.php:135
 msgid "Approve this change?"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:135
+#: src/Features/Settings/ScreenAssets.php:136
 msgid "The assistant wants to run this. Nothing happens until you decide."
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:136
+#: src/Features/Settings/ScreenAssets.php:137
 msgid "Approve"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:137
+#: src/Features/Settings/ScreenAssets.php:138
 msgid "Decline"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:138
+#: src/Features/Settings/ScreenAssets.php:139
 msgid "Approved"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:139
+#: src/Features/Settings/ScreenAssets.php:140
 msgid "Declined"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:140
+#: src/Features/Settings/ScreenAssets.php:141
 msgid "Waiting for your approval…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:141
+#: src/Features/Settings/ScreenAssets.php:142
 msgid "Tokens"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:142
+#: src/Features/Settings/ScreenAssets.php:143
 msgid "Installing…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:143
+#: src/Features/Settings/ScreenAssets.php:144
 msgid "Installed"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:144
+#: src/Features/Settings/ScreenAssets.php:145
 msgid "The install failed."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:56
+#: src/Features/Settings/SettingsFeature.php:52
 msgid "Source on GitHub"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:57
+#: src/Features/Settings/SettingsFeature.php:53
 msgid "Sponsor"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:78
+#: src/Features/Settings/SettingsFeature.php:74
 msgid "Counterhand MCP"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:107
+#: src/Features/Settings/SettingsFeature.php:97
 msgid "AI Chat"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:38
+#: src/Features/Settings/views/connect.php:38
 msgid "Your store address"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:40
+#: src/Features/Settings/views/connect.php:40
 msgid "Paste this one URL into any AI app. The app identifies itself with its own published address, so there is no token to create and nothing to copy back — you just approve what it may do."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:49
-#: src/Features/Settings/views/tab-connect.php:127
+#: src/Features/Settings/views/connect.php:49
+#: src/Features/Settings/views/connect.php:127
 msgid "Copied!"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:50
-#: src/Features/Settings/views/tab-connect.php:128
+#: src/Features/Settings/views/connect.php:50
+#: src/Features/Settings/views/connect.php:128
 msgid "Copy"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:59
+#: src/Features/Settings/views/connect.php:59
 msgid "Check again"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:82
+#: src/Features/Settings/views/connect.php:82
 msgid "✓ Connected"
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:137
+#: src/Features/Settings/views/connect.php:137
 msgid "Official setup documentation"
 msgstr ""
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/tab-connect.php:152
+#: src/Features/Settings/views/connect.php:152
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
 msgstr ""
 
-#: src/Features/Settings/views/tab-connect.php:157
+#: src/Features/Settings/views/connect.php:157
 msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:28
-msgid "Another MCP server is running on this store."
-msgstr ""
-
-#: src/Features/Settings/views/tab-settings.php:29
-msgid "A plugin such as Rank Math or the MCP Adapter has started its own, under /wp-json/mcp/. It lets a logged-in user reach abilities directly, including WooCommerce's own, without the switches, permissions and confirmations below. To turn it off, return false from the mcp_adapter_create_default_server and wpmedia_mcp_oauth_server_enabled filters. While its OAuth server is on, its connector may also not work beside this plugin, because both answer the same discovery address."
-msgstr ""
-
-#: src/Features/Settings/views/tab-settings.php:39
+#: src/Features/Settings/views/dashboard.php:29
+#: src/Features/Settings/views/settings.php:40
 msgid "Connector"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:40
+#: src/Features/Settings/views/dashboard.php:34
+msgid "On"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:34
+#: src/Features/Settings/views/dashboard.php:151
+msgid "Off"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:39
+msgid "Apps you have approved can reach this store."
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:40
+msgid "No outside AI app can reach this store."
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:58
+msgid "Review or revoke them"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:64
+msgid "Areas switched on"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:65
+msgid "The most any connection can get. Each one holds only what it was approved for."
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:73
+msgid "None can be changed by an AI client."
+msgstr ""
+
+#. translators: %s: comma-separated names of areas of the store, e.g. "Products, Orders".
+#: src/Features/Settings/views/dashboard.php:77
+#, php-format
+msgid "Can be changed: %s."
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:85
+msgid "Choose areas"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:92
+msgid "Tool calls today"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:97
+msgid "Not recorded"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:98
+msgid "The action log is off, so nothing here can say what apps have done."
+msgstr ""
+
+#. translators: %s: number of tool calls that failed.
+#: src/Features/Settings/views/dashboard.php:105
+#, php-format
+msgid "%s failed."
+msgid_plural "%s failed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Settings/views/dashboard.php:126
+msgid "Open the action log"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:128
+msgid "Switch the log on"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:147
+msgid "Can read and change"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:149
+msgid "Can read"
+msgstr ""
+
+#: src/Features/Settings/views/dashboard.php:160
+msgid "Choose plugins"
+msgstr ""
+
+#: src/Features/Settings/views/integrations.php:25
+msgid "Each plugin still checks its own permissions. A connection reaches a plugin only if it is switched on here and that connection was approved for it. To add a plugin to an app already connected, connect it again."
+msgstr ""
+
+#: src/Features/Settings/views/integrations.php:32
+msgid "No other plugin offers tools yet"
+msgstr ""
+
+#: src/Features/Settings/views/integrations.php:33
+msgid "A plugin appears here once it is active and has something to offer. Some, such as SEO plugins, need their own setup finished first."
+msgstr ""
+
+#: src/Features/Settings/views/other-server-notice.php:18
+msgid "Another MCP server is running on this store."
+msgstr ""
+
+#: src/Features/Settings/views/other-server-notice.php:19
+msgid "A plugin such as Rank Math or the MCP Adapter has started its own, under /wp-json/mcp/. It lets a logged-in user reach abilities directly, including WooCommerce's own, without the switches, permissions and confirmations below. To turn it off, return false from the mcp_adapter_create_default_server and wpmedia_mcp_oauth_server_enabled filters. While its OAuth server is on, its connector may also not work beside this plugin, because both answer the same discovery address."
+msgstr ""
+
+#: src/Features/Settings/views/read-only-notice.php:17
+msgid "Only a site administrator can change these."
+msgstr ""
+
+#: src/Features/Settings/views/settings.php:41
 msgid "When the connector is off, the /mcp endpoint does not exist — no tools and no keys are exposed to any assistant."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:46
+#: src/Features/Settings/views/settings.php:47
 msgid "Enable the MCP connector"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:54
+#: src/Features/Settings/views/settings.php:55
 msgid "Tool groups"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:55
+#: src/Features/Settings/views/settings.php:56
 msgid "Disabled groups are withheld from every AI client and enforced when a tool runs — not just hidden from the list. A connection additionally needs the matching scope."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:62
+#: src/Features/Settings/views/settings.php:63
 msgid "Group"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:63
+#: src/Features/Settings/views/settings.php:64
 msgid "Read"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:64
+#: src/Features/Settings/views/settings.php:65
 msgid "Write"
 msgstr ""
 
 #. translators: %s: name of a tool group, e.g. "Products".
-#: src/Features/Settings/views/tab-settings.php:86
+#: src/Features/Settings/views/settings.php:87
 #, php-format
 msgid "Allow reading %s"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:99
+#: src/Features/Settings/views/settings.php:100
 msgid "This area is read-only and cannot be changed by an AI client."
 msgstr ""
 
 #. translators: %s: name of a tool group, e.g. "Products".
-#: src/Features/Settings/views/tab-settings.php:105
+#: src/Features/Settings/views/settings.php:106
 #, php-format
 msgid "Allow changing %s"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:127
+#: src/Features/Settings/views/settings.php:124
+msgid "Tools from other plugins have their own screen."
+msgstr ""
+
+#: src/Features/Settings/views/settings.php:131
 msgid "Limits"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:128
+#: src/Features/Settings/views/settings.php:132
 msgid "Caps how fast a single connection can call the store."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:133
+#: src/Features/Settings/views/settings.php:137
 msgid "Requests per minute per connection"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:144
+#: src/Features/Settings/views/settings.php:148
 msgid "Action log"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:145
+#: src/Features/Settings/views/settings.php:149
 msgid "Records what each connection did. Emails and phone numbers are masked before anything is stored."
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:153
+#: src/Features/Settings/views/settings.php:157
 msgid "Record every tool call"
 msgstr ""
 
-#: src/Features/Settings/views/tab-settings.php:158
+#: src/Features/Settings/views/settings.php:162
 msgid "Keep log entries for (days)"
 msgstr ""
 
@@ -1496,11 +1625,11 @@ msgstr[1] ""
 msgid "Revoke"
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-connections.php:16
+#: src/Features/Tokens/Admin/views/connections.php:16
 msgid "Connection revoked."
 msgstr ""
 
-#: src/Features/Tokens/Admin/views/tab-connections.php:20
+#: src/Features/Tokens/Admin/views/connections.php:20
 msgid "Each connection is an AI assistant that completed the browser consent flow. Revoking one immediately cuts off its access."
 msgstr ""
 
@@ -1958,10 +2087,6 @@ msgstr ""
 
 #: src/Shared/Tool/ToolSection.php:37
 msgid "Store setup"
-msgstr ""
-
-#: src/Shared/Tool/ToolSection.php:39
-msgid "Other plugins"
 msgstr ""
 
 #: src/Shared/Tool/ToolSection.php:45

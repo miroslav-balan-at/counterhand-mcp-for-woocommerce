@@ -4,10 +4,14 @@ declare( strict_types=1 );
 
 namespace Counterhand\Tests\Unit\Features\McpServer;
 
+use Counterhand\Features\McpServer\AppViewContents;
+use Counterhand\Features\McpServer\AppViewSourceInterface;
 use Counterhand\Features\McpServer\McpServer;
+use Counterhand\Features\McpServer\ResourceSourceInterface;
 use Counterhand\Features\McpServer\ToolDispatcher;
 use Counterhand\Features\McpServer\ToolRegistry;
 use Counterhand\Features\Settings\PluginSettings;
+use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Exception\ToolCallException;
 use Counterhand\Shared\JsonRpc\JsonRpcErrorCode;
@@ -394,6 +398,41 @@ final class McpServerTest extends TestCase {
 
 		$this->assertSame( 200, $reply->status );
 		$this->assertSame( JsonRpcErrorCode::InvalidParams->value, $reply->body['error']['code'] );
+	}
+
+	public function test_a_tool_with_a_view_names_it_in_both_spellings_and_others_name_nothing(): void {
+		$views = new class() implements AppViewSourceInterface {
+
+			public function uri_for_tool( string $tool_name ): ?string {
+				return 'viewed' === $tool_name ? 'ui://counterhand/test' : null;
+			}
+
+			public function read( string $uri, AuthenticatedAgent $agent ): ?AppViewContents {
+				return 'ui://counterhand/test' === $uri ? new AppViewContents( $uri, '<!doctype html>' ) : null;
+			}
+		};
+		$server = new McpServer( new ToolDispatcher( $this->registry_with( new StubTool( 'viewed', ApiScope::ProductsRead, ToolGroup::Products ), new StubTool( 'plain', ApiScope::ProductsRead, ToolGroup::Products ) ) ), views: $views, resources: new class() implements ResourceSourceInterface {
+
+			public function resources_for( AuthenticatedAgent $agent ): array {
+				return [];
+			}
+
+			public function read( string $uri, AuthenticatedAgent $agent ): ?string {
+				return null;
+			}
+		} );
+		$agent  = AgentFactory::with_scopes( [ 'products:read' ] );
+
+		$tools = array_column( $server->handle( $this->request( 'tools/list' ), $agent )->payload['result']['tools'], null, 'name' );
+		$this->assertSame( 'ui://counterhand/test', $tools['viewed']['_meta']['ui']['resourceUri'] );
+		$this->assertSame( 'ui://counterhand/test', $tools['viewed']['_meta']['ui/resourceUri'] );
+		$this->assertArrayNotHasKey( '_meta', $tools['plain'] );
+
+		$read = $server->handle( $this->request( 'resources/read', [ 'uri' => 'ui://counterhand/test' ] ), $agent )->payload['result']['contents'][0];
+		$this->assertSame( 'text/html;profile=mcp-app', $read['mimeType'] );
+		$this->assertSame( '<!doctype html>', $read['text'] );
+
+		$this->assertArrayHasKey( 'error', $server->handle( $this->request( 'resources/read', [ 'uri' => 'ui://counterhand/other' ] ), $agent )->payload );
 	}
 
 	private function broken_tool(): StubTool {

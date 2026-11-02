@@ -33,11 +33,14 @@ final readonly class McpServer {
 
 	private const CONFIRMATION_INPUT = 'confirm_change';
 
+	private const APP_VIEW_MIME_TYPE = 'text/html;profile=mcp-app';
+
 	public function __construct(
 		private ToolDispatcher $dispatcher,
 		private ?PromptSourceInterface $prompts = null,
 		private ?ResourceSourceInterface $resources = null,
 		private ConfirmationState $confirmations = new ConfirmationState(),
+		private ?AppViewSourceInterface $views = null,
 	) {}
 
 	/** A legacy (initialize-era) request. Its wire shape is what 2025-era clients rely on: keep it unchanged. */
@@ -177,7 +180,22 @@ final readonly class McpServer {
 
 	/** @param callable(array<string, mixed>): JsonRpcResponse $frame */
 	private function read_resource( ResourceSourceInterface $source, JsonRpcRequest $request, AuthenticatedAgent $agent, callable $frame ): JsonRpcResponse {
-		$uri = $request->params['uri'] ?? null;
+		$uri  = $request->params['uri'] ?? null;
+		$view = is_string( $uri ) ? $this->views?->read( $uri, $agent ) : null;
+
+		if ( null !== $view ) {
+			return $frame(
+				[
+					'contents' => [
+						[
+							'uri'      => $view->uri,
+							'mimeType' => self::APP_VIEW_MIME_TYPE,
+							'text'     => $view->html,
+						],
+					],
+				]
+			);
+		}
 
 		foreach ( $source->resources_for( $agent ) as $definition ) {
 			$text = $definition->uri === $uri ? $source->read( $definition->uri, $agent ) : null;
@@ -285,9 +303,27 @@ final readonly class McpServer {
 						'openWorldHint'   => $tool->is_open_world(),
 					],
 					...( $tool instanceof OutputSchemaToolInterface && null !== $tool->output_schema() ? [ 'outputSchema' => $tool->output_schema() ] : [] ),
+					...$this->view_link( $tool->name() ),
 				],
 				$this->dispatcher->visible_for( $agent )
 			),
+		];
+	}
+
+	/**
+	 * Both spellings, as the official SDK sends: hosts built before the flat key's
+	 * deprecation read only that one. A host without MCP Apps ignores _meta.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function view_link( string $tool_name ): array {
+		$uri = $this->views?->uri_for_tool( $tool_name );
+
+		return null === $uri ? [] : [
+			'_meta' => [
+				'ui'             => [ 'resourceUri' => $uri ],
+				'ui/resourceUri' => $uri,
+			],
 		];
 	}
 

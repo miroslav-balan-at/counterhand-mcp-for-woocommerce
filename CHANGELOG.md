@@ -4,6 +4,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* New: hosts that support MCP Apps, such as Claude, can show the sales report, an order and a product change preview as a view in the conversation. Views only display: changes still go through the usual confirmation. Other clients get the same text as before.
 * New: a Dashboard says whether the connector is on, how many apps are connected, which areas can be changed, and what happened today. With the action log off it says calls are not recorded rather than showing a zero.
 * New: tools from other plugins have their own screen, with one card per plugin. Existing choices carry over, and saving either screen leaves the other's alone.
 * Fixed: screens now follow the admin colour scheme. Almost none of the WordPress design token names we read existed, so accents stayed one blue on every scheme.

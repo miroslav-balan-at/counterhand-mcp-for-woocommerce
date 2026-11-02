@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-01T20:47:03+00:00\n"
+"POT-Creation-Date: 2026-11-01T21:33:55+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -183,13 +183,90 @@ msgstr "Nachrichten lesen, die über deine Formulare gesendet wurden, samt Namen
 msgid "Move stored form messages to the trash. Every removal needs explicit confirmation."
 msgstr "Gespeicherte Formularnachrichten in den Papierkorb verschieben. Jedes Entfernen muss ausdrücklich bestätigt werden."
 
+#: src/Features/McpApps/AppViewCatalog.php:69
+msgid "Counterhand"
+msgstr "Counterhand"
+
+#: src/Features/McpApps/ViewText.php:17
+msgid "This could not be shown."
+msgstr "Das konnte nicht angezeigt werden."
+
+#: src/Features/McpApps/ViewText.php:18 src/Shared/Tool/ToolSection.php:34
+msgid "Sales"
+msgstr "Verkauf"
+
+#: src/Features/McpApps/ViewText.php:19
+msgid "Total sales"
+msgstr "Gesamtumsatz"
+
+#: src/Features/McpApps/ViewText.php:20
+msgid "Net sales"
+msgstr "Nettoumsatz"
+
+#: src/Features/McpApps/ViewText.php:21 src/Shared/Tool/ToolGroup.php:59
+msgid "Orders"
+msgstr "Bestellungen"
+
+#: src/Features/McpApps/ViewText.php:22
+msgid "Items sold"
+msgstr "Verkaufte Artikel"
+
+#: src/Features/McpApps/ViewText.php:23 src/Shared/Tool/ToolGroup.php:66
+msgid "Refunds"
+msgstr "Rückerstattungen"
+
+#: src/Features/McpApps/ViewText.php:24
+msgid "Order"
+msgstr "Bestellung"
+
+#: src/Features/McpApps/ViewText.php:25
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+msgid "Status"
+msgstr "Status"
+
+#: src/Features/McpApps/ViewText.php:26
+msgid "Total"
+msgstr "Gesamt"
+
+#: src/Features/McpApps/ViewText.php:27
+msgid "Customer"
+msgstr "Kunde"
+
+#: src/Features/McpApps/ViewText.php:28
+msgid "Customer note"
+msgstr "Kundennotiz"
+
+#: src/Features/McpApps/ViewText.php:29
+msgid "Proposed change, not saved"
+msgstr "Vorgeschlagene Änderung, nicht gespeichert"
+
+#: src/Features/McpApps/ViewText.php:30
+msgid "Change saved"
+msgstr "Änderung gespeichert"
+
+#: src/Features/McpApps/ViewText.php:31
+msgid "Field"
+msgstr "Feld"
+
+#: src/Features/McpApps/ViewText.php:32
+msgid "Before"
+msgstr "Vorher"
+
+#: src/Features/McpApps/ViewText.php:33
+msgid "After"
+msgstr "Nachher"
+
+#: src/Features/McpApps/ViewText.php:34
+msgid "Empty"
+msgstr "Leer"
+
 #. translators: 1: tool name, 2: the arguments as JSON
-#: src/Features/McpServer/McpServer.php:395
+#: src/Features/McpServer/McpServer.php:431
 #, php-format
 msgid "Allow this change to the store? %1$s: %2$s"
 msgstr "Diese Änderung am Shop freigeben? %1$s: %2$s"
 
-#: src/Features/McpServer/McpServer.php:401
+#: src/Features/McpServer/McpServer.php:437
 msgid "Approve this change"
 msgstr "Diese Änderung freigeben"
 
@@ -1589,10 +1666,6 @@ msgstr "Client"
 msgid "Granted scopes"
 msgstr "Gewährte Berechtigungen"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
-msgid "Status"
-msgstr "Status"
-
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:40
 msgid "Last used"
 msgstr "Zuletzt verwendet"
@@ -1869,10 +1942,6 @@ msgstr "Übersetzungen hinzufügen und ihren Text ändern, ohne ein Original, ei
 msgid "Products"
 msgstr "Produkte"
 
-#: src/Shared/Tool/ToolGroup.php:59
-msgid "Orders"
-msgstr "Bestellungen"
-
 #: src/Shared/Tool/ToolGroup.php:60
 msgid "Customers"
 msgstr "Kunden"
@@ -1896,10 +1965,6 @@ msgstr "Varianten"
 #: src/Shared/Tool/ToolGroup.php:65
 msgid "Reviews"
 msgstr "Bewertungen"
-
-#: src/Shared/Tool/ToolGroup.php:66
-msgid "Refunds"
-msgstr "Rückerstattungen"
 
 #: src/Shared/Tool/ToolGroup.php:67
 msgid "Shipping"
@@ -2072,10 +2137,6 @@ msgstr "Rückgängig-Verlauf"
 #: src/Shared/Tool/ToolSection.php:33
 msgid "Catalog"
 msgstr "Katalog"
-
-#: src/Shared/Tool/ToolSection.php:34
-msgid "Sales"
-msgstr "Verkauf"
 
 #: src/Shared/Tool/ToolSection.php:35
 msgid "Insights"

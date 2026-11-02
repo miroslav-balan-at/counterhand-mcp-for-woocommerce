@@ -66,6 +66,13 @@ Read the spec source, not summaries: `github.com/modelcontextprotocol/modelconte
 - **The store profile answers only for what the connection reaches.** It lists this grant's areas, not the store's, so it cannot fingerprint plugins. Out of reach reads the same as unknown: `-32602`.
 - **`outputSchema` promises only the envelope, on reads only.** A client may reject a result that does not conform, and WooCommerce's own schemas call a date a string when it can be null, so typing a row would break calls that are right. A write's result varies by outcome: `change_id`, `undo_unavailable`, a preview. Do not tighten this without checking real results against a validating client.
 
+## MCP Apps views
+- **`Features/McpApps` publishes views through `AppViewSourceInterface`, and McpServer spells them.** A tool names its view in `_meta.ui.resourceUri`, plus the deprecated flat key, as the official SDK sends both. A host without MCP Apps ignores `_meta`, so every client gets the same list. Views stay out of `resources/list`, which the spec allows, and a view reads like an unknown URI for a connection that cannot reach its tool.
+- **Views only display.** A button that wrote would send the same `confirm` a model can set, so the server could not tell a click from an injected instruction, and the spec lets a host forward such a call unasked. Adding one needs a way to tell them apart first.
+- **Everything is inlined, and customer text goes in through `textContent`.** The default CSP blocks every other origin, so product images do not appear. Colours are the host's variables over system colours, with no hex, so dark mode works.
+- **No `ui.domain`.** Claude's docs tie it to an app running its own OAuth, each host has its own format, and a wrong value stops the view rendering.
+- **`mcp-apps.spec.ts` plays the host:** a sandboxed iframe with the spec's default CSP. Claude and ChatGPT connect from their own clouds, so they cannot reach the test store. Try a real one before relying on how a view looks there.
+
 ## The Agent Skill
 `skills/counterhand-woocommerce` is the published guide for assistants, outside the plugin zip. `tests/skill-evals/` holds scenarios to run with and without it after changing it; a model answers them, so a person grades them and CI does not. It states habits and traps, and leaves tools and their arguments to what the server publishes, because a copy of those would rot. A change to how writes work (preview, confirm, undo) or a renamed tool means editing it: `ShippedSurfaceTest` catches the names, nothing catches the behaviour. Only the six standard frontmatter fields are portable; any other fails on upload to Claude.ai.
 

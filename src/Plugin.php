@@ -11,6 +11,7 @@ use Counterhand\Features\Abilities\AbilitiesFeature;
 use Counterhand\Features\Abilities\AbilityCatalog;
 use Counterhand\Features\ActionLog\ActionLogFeature;
 use Counterhand\Features\ActionLog\Persistence\WpdbActivityReport;
+use Counterhand\Features\McpApps\AppViewCatalog;
 use Counterhand\Features\CostOfGoods\CostOfGoodsFeature;
 use Counterhand\Features\CostOfGoods\WooCommerceCostLedger;
 use Counterhand\Features\Flamingo\FlamingoFeature;
@@ -155,7 +156,7 @@ final class Plugin {
 		// skips the JSON-RPC framing.
 		$change_journal  = new WpdbChangeJournal();
 		$tool_dispatcher = new ToolDispatcher( $this->tool_registry, $change_journal );
-		$mcp_server      = new McpServer( $tool_dispatcher, new PlaybookCatalog( $tool_dispatcher ), new StoreProfileResource( $tool_dispatcher ) );
+		$mcp_server      = new McpServer( $tool_dispatcher, new PlaybookCatalog( $tool_dispatcher ), new StoreProfileResource( $tool_dispatcher ), views: new AppViewCatalog( $tool_dispatcher ) );
 
 		$tokens     = new TokensFeature( $repository );
 		$action_log = new ActionLogFeature( $settings );

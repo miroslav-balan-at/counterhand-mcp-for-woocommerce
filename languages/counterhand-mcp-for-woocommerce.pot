@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T20:47:03+00:00\n"
+"POT-Creation-Date: 2026-11-01T21:33:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -183,13 +183,93 @@ msgstr ""
 msgid "Move stored form messages to the trash. Every removal needs explicit confirmation."
 msgstr ""
 
+#: src/Features/McpApps/AppViewCatalog.php:69
+msgid "Counterhand"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:17
+msgid "This could not be shown."
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:18
+#: src/Shared/Tool/ToolSection.php:34
+msgid "Sales"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:19
+msgid "Total sales"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:20
+msgid "Net sales"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:21
+#: src/Shared/Tool/ToolGroup.php:59
+msgid "Orders"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:22
+msgid "Items sold"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:23
+#: src/Shared/Tool/ToolGroup.php:66
+msgid "Refunds"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:24
+msgid "Order"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:25
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+msgid "Status"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:26
+msgid "Total"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:27
+msgid "Customer"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:28
+msgid "Customer note"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:29
+msgid "Proposed change, not saved"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:30
+msgid "Change saved"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:31
+msgid "Field"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:32
+msgid "Before"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:33
+msgid "After"
+msgstr ""
+
+#: src/Features/McpApps/ViewText.php:34
+msgid "Empty"
+msgstr ""
+
 #. translators: 1: tool name, 2: the arguments as JSON
-#: src/Features/McpServer/McpServer.php:395
+#: src/Features/McpServer/McpServer.php:431
 #, php-format
 msgid "Allow this change to the store? %1$s: %2$s"
 msgstr ""
 
-#: src/Features/McpServer/McpServer.php:401
+#: src/Features/McpServer/McpServer.php:437
 msgid "Approve this change"
 msgstr ""
 
@@ -1589,10 +1669,6 @@ msgstr ""
 msgid "Granted scopes"
 msgstr ""
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
-msgid "Status"
-msgstr ""
-
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:40
 msgid "Last used"
 msgstr ""
@@ -1869,10 +1945,6 @@ msgstr ""
 msgid "Products"
 msgstr ""
 
-#: src/Shared/Tool/ToolGroup.php:59
-msgid "Orders"
-msgstr ""
-
 #: src/Shared/Tool/ToolGroup.php:60
 msgid "Customers"
 msgstr ""
@@ -1895,10 +1967,6 @@ msgstr ""
 
 #: src/Shared/Tool/ToolGroup.php:65
 msgid "Reviews"
-msgstr ""
-
-#: src/Shared/Tool/ToolGroup.php:66
-msgid "Refunds"
 msgstr ""
 
 #: src/Shared/Tool/ToolGroup.php:67
@@ -2071,10 +2139,6 @@ msgstr ""
 
 #: src/Shared/Tool/ToolSection.php:33
 msgid "Catalog"
-msgstr ""
-
-#: src/Shared/Tool/ToolSection.php:34
-msgid "Sales"
 msgstr ""
 
 #: src/Shared/Tool/ToolSection.php:35

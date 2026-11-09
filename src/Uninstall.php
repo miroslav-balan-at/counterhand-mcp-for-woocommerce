@@ -53,6 +53,8 @@ final class Uninstall {
 		wp_clear_scheduled_hook( 'counterhand_purge_changes' );
 		wp_clear_scheduled_hook( 'counterhand_purge_confirmations' );
 		wp_clear_scheduled_hook( 'counterhand_purge_rewrites' );
+		wp_clear_scheduled_hook( 'counterhand_weekly_report' );
+		delete_metadata( 'user', 0, 'counterhand_weekly_report', '', true );
 
 		// WooCommerce may already be gone, and its scheduler with it.
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {

@@ -11,6 +11,7 @@
  * @var \Counterhand\Features\ActionLog\ActivitySummary|null          $activity
  * @var bool                                                          $other_mcp_server
  * @var bool                                                          $can_save
+ * @var list<\Counterhand\Features\Settings\DashboardCardInterface>    $cards
  */
 
 declare( strict_types=1 );
@@ -161,4 +162,9 @@ require __DIR__ . '/other-server-notice.php';
 			<?php endif; ?>
 		</section>
 	<?php endif; ?>
+	<?php
+	foreach ( $cards as $counterhand_card ) {
+		$counterhand_card->render_card();
+	}
+	?>
 </div>

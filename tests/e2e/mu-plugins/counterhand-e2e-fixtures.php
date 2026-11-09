@@ -112,6 +112,10 @@ add_filter(
 
 				$text = (string) ( $last['text'] ?? '' );
 
+				if ( str_contains( $config->system_prompt, 'weekly sales email' ) ) {
+					return new ProviderTurn( 'E2E summary: sales are up. <b>Bold</b>', [], false );
+				}
+
 				// A bulk rewrite: answer with markup the review screen must clean before showing it.
 				if ( str_contains( $text, '<<<CURRENT' ) ) {
 					return new ProviderTurn( '<p>E2E rewrite</p><script>window.counterhandE2eRan = true;</script>', [], false, usage: new TokenUsage( 120, 30 ) );
@@ -313,4 +317,26 @@ add_action(
 			static fn (): array => [ 'pong' => true ]
 		);
 	}
+);
+
+// Mail is kept, not sent, so a spec can read what would have gone out.
+add_filter(
+	'pre_wp_mail',
+	static function ( $short_circuit, array $mail ) {
+		if ( ! get_option( 'counterhand_e2e_capture_mail' ) ) {
+			return $short_circuit;
+		}
+
+		$kept   = (array) get_option( 'counterhand_e2e_mails', [] );
+		$kept[] = [
+			'to'      => $mail['to'],
+			'subject' => $mail['subject'],
+			'message' => $mail['message'],
+		];
+		update_option( 'counterhand_e2e_mails', $kept, false );
+
+		return true;
+	},
+	10,
+	2
 );

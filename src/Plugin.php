@@ -24,6 +24,7 @@ use Counterhand\Features\McpServer\ToolRegistry;
 use Counterhand\Features\OAuth\OAuthFeature;
 use Counterhand\Features\Playground\AgentLoop;
 use Counterhand\Features\Playground\ChatSettings;
+use Counterhand\Features\Playground\ConnectedTextModel;
 use Counterhand\Features\Playground\ModelConnect;
 use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
@@ -54,6 +55,11 @@ use Counterhand\Features\Undo\Persistence\ChangeSchema;
 use Counterhand\Features\Undo\UndoFeature;
 use Counterhand\Features\Undo\WpdbChangeJournal;
 use Counterhand\Features\UrlCoupons\UrlCouponsFeature;
+use Counterhand\Features\WeeklyReport\FigureReader;
+use Counterhand\Features\WeeklyReport\ReportSummary;
+use Counterhand\Features\WeeklyReport\Subscriptions;
+use Counterhand\Features\WeeklyReport\WeeklyReport;
+use Counterhand\Features\WeeklyReport\WeeklyReportFeature;
 use Counterhand\Features\WooCommerceTools\Application\ServedIntegrationGroups;
 use Counterhand\Features\WooCommerceTools\Application\StoreProfileResource;
 use Counterhand\Features\WooCommerceTools\Application\ToolFactory;
@@ -122,6 +128,7 @@ final class Plugin {
 		wp_clear_scheduled_hook( UndoFeature::PURGE_HOOK );
 		wp_clear_scheduled_hook( ConfirmationState::PURGE_HOOK );
 		wp_clear_scheduled_hook( RewriteJobs::PURGE_HOOK );
+		wp_clear_scheduled_hook( WeeklyReport::HOOK );
 
 		// Left queued, each would fail later for want of its callback.
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
@@ -185,6 +192,14 @@ final class Plugin {
 			new StoreToolPolicy( $settings )
 		);
 
+		$weekly_report = new WeeklyReportFeature(
+			new WeeklyReport(
+				new FigureReader( $tool_dispatcher ),
+				new ReportSummary( new ConnectedTextModel( $chat_settings, $chat_providers ) ),
+				new Subscriptions()
+			)
+		);
+
 		$rewrites = new RewritesFeature( new RewriteJobs( $tool_dispatcher, new WpdbRewriteQueue(), $chat_settings, $chat_providers ) );
 
 		$descriptors        = new StaticDescriptorCatalog();
@@ -195,11 +210,12 @@ final class Plugin {
 			$action_log,
 			$playground,
 			$rewrites,
+			$weekly_report,
 			new SettingsFeature(
 				[
 					AdminScreen::Chat->value         => $playground,
 					AdminScreen::Rewrites->value     => $rewrites,
-					AdminScreen::Dashboard->value    => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport() ),
+					AdminScreen::Dashboard->value    => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport(), [ $weekly_report ] ),
 					AdminScreen::Connect->value      => new ConnectScreen( $tokens->admin(), $connection_matcher ),
 					AdminScreen::Integrations->value => new IntegrationsScreen( $settings ),
 					AdminScreen::Settings->value     => new SettingsScreen( $settings ),

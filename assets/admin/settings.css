@@ -857,3 +857,48 @@
 		align-items: flex-start;
 	}
 }
+
+/* Bulk rewrites ---------------------------------------------------------- */
+
+.counterhand-rewrites__form .counterhand-field select,
+.counterhand-rewrites__form textarea {
+	max-width: var(--counterhand-prose);
+}
+
+.counterhand-rewrites__table td {
+	vertical-align: top;
+}
+
+/* A description can run to pages; each cell scrolls so a row stays comparable side by side. */
+.counterhand-rewrites__text {
+	max-height: 16rem;
+	overflow: auto;
+	max-width: var(--counterhand-prose);
+}
+
+.counterhand-rewrites__text--new {
+	padding-left: var(--counterhand-gap-small);
+	border-left: 3px solid var(--counterhand-accent);
+}
+
+.counterhand-rewrites__status--applied {
+	color: var(--counterhand-success-text);
+}
+
+.counterhand-rewrites__status--failed {
+	color: var(--counterhand-error-text);
+}
+
+/* Two text columns cannot share a phone screen, so each row stacks. */
+@media (max-width: 782px) {
+	.counterhand-rewrites__table thead {
+		display: none;
+	}
+
+	.counterhand-rewrites__table tr,
+	.counterhand-rewrites__table td,
+	.counterhand-rewrites__table th {
+		display: block;
+		width: auto;
+	}
+}

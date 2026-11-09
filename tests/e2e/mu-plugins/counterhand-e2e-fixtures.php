@@ -9,6 +9,7 @@ declare( strict_types=1 );
 use Counterhand\Features\Playground\Provider\ProviderConfig;
 use Counterhand\Features\Playground\Provider\ProviderInterface;
 use Counterhand\Features\Playground\Provider\ProviderTurn;
+use Counterhand\Features\Playground\Provider\TokenUsage;
 use Counterhand\Features\Playground\Provider\ToolCall;
 
 defined( 'ABSPATH' ) || exit;
@@ -110,6 +111,12 @@ add_filter(
 				}
 
 				$text = (string) ( $last['text'] ?? '' );
+
+				// A bulk rewrite: answer with markup the review screen must clean before showing it.
+				if ( str_contains( $text, '<<<CURRENT' ) ) {
+					return new ProviderTurn( '<p>E2E rewrite</p><script>window.counterhandE2eRan = true;</script>', [], false, usage: new TokenUsage( 120, 30 ) );
+				}
+
 				if ( str_contains( $text, 'list products' ) ) {
 					return new ProviderTurn( '', [ new ToolCall( 'e2e-call-1', 'list_products', [ 'per_page' => 1 ] ) ], true );
 				}

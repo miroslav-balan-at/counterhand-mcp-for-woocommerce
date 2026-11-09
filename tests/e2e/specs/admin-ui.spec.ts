@@ -3,6 +3,7 @@ import { anonymousContext, authorizationUrl, discover, pkcePair } from '../suppo
 
 const screens = [
 	{ name: 'Chat', path: '/wp-admin/admin.php?page=counterhand-mcp' },
+	{ name: 'Bulk rewrites', path: '/wp-admin/admin.php?page=counterhand-mcp-rewrites' },
 	{ name: 'Dashboard', path: '/wp-admin/admin.php?page=counterhand-mcp-dashboard' },
 	{ name: 'Connect AI apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect' },
 	{ name: 'Connected apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect&view=connections' },

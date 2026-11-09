@@ -73,6 +73,17 @@ Read the spec source, not summaries: `github.com/modelcontextprotocol/modelconte
 - **No `ui.domain`.** Claude's docs tie it to an app running its own OAuth, each host has its own format, and a wrong value stops the view rendering.
 - **`mcp-apps.spec.ts` plays the host:** a sandboxed iframe with the spec's default CSP. Claude and ChatGPT connect from their own clouds, so they cannot reach the test store. Try a real one before relying on how a view looks there.
 
+## Bulk rewrites (`Playground/Rewrites`)
+- **The model proposes; a person approves each product.** Nothing is written until its owner ticks it, and the write is `update_product` through `ToolDispatcherInterface::dispatch`, so the store's switches, Germanized's `KEEP_UNSENT`, the audit hook and undo history all apply. Never save a product directly here.
+- **Only `description` and `short_description`.** Undo must be able to put a text back: alt text needs the image sent to the model and a media write, and SEO meta goes through integrations, which keep no history.
+- **The queue runs with no user.** Each Action Scheduler action takes on the job's owner, checks `manage_woocommerce` again, because the person may have lost it since, and hands the request back to the user it found, because other plugins' actions run in the same request. A failed action is not retried by Action Scheduler; the item is marked failed and a new job starts over.
+- **Apply refuses a text edited after the model read it,** comparing the raw stored value (`read_state`), not the rendered one, which runs shortcodes. Every query a person reaches names their user id: that is the IDOR gate.
+- **Apply, undo and discard claim the item first** with a conditional `UPDATE` on its status, as `WpdbChangeJournal::claim` does. Without it a double click wrote twice, and undo restored the first write while reporting success.
+- **Rows go after 30 days on a daily cron, like undo history,** because they hold a person's instructions. A store nobody starts a job on still loses them.
+- **Model output is cleaned before it is stored:** script and style blocks go with their contents, as in `wp_strip_all_tags`, then `wp_kses_post`. kses alone keeps a script's code as visible text.
+- **Writes answer `SERVES_TOOLS_FILTER`, the queue does not.** Applying and undoing run in our own `admin-post` request; answering for a whole cron request would change how other plugins' work in it is saved. The queue only reads.
+- **`rewrites.spec.ts` runs the queue with `wp action-scheduler run --hooks=counterhand_rewrite_item`** and checks the product as stored, using the scripted model in the fixtures mu-plugin.
+
 ## The Agent Skill
 `skills/counterhand-woocommerce` is the published guide for assistants, outside the plugin zip. `tests/skill-evals/` holds scenarios to run with and without it after changing it; a model answers them, so a person grades them and CI does not. It states habits and traps, and leaves tools and their arguments to what the server publishes, because a copy of those would rot. A change to how writes work (preview, confirm, undo) or a renamed tool means editing it: `ShippedSurfaceTest` catches the names, nothing catches the behaviour. Only the six standard frontmatter fields are portable; any other fails on upload to Claude.ai.
 

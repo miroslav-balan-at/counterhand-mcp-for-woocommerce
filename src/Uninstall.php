@@ -35,6 +35,7 @@ final class Uninstall {
 		// Plugin-owned tables.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_tokens" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_changes" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- plugin-owned table on uninstall.
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_rewrites" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- plugin-owned table on uninstall.
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}counterhand_action_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 
 		delete_option( 'counterhand_settings' );
@@ -42,6 +43,7 @@ final class Uninstall {
 		delete_option( 'counterhand_tokens_schema_version' );
 		delete_option( 'counterhand_action_log_schema_version' );
 		delete_option( 'counterhand_changes_schema_version' );
+		delete_option( 'counterhand_rewrites_schema_version' );
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'counterhand\\_confirmed\\_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- spent one-time approvals, which no core API lists.
 
 		// No transient sweep: every transient this plugin sets lives an hour
@@ -50,5 +52,11 @@ final class Uninstall {
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
 		wp_clear_scheduled_hook( 'counterhand_purge_changes' );
 		wp_clear_scheduled_hook( 'counterhand_purge_confirmations' );
+		wp_clear_scheduled_hook( 'counterhand_purge_rewrites' );
+
+		// WooCommerce may already be gone, and its scheduler with it.
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( 'counterhand_rewrite_item' );
+		}
 	}
 }

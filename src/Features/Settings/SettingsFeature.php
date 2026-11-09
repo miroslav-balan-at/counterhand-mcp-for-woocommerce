@@ -79,7 +79,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 			56
 		);
 
-		foreach ( [ AdminScreen::Chat, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ] as $screen ) {
+		foreach ( [ AdminScreen::Chat, AdminScreen::Rewrites, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ] as $screen ) {
 			add_submenu_page(
 				$chat->value,
 				$screen->page_title(),

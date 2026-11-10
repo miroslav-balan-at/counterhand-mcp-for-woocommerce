@@ -53,9 +53,10 @@ final readonly class McpClient {
 	 * read "hygienemitsystem-ihrpartnerfrhyg".
 	 */
 	public static function server_slug(): string {
-		$home  = (string) home_url();
-		$host  = strtolower( trim( (string) wp_parse_url( $home, PHP_URL_HOST ), '[]' ) );
-		$ascii = function_exists( 'idn_to_ascii' ) ? idn_to_ascii( $host ) : false;
+		$home = (string) home_url();
+		$host = strtolower( trim( (string) wp_parse_url( $home, PHP_URL_HOST ), '[]' ) );
+		// idn_to_ascii() throws on an empty host or one longer than DNS allows.
+		$ascii = function_exists( 'idn_to_ascii' ) && '' !== $host && strlen( $host ) <= 253 ? idn_to_ascii( $host ) : false;
 		$host  = false === $ascii ? $host : $ascii;
 		$host  = (string) preg_replace( '/^www\./', '', $host );
 		$port  = (int) wp_parse_url( $home, PHP_URL_PORT );

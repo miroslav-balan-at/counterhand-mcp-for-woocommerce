@@ -343,3 +343,27 @@ add_filter(
 	10,
 	2
 );
+
+// A link core cannot resolve, as WooCommerce Multilingual writes one under /en/wp-json/ for a
+// write sent with lang, and a callback that trusts the resolved request, as Solid Security 10 does.
+add_filter(
+	'woocommerce_rest_prepare_product_object',
+	static function ( WP_REST_Response $response ): WP_REST_Response {
+		if ( get_option( 'counterhand_e2e_unresolvable_link' ) ) {
+			$response->add_link( 'self', home_url( '/en/wp-json/wc/v3/products/1' ) );
+		}
+
+		return $response;
+	},
+	99
+);
+add_filter(
+	'rest_request_from_url',
+	static function ( mixed $request ): mixed {
+		if ( get_option( 'counterhand_e2e_unresolvable_link' ) ) {
+			$request->get_route();
+		}
+
+		return $request;
+	}
+);

@@ -118,6 +118,37 @@ final class TranslationPoliciesTest extends TestCase {
 		$this->assertFalse( $policy->verdict( [] )->allowed );
 	}
 
+	/** WPML compares a term's slug within the request's language, so a write in the default language found its original. */
+	public function test_a_term_translation_is_changed_only_in_its_own_language(): void {
+		$policy = new ExistingTranslationPolicy( TranslatedElements::posts( 'product' ), sends_its_language: true );
+
+		$this->records(
+			(object) [
+				'trid'                 => 1,
+				'language_code'        => 'en',
+				'source_language_code' => 'de',
+			]
+		);
+
+		$this->assertTrue(
+			$policy->verdict(
+				[
+					'id'   => 6,
+					'lang' => 'en',
+				]
+			)->allowed
+		);
+		$this->assertFalse(
+			$policy->verdict(
+				[
+					'id'   => 6,
+					'lang' => 'de',
+				]
+			)->allowed
+		);
+		$this->assertFalse( $policy->verdict( [ 'id' => 6 ] )->allowed );
+	}
+
 	/** It would put an unreleased product on sale in that language. */
 	public function test_publishing_needs_a_published_original(): void {
 		Filters\expectApplied( 'wpml_element_language_details' )->andReturn(

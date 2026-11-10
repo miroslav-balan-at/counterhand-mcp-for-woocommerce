@@ -950,8 +950,9 @@ test.describe( 'WPML with the real plugins', () => {
 		expect( ( await call( 'create_product_category_translation', { translation_of: source, lang: 'de', name: 'E2E WPML second' } ) ).isError ).toBe( true );
 
 		const renamed = `E2E WPML Renamed ${ Date.now() }`;
-		expect( ( await call( 'update_product_category_translation', { id: created.id, name: renamed } ) ).structuredContent[ 'product category' ].name ).toBe( renamed );
-		expect( ( await call( 'update_product_category_translation', { id: source, name: 'E2E WPML hijacked' } ) ).isError ).toBe( true );
+		expect( ( await call( 'update_product_category_translation', { id: created.id, lang: 'en', name: renamed } ) ).isError, 'only in its own language' ).toBe( true );
+		expect( ( await call( 'update_product_category_translation', { id: created.id, lang: 'de', name: renamed } ) ).structuredContent[ 'product category' ].name ).toBe( renamed );
+		expect( ( await call( 'update_product_category_translation', { id: source, lang: 'en', name: 'E2E WPML hijacked' } ) ).isError ).toBe( true );
 
 		const unrecorded = Number( evaluate( `
 			global $wpdb;
@@ -1020,7 +1021,7 @@ test.describe( 'WPML with the real plugins', () => {
 		expect( created.lang ).toBe( 'de' );
 		expect( Number( created.translations.en ) ).toBe( source );
 
-		expect( ( await call( 'update_attribute_term_translation', { attribute_id: attribute, id: source, name: 'hijacked' } ) ).isError ).toBe( true );
+		expect( ( await call( 'update_attribute_term_translation', { attribute_id: attribute, id: source, lang: 'en', name: 'hijacked' } ) ).isError ).toBe( true );
 		expect( ( await call( 'create_attribute_term_translation', { attribute_id: attribute, translation_of: source, lang: 'de', name: 'second' } ) ).isError, 'a second would orphan the first' ).toBe( true );
 	} );
 

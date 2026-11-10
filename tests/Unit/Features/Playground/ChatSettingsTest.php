@@ -108,4 +108,29 @@ final class ChatSettingsTest extends TestCase {
 		$this->assertSame( 'claude-opus-5', $saved['model'] );
 		$this->assertSame( 'sk-secret', $saved['api_key'] );
 	}
+
+	public function test_changing_the_model_keeps_the_chosen_areas(): void {
+		Functions\when( 'get_option' )->justReturn(
+			[
+				'provider'    => 'anthropic',
+				'model'       => 'claude-opus-5',
+				'tool_groups' => [ 'orders' ],
+			]
+		);
+		Functions\when( 'sanitize_text_field' )->returnArg( 1 );
+
+		$saved = null;
+		Functions\when( 'update_option' )->alias(
+			static function ( string $name, mixed $value ) use ( &$saved ): bool {
+				$saved = $value;
+
+				return true;
+			}
+		);
+
+		( new ChatSettings() )->save( 'anthropic', 'claude-sonnet-5', '', null );
+
+		$this->assertSame( 'claude-sonnet-5', $saved['model'] );
+		$this->assertSame( [ 'orders' ], $saved['tool_groups'] );
+	}
 }

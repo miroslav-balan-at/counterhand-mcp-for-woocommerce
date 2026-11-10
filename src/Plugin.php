@@ -23,11 +23,14 @@ use Counterhand\Features\McpServer\ToolDispatcher;
 use Counterhand\Features\McpServer\ToolRegistry;
 use Counterhand\Features\OAuth\OAuthFeature;
 use Counterhand\Features\Playground\AgentLoop;
+use Counterhand\Features\Playground\ChatNotesFeature;
 use Counterhand\Features\Playground\ChatSettings;
 use Counterhand\Features\Playground\ConnectedTextModel;
 use Counterhand\Features\Playground\ModelConnect;
 use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
+use Counterhand\Features\Playground\SavedPrompts;
+use Counterhand\Features\Playground\StoreMemory;
 use Counterhand\Features\Playbooks\PlaybookCatalog;
 use Counterhand\Features\Playground\Rewrites\Persistence\RewriteSchema;
 use Counterhand\Features\Playground\Rewrites\RewriteJobs;
@@ -174,12 +177,15 @@ final class Plugin {
 		// skips the JSON-RPC framing.
 		$change_journal  = new WpdbChangeJournal();
 		$tool_dispatcher = new ToolDispatcher( $this->tool_registry, $change_journal );
-		$mcp_server      = new McpServer( $tool_dispatcher, new PlaybookCatalog( $tool_dispatcher ), new StoreProfileResource( $tool_dispatcher ), views: new AppViewCatalog( $tool_dispatcher ) );
+		$playbooks       = new PlaybookCatalog( $tool_dispatcher );
+		$mcp_server      = new McpServer( $tool_dispatcher, $playbooks, new StoreProfileResource( $tool_dispatcher ), views: new AppViewCatalog( $tool_dispatcher ) );
 
 		$tokens     = new TokensFeature( $repository );
 		$action_log = new ActionLogFeature( $settings );
 
 		$chat_settings  = new ChatSettings();
+		$store_memory   = new StoreMemory();
+		$saved_prompts  = new SavedPrompts();
 		$chat_providers = new ProviderRegistry();
 		$pending_store  = new PendingConfirmationStore();
 		$playground     = new PlaygroundFeature(
@@ -189,7 +195,10 @@ final class Plugin {
 			$chat_settings,
 			$chat_providers,
 			new ModelConnect( $chat_settings, $chat_providers ),
-			new StoreToolPolicy( $settings )
+			new StoreToolPolicy( $settings ),
+			$playbooks,
+			$store_memory,
+			$saved_prompts
 		);
 
 		$weekly_report = new WeeklyReportFeature(
@@ -209,6 +218,7 @@ final class Plugin {
 			$tokens,
 			$action_log,
 			$playground,
+			new ChatNotesFeature( $store_memory, $saved_prompts ),
 			$rewrites,
 			$weekly_report,
 			new SettingsFeature(

@@ -919,3 +919,73 @@
 		padding: 0 16px;
 	}
 }
+
+/* Saved questions -------------------------------------------------------- */
+
+.counterhand-chat__saved {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--counterhand-gap-small);
+	margin: 0 0 var(--counterhand-gap-small);
+	padding: 0;
+	list-style: none;
+}
+
+.counterhand-chat__saved:empty {
+	display: none;
+}
+
+.counterhand-chat__saved li {
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+	border: 1px solid var(--counterhand-border);
+	border-radius: 999px;
+	background: var(--counterhand-surface);
+}
+
+.counterhand-chat__saved button {
+	padding: 4px 10px;
+	border: 0;
+	background: none;
+	color: var(--counterhand-text);
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.counterhand-chat__saved-ask {
+	max-width: 32ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.counterhand-chat__saved-forget {
+	color: var(--counterhand-text-muted);
+}
+
+/* Before and after in an approval --------------------------------------- */
+
+.counterhand-confirm__diff {
+	width: 100%;
+	margin: var(--counterhand-gap-small) 0;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.counterhand-confirm__diff th,
+.counterhand-confirm__diff td {
+	padding: 4px 8px;
+	border: 1px solid var(--counterhand-border);
+	text-align: left;
+	vertical-align: top;
+	overflow-wrap: anywhere;
+}
+
+.counterhand-confirm__refusal {
+	color: var(--counterhand-error-text);
+}
+
+.counterhand-store-memory__text {
+	max-width: var(--counterhand-prose);
+}

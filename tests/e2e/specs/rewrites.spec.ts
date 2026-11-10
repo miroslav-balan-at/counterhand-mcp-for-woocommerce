@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
@@ -14,8 +15,23 @@ const evaluate = ( code: string ) => {
 
 const description = ( id: number ) => evaluate( `echo wc_get_product( ${ id } )->get_description( 'edit' );` );
 
-// The queue runs in the background on a real store; here it runs when the test says so.
-const runQueue = () => wp( 'action-scheduler', 'run', '--hooks=counterhand_rewrite_item', '--group=counterhand-rewrites', '--force' );
+const waiting = () => Number( evaluate( `global $wpdb; echo (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}counterhand_rewrites WHERE status = 'queued'" );` ) );
+
+/*
+ * The queue runs in the background on a real store; here it runs when the test says so.
+ * A page load can start Action Scheduler's own runner, which then holds the actions and
+ * fails this command, so the test waits for the queue rather than for the command.
+ */
+const runQueue = () => {
+	for ( let attempt = 0; attempt < 30 && waiting() > 0; attempt++ ) {
+		try {
+			wp( 'action-scheduler', 'run', '--hooks=counterhand_rewrite_item', '--group=counterhand-rewrites', '--force' );
+		} catch {
+			execFileSync( 'sleep', [ '2' ] );
+		}
+	}
+	expect( waiting(), 'every queued rewrite ran' ).toBe( 0 );
+};
 
 /* A bulk rewrite against a real store: what ends up in the product, not what the screen says. */
 test.describe( 'Bulk rewrites', () => {

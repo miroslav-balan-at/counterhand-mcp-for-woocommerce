@@ -4,12 +4,14 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground;
 
+use Counterhand\Features\McpServer\PromptSourceInterface;
 use Counterhand\Features\McpServer\ToolDispatcherInterface;
 use Counterhand\Features\Playground\Provider\ProviderConfig;
 use Counterhand\Features\Playground\Provider\ProviderInterface;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ScreenBodyInterface;
+use Counterhand\Features\Settings\SettingsAccess;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
@@ -45,6 +47,9 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 		private ProviderRegistry $providers,
 		private ModelConnect $model_connect,
 		private ChatToolPolicy $store_policy,
+		private PromptSourceInterface $playbooks,
+		private StoreMemory $memory,
+		private SavedPrompts $saved_prompts,
 	) {}
 
 	public function register(): void {
@@ -84,6 +89,13 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 		$save_result        = $this->model_connect->take_result();
 		$core_state         = $this->model_connect->core_state();
 		$core_connectors    = $this->model_connect->connectors();
+		$starters           = $this->starters();
+		$saved_prompts      = $this->saved_prompts->for_user( get_current_user_id() );
+		$prompts_nonce      = wp_create_nonce( ChatNotesFeature::PROMPTS_NONCE );
+		$store_memory       = $this->memory->text();
+		$can_edit_memory    = SettingsAccess::can_save();
+		// Saved conversations are keyed by who, where and which model format they were written for.
+		$storage_key = sprintf( 'counterhand-chat:%d:%d:%s', get_current_blog_id(), get_current_user_id(), $this->settings->provider_id() );
 
 		include __DIR__ . '/views/chat.php';
 	}
@@ -137,6 +149,24 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 		return $provider;
 	}
 
+	/**
+	 * The playbooks an MCP client with the chat's grant would be offered, so both lists are one.
+	 *
+	 * @return list<ChatStarter>
+	 */
+	private function starters(): array {
+		$locale = get_user_locale();
+
+		return array_values(
+			array_filter(
+				array_map(
+					static fn ( $prompt ): ?ChatStarter => ChatStarter::of( $prompt, $locale ),
+					$this->playbooks->prompts_for( $this->synthetic_agent() )
+				)
+			)
+		);
+	}
+
 	/** @return list<array<string,mixed>> */
 	private function history(): array {
 		$posted = wp_unslash( $_POST['history'] ?? '[]' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in ready_provider(); provider-format JSON, never output as HTML.
@@ -164,6 +194,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 				'history'    => $result->messages,
 				'usage'      => $result->usage->to_array(),
 				'pending'    => $result->pending?->to_array(),
+				'previews'   => array_map( static fn ( ApprovalPreview $preview ): array => $preview->to_array(), $result->previews ),
 			]
 		);
 	}
@@ -241,9 +272,16 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 					get_bloginfo( 'name' ),
 					function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'EUR',
 					[] !== $areas ? implode( ', ', $areas ) : 'none — no tool groups are selected for chat'
-				);
+				) . $this->memory_note();
 			}
 		);
+	}
+
+	/** An administrator wrote these, so they steer; store data never reaches this part of the prompt. */
+	private function memory_note(): string {
+		$memory = $this->memory->text();
+
+		return '' === $memory ? '' : "\n\nNotes from the store's administrator, to follow where they do not conflict with the rules above:\n" . $memory;
 	}
 
 	/**

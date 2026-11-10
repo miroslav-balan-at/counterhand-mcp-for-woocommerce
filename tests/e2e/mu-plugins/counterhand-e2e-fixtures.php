@@ -160,7 +160,10 @@ add_filter(
 					);
 				}
 
-				return new ProviderTurn( 'E2E model says: ' . $text, [], false );
+				// The store notes arrive in the system prompt, which the chat never shows; say whether they did.
+				$notes = str_contains( $config->system_prompt, 'E2E-NOTE-MARKER' ) ? ' [notes received]' : '';
+
+				return new ProviderTurn( 'E2E model says: ' . $text . $notes, [], false, usage: new TokenUsage( 10, 5 ) );
 			}
 
 			public function describe_tool( string $name, string $description, array $input_schema ): array {

@@ -108,17 +108,18 @@ final class ConnectionsListTable extends \WP_List_Table {
 	}
 
 	private function render_status( ApiToken $item ): string {
-		$class = match ( $item->status ) {
+		$status = $item->status_at( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) );
+		$class  = match ( $status ) {
 			TokenStatus::Active  => 'counterhand-status counterhand-status--active',
 			TokenStatus::Revoked => 'counterhand-status counterhand-status--revoked',
 			TokenStatus::Expired => 'counterhand-status counterhand-status--expired',
 		};
 
-		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $item->status->label() ) . '</span>';
+		return '<span class="' . esc_attr( $class ) . '">' . esc_html( $status->label() ) . '</span>';
 	}
 
 	private function render_actions( ApiToken $item ): string {
-		if ( TokenStatus::Active !== $item->status ) {
+		if ( TokenStatus::Active !== $item->status_at( new \DateTimeImmutable( 'now', new \DateTimeZone( 'UTC' ) ) ) ) {
 			return '';
 		}
 

@@ -4,6 +4,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* Fixed: Connected apps listed a connection past its refresh window as active, with a Revoke button, until it was next used. It now reads as expired, matching the Dashboard's count.
 * Fixed: on a store with WPML and Solid Security, creating a translation reported a failure although it was saved. The tool now answers with the translation.
 * Changed: changing a category, tag or attribute term translation now takes its language as `lang`. Without it, WPML compared the name against the original and refused the change.
 * Fixed: a report or background job that acts for several people in one run no longer reuses the first person's view of what they may reach.

@@ -42,6 +42,11 @@ final readonly class ApiToken {
 	}
 
 	/** The connection is over: nothing, refresh token included, can revive it. */
+	/** The stored status turns to expired only when the token is next tried. */
+	public function status_at( \DateTimeImmutable $now ): TokenStatus {
+		return TokenStatus::Active === $this->status && $this->is_expired( $now ) ? TokenStatus::Expired : $this->status;
+	}
+
 	public function is_expired( \DateTimeImmutable $now ): bool {
 		$end = $this->refresh_expires_at ?? $this->expires_at;
 

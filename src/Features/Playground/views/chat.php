@@ -20,6 +20,12 @@
  * @var \Counterhand\Features\Playground\ConnectResult|null                        $save_result
  * @var \Counterhand\Features\Playground\CoreAiState|null                          $core_state
  * @var list<\Counterhand\Features\Playground\CoreConnector>                       $core_connectors
+ * @var list<\Counterhand\Features\Playground\ChatStarter>                         $starters
+ * @var list<string>                                                                $saved_prompts
+ * @var string                                                                      $prompts_nonce
+ * @var string                                                                      $store_memory
+ * @var bool                                                                        $can_edit_memory
+ * @var string                                                                      $storage_key
  */
 
 declare( strict_types=1 );
@@ -56,26 +62,31 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 				<div class="counterhand-chat__empty" id="counterhand-chat-empty">
 					<p class="counterhand-chat__empty-title"><?php esc_html_e( 'Ask about your store', 'counterhand-mcp-for-woocommerce' ); ?></p>
 					<p class="counterhand-chat__empty-hint"><?php esc_html_e( 'Plain language works — the assistant looks the answer up with the same tools an outside AI app would use.', 'counterhand-mcp-for-woocommerce' ); ?></p>
-					<div class="counterhand-chat__suggestions">
-						<?php
-						$counterhand_suggestions = [
-							__( 'How many orders are waiting to be processed?', 'counterhand-mcp-for-woocommerce' ),
-							__( 'Show me my 5 best selling products this month', 'counterhand-mcp-for-woocommerce' ),
-							__( 'Which products are out of stock?', 'counterhand-mcp-for-woocommerce' ),
-							__( 'What were my sales last week?', 'counterhand-mcp-for-woocommerce' ),
-						];
-						foreach ( $counterhand_suggestions as $counterhand_suggestion ) :
-							?>
-							<button type="button" class="counterhand-chat__suggestion"><?php echo esc_html( $counterhand_suggestion ); ?></button>
+					<div class="counterhand-chat__suggestions" id="counterhand-chat-starters">
+						<?php foreach ( $starters as $counterhand_starter ) : ?>
+							<button type="button" class="counterhand-chat__suggestion" data-message="<?php echo esc_attr( $counterhand_starter->message ); ?>"><?php echo esc_html( $counterhand_starter->title ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</div>
 			<?php endif; ?>
 		</div>
 
+		<?php if ( $is_ready ) : ?>
+			<ul class="counterhand-chat__saved" id="counterhand-chat-saved" aria-label="<?php esc_attr_e( 'Saved questions', 'counterhand-mcp-for-woocommerce' ); ?>">
+				<?php foreach ( $saved_prompts as $counterhand_prompt ) : ?>
+					<li>
+						<button type="button" class="counterhand-chat__saved-ask"><?php echo esc_html( $counterhand_prompt ); ?></button>
+						<button type="button" class="counterhand-chat__saved-forget" aria-label="<?php esc_attr_e( 'Forget this question', 'counterhand-mcp-for-woocommerce' ); ?>">×</button>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+
 		<form class="counterhand-chat__composer" id="counterhand-chat-form"
 			data-nonce="<?php echo esc_attr( $send_nonce ); ?>"
-			data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
+			data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>"
+			data-prompts-nonce="<?php echo esc_attr( $prompts_nonce ); ?>"
+			data-storage-key="<?php echo esc_attr( $storage_key ); ?>">
 			<label class="screen-reader-text" for="counterhand-chat-input"><?php esc_html_e( 'Message', 'counterhand-mcp-for-woocommerce' ); ?></label>
 			<textarea id="counterhand-chat-input" class="counterhand-chat__input" rows="1"
 				placeholder="
@@ -87,6 +98,9 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 				);
 				?>
 				" <?php disabled( ! $is_ready ); ?>></textarea>
+			<button type="button" class="button counterhand-chat__save-prompt" id="counterhand-chat-save-prompt" <?php disabled( ! $is_ready ); ?>>
+				<?php esc_html_e( 'Save question', 'counterhand-mcp-for-woocommerce' ); ?>
+			</button>
 			<button type="submit" class="button button-primary counterhand-chat__send" id="counterhand-chat-send" <?php disabled( ! $is_ready ); ?>>
 				<?php esc_html_e( 'Send', 'counterhand-mcp-for-woocommerce' ); ?>
 			</button>
@@ -128,6 +142,7 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 	</div>
 
 	<?php require __DIR__ . '/partial-chat-tools.php'; ?>
+	<?php require __DIR__ . '/partial-store-memory.php'; ?>
 
 	<p class="description counterhand-chat__note">
 		<?php esc_html_e( 'The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ); ?>

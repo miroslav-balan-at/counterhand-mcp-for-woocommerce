@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-09T16:02:57+00:00\n"
+"POT-Creation-Date: 2026-11-09T16:35:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -255,6 +255,7 @@ msgid "Change saved"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:31
+#: src/Features/Settings/ScreenAssets.php:144
 msgid "Field"
 msgstr ""
 
@@ -263,6 +264,7 @@ msgid "Before"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:33
+#: src/Features/Settings/ScreenAssets.php:146
 msgid "After"
 msgstr ""
 
@@ -538,14 +540,25 @@ msgstr ""
 msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
 msgstr ""
 
-#: src/Features/Playground/AgentLoop.php:193
+#: src/Features/Playground/AgentLoop.php:238
 msgid "The store administrator declined this action."
 msgstr ""
 
 #. translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove.
-#: src/Features/Playground/AgentLoop.php:284
+#: src/Features/Playground/AgentLoop.php:329
 #, php-format
 msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
+msgstr ""
+
+#: src/Features/Playground/ChatNotesFeature.php:35
+msgid "You are not allowed to change the store notes."
+msgstr ""
+
+#: src/Features/Playground/ChatNotesFeature.php:60
+#: src/Features/Playground/PlaygroundFeature.php:139
+#: src/Features/Settings/SettingsFeature.php:156
+#: src/Features/Settings/SettingsFeature.php:170
+msgid "Not allowed."
 msgstr ""
 
 #: src/Features/Playground/ModelConnect.php:79
@@ -567,7 +580,7 @@ msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr ""
 
 #: src/Features/Playground/ModelConnect.php:136
-#: src/Features/Playground/PlaygroundFeature.php:173
+#: src/Features/Playground/PlaygroundFeature.php:204
 msgid "You are not allowed to change these settings."
 msgstr ""
 
@@ -593,29 +606,23 @@ msgstr ""
 msgid "Connected to %1$s%2$s."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:102
+#: src/Features/Playground/PlaygroundFeature.php:114
 msgid "Type a message first."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:118
+#: src/Features/Playground/PlaygroundFeature.php:130
 msgid "That approval has expired. Send your message again."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:127
-#: src/Features/Settings/SettingsFeature.php:156
-#: src/Features/Settings/SettingsFeature.php:170
-msgid "Not allowed."
-msgstr ""
-
-#: src/Features/Playground/PlaygroundFeature.php:134
+#: src/Features/Playground/PlaygroundFeature.php:146
 msgid "No model is connected yet. Pick one at the top of this tab."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:158
+#: src/Features/Playground/PlaygroundFeature.php:188
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:266
+#: src/Features/Playground/PlaygroundFeature.php:304
 msgid "Admin chat"
 msgstr ""
 
@@ -884,73 +891,70 @@ msgstr ""
 msgid "Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:40
+#: src/Features/Playground/views/chat.php:46
 msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:57
+#: src/Features/Playground/views/chat.php:63
 msgid "Ask about your store"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:58
+#: src/Features/Playground/views/chat.php:64
 msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:62
-msgid "How many orders are waiting to be processed?"
-msgstr ""
-
-#: src/Features/Playground/views/chat.php:63
-msgid "Show me my 5 best selling products this month"
-msgstr ""
-
-#: src/Features/Playground/views/chat.php:64
-msgid "Which products are out of stock?"
-msgstr ""
-
-#: src/Features/Playground/views/chat.php:65
-msgid "What were my sales last week?"
+#: src/Features/Playground/views/chat.php:75
+msgid "Saved questions"
 msgstr ""
 
 #: src/Features/Playground/views/chat.php:79
+#: src/Features/Settings/ScreenAssets.php:149
+msgid "Forget this question"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:90
 msgid "Message"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:85
+#: src/Features/Playground/views/chat.php:96
 msgid "Ask about products, orders, customers or sales…"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:86
+#: src/Features/Playground/views/chat.php:97
 msgid "Connect a model above, then ask your first question here…"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:91
+#: src/Features/Playground/views/chat.php:102
+msgid "Save question"
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:105
 msgid "Send"
 msgstr ""
 
 #. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/chat.php:102
+#: src/Features/Playground/views/chat.php:116
 #, php-format
 msgid "%1$s to send · %2$s for a new line"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:103
+#: src/Features/Playground/views/chat.php:117
 msgid "Enter"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:104
+#: src/Features/Playground/views/chat.php:118
 msgid "Shift+Enter"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:119
+#: src/Features/Playground/views/chat.php:133
 msgid "Change"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:124
+#: src/Features/Playground/views/chat.php:138
 msgid "Clear conversation"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:133
+#: src/Features/Playground/views/chat.php:148
 msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
 msgstr ""
 
@@ -1183,6 +1187,35 @@ msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:260
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:18
+#: src/Features/Playground/views/partial-store-memory.php:37
+msgid "Store notes"
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:22
+msgid "none yet"
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:23
+msgid "sent with every chat message"
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:30
+msgid "What the assistant should always know, such as your house style, a supplier who is late, or how you name products. Every chat on this store gets these notes, and so does the model provider."
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:39
+msgid "Save notes"
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:43
+msgid "Only an administrator can change these notes."
+msgstr ""
+
+#: src/Features/Playground/views/partial-store-memory.php:45
+msgid "No notes yet. Only an administrator can add them."
 msgstr ""
 
 #: src/Features/Privacy/PrivacyFeature.php:39
@@ -1607,19 +1640,37 @@ msgstr ""
 msgid "Waiting for your approval…"
 msgstr ""
 
-#: src/Features/Settings/ScreenAssets.php:142
-msgid "Tokens"
-msgstr ""
-
+#. translators: 1: tokens sent to the model, 2: tokens it wrote, both in this conversation.
 #: src/Features/Settings/ScreenAssets.php:143
-msgid "Installing…"
-msgstr ""
-
-#: src/Features/Settings/ScreenAssets.php:144
-msgid "Installed"
+#, php-format
+msgid "This conversation: %1$s tokens in, %2$s out"
 msgstr ""
 
 #: src/Features/Settings/ScreenAssets.php:145
+msgid "Now"
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:147
+msgid "The store would refuse this:"
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:148
+msgid "(empty)"
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:150
+msgid "Type a question first, then save it."
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:151
+msgid "Installing…"
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:152
+msgid "Installed"
+msgstr ""
+
+#: src/Features/Settings/ScreenAssets.php:153
 msgid "The install failed."
 msgstr ""
 

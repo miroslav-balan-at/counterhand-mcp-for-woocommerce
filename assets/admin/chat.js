@@ -78,6 +78,13 @@
 	// Provider-format message history, replaced wholesale by each response.
 	var history = [];
 
+	// What the log shows, as data, so a reload can draw it again through the same escaping.
+	var entries = [];
+	var totals = { input: 0, output: 0 };
+	var storageKey = form.dataset.storageKey || '';
+	var savedList = document.getElementById( 'counterhand-chat-saved' );
+	var saveButton = document.getElementById( 'counterhand-chat-save-prompt' );
+
 	function el( tag, className, text ) {
 		var node = document.createElement( tag );
 		if ( className ) {
@@ -236,8 +243,12 @@
 	 * inserted as text, since there is nothing to render and no reason to parse
 	 * what they typed.
 	 */
-	function addBubble( role, text ) {
+	function addBubble( role, text, kept ) {
 		hideEmptyState();
+
+		if ( kept !== false ) {
+			entries.push( { kind: 'bubble', role: role, text: text } );
+		}
 
 		var parts = messageRow( role );
 		var body = el( 'div', 'counterhand-msg__body' );
@@ -258,6 +269,7 @@
 	/** A collapsible card showing one tool call and its result. */
 	function addToolCard( entry ) {
 		hideEmptyState();
+		entries.push( { kind: 'tool', entry: entry } );
 
 		var state = entry.declined ? 'declined' : ( entry.is_error ? 'error' : 'ok' );
 		var details = el( 'details', 'counterhand-tool' + ( state === 'ok' ? '' : ' counterhand-tool--' + state ) );
@@ -338,7 +350,7 @@
 		var data = payload.data || {};
 
 		if ( ! payload.success ) {
-			addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ) ).classList.add( 'counterhand-msg--error' );
+			addBubble( 'assistant', data.message || ( i18n.failed || 'The request failed.' ), false ).classList.add( 'counterhand-msg--error' );
 			return false;
 		}
 
@@ -353,21 +365,121 @@
 		} );
 
 		if ( data.usage ) {
-			status.textContent = ( i18n.tokens || 'Tokens' ) + ': ' +
-				data.usage.input + ' → ' + data.usage.output;
+			totals.input += data.usage.input || 0;
+			totals.output += data.usage.output || 0;
 		}
+		showTotals();
 
 		if ( data.pending ) {
-			askApproval( data.pending );
+			askApproval( data.pending, data.previews || [] );
 			return true;
 		}
 
+		keep();
 		return false;
 	}
 
+	function showTotals() {
+		if ( ! totals.input && ! totals.output ) {
+			return;
+		}
+
+		status.textContent = ( i18n.conversation || 'This conversation: %1$s tokens in, %2$s out' )
+			.replace( '%1$s', totals.input.toLocaleString() )
+			.replace( '%2$s', totals.output.toLocaleString() );
+	}
+
+	/*
+	 * The tab's own storage, keyed by site, user and model: logging out does not clear it,
+	 * and a history in one provider's format breaks another's. A turn waiting for approval
+	 * is never kept, because its approval cannot survive the reload.
+	 */
+	function keep() {
+		try {
+			window.sessionStorage.setItem( storageKey, JSON.stringify( { history: history, entries: entries, totals: totals } ) );
+		} catch ( error ) {
+			// Storage can be full or blocked; the conversation just will not survive a reload.
+		}
+	}
+
+	function forgetKept() {
+		try {
+			window.sessionStorage.removeItem( storageKey );
+		} catch ( error ) {
+			// Nothing was kept.
+		}
+	}
+
+	function restore() {
+		var kept = null;
+
+		try {
+			kept = JSON.parse( window.sessionStorage.getItem( storageKey ) || 'null' );
+		} catch ( error ) {
+			kept = null;
+		}
+
+		if ( ! kept || ! Array.isArray( kept.history ) || ! Array.isArray( kept.entries ) ) {
+			return;
+		}
+
+		history = kept.history;
+		totals = kept.totals || totals;
+		kept.entries.forEach( function ( item ) {
+			if ( item.kind === 'tool' ) {
+				addToolCard( item.entry );
+			} else if ( item.kind === 'bubble' ) {
+				addBubble( item.role, String( item.text ) );
+			}
+		} );
+		showTotals();
+	}
+
+	/** Values can be HTML or objects; they go in as text, and a long one is cut. */
+	function previewValue( value ) {
+		var text = typeof value === 'string' ? value : JSON.stringify( value );
+
+		if ( text === '' || text === undefined || text === 'null' ) {
+			return i18n.empty || '(empty)';
+		}
+
+		return text.length > 300 ? text.slice( 0, 300 ) + '…' : text;
+	}
+
+	function previewTable( preview ) {
+		if ( preview.refusal ) {
+			var refused = el( 'p', 'counterhand-confirm__refusal' );
+			refused.appendChild( el( 'strong', '', ( i18n.wouldRefuse || 'The store would refuse this:' ) + ' ' ) );
+			refused.appendChild( document.createTextNode( preview.refusal ) );
+			return refused;
+		}
+
+		var table = el( 'table', 'counterhand-confirm__diff' );
+		var head = el( 'tr' );
+		[ i18n.field || 'Field', i18n.before || 'Now', i18n.after || 'After' ].forEach( function ( label ) {
+			head.appendChild( el( 'th', '', label ) );
+		} );
+		table.appendChild( head );
+
+		preview.changes.forEach( function ( change ) {
+			var row = el( 'tr' );
+			row.appendChild( el( 'th', '', change.field ) );
+			row.appendChild( el( 'td', '', previewValue( change.before ) ) );
+			row.appendChild( el( 'td', '', previewValue( change.after ) ) );
+			table.appendChild( row );
+		} );
+
+		return table;
+	}
+
 	/** One card per call that needs the person; the turn resumes once all are decided. */
-	function askApproval( pending ) {
+	function askApproval( pending, previews ) {
 		hideEmptyState();
+
+		var previewFor = {};
+		previews.forEach( function ( preview ) {
+			previewFor[ preview.id ] = preview;
+		} );
 
 		var decisions = {};
 		var remaining = pending.gated.length;
@@ -382,7 +494,9 @@
 			card.appendChild( el( 'p', 'counterhand-confirm__hint', i18n.approvalHint || 'The assistant wants to run this. Nothing happens until you decide.' ) );
 			card.appendChild( el( 'code', 'counterhand-tool__name', call.name ) );
 
-			if ( call.arguments && Object.keys( call.arguments ).length ) {
+			if ( previewFor[ call.id ] ) {
+				card.appendChild( previewTable( previewFor[ call.id ] ) );
+			} else if ( call.arguments && Object.keys( call.arguments ).length ) {
 				card.appendChild( el( 'pre', 'counterhand-tool__code', JSON.stringify( call.arguments, null, 2 ) ) );
 			}
 
@@ -432,19 +546,21 @@
 			} )
 			.catch( function ( error ) {
 				row.remove();
-				addBubble( 'assistant', String( error ) ).classList.add( 'counterhand-msg--error' );
+				addBubble( 'assistant', String( error ), false ).classList.add( 'counterhand-msg--error' );
 				return false;
 			} )
 			.then( function ( awaiting ) {
 				if ( ! awaiting ) {
 					setBusy( false );
+					showTotals();
 					input.focus();
 				}
 			} );
 	}
 
-	function send( text ) {
-		addBubble( 'user', text );
+	/** A playbook shows its title and sends its instructions, which the model reads and the person need not. */
+	function send( text, shown ) {
+		addBubble( 'user', shown || text );
 
 		var body = new URLSearchParams();
 		body.set( 'action', 'counterhand_chat_send' );
@@ -485,19 +601,89 @@
 	autoGrow();
 
 	document.addEventListener( 'click', function ( event ) {
-		if ( event.target.classList.contains( 'counterhand-chat__suggestion' ) ) {
-			input.value = event.target.textContent.trim();
-			autoGrow();
-			form.dispatchEvent( new Event( 'submit' ) );
+		var target = event.target;
+
+		if ( target.classList.contains( 'counterhand-chat__suggestion' ) && ! sendButton.disabled ) {
+			send( target.dataset.message || target.textContent.trim(), target.textContent.trim() );
+		}
+
+		if ( target.classList.contains( 'counterhand-chat__saved-ask' ) && ! sendButton.disabled ) {
+			send( target.textContent.trim() );
+		}
+
+		if ( target.classList.contains( 'counterhand-chat__saved-forget' ) ) {
+			savePrompt( 'counterhand_chat_forget_prompt', target.parentNode.querySelector( '.counterhand-chat__saved-ask' ).textContent.trim() );
 		}
 	} );
+
+	function drawSaved( prompts ) {
+		if ( ! savedList ) {
+			return;
+		}
+
+		savedList.textContent = '';
+		prompts.forEach( function ( prompt ) {
+			var item = el( 'li' );
+			var ask = el( 'button', 'counterhand-chat__saved-ask', prompt );
+			var forget = el( 'button', 'counterhand-chat__saved-forget', '×' );
+			ask.type = 'button';
+			forget.type = 'button';
+			forget.setAttribute( 'aria-label', i18n.forget || 'Forget this question' );
+			item.appendChild( ask );
+			item.appendChild( forget );
+			savedList.appendChild( item );
+		} );
+	}
+
+	function savePrompt( action, prompt ) {
+		var body = new URLSearchParams();
+		body.set( 'action', action );
+		body.set( 'prompt', prompt );
+		body.set( '_ajax_nonce', form.dataset.promptsNonce );
+
+		fetch( form.dataset.ajaxUrl, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: body.toString()
+		} )
+			.then( function ( response ) {
+				return response.json();
+			} )
+			.then( function ( payload ) {
+				if ( payload.success ) {
+					drawSaved( payload.data.prompts || [] );
+				}
+			} );
+	}
+
+	if ( saveButton ) {
+		saveButton.addEventListener( 'click', function () {
+			var text = input.value.trim();
+
+			if ( ! text ) {
+				status.textContent = i18n.nothingToSave || 'Type a question first, then save it.';
+				return;
+			}
+
+			savePrompt( 'counterhand_chat_save_prompt', text );
+		} );
+	}
 
 	if ( resetButton ) {
 		resetButton.addEventListener( 'click', function () {
 			history = [];
+			entries = [];
+			totals = { input: 0, output: 0 };
+			forgetKept();
 			log.innerHTML = '';
 			status.textContent = '';
 			input.focus();
 		} );
+	}
+
+	// Before a model is connected the log holds the setup form, not a conversation.
+	if ( storageKey && ! input.disabled ) {
+		restore();
 	}
 }() );

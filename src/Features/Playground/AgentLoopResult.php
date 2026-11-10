@@ -25,5 +25,7 @@ final readonly class AgentLoopResult {
 		public array $transcript,
 		public TokenUsage $usage,
 		public ?PendingConfirmation $pending = null,
+		/** @var list<ApprovalPreview> */
+		public array $previews = [],
 	) {}
 }

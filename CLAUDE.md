@@ -84,6 +84,15 @@ Read the spec source, not summaries: `github.com/modelcontextprotocol/modelconte
 - **Writes answer `SERVES_TOOLS_FILTER`, the queue does not.** Applying and undoing run in our own `admin-post` request; answering for a whole cron request would change how other plugins' work in it is saved. The queue only reads.
 - **`rewrites.spec.ts` runs the queue with `wp action-scheduler run --hooks=counterhand_rewrite_item`** and checks the product as stored, using the scripted model in the fixtures mu-plugin.
 
+## Chat between conversations (`Features/Playground`)
+- **Starters are the playbooks** an MCP client with the chat's grant is offered (`PromptSourceInterface`), so the two lists are one. The person sees the title; the model gets the English playbook plus a line naming the person's locale, because as sent the person "writes" English. A playbook needing a value it has no default for is not offered.
+- **Store notes are an administrator's** (`SettingsAccess::can_save()`), in their own option so a model change never touches them, labelled in the system prompt as the administrator's and capped at 2000 characters. They reach every chat and the model provider.
+- **Saved questions belong to one person** (user meta, ten at most) and are sent exactly as typed.
+- **A conversation survives a reload in `sessionStorage`,** keyed by blog, user and provider: logging out does not clear it, and a history in one provider's format breaks another's. It keeps data and draws it again through the same escaping, never markup, and never keeps a turn waiting for approval.
+- **An approval shows before and after where the tool has a preview** (`ApprovalPreview`, through the dispatch pipeline), which among gated writes means prices; refunds, order status, coupons and notes still show their arguments. Each preview is a logged tool call.
+- **Tokens, not money.** The running total is what the provider reported; a price would need per-model rates nothing here can verify.
+- **`ChatSettings::save()` merges into what is stored.** Rebuilding the option dropped the chosen areas on every model change.
+
 ## Weekly report (`Features/WeeklyReport`)
 - **Each person signs themselves up** (user meta), and the report goes only to their own address. Nobody subscribes anyone else. Sending asks again each time: `manage_woocommerce`, the plugin's one capability, then WooCommerce's own permission check on the report routes, so a person who loses either stops getting it.
 - **Every figure is one WooCommerce states.** The email prints the sales report, top sellers and order totals as the report tools return them, read through `ToolDispatcherInterface::dispatch` as that person with `reports:read` only, so a store with Reports switched off sends nothing. The legacy sales report reads the order tables under HPOS (`WC_Admin_Report`, checked in WooCommerce 11).

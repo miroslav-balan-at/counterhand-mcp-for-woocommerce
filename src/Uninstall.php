@@ -40,6 +40,7 @@ final class Uninstall {
 
 		delete_option( 'counterhand_settings' );
 		delete_option( 'counterhand_chat' );
+		delete_option( 'counterhand_store_memory' );
 		delete_option( 'counterhand_tokens_schema_version' );
 		delete_option( 'counterhand_action_log_schema_version' );
 		delete_option( 'counterhand_changes_schema_version' );
@@ -55,6 +56,7 @@ final class Uninstall {
 		wp_clear_scheduled_hook( 'counterhand_purge_rewrites' );
 		wp_clear_scheduled_hook( 'counterhand_weekly_report' );
 		delete_metadata( 'user', 0, 'counterhand_weekly_report', '', true );
+		delete_metadata( 'user', 0, 'counterhand_saved_prompts', '', true );
 
 		// WooCommerce may already be gone, and its scheduler with it.
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {

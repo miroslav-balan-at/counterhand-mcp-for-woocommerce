@@ -117,7 +117,9 @@ final class ChatSettings {
 	}
 
 	public function save( string $provider, string $model, string $base_url, ?string $api_key ): void {
+		// Merged into what is stored: rebuilding the option dropped the chat's chosen areas on every model change.
 		$stored = [
+			...$this->all(),
 			'provider' => sanitize_key( $provider ),
 			'model'    => sanitize_text_field( $model ),
 			'base_url' => '' === $base_url ? '' : esc_url_raw( $base_url ),

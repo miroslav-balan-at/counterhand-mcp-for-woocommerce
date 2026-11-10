@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-09T16:02:57+00:00\n"
+"POT-Creation-Date: 2026-11-09T16:35:39+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -255,6 +255,7 @@ msgid "Change saved"
 msgstr "Änderung gespeichert"
 
 #: src/Features/McpApps/ViewText.php:31
+#: src/Features/Settings/ScreenAssets.php:144
 msgid "Field"
 msgstr "Feld"
 
@@ -263,6 +264,7 @@ msgid "Before"
 msgstr "Vorher"
 
 #: src/Features/McpApps/ViewText.php:33
+#: src/Features/Settings/ScreenAssets.php:146
 msgid "After"
 msgstr "Nachher"
 
@@ -538,15 +540,26 @@ msgstr "Produkte ohne Lieferzeit oder Grundpreis. Benötigt Germanized."
 msgid "Stopped: the assistant kept calling tools past the safety limit for one message."
 msgstr "Gestoppt: Der Assistent hat über das Sicherheitslimit für eine Nachricht hinaus weiter Tools aufgerufen."
 
-#: src/Features/Playground/AgentLoop.php:193
+#: src/Features/Playground/AgentLoop.php:238
 msgid "The store administrator declined this action."
 msgstr "Der Shop-Administrator hat diese Aktion abgelehnt."
 
 #. translators: 1: number of tools chat can reach, 2: the supported maximum, 3: how many to remove.
-#: src/Features/Playground/AgentLoop.php:284
+#: src/Features/Playground/AgentLoop.php:329
 #, php-format
 msgid "Chat can reach %1$d tools, which is more than this model can carry in one message (%2$d). Open \"available to chat\" below and untick areas until at least %3$d fewer tools are selected — the areas you untick stay available to your other AI apps. Connecting an Anthropic model instead removes the limit, because Claude can search the tools it needs."
 msgstr "Der Chat kann %1$d Tools erreichen — mehr, als dieses Modell in einer Nachricht mitführen kann (%2$d). Öffne unten \"für den Chat verfügbar\" und wähle Bereiche ab, bis mindestens %3$d Tools weniger ausgewählt sind — die abgewählten Bereiche bleiben für deine anderen KI-Apps verfügbar. Verbindest du stattdessen ein Anthropic-Modell, entfällt das Limit, weil Claude die benötigten Tools selbst suchen kann."
+
+#: src/Features/Playground/ChatNotesFeature.php:35
+msgid "You are not allowed to change the store notes."
+msgstr "Du darfst die Shop-Notizen nicht ändern."
+
+#: src/Features/Playground/ChatNotesFeature.php:60
+#: src/Features/Playground/PlaygroundFeature.php:139
+#: src/Features/Settings/SettingsFeature.php:156
+#: src/Features/Settings/SettingsFeature.php:170
+msgid "Not allowed."
+msgstr "Nicht erlaubt."
 
 #: src/Features/Playground/ModelConnect.php:79
 msgid "You are not allowed to install plugins."
@@ -567,7 +580,7 @@ msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr "%s ist installiert. Letzter Schritt: Hinterlege deinen API-Schlüssel dort, wo WordPress ihn aufbewahrt."
 
 #: src/Features/Playground/ModelConnect.php:136
-#: src/Features/Playground/PlaygroundFeature.php:173
+#: src/Features/Playground/PlaygroundFeature.php:204
 msgid "You are not allowed to change these settings."
 msgstr "Du darfst diese Einstellungen nicht ändern."
 
@@ -593,29 +606,23 @@ msgstr "Das Modell konnte nicht erreicht werden. Prüfe die Angaben und versuche
 msgid "Connected to %1$s%2$s."
 msgstr "Verbunden mit %1$s%2$s."
 
-#: src/Features/Playground/PlaygroundFeature.php:102
+#: src/Features/Playground/PlaygroundFeature.php:114
 msgid "Type a message first."
 msgstr "Gib zuerst eine Nachricht ein."
 
-#: src/Features/Playground/PlaygroundFeature.php:118
+#: src/Features/Playground/PlaygroundFeature.php:130
 msgid "That approval has expired. Send your message again."
 msgstr "Diese Freigabe ist abgelaufen. Sende deine Nachricht noch einmal."
 
-#: src/Features/Playground/PlaygroundFeature.php:127
-#: src/Features/Settings/SettingsFeature.php:156
-#: src/Features/Settings/SettingsFeature.php:170
-msgid "Not allowed."
-msgstr "Nicht erlaubt."
-
-#: src/Features/Playground/PlaygroundFeature.php:134
+#: src/Features/Playground/PlaygroundFeature.php:146
 msgid "No model is connected yet. Pick one at the top of this tab."
 msgstr "Es ist noch kein Modell verbunden. Wähle eines oben in diesem Tab aus."
 
-#: src/Features/Playground/PlaygroundFeature.php:158
+#: src/Features/Playground/PlaygroundFeature.php:188
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Die Chat-Anfrage ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
-#: src/Features/Playground/PlaygroundFeature.php:266
+#: src/Features/Playground/PlaygroundFeature.php:304
 msgid "Admin chat"
 msgstr "Admin-Chat"
 
@@ -884,73 +891,70 @@ msgstr "Ausgewählte Texte rückgängig machen"
 msgid "Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong."
 msgstr "Übernehmen schreibt nur ausgewählte Texte, die zur Prüfung bereit sind, Verwerfen verwirft sie, und Rückgängig stellt ausgewählte, schon übernommene Texte wieder her. Lies jeden Text vorher: Das Modell kann Fakten falsch wiedergeben."
 
-#: src/Features/Playground/views/chat.php:40
+#: src/Features/Playground/views/chat.php:46
 msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
 msgstr "Es sind keine Tools aktiviert, daher kann der Assistent nichts lesen oder ändern. Schalte im Tab „Einstellungen“ mindestens eine Tool-Gruppe ein."
 
-#: src/Features/Playground/views/chat.php:57
+#: src/Features/Playground/views/chat.php:63
 msgid "Ask about your store"
 msgstr "Frag etwas über deinen Shop"
 
-#: src/Features/Playground/views/chat.php:58
+#: src/Features/Playground/views/chat.php:64
 msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
 msgstr "Ganz normale Sprache genügt – der Assistent schlägt die Antwort mit denselben Tools nach, die auch eine externe KI-App verwenden würde."
 
-#: src/Features/Playground/views/chat.php:62
-msgid "How many orders are waiting to be processed?"
-msgstr "Wie viele Bestellungen warten auf Bearbeitung?"
-
-#: src/Features/Playground/views/chat.php:63
-msgid "Show me my 5 best selling products this month"
-msgstr "Zeig mir meine 5 meistverkauften Produkte in diesem Monat"
-
-#: src/Features/Playground/views/chat.php:64
-msgid "Which products are out of stock?"
-msgstr "Welche Produkte sind nicht mehr auf Lager?"
-
-#: src/Features/Playground/views/chat.php:65
-msgid "What were my sales last week?"
-msgstr "Wie hoch war mein Umsatz letzte Woche?"
+#: src/Features/Playground/views/chat.php:75
+msgid "Saved questions"
+msgstr "Gespeicherte Fragen"
 
 #: src/Features/Playground/views/chat.php:79
+#: src/Features/Settings/ScreenAssets.php:149
+msgid "Forget this question"
+msgstr "Diese Frage entfernen"
+
+#: src/Features/Playground/views/chat.php:90
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/Features/Playground/views/chat.php:85
+#: src/Features/Playground/views/chat.php:96
 msgid "Ask about products, orders, customers or sales…"
 msgstr "Frag nach Produkten, Bestellungen, Kunden oder Verkäufen …"
 
-#: src/Features/Playground/views/chat.php:86
+#: src/Features/Playground/views/chat.php:97
 msgid "Connect a model above, then ask your first question here…"
 msgstr "Verbinde oben ein Modell und stelle dann hier deine erste Frage …"
 
-#: src/Features/Playground/views/chat.php:91
+#: src/Features/Playground/views/chat.php:102
+msgid "Save question"
+msgstr "Frage speichern"
+
+#: src/Features/Playground/views/chat.php:105
 msgid "Send"
 msgstr "Senden"
 
 #. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/chat.php:102
+#: src/Features/Playground/views/chat.php:116
 #, php-format
 msgid "%1$s to send · %2$s for a new line"
 msgstr "%1$s zum Senden · %2$s für eine neue Zeile"
 
-#: src/Features/Playground/views/chat.php:103
+#: src/Features/Playground/views/chat.php:117
 msgid "Enter"
 msgstr "Enter"
 
-#: src/Features/Playground/views/chat.php:104
+#: src/Features/Playground/views/chat.php:118
 msgid "Shift+Enter"
 msgstr "Umschalt+Enter"
 
-#: src/Features/Playground/views/chat.php:119
+#: src/Features/Playground/views/chat.php:133
 msgid "Change"
 msgstr "Ändern"
 
-#: src/Features/Playground/views/chat.php:124
+#: src/Features/Playground/views/chat.php:138
 msgid "Clear conversation"
 msgstr "Unterhaltung löschen"
 
-#: src/Features/Playground/views/chat.php:133
+#: src/Features/Playground/views/chat.php:148
 msgid "The assistant runs the same tools an external AI client would, limited by the tool groups you enabled. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
 msgstr "Der Assistent nutzt dieselben Tools wie ein externer KI-Client, begrenzt auf die aktivierten Tool-Gruppen. Shop-Daten, die er liest, darunter Namen, Adressen und Bestellungen von Kunden, gehen an den gewählten Modellanbieter. Prüfe, ob du mit ihm einen Auftragsverarbeitungsvertrag brauchst."
 
@@ -1184,6 +1188,35 @@ msgstr "Modell verbinden"
 #: src/Features/Playground/views/partial-model-chooser.php:260
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr "Vor dem Speichern senden wir eine winzige Testnachricht – so fällt ein falscher Schlüssel schon hier auf und nicht erst bei deiner ersten Frage."
+
+#: src/Features/Playground/views/partial-store-memory.php:18
+#: src/Features/Playground/views/partial-store-memory.php:37
+msgid "Store notes"
+msgstr "Shop-Notizen"
+
+#: src/Features/Playground/views/partial-store-memory.php:22
+msgid "none yet"
+msgstr "noch keine"
+
+#: src/Features/Playground/views/partial-store-memory.php:23
+msgid "sent with every chat message"
+msgstr "gehen mit jeder Chat-Nachricht mit"
+
+#: src/Features/Playground/views/partial-store-memory.php:30
+msgid "What the assistant should always know, such as your house style, a supplier who is late, or how you name products. Every chat on this store gets these notes, and so does the model provider."
+msgstr "Was der Assistent immer wissen soll, etwa euren Stil, einen Lieferanten, der sich verspätet, oder wie ihr Produkte benennt. Jeder Chat in diesem Shop bekommt diese Notizen, und der Modellanbieter auch."
+
+#: src/Features/Playground/views/partial-store-memory.php:39
+msgid "Save notes"
+msgstr "Notizen speichern"
+
+#: src/Features/Playground/views/partial-store-memory.php:43
+msgid "Only an administrator can change these notes."
+msgstr "Nur ein Administrator kann diese Notizen ändern."
+
+#: src/Features/Playground/views/partial-store-memory.php:45
+msgid "No notes yet. Only an administrator can add them."
+msgstr "Noch keine Notizen. Nur ein Administrator kann welche hinzufügen."
 
 #: src/Features/Privacy/PrivacyFeature.php:39
 msgid "AI assistants you connect to this store can read and change the data you grant them, which can include customers' names, addresses, orders and messages. That data goes to the assistant's provider under your agreement with them. If you use the built-in chat, store data you ask about is sent to the AI provider you configured. A log of assistant actions, with names, addresses, email addresses and phone numbers masked, is kept if you switch it on, and always for maintenance, settings, payment and refund actions. If you grant undo history, the previous values of changed catalog, content, shipping and tax records are kept for 30 days. Check whether you need a data processing agreement with your AI providers, and describe this use in your own words."
@@ -1607,19 +1640,37 @@ msgstr "Abgelehnt"
 msgid "Waiting for your approval…"
 msgstr "Wartet auf deine Freigabe…"
 
-#: src/Features/Settings/ScreenAssets.php:142
-msgid "Tokens"
-msgstr "Tokens"
-
+#. translators: 1: tokens sent to the model, 2: tokens it wrote, both in this conversation.
 #: src/Features/Settings/ScreenAssets.php:143
+#, php-format
+msgid "This conversation: %1$s tokens in, %2$s out"
+msgstr "Dieses Gespräch: %1$s Tokens rein, %2$s raus"
+
+#: src/Features/Settings/ScreenAssets.php:145
+msgid "Now"
+msgstr "Jetzt"
+
+#: src/Features/Settings/ScreenAssets.php:147
+msgid "The store would refuse this:"
+msgstr "Der Shop würde das ablehnen:"
+
+#: src/Features/Settings/ScreenAssets.php:148
+msgid "(empty)"
+msgstr "(leer)"
+
+#: src/Features/Settings/ScreenAssets.php:150
+msgid "Type a question first, then save it."
+msgstr "Gib zuerst eine Frage ein und speichere sie dann."
+
+#: src/Features/Settings/ScreenAssets.php:151
 msgid "Installing…"
 msgstr "Wird installiert…"
 
-#: src/Features/Settings/ScreenAssets.php:144
+#: src/Features/Settings/ScreenAssets.php:152
 msgid "Installed"
 msgstr "Installiert"
 
-#: src/Features/Settings/ScreenAssets.php:145
+#: src/Features/Settings/ScreenAssets.php:153
 msgid "The install failed."
 msgstr "Die Installation ist fehlgeschlagen."
 
@@ -2521,6 +2572,21 @@ msgstr "Shop-Konfiguration und Wartung. Aktiviere das nur, wenn du weißt, warum
 #: src/Shared/Tool/ToolSection.php:51
 msgid "What other plugins on this store offer to AI clients. Each plugin still checks its own permissions."
 msgstr "Was andere Plugins in diesem Shop KI-Clients anbieten. Jedes Plugin prüft weiterhin seine eigenen Berechtigungen."
+
+#~ msgid "How many orders are waiting to be processed?"
+#~ msgstr "Wie viele Bestellungen warten auf Bearbeitung?"
+
+#~ msgid "Show me my 5 best selling products this month"
+#~ msgstr "Zeig mir meine 5 meistverkauften Produkte in diesem Monat"
+
+#~ msgid "Which products are out of stock?"
+#~ msgstr "Welche Produkte sind nicht mehr auf Lager?"
+
+#~ msgid "What were my sales last week?"
+#~ msgstr "Wie hoch war mein Umsatz letzte Woche?"
+
+#~ msgid "Tokens"
+#~ msgstr "Tokens"
 
 #~ msgid "Picking it here is remembered, but the chat cannot reach it until the store exposes it. Settings decides what every AI client may touch; this panel only narrows it further for chat."
 #~ msgstr "Deine Auswahl hier wird gespeichert, aber der Chat kann erst darauf zugreifen, wenn der Shop den Bereich freigibt. Die Einstellungen bestimmen, worauf jeder KI-Client überhaupt zugreifen darf; dieses Panel schränkt das für den Chat nur weiter ein."

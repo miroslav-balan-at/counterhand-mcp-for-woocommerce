@@ -149,7 +149,7 @@ final readonly class AgentLoop {
 			if ( [] !== $gated_ids ) {
 				$pending = $this->pending_store->park( $agent->token->owner_user_id, self::without_model_confirmation( $turn->tool_calls, $gated_ids ), $gated_ids );
 
-				return new AgentLoopResult( $messages, $transcript, $usage, $pending );
+				return new AgentLoopResult( $messages, $transcript, $usage, $pending, $this->previews( $pending, $agent ) );
 			}
 
 			$results = [];
@@ -169,6 +169,51 @@ final readonly class AgentLoop {
 		];
 
 		return new AgentLoopResult( $messages, $transcript, $usage );
+	}
+
+	/**
+	 * Only reversible tools have a preview: prices through update_product among the gated
+	 * ones. Refunds, order status, coupons and notes keep showing their arguments.
+	 *
+	 * @return list<ApprovalPreview>
+	 */
+	private function previews( PendingConfirmation $pending, AuthenticatedAgent $agent ): array {
+		$previews = [];
+
+		foreach ( $pending->calls as $call ) {
+			if ( ! $pending->needs_approval( $call ) || null === $this->dispatcher->reversible_for( $agent, $call->name ) ) {
+				continue;
+			}
+
+			$outcome = $this->dispatcher->dispatch(
+				$call->name,
+				[
+					...array_diff_key( $call->input, [ 'confirm' => true ] ),
+					'preview' => true,
+				],
+				$agent
+			);
+
+			$previews[] = $outcome->is_error()
+				? new ApprovalPreview( $call->id, [], $outcome->message )
+				: new ApprovalPreview( $call->id, self::changes( $outcome->data['changes'] ?? [] ) );
+		}
+
+		return $previews;
+	}
+
+	/** @return list<array{field: string, before: mixed, after: mixed}> */
+	private static function changes( mixed $changes ): array {
+		return array_values(
+			array_map(
+				static fn ( array $change ): array => [
+					'field'  => (string) ( $change['field'] ?? '' ),
+					'before' => $change['before'] ?? null,
+					'after'  => $change['after'] ?? null,
+				],
+				array_filter( is_array( $changes ) ? $changes : [], 'is_array' )
+			)
+		);
 	}
 
 	/**

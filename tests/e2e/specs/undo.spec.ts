@@ -250,6 +250,31 @@ test.describe( 'Preview and undo', () => {
 		expect( allowed.isError ).toBeFalsy();
 	} );
 
+	test( 'a write whose response carries a link core cannot resolve still answers with its result', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, [ 'products:read', 'products:write' ] );
+		wp( 'option', 'update', 'counterhand_e2e_unresolvable_link', '1' );
+
+		try {
+			const reply = await call( 'update_product', { id: product, description: 'Linked' } );
+
+			expect( reply.isError, JSON.stringify( reply ) ).toBeFalsy();
+		} finally {
+			wp( 'option', 'delete', 'counterhand_e2e_unresolvable_link' );
+		}
+	} );
+
+	test( 'a store updated with no admin visit since answers for its history without a database error', async ( { browser, baseURL } ) => {
+		const { call } = await caller( browser, baseURL as string, HISTORY );
+		const table = `${ wp( 'db', 'prefix' ) }counterhand_changes`;
+		wp( 'db', 'query', `DROP TABLE IF EXISTS ${ table }` );
+		wp( 'option', 'delete', 'counterhand_changes_schema_version' );
+
+		const listed = await call( 'get_recent_changes', {} );
+
+		expect( listed.isError ).toBeFalsy();
+		expect( wp( 'db', 'query', `SHOW TABLES LIKE '${ table }'`, '--skip-column-names' ) ).toBe( table );
+	} );
+
 	test( 'a store that switched history off records nothing, whatever the grant', async ( { browser, baseURL } ) => {
 		const { call } = await caller( browser, baseURL as string, HISTORY );
 		const putBack = patchSettings( { changes_write: false } );

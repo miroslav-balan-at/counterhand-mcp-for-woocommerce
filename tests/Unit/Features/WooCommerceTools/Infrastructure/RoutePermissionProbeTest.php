@@ -155,6 +155,35 @@ final class RoutePermissionProbeTest extends TestCase {
 		$this->assertSame( 2, $calls );
 	}
 
+	/** A cron run sends one person's report after another's, and an Action Scheduler batch runs several owners' items. */
+	public function test_each_user_gets_their_own_answer_within_one_request(): void {
+		$user = 1;
+		Functions\when( 'get_current_user_id' )->alias( static function () use ( &$user ): int {
+			return $user;
+		} );
+
+		$probe = $this->probe(
+			new FakeRestServer(
+				[
+					'/wc/v3/coupons' => [
+						[
+							'methods'             => [ 'GET' => true ],
+							'args'                => [],
+							'permission_callback' => static function () use ( &$user ): bool {
+								return 1 === $user;
+							},
+						],
+					],
+				]
+			)
+		);
+
+		$this->assertTrue( $probe->allows( $this->coupons(), RestMethod::Get ) );
+
+		$user = 2;
+		$this->assertFalse( $probe->allows( $this->coupons(), RestMethod::Get ) );
+	}
+
 	/** A denial is an answer too — re-asking a denied route on every tool would be the expensive case. */
 	public function test_a_denial_is_memoized_as_well(): void {
 		$calls = 0;

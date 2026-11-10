@@ -57,16 +57,21 @@ final readonly class RestGateway implements RestGatewayInterface {
 		// payload comes back whole.
 		$response = rest_filter_response_fields( $response, rest_get_server(), $request );
 
+		// HAL links are HTTP-client affordances an MCP agent cannot follow, and on a
+		// collection the string key would hide the payload's list shape. They go
+		// before response_to_data(), which resolves each one as a request: a write
+		// sent with lang gets a link under /en/wp-json/ from WooCommerce Multilingual,
+		// core answers false for it, and Solid Security 10 then fatals after the write
+		// was saved.
+		foreach ( array_keys( $response->get_links() ) as $relation ) {
+			$response->remove_link( (string) $relation );
+		}
+
 		$data = rest_get_server()->response_to_data( $response, false );
 
 		if ( ! is_array( $data ) ) {
 			return new RestResult( [ 'value' => $data ] );
 		}
-
-		// response_to_data() re-attaches HAL links after field filtering. They
-		// are HTTP-client affordances an MCP agent cannot follow, and on a
-		// collection the string key would hide the payload's list shape.
-		unset( $data['_links'] );
 
 		return new RestResult(
 			$data,

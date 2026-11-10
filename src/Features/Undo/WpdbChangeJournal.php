@@ -22,13 +22,10 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function record( AuthenticatedAgent $agent, string $tool_name, ChangePlan $plan, array $before, array $after ): ?string {
 		global $wpdb;
 
-		// A store updated without anyone visiting the admin would otherwise lose records.
-		ChangeSchema::maybe_upgrade();
-
 		$key = bin2hex( random_bytes( 16 ) );
 
 		$saved = $wpdb->insert(
-			ChangeSchema::table_name(),
+			self::table(),
 			[
 				'change_key'   => $key,
 				'token_id'     => $agent->token->id,
@@ -49,7 +46,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function find( string $key, AuthenticatedAgent $agent ): ?RecordedChange {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -67,7 +64,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function recent( AuthenticatedAgent $agent, int $limit ): array {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -85,7 +82,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function claim( string $key ): bool {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 
 		return 1 === $wpdb->query(
 			$wpdb->prepare(
@@ -99,7 +96,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function release( string $key ): void {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 
 		$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET undone_at = NULL WHERE change_key = %s", $key ) );
 	}
@@ -107,7 +104,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function made_by( int $user_id ): array {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d ORDER BY id DESC", $user_id ) );
 
 		return array_map(
@@ -123,15 +120,22 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function forget( int $user_id ): int {
 		global $wpdb;
 
-		return (int) $wpdb->delete( ChangeSchema::table_name(), [ 'user_id' => $user_id ], [ '%d' ] );
+		return (int) $wpdb->delete( self::table(), [ 'user_id' => $user_id ], [ '%d' ] );
 	}
 
 	public function purge_expired(): void {
 		global $wpdb;
 
-		$table = ChangeSchema::table_name();
+		$table = self::table();
 
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", self::oldest() ) );
+	}
+
+	/** A store updated without anyone visiting the admin has no table yet, and agents and cron reach it first. */
+	private static function table(): string {
+		ChangeSchema::maybe_upgrade();
+
+		return ChangeSchema::table_name();
 	}
 
 	private static function oldest(): string {

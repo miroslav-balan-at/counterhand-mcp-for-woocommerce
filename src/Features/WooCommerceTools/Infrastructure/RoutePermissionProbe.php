@@ -28,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
  *   rest_do_request() then runs the real, id-aware check on every dispatch.
  *   Nothing executable escapes WooCommerce's own gate by being visible here.
  *
- * Not readonly: answers are memoized per request. Two probes per resource,
+ * Not readonly: answers are memoized per request and user. Two probes per resource,
  * each usually a single current_user_can(), is cheaper than one get_posts().
  */
 final class RoutePermissionProbe {
@@ -39,7 +39,8 @@ final class RoutePermissionProbe {
 	public function __construct( private readonly RouteCatalog $catalog ) {}
 
 	public function allows( RestRoute $route, RestMethod $method ): bool {
-		return $this->answers[ $method->value . ' ' . $route->path_template() ] ??= $this->ask( $route, $method );
+		// Keyed by user too: a cron run or a queue batch acts for one person after another.
+		return $this->answers[ get_current_user_id() . ' ' . $method->value . ' ' . $route->path_template() ] ??= $this->ask( $route, $method );
 	}
 
 	private function ask( RestRoute $route, RestMethod $method ): bool {

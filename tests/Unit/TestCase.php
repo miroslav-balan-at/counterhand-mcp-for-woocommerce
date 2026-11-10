@@ -19,6 +19,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase {
 		Functions\when( 'esc_html__' )->returnArg( 1 );
 		Functions\when( '_x' )->returnArg( 1 );
 		Functions\when( 'switch_to_locale' )->justReturn( false );
+		// Visibility caches are keyed by it, so most tests need it and few care about its value.
+		Functions\when( 'get_current_user_id' )->justReturn( 0 );
 		// Stubbed once one test defines it, it stays defined for the whole run, so every
 		// test gets a logger rather than only those that happen to run after it.
 		Functions\when( 'wc_get_logger' )->justReturn(

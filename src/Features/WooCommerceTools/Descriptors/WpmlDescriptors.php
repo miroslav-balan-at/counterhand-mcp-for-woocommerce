@@ -56,6 +56,14 @@ final readonly class WpmlDescriptors implements DescriptorProvider {
 		],
 	];
 
+	private const OWN_LANGUAGE = [
+		'lang' => [
+			'type'        => 'string',
+			'description' => 'The translation\'s own language code, as its lang reads, such as en.',
+			'required'    => true,
+		],
+	];
+
 	private const PRODUCT_TEXT = [ 'name', 'slug', 'description', 'short_description' ];
 
 	private const PRODUCT_LIST_OUTPUT = [ 'id', 'name', 'sku', 'status', 'type', 'lang', 'translations' ];
@@ -216,7 +224,8 @@ final readonly class WpmlDescriptors implements DescriptorProvider {
 					new FieldProfile( [ 'id', ...self::TERM_TEXT ], self::TERM_OUTPUT, false ),
 					description_override: sprintf( 'Change the text of a %s translation. Customers see it at once. A term in the store\'s default language is refused.', $singular ),
 					forced_params: [ RestRequestGuards::NO_UNFILTERED_HTML => 1 ],
-					policy: new ExistingTranslationPolicy( $elements )
+					policy: new ExistingTranslationPolicy( $elements, sends_its_language: true ),
+					declared_arguments: self::OWN_LANGUAGE
 				),
 			],
 			$probe,

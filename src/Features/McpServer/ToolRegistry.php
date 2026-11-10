@@ -208,7 +208,8 @@ final class ToolRegistry implements ToolRegistrarInterface, IntegrationToolCatal
 		$scopes = array_map( static fn ( ScopeInterface $scope ): string => $scope->key(), $agent->scopes()->all() );
 		sort( $scopes );
 
-		return $agent->token->owner_user_id . '|' . implode( ',', $scopes ) . '|' . implode( ',', $agent->token->approved_tools ?? [ '*' ] );
+		// Visibility is probed as the current user, who is the owner except while a caller is still switching to them.
+		return get_current_user_id() . '|' . $agent->token->owner_user_id . '|' . implode( ',', $scopes ) . '|' . implode( ',', $agent->token->approved_tools ?? [ '*' ] );
 	}
 
 	private function is_group_enabled( ToolInterface $tool ): bool {

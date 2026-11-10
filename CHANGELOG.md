@@ -4,6 +4,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* New: a weekly report by email, which each person asks for on the Dashboard. It has last week's sales against the week before, the best sellers and the orders waiting, all as WooCommerce's reports state them. With a model connected, a short summary written by AI comes first, labelled as such. It is sent only while Reports are switched on.
 * New: Bulk rewrites. The model connected to the chat drafts new descriptions or short descriptions for up to 25 products in a category, in the background. Nothing changes until you approve a text, a text edited since the model read it is not overwritten, and with undo history on, applied texts can be undone.
 * New: hosts that support MCP Apps, such as Claude, can show the sales report, an order and a product change preview as a view in the conversation. Views only display: changes still go through the usual confirmation. Other clients get the same text as before.
 * New: a Dashboard says whether the connector is on, how many apps are connected, which areas can be changed, and what happened today. With the action log off it says calls are not recorded rather than showing a zero.

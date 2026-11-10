@@ -25,6 +25,8 @@ final readonly class DashboardScreen implements ScreenBodyInterface {
 		private PluginSettings $settings,
 		private ConnectionMatcher $matcher,
 		private ActivityReportInterface $activity,
+		/** @var list<DashboardCardInterface> */
+		private array $cards = [],
 	) {}
 
 	public function render_body(): void {
@@ -36,6 +38,7 @@ final readonly class DashboardScreen implements ScreenBodyInterface {
 		$writable_groups  = array_values( array_filter( ToolGroup::cases(), $this->settings->is_group_write_enabled( ... ) ) );
 		$integrations     = ScopeGroups::integrations();
 		$other_mcp_server = OtherMcpServer::is_running();
+		$cards            = $this->cards;
 		$activity         = $this->settings->is_action_log_enabled()
 			? $this->activity->since( new \DateTimeImmutable( 'today', wp_timezone() ), self::FAILURES_LISTED )
 			: null;

@@ -84,6 +84,14 @@ Read the spec source, not summaries: `github.com/modelcontextprotocol/modelconte
 - **Writes answer `SERVES_TOOLS_FILTER`, the queue does not.** Applying and undoing run in our own `admin-post` request; answering for a whole cron request would change how other plugins' work in it is saved. The queue only reads.
 - **`rewrites.spec.ts` runs the queue with `wp action-scheduler run --hooks=counterhand_rewrite_item`** and checks the product as stored, using the scripted model in the fixtures mu-plugin.
 
+## Weekly report (`Features/WeeklyReport`)
+- **Each person signs themselves up** (user meta), and the report goes only to their own address. Nobody subscribes anyone else. Sending asks again each time: `manage_woocommerce`, the plugin's one capability, then WooCommerce's own permission check on the report routes, so a person who loses either stops getting it.
+- **Every figure is one WooCommerce states.** The email prints the sales report, top sellers and order totals as the report tools return them, read through `ToolDispatcherInterface::dispatch` as that person with `reports:read` only, so a store with Reports switched off sends nothing. The legacy sales report reads the order tables under HPOS (`WC_Admin_Report`, checked in WooCommerce 11).
+- **The AI summary sits on top of the figures, never instead of them,** labelled as written by AI and stripped to plain text. It sees only the figures, and with no model, or a failing one, the report goes out without it. It uses the chat's model through `Playground\TextModelInterface`.
+- **One cron event at a time, set again after each run,** for Monday 07:00 in the store's time zone, so the hour holds across daylight saving. The week is Monday to Sunday, the last complete one.
+- **The body is one line of markup,** because WooCommerce's `wrap_message()` runs `wpautop` over it. Mail goes through `WC()->mailer()`, so it wears the store's email template.
+- **`weekly-report.spec.ts` keeps mail instead of sending it** (`pre_wp_mail` in the fixtures mu-plugin) and compares the total with WooCommerce's own report for the same week.
+
 ## The Agent Skill
 `skills/counterhand-woocommerce` is the published guide for assistants, outside the plugin zip. `tests/skill-evals/` holds scenarios to run with and without it after changing it; a model answers them, so a person grades them and CI does not. It states habits and traps, and leaves tools and their arguments to what the server publishes, because a copy of those would rot. A change to how writes work (preview, confirm, undo) or a renamed tool means editing it: `ShippedSurfaceTest` catches the names, nothing catches the behaviour. Only the six standard frontmatter fields are portable; any other fails on upload to Claude.ai.
 

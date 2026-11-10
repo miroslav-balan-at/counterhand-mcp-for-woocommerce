@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-02T15:09:15+00:00\n"
+"POT-Creation-Date: 2026-11-09T16:02:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -193,28 +193,34 @@ msgid "This could not be shown."
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:18
+#: src/Features/WeeklyReport/ReportEmail.php:70
 #: src/Shared/Tool/ToolSection.php:34
 msgid "Sales"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:19
+#: src/Features/WeeklyReport/ReportEmail.php:61
 msgid "Total sales"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:20
+#: src/Features/WeeklyReport/ReportEmail.php:62
 msgid "Net sales"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:21
+#: src/Features/WeeklyReport/ReportEmail.php:63
 #: src/Shared/Tool/ToolGroup.php:59
 msgid "Orders"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:22
+#: src/Features/WeeklyReport/ReportEmail.php:64
 msgid "Items sold"
 msgstr ""
 
 #: src/Features/McpApps/ViewText.php:23
+#: src/Features/WeeklyReport/ReportEmail.php:65
 #: src/Shared/Tool/ToolGroup.php:66
 msgid "Refunds"
 msgstr ""
@@ -736,11 +742,11 @@ msgstr ""
 msgid "Applied without undo history, so this cannot be undone here."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:297
+#: src/Features/Playground/Rewrites/RewriteJobs.php:298
 msgid "Products cannot be changed by AI on this store any more."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:316
+#: src/Features/Playground/Rewrites/RewriteJobs.php:317
 msgid "The rewrite failed unexpectedly. Check the WooCommerce logs for details."
 msgstr ""
 
@@ -1217,13 +1223,13 @@ msgstr ""
 
 #: src/Features/Settings/AdminScreen.php:34
 #: src/Features/Settings/AdminScreen.php:46
-#: src/Features/Settings/views/dashboard.php:136
+#: src/Features/Settings/views/dashboard.php:137
 #: src/Shared/Tool/ToolSection.php:39
 msgid "Other plugins"
 msgstr ""
 
 #: src/Features/Settings/AdminScreen.php:35
-#: src/Features/Settings/views/dashboard.php:45
+#: src/Features/Settings/views/dashboard.php:46
 msgid "Settings"
 msgstr ""
 
@@ -1359,7 +1365,7 @@ msgid "Add an app"
 msgstr ""
 
 #: src/Features/Settings/ConnectTab.php:24
-#: src/Features/Settings/views/dashboard.php:52
+#: src/Features/Settings/views/dashboard.php:53
 msgid "Connected apps"
 msgstr ""
 
@@ -1673,91 +1679,93 @@ msgstr ""
 msgid "Approved apps appear on the Connections tab, where you can revoke any of them."
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:29
+#: src/Features/Settings/views/dashboard.php:30
 #: src/Features/Settings/views/settings.php:40
 msgid "Connector"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:34
+#: src/Features/Settings/views/dashboard.php:35
+#: src/Features/WeeklyReport/views/card.php:33
 msgid "On"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:34
-#: src/Features/Settings/views/dashboard.php:151
+#: src/Features/Settings/views/dashboard.php:35
+#: src/Features/Settings/views/dashboard.php:152
+#: src/Features/WeeklyReport/views/card.php:33
 msgid "Off"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:39
+#: src/Features/Settings/views/dashboard.php:40
 msgid "Apps you have approved can reach this store."
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:40
+#: src/Features/Settings/views/dashboard.php:41
 msgid "No outside AI app can reach this store."
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:58
+#: src/Features/Settings/views/dashboard.php:59
 msgid "Review or revoke them"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:64
+#: src/Features/Settings/views/dashboard.php:65
 msgid "Areas switched on"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:65
+#: src/Features/Settings/views/dashboard.php:66
 msgid "The most any connection can get. Each one holds only what it was approved for."
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:73
+#: src/Features/Settings/views/dashboard.php:74
 msgid "None can be changed by an AI client."
 msgstr ""
 
 #. translators: %s: comma-separated names of areas of the store, e.g. "Products, Orders".
-#: src/Features/Settings/views/dashboard.php:77
+#: src/Features/Settings/views/dashboard.php:78
 #, php-format
 msgid "Can be changed: %s."
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:85
+#: src/Features/Settings/views/dashboard.php:86
 msgid "Choose areas"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:92
+#: src/Features/Settings/views/dashboard.php:93
 msgid "Tool calls today"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:97
+#: src/Features/Settings/views/dashboard.php:98
 msgid "Not recorded"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:98
+#: src/Features/Settings/views/dashboard.php:99
 msgid "The action log is off, so nothing here can say what apps have done."
 msgstr ""
 
 #. translators: %s: number of tool calls that failed.
-#: src/Features/Settings/views/dashboard.php:105
+#: src/Features/Settings/views/dashboard.php:106
 #, php-format
 msgid "%s failed."
 msgid_plural "%s failed."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Settings/views/dashboard.php:126
+#: src/Features/Settings/views/dashboard.php:127
 msgid "Open the action log"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:128
+#: src/Features/Settings/views/dashboard.php:129
 msgid "Switch the log on"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:147
+#: src/Features/Settings/views/dashboard.php:148
 msgid "Can read and change"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:149
+#: src/Features/Settings/views/dashboard.php:150
 msgid "Can read"
 msgstr ""
 
-#: src/Features/Settings/views/dashboard.php:160
+#: src/Features/Settings/views/dashboard.php:161
 msgid "Choose plugins"
 msgstr ""
 
@@ -2067,6 +2075,135 @@ msgstr ""
 
 #: src/Features/UrlCoupons/UrlCouponsCopy.php:26
 msgid "Give any existing coupon a link or remove one. Anyone with the link gets the discount, so every change needs explicit confirmation. This cannot create a coupon or change its discount."
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportAgent.php:26
+#: src/Features/WeeklyReport/views/card.php:21
+msgid "Weekly report"
+msgstr ""
+
+#. translators: 1: store name, 2: the week, e.g. "3 November 2026 to 9 November 2026".
+#: src/Features/WeeklyReport/ReportEmail.php:29
+#, php-format
+msgid "Weekly report for %1$s: %2$s"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:33
+msgid "Your week in the store"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:55
+msgid "Written by AI from the figures below. Check it against them."
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:71
+msgid "Figure"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:72
+msgid "This week"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:73
+msgid "Week before"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:85
+msgid "Best sellers"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:88
+msgid "Nothing was sold this week."
+msgstr ""
+
+#. translators: 1: product name, 2: number sold.
+#: src/Features/WeeklyReport/ReportEmail.php:99
+#, php-format
+msgid "%1$s: %2$s sold"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:113
+msgid "Waiting now"
+msgstr ""
+
+#. translators: 1: number of orders processing, 2: number of orders on hold.
+#: src/Features/WeeklyReport/ReportEmail.php:117
+#, php-format
+msgid "%1$s orders processing and %2$s on hold."
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:123
+msgid "Open the orders"
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:130
+msgid "You get this because you asked for a weekly report in Counterhand MCP."
+msgstr ""
+
+#: src/Features/WeeklyReport/ReportEmail.php:132
+msgid "Stop it on the Dashboard."
+msgstr ""
+
+#. translators: 1: first day of the week, 2: last day of the week, both as dates.
+#: src/Features/WeeklyReport/ReportWeek.php:38
+#, php-format
+msgid "%1$s to %2$s"
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:22
+msgid "Last week’s sales, best sellers and waiting orders, by email every Monday morning. With a model connected on the Chat screen, a short summary written by AI comes first."
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:30
+msgid "Reports are switched off in Settings, so there is nothing to send."
+msgstr ""
+
+#. translators: 1: email address, 2: date and time of the next report.
+#: src/Features/WeeklyReport/views/card.php:40
+#, php-format
+msgid "Sent to %1$s. Next one: %2$s."
+msgstr ""
+
+#. translators: %s: email address.
+#: src/Features/WeeklyReport/views/card.php:46
+#, php-format
+msgid "Sent to %s."
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:48
+msgid "Only you get it, at your own address. Nobody is signed up for anyone else."
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:57
+msgid "Stop the weekly report"
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:57
+msgid "Email me every Monday"
+msgstr ""
+
+#: src/Features/WeeklyReport/views/card.php:62
+msgid "Send last week’s report now"
+msgstr ""
+
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:56
+msgid "You will get the report every Monday morning."
+msgstr ""
+
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:60
+msgid "You will not get the weekly report any more."
+msgstr ""
+
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:68
+msgid "Last week’s report is on its way to your email address."
+msgstr ""
+
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:69
+msgid "The report could not be sent. Check that Reports are switched on in Settings, and the WooCommerce logs."
+msgstr ""
+
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:75
+msgid "You are not allowed to see store reports."
 msgstr ""
 
 #: src/Features/WooCommerceTools/Application/StoreProfileResource.php:42

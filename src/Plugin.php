@@ -28,6 +28,10 @@ use Counterhand\Features\Playground\ModelConnect;
 use Counterhand\Features\Playground\PendingConfirmationStore;
 use Counterhand\Features\Playground\PlaygroundFeature;
 use Counterhand\Features\Playbooks\PlaybookCatalog;
+use Counterhand\Features\Playground\Rewrites\Persistence\RewriteSchema;
+use Counterhand\Features\Playground\Rewrites\RewriteJobs;
+use Counterhand\Features\Playground\Rewrites\RewritesFeature;
+use Counterhand\Features\Playground\Rewrites\WpdbRewriteQueue;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Privacy\PrivacyFeature;
 use Counterhand\Features\Settings\AdminScreen;
@@ -106,6 +110,7 @@ final class Plugin {
 		Schema::install();
 		\Counterhand\Features\ActionLog\Persistence\LogSchema::install();
 		ChangeSchema::install();
+		RewriteSchema::install();
 		McpServerFeature::register_rewrite();
 		OAuthFeature::register_rewrites();
 		flush_rewrite_rules();
@@ -116,6 +121,12 @@ final class Plugin {
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
 		wp_clear_scheduled_hook( UndoFeature::PURGE_HOOK );
 		wp_clear_scheduled_hook( ConfirmationState::PURGE_HOOK );
+		wp_clear_scheduled_hook( RewriteJobs::PURGE_HOOK );
+
+		// Left queued, each would fail later for want of its callback.
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( RewriteJobs::HOOK );
+		}
 	}
 
 	public function tool_registry(): ?ToolRegistry {
@@ -174,6 +185,8 @@ final class Plugin {
 			new StoreToolPolicy( $settings )
 		);
 
+		$rewrites = new RewritesFeature( new RewriteJobs( $tool_dispatcher, new WpdbRewriteQueue(), $chat_settings, $chat_providers ) );
+
 		$descriptors        = new StaticDescriptorCatalog();
 		$connection_matcher = new ConnectionMatcher( $repository );
 
@@ -181,9 +194,11 @@ final class Plugin {
 			$tokens,
 			$action_log,
 			$playground,
+			$rewrites,
 			new SettingsFeature(
 				[
 					AdminScreen::Chat->value         => $playground,
+					AdminScreen::Rewrites->value     => $rewrites,
 					AdminScreen::Dashboard->value    => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport() ),
 					AdminScreen::Connect->value      => new ConnectScreen( $tokens->admin(), $connection_matcher ),
 					AdminScreen::Integrations->value => new IntegrationsScreen( $settings ),

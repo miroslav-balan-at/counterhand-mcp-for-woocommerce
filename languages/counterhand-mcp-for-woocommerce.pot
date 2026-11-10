@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T21:33:55+00:00\n"
+"POT-Creation-Date: 2026-11-02T15:09:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -142,6 +142,7 @@ msgid "Nothing recorded. Switch the log on in Settings to start keeping the reco
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:84
+#: src/Features/Playground/Rewrites/RewriteStatus.php:24
 msgid "Failed"
 msgstr ""
 
@@ -682,6 +683,201 @@ msgstr ""
 msgid "Claude (Anthropic)"
 msgstr ""
 
+#: src/Features/Playground/Rewrites/RewriteAgent.php:31
+#: src/Features/Settings/AdminScreen.php:31
+msgid "Bulk rewrites"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteField.php:20
+msgid "Description"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteField.php:21
+msgid "Short description"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:47
+msgid "WooCommerce’s Action Scheduler is not available, so rewrites cannot run in the background."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:51
+msgid "No model is connected yet. Connect one on the Chat screen first."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:55
+msgid "Products cannot be changed by AI on this store. Tick Write for Products in Settings first."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:76
+msgid "Say what the new text should do differently."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:102
+msgid "That category has no products."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:137
+msgid "The person who started this job can no longer manage the store."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:144
+msgid "No model is connected any more."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:183
+msgid "The model returned no text."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:210
+msgid "The product’s text changed after the model read it. Start a new job to rewrite the current text."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:235
+msgid "Applied without undo history, so this cannot be undone here."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:297
+msgid "Products cannot be changed by AI on this store any more."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:316
+msgid "The rewrite failed unexpectedly. Check the WooCommerce logs for details."
+msgstr ""
+
+#. translators: %d: number of products.
+#: src/Features/Playground/Rewrites/RewritesFeature.php:79
+#, php-format
+msgid "%d product is queued. Its new text appears below when the model has written it."
+msgid_plural "%d products are queued. Their new texts appear below as the model writes them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Playground/Rewrites/RewritesFeature.php:97
+msgid "Tick the products first."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritesFeature.php:109
+msgid "Done. Each product’s status is below."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritesFeature.php:114
+msgid "You are not allowed to rewrite products."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:22
+msgid "Waiting for the model"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:23
+msgid "Ready to review"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:25
+msgid "Being applied"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:26
+msgid "Applied"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:27
+msgid "Being undone"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:28
+msgid "Undone"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteStatus.php:29
+msgid "Discarded"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:33
+msgid "Start a rewrite"
+msgstr ""
+
+#. translators: %d: maximum number of products in one job.
+#: src/Features/Playground/Rewrites/views/rewrites.php:38
+#, php-format
+msgid "The model connected on the Chat screen writes a new text for up to %d products in the category. Nothing changes on your store until you approve a text below."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:50
+msgid "Undo history is off, so applied texts cannot be undone here. To keep that option, tick Read and Write for Undo history under Advanced in Settings."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:56
+msgid "Category"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:71
+msgid "Text to rewrite"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:79
+msgid "What should the new text do differently?"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:80
+msgid "For example: shorter, friendlier, and start with what the product is for."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:82
+msgid "Write new texts"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:92
+msgid "Review"
+msgstr ""
+
+#. translators: 1: tokens sent to the model, 2: tokens the model wrote.
+#: src/Features/Playground/Rewrites/views/rewrites.php:97
+#, php-format
+msgid "Model usage so far: %1$s tokens in, %2$s tokens out."
+msgstr ""
+
+#. translators: %d: number of products still waiting for the model.
+#: src/Features/Playground/Rewrites/views/rewrites.php:109
+#, php-format
+msgid "Refresh (%d waiting)"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:122
+msgid "Select"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:123
+msgid "Product"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:124
+msgid "Current text"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:125
+msgid "New text"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:145
+msgid "Edit product"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:154
+msgid "Apply ticked texts"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:155
+msgid "Discard ticked texts"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:156
+msgid "Undo ticked texts"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/views/rewrites.php:158
+msgid "Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong."
+msgstr ""
+
 #: src/Features/Playground/views/chat.php:40
 msgid "No tools are enabled, so the assistant cannot read or change anything. Turn on at least one tool group on the Settings tab."
 msgstr ""
@@ -1004,67 +1200,75 @@ msgstr ""
 msgid "Fields"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:29
+#: src/Features/Settings/AdminScreen.php:30
 msgid "Chat"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:30
-#: src/Features/Settings/AdminScreen.php:41
+#: src/Features/Settings/AdminScreen.php:32
+#: src/Features/Settings/AdminScreen.php:44
 msgid "Dashboard"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:31
-#: src/Features/Settings/AdminScreen.php:42
+#: src/Features/Settings/AdminScreen.php:33
+#: src/Features/Settings/AdminScreen.php:45
 #: src/Features/Settings/views/connect-navigation.php:15
 msgid "Connect AI apps"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:32
-#: src/Features/Settings/AdminScreen.php:43
+#: src/Features/Settings/AdminScreen.php:34
+#: src/Features/Settings/AdminScreen.php:46
 #: src/Features/Settings/views/dashboard.php:136
 #: src/Shared/Tool/ToolSection.php:39
 msgid "Other plugins"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:33
+#: src/Features/Settings/AdminScreen.php:35
 #: src/Features/Settings/views/dashboard.php:45
 msgid "Settings"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:34
-#: src/Features/Settings/AdminScreen.php:45
+#: src/Features/Settings/AdminScreen.php:36
+#: src/Features/Settings/AdminScreen.php:48
 msgid "Action Log"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:40
+#: src/Features/Settings/AdminScreen.php:42
 msgid "Chat with your store"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:44
+#: src/Features/Settings/AdminScreen.php:43
+msgid "Rewrite product texts"
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:47
 msgid "Counterhand MCP settings"
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:51
+#: src/Features/Settings/AdminScreen.php:54
 msgid "Use AI here, inside WooCommerce, on a model you connect."
 msgstr ""
 
-#: src/Features/Settings/AdminScreen.php:52
-msgid "What AI can reach on this store right now, and what it has been doing."
-msgstr ""
-
-#: src/Features/Settings/AdminScreen.php:53
-msgid "Let AI apps you already use work with this store, and manage what they may do."
-msgstr ""
-
-#: src/Features/Settings/AdminScreen.php:54
-msgid "What other plugins on this store offer to AI clients."
-msgstr ""
-
 #: src/Features/Settings/AdminScreen.php:55
-msgid "What this store exposes, and how much of it."
+msgid "Have a model draft new descriptions for a whole category, then approve each one."
 msgstr ""
 
 #: src/Features/Settings/AdminScreen.php:56
+msgid "What AI can reach on this store right now, and what it has been doing."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:57
+msgid "Let AI apps you already use work with this store, and manage what they may do."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:58
+msgid "What other plugins on this store offer to AI clients."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:59
+msgid "What this store exposes, and how much of it."
+msgstr ""
+
+#: src/Features/Settings/AdminScreen.php:60
 msgid "What each connected app actually did."
 msgstr ""
 

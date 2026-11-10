@@ -138,3 +138,9 @@ class WC_Shipping_Zones {
 		return [];
 	}
 }
+
+/** @param array<mixed> $args */
+function as_enqueue_async_action( string $hook, array $args = [], string $group = '', bool $unique = false, int $priority = 10 ): int {}
+
+/** @param array<mixed> $args */
+function as_unschedule_all_actions( string $hook, array $args = [], string $group = '' ): void {}

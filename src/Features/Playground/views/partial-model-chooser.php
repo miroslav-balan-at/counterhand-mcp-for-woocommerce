@@ -174,7 +174,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 			<div class="counterhand-field">
 				<label class="counterhand-label" for="counterhand-chat-model"><?php esc_html_e( 'Model', 'counterhand-mcp-for-woocommerce' ); ?></label>
 				<input type="text" id="counterhand-chat-model" name="counterhand_chat_model" class="regular-text"
-					list="counterhand-chat-model-list"
+					list="counterhand-chat-model-list" autocomplete="off"
 					value="<?php echo esc_attr( $chat_settings->model() ); ?>"
 					placeholder="<?php esc_attr_e( 'e.g. claude-opus-5-5', 'counterhand-mcp-for-woocommerce' ); ?>">
 				<datalist id="counterhand-chat-model-list">
@@ -201,8 +201,9 @@ $counterhand_key_hint = $chat_settings->masked_key();
 					? sprintf( __( 'Saved (%s) — leave blank to keep', 'counterhand-mcp-for-woocommerce' ), $counterhand_key_hint )
 					: __( 'Paste your provider API key', 'counterhand-mcp-for-woocommerce' );
 				?>
+				<?php // Browsers ignore "off" on a password field and fill in a saved site login, which connecting would send to the provider. ?>
 				<input type="password" id="counterhand-chat-key" name="counterhand_chat_key" class="regular-text"
-					autocomplete="off" placeholder="<?php echo esc_attr( $counterhand_key_placeholder ); ?>">
+					autocomplete="new-password" data-1p-ignore data-lpignore="true" placeholder="<?php echo esc_attr( $counterhand_key_placeholder ); ?>">
 
 				<p class="counterhand-field__hint">
 					<?php esc_html_e( 'Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key.', 'counterhand-mcp-for-woocommerce' ); ?>

@@ -17,6 +17,9 @@ final class AbilityCatalogTest extends TestCase {
 	private function catalog( array $abilities, bool $after_init = true ): AbilityCatalog {
 		Functions\when( 'did_action' )->justReturn( $after_init ? 1 : 0 );
 		Functions\when( 'wp_get_abilities' )->justReturn( $abilities );
+		Functions\when( 'get_option' )->justReturn( [] );
+		Functions\when( 'get_site_option' )->justReturn( [] );
+		Functions\when( 'get_plugin_data' )->justReturn( [] );
 
 		return new AbilityCatalog();
 	}
@@ -135,6 +138,39 @@ final class AbilityCatalogTest extends TestCase {
 		[ $group ] = $this->catalog( [ $this->exposed( 'yoast-seo/get' ) ] )->groups();
 
 		$this->assertSame( 'Yoast SEO', $group->label() );
+	}
+
+	public function test_an_active_plugin_is_named_as_its_own_header_names_it(): void {
+		if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
+			define( 'WP_PLUGIN_DIR', '/plugins' );
+		}
+
+		$catalog = $this->catalog( [ $this->exposed( 'backwpup/list-jobs' ), $this->exposed( 'wp-mail-smtp/get-debug-events' ), $this->exposed( 'forms/read' ) ] );
+		Functions\when( 'get_option' )->justReturn( [ 'backwpup/backwpup.php', 'wp-mail-smtp/wp_mail_smtp.php', 'other/other.php' ] );
+		Functions\when( 'get_plugin_data' )->alias(
+			static fn ( string $file ): array => [
+				'Name' => match ( basename( dirname( $file ) ) ) {
+					'backwpup'     => 'BackWPup',
+					'wp-mail-smtp' => 'WP Mail SMTP',
+					default        => 'Somebody Else',
+				},
+			]
+		);
+
+		$labels = array_map( static fn ( $group ): string => $group->label(), $catalog->groups() );
+
+		$this->assertSame( [ 'BackWPup', 'Forms', 'WP Mail SMTP' ], array_values( $labels ) );
+	}
+
+	public function test_a_plugin_whose_names_cannot_be_read_keeps_its_abilities(): void {
+		$catalog = $this->catalog( [ $this->exposed( 'backwpup/list-jobs' ) ] );
+		Functions\when( 'get_option' )->alias(
+			static function (): never {
+				throw new \RuntimeException( 'a plugin filter threw' );
+			}
+		);
+
+		$this->assertSame( [ 'Backwpup' ], array_map( static fn ( $group ): string => $group->label(), array_values( $catalog->groups() ) ) );
 	}
 
 	/** @dataProvider exposure */

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-11T18:47:17+00:00\n"
+"POT-Creation-Date: 2026-11-11T21:26:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -197,6 +197,7 @@ msgid "Move stored form messages to the trash. Every removal needs explicit conf
 msgstr ""
 
 #: src/Features/McpApps/AppViewCatalog.php:69
+#: src/Features/Settings/SettingsFeature.php:133
 msgid "Counterhand"
 msgstr ""
 
@@ -568,8 +569,8 @@ msgstr ""
 
 #: src/Features/Playground/ChatNotesFeature.php:60
 #: src/Features/Playground/PlaygroundFeature.php:139
-#: src/Features/Settings/SettingsFeature.php:164
-#: src/Features/Settings/SettingsFeature.php:178
+#: src/Features/Settings/SettingsFeature.php:190
+#: src/Features/Settings/SettingsFeature.php:204
 msgid "Not allowed."
 msgstr ""
 
@@ -1696,20 +1697,28 @@ msgstr ""
 msgid "The install failed."
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:52
+#: src/Features/Settings/SettingsFeature.php:56
 msgid "Source on GitHub"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:53
+#: src/Features/Settings/SettingsFeature.php:57
 msgid "Sponsor"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:74
+#: src/Features/Settings/SettingsFeature.php:78
 msgid "Counterhand MCP"
 msgstr ""
 
-#: src/Features/Settings/SettingsFeature.php:97
+#: src/Features/Settings/SettingsFeature.php:101
 msgid "AI Chat"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:132
+msgid "AI access on"
+msgstr ""
+
+#: src/Features/Settings/SettingsFeature.php:132
+msgid "AI access off"
 msgstr ""
 
 #: src/Features/Settings/views/connect.php:38

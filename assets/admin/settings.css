@@ -671,44 +671,143 @@
 }
 
 /* Page head ---------------------------------------------------------------
- * The brand lockup every Counterhand screen opens with: the prompt-tile mark
- * beside the core h1. The tile is the one place the brand colour appears —
- * everything interactive stays on the admin scheme.
+ * One slim row (the prompt tile, the title, what the screen is for, whether AI
+ * access is on), then the nav across the plugin's screens. Kept slim so the work
+ * starts high on the page; WordPress's menu already names the plugin.
  */
 
 .counterhand-page-head {
+	margin: 0 0 var(--counterhand-gap);
+	background: var(--counterhand-head-bg, var(--counterhand-surface));
+	color: var(--counterhand-head-text, var(--counterhand-text));
+	border: 1px solid var(--counterhand-head-line, var(--counterhand-border));
+	border-radius: var(--counterhand-radius-card);
+	box-shadow: var(--counterhand-shadow-card);
+	overflow: hidden;
+}
+
+.counterhand-page-head__row {
 	display: flex;
-	align-items: flex-start;
-	gap: var(--counterhand-gap);
-	margin: 8px 0 var(--counterhand-gap-large);
+	align-items: center;
+	gap: 12px;
+	padding: 12px 20px;
 }
 
 .counterhand-page-head__mark {
 	display: grid;
 	place-items: center;
 	flex: 0 0 auto;
-	width: 40px;
-	height: 40px;
-	margin-top: 2px;
-	border-radius: 10px;
+	width: 28px;
+	height: 28px;
+	border-radius: 7px;
 	background: var(--counterhand-brand);
 	color: var(--counterhand-brand-ink);
 }
 
 .counterhand-page-head__mark svg {
-	width: 21px;
-	height: 21px;
+	width: 15px;
+	height: 15px;
 	display: block;
 }
 
-.counterhand-page-head__text h1 {
-	padding: 0;
+.counterhand-page-head__text {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 2px 12px;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.counterhand-wrap .counterhand-page-head__text h1 {
 	margin: 0;
-	line-height: 1.25;
+	padding: 0;
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--counterhand-head-text, var(--counterhand-text));
 }
 
 .counterhand-page-head .counterhand-subtitle {
-	margin: 2px 0 0;
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var(--counterhand-head-text-muted, var(--counterhand-text-muted));
+}
+
+.counterhand-nav {
+	display: flex;
+	gap: 2px;
+	padding: 0 8px;
+	border-top: 1px solid var(--counterhand-head-line, var(--counterhand-border));
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+
+.counterhand-wrap .counterhand-nav a {
+	position: relative;
+	padding: 9px 12px 10px;
+	color: var(--counterhand-head-text-muted, var(--counterhand-text-muted));
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.counterhand-wrap .counterhand-nav a:hover,
+.counterhand-wrap .counterhand-nav a[aria-current="page"] {
+	color: var(--counterhand-head-text, var(--counterhand-text));
+}
+
+.counterhand-nav a[aria-current="page"]::after {
+	content: "";
+	position: absolute;
+	left: 12px;
+	right: 12px;
+	bottom: 0;
+	height: 3px;
+	border-radius: 3px 3px 0 0;
+	background: var(--counterhand-head-underline, var(--counterhand-accent));
+}
+
+/* Status pill: a state word in the console voice, beside what it describes. */
+.counterhand-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	flex: 0 0 auto;
+	height: 24px;
+	padding: 0 10px;
+	border: 1px solid var(--counterhand-border-strong);
+	border-radius: 999px;
+	color: var(--counterhand-text-muted);
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.counterhand-pill::before {
+	content: "";
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.counterhand-pill--on {
+	background: var(--counterhand-pill-on-bg, var(--counterhand-success-surface));
+	border-color: color-mix(in srgb, var(--counterhand-brand) 55%, transparent);
+	color: var(--counterhand-pill-on-text, var(--counterhand-success-text));
+}
+
+@media (max-width: 600px) {
+	.counterhand-page-head__row {
+		padding: 10px 16px;
+	}
+
+	.counterhand-page-head .counterhand-subtitle {
+		display: none;
+	}
 }
 
 /* Action log --------------------------------------------------------------
@@ -902,3 +1001,4 @@
 		width: auto;
 	}
 }
+

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-11T18:47:17+00:00\n"
+"POT-Creation-Date: 2026-11-11T21:26:41+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -197,6 +197,7 @@ msgid "Move stored form messages to the trash. Every removal needs explicit conf
 msgstr "Gespeicherte Formularnachrichten in den Papierkorb verschieben. Jedes Entfernen muss ausdrücklich bestätigt werden."
 
 #: src/Features/McpApps/AppViewCatalog.php:69
+#: src/Features/Settings/SettingsFeature.php:133
 msgid "Counterhand"
 msgstr "Counterhand"
 
@@ -568,8 +569,8 @@ msgstr "Du darfst die Shop-Notizen nicht ändern."
 
 #: src/Features/Playground/ChatNotesFeature.php:60
 #: src/Features/Playground/PlaygroundFeature.php:139
-#: src/Features/Settings/SettingsFeature.php:164
-#: src/Features/Settings/SettingsFeature.php:178
+#: src/Features/Settings/SettingsFeature.php:190
+#: src/Features/Settings/SettingsFeature.php:204
 msgid "Not allowed."
 msgstr "Nicht erlaubt."
 
@@ -1696,21 +1697,29 @@ msgstr "Installiert"
 msgid "The install failed."
 msgstr "Die Installation ist fehlgeschlagen."
 
-#: src/Features/Settings/SettingsFeature.php:52
+#: src/Features/Settings/SettingsFeature.php:56
 msgid "Source on GitHub"
 msgstr "Quellcode auf GitHub"
 
-#: src/Features/Settings/SettingsFeature.php:53
+#: src/Features/Settings/SettingsFeature.php:57
 msgid "Sponsor"
 msgstr "Unterstützen"
 
-#: src/Features/Settings/SettingsFeature.php:74
+#: src/Features/Settings/SettingsFeature.php:78
 msgid "Counterhand MCP"
 msgstr "Counterhand MCP"
 
-#: src/Features/Settings/SettingsFeature.php:97
+#: src/Features/Settings/SettingsFeature.php:101
 msgid "AI Chat"
 msgstr "KI-Chat"
+
+#: src/Features/Settings/SettingsFeature.php:132
+msgid "AI access on"
+msgstr "KI-Zugriff an"
+
+#: src/Features/Settings/SettingsFeature.php:132
+msgid "AI access off"
+msgstr "KI-Zugriff aus"
 
 #: src/Features/Settings/views/connect.php:38
 msgid "Your store address"

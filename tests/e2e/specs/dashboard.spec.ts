@@ -64,6 +64,31 @@ test.describe( 'Design tokens', () => {
 
 		expect( ratio ).toBeGreaterThanOrEqual( 4.5 );
 	} );
+
+	test( 'the slim header names the screen, links every screen and says whether AI access is on', async ( { page } ) => {
+		await page.goto( SETTINGS );
+		const head = page.locator( '.counterhand-page-head' );
+
+		await expect( head.getByRole( 'heading', { level: 1 } ) ).toHaveText( 'Counterhand MCP settings' );
+		await expect( head.getByRole( 'navigation' ).getByRole( 'link' ) ).toHaveCount( 7 );
+		await expect( head.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'aria-current', 'page' );
+		await expect( head.locator( '.counterhand-pill' ) ).toHaveText( /AI access (on|off)/ );
+
+		const ratio = await page.evaluate( () => {
+			const channel = ( value: number ) => ( value / 255 <= 0.03928 ? value / 255 / 12.92 : ( ( value / 255 + 0.055 ) / 1.055 ) ** 2.4 );
+			const luminance = ( color: string ) => {
+				const [ red, green, blue ] = ( color.match( /[\d.]+/g ) as string[] ).map( Number );
+
+				return ( 0.2126 * channel( red ) ) + ( 0.7152 * channel( green ) ) + ( 0.0722 * channel( blue ) );
+			};
+			const text = getComputedStyle( document.querySelector( '.counterhand-page-head .counterhand-subtitle' ) as Element ).color;
+			const tint = getComputedStyle( document.querySelector( '.counterhand-page-head' ) as Element ).backgroundColor;
+			const [ light, dark ] = [ luminance( text ), luminance( tint ) ].sort( ( a, b ) => b - a );
+
+			return ( light + 0.05 ) / ( dark + 0.05 );
+		} );
+		expect( ratio, 'purpose line on the mint tint' ).toBeGreaterThanOrEqual( 4.5 );
+	} );
 } );
 
 test.describe( 'Dashboard', () => {

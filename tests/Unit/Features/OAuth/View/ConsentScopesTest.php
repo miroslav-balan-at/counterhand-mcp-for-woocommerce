@@ -11,6 +11,7 @@ use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\PublishedScopes;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolGroup;
+use Counterhand\Shared\Tool\ToolSection;
 use Counterhand\Tests\Unit\TestCase;
 
 /**
@@ -132,6 +133,26 @@ final class ConsentScopesTest extends TestCase {
 						$row->scope->value . ' is pre-ticked against its section.'
 					);
 				}
+			}
+		}
+	}
+
+	public function test_a_section_with_something_to_grant_starts_open_and_one_without_starts_closed(): void {
+		$sections = [];
+		foreach ( $this->consent( [ ApiScope::ProductsRead ] )->sections as $section ) {
+			$sections[ $section->section->value ] = $section;
+		}
+
+		$this->assertTrue( $sections[ ToolSection::Catalog->value ]->starts_open() );
+		$this->assertSame( 1, $sections[ ToolSection::Catalog->value ]->grantable_count() );
+		$this->assertFalse( $sections[ ToolSection::Sales->value ]->starts_open(), 'nothing requested there, so it folds away' );
+	}
+
+	public function test_an_advanced_section_starts_closed_even_with_something_to_grant(): void {
+		foreach ( $this->consent( ApiScope::cases() )->sections as $section ) {
+			if ( $section->is_collapsed() ) {
+				$this->assertGreaterThan( 0, $section->grantable_count() );
+				$this->assertFalse( $section->starts_open() );
 			}
 		}
 	}

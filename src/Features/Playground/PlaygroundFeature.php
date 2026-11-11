@@ -143,7 +143,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 
 		$provider = $this->providers->get( $this->settings->provider_id() );
 		if ( null === $provider ) {
-			wp_send_json_error( [ 'message' => __( 'No model is connected yet. Pick one at the top of this tab.', 'counterhand-mcp-for-woocommerce' ) ] );
+			wp_send_json_error( [ 'message' => __( 'No AI model is chosen yet. Choose one at the top of this screen.', 'counterhand-mcp-for-woocommerce' ) ] );
 		}
 
 		return $provider;

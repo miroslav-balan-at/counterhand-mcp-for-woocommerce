@@ -48,7 +48,7 @@ final readonly class RewriteJobs {
 		}
 
 		if ( null === $this->providers->get( $this->settings->provider_id() ) || ! $this->settings->is_configured() ) {
-			return __( 'No model is connected yet. Connect one on the Chat screen first.', 'counterhand-mcp-for-woocommerce' );
+			return __( 'No AI model is chosen yet. Choose one on the Chat screen first.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		if ( ! $this->writes_products( $user_id ) ) {

@@ -30,7 +30,7 @@ test.describe( 'OAuth consent', () => {
 			// coupons:read is switched off in the store, so the screen must offer it disabled.
 			{ scopes: [ 'products:read', 'orders:read', 'reports:read', 'coupons:read' ], verifierChallenge: challenge, state: sentState },
 			async ( consent ) => {
-				await expect( consent.getByRole( 'heading', { name: 'Authorize AI access' } ) ).toBeVisible();
+				await expect( consent.getByRole( 'heading', { name: /work with your store\?/ } ) ).toBeVisible();
 				await expect( consent.getByText( 'E2E Test Client' ).first() ).toBeVisible();
 				await expect( consent.locator( 'input[value="coupons:read"]' ) ).toBeDisabled();
 				await expect( consent.locator( 'input[value="orders:read"]' ) ).toBeChecked();

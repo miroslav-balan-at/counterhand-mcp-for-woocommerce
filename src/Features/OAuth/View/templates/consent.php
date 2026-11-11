@@ -13,6 +13,8 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\AdminScreen;
+
 defined( 'ABSPATH' ) || exit;
 
 $counterhand_scopes         = $context['scopes'];
@@ -22,39 +24,46 @@ $counterhand_client_name    = $context['client_name'];
 $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 ?>
 <div class="counterhand-card__body">
-	<h1 class="counterhand-title"><?php esc_html_e( 'Authorize AI access', 'counterhand-mcp-for-woocommerce' ); ?></h1>
-
-	<p class="counterhand-lede">
+	<p class="counterhand-eyebrow"><?php esc_html_e( 'An app asks to connect', 'counterhand-mcp-for-woocommerce' ); ?></p>
+	<h1 class="counterhand-title">
 		<?php
 		printf(
-			/* translators: %s: name of the AI application requesting access */
-			esc_html__( '%s wants to connect to your store.', 'counterhand-mcp-for-woocommerce' ),
-			'<strong>' . esc_html( $counterhand_client_name ) . '</strong>'
+			/* translators: %s: name the app gives itself, e.g. "Claude". */
+			esc_html__( 'Let %s work with your store?', 'counterhand-mcp-for-woocommerce' ),
+			esc_html( $counterhand_client_name )
 		);
 		?>
-	</p>
+	</h1>
+	<p class="counterhand-lede"><?php esc_html_e( 'It can do what you tick below, and nothing else. You can take its access away at any time.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
-	<?php $counterhand_admin_name = wp_get_current_user()->display_name; ?>
-	<div class="counterhand-identity">
-		<span class="counterhand-identity__avatar" aria-hidden="true"><?php echo esc_html( mb_substr( $counterhand_admin_name, 0, 1 ) ); ?></span>
-		<span class="counterhand-identity__text">
-			<span class="counterhand-identity__label"><?php esc_html_e( 'Approving as', 'counterhand-mcp-for-woocommerce' ); ?></span>
-			<span class="counterhand-identity__name"><?php echo esc_html( $counterhand_admin_name ); ?></span>
-		</span>
-	</div>
-
-	<p class="counterhand-origin">
-		<span class="counterhand-origin__label"><?php esc_html_e( 'Verified origin', 'counterhand-mcp-for-woocommerce' ); ?></span>
-		<code><?php echo esc_html( $context['client_host'] ); ?></code>
-	</p>
-
-	<p class="counterhand-origin">
-		<span class="counterhand-origin__label"><?php esc_html_e( 'Access goes to', 'counterhand-mcp-for-woocommerce' ); ?></span>
-		<code><?php echo esc_html( $context['return_host'] ); ?></code>
-	</p>
+	<?php
+	// The name is the app's own claim; only the address it was fetched from is checked.
+	$counterhand_admin_name = wp_get_current_user()->display_name;
+	?>
+	<dl class="counterhand-request">
+		<div class="counterhand-request__row">
+			<dt><?php esc_html_e( 'Approving as', 'counterhand-mcp-for-woocommerce' ); ?></dt>
+			<dd>
+				<span class="counterhand-identity__avatar" aria-hidden="true"><?php echo esc_html( mb_substr( $counterhand_admin_name, 0, 1 ) ); ?></span>
+				<span class="counterhand-identity__name"><?php echo esc_html( $counterhand_admin_name ); ?></span>
+			</dd>
+		</div>
+		<div class="counterhand-request__row">
+			<dt><?php esc_html_e( 'App', 'counterhand-mcp-for-woocommerce' ); ?></dt>
+			<dd>
+				<span class="counterhand-identity__name"><?php echo esc_html( $counterhand_client_name ); ?></span>
+				<code><?php echo esc_html( $context['client_host'] ); ?></code>
+				<span class="counterhand-tag counterhand-tag--verified"><?php esc_html_e( 'Address verified', 'counterhand-mcp-for-woocommerce' ); ?></span>
+			</dd>
+		</div>
+		<div class="counterhand-request__row">
+			<dt><?php esc_html_e( 'Access goes to', 'counterhand-mcp-for-woocommerce' ); ?></dt>
+			<dd><code><?php echo esc_html( $context['return_host'] ); ?></code></dd>
+		</div>
+	</dl>
 
 	<?php if ( $context['returns_to_this_computer'] ) : ?>
-		<p class="counterhand-origin"><strong><?php esc_html_e( "This hands access to a program on your own computer. Approve only if you just started this connection yourself: any program there could ask under this app's name.", 'counterhand-mcp-for-woocommerce' ); ?></strong></p>
+		<p class="counterhand-notice counterhand-notice--warning"><strong><?php esc_html_e( "This hands access to a program on your own computer. Approve only if you just started this connection yourself: any program there could ask under this app's name.", 'counterhand-mcp-for-woocommerce' ); ?></strong></p>
 	<?php endif; ?>
 
 	<form method="post" class="counterhand-form">
@@ -75,23 +84,31 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 			<legend class="counterhand-scopes__legend"><?php esc_html_e( 'Choose what it may do', 'counterhand-mcp-for-woocommerce' ); ?></legend>
 
 			<?php foreach ( $counterhand_scopes->sections as $counterhand_section ) : ?>
-				<?php if ( $counterhand_section->is_collapsed() ) : ?>
-					<details class="counterhand-scopes__section counterhand-scopes__section--advanced">
-						<summary class="counterhand-scopes__heading">
+				<details class="counterhand-scopes__section<?php echo $counterhand_section->is_collapsed() ? ' counterhand-scopes__section--advanced' : ''; ?>" <?php echo $counterhand_section->starts_open() ? 'open' : ''; ?>>
+					<summary class="counterhand-scopes__heading">
+						<span class="counterhand-scopes__heading-text">
 							<?php echo esc_html( $counterhand_section->section->label() ); ?>
 							<span class="counterhand-scopes__heading-desc"><?php echo esc_html( $counterhand_section->section->description() ); ?></span>
-						</summary>
-						<?php require __DIR__ . '/partial-consent-rows.php'; ?>
-					</details>
-				<?php else : ?>
-					<div class="counterhand-scopes__section">
-						<p class="counterhand-scopes__heading">
-							<?php echo esc_html( $counterhand_section->section->label() ); ?>
-							<span class="counterhand-scopes__heading-desc"><?php echo esc_html( $counterhand_section->section->description() ); ?></span>
-						</p>
+						</span>
+						<span class="counterhand-scopes__count">
+							<?php
+							echo esc_html(
+								0 === $counterhand_section->grantable_count()
+									? __( 'Off for this store', 'counterhand-mcp-for-woocommerce' )
+									: sprintf(
+										/* translators: 1: how many permissions in this section can be granted, 2: how many it has. */
+										__( '%1$s of %2$s can be granted', 'counterhand-mcp-for-woocommerce' ),
+										number_format_i18n( $counterhand_section->grantable_count() ),
+										number_format_i18n( $counterhand_section->row_count() )
+									)
+							);
+							?>
+						</span>
+					</summary>
+					<div class="counterhand-scopes__body">
 						<?php require __DIR__ . '/partial-consent-rows.php'; ?>
 					</div>
-				<?php endif; ?>
+				</details>
 			<?php endforeach; ?>
 		</fieldset>
 
@@ -101,10 +118,9 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 			<p class="counterhand-hint">
 				<?php
 				printf(
-					/* translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag */
-					esc_html__( 'Grayed-out areas are switched off for this store. Switch them on under %1$sCounterhand MCP › Access%2$s, then connect the app again — a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
-					'<a href="' . esc_url( $counterhand_settings_url ) . '" target="_blank" rel="noopener">',
-					'</a>'
+					/* translators: 1: link to the Access screen, named as in the menu, e.g. "Counterhand MCP › Access". */
+					esc_html__( 'Grayed-out areas are switched off for this store. Switch them on under %1$s, then connect the app again — a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
+					'<a href="' . esc_url( $counterhand_settings_url ) . '" target="_blank" rel="noopener">' . esc_html( __( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ) . ' › ' . AdminScreen::Access->menu_title() ) . '</a>'
 				);
 				?>
 			</p>
@@ -136,5 +152,11 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 </div>
 
 <footer class="counterhand-card__foot">
-	<?php esc_html_e( 'You can take this app\'s access away any time under Counterhand MCP › Connect apps › Connected apps.', 'counterhand-mcp-for-woocommerce' ); ?>
+	<?php
+	printf(
+		/* translators: %s: where connected apps are listed in the menu, e.g. "Counterhand MCP › Connect apps › Connected apps". */
+		esc_html__( 'You can take this app\'s access away any time under %s.', 'counterhand-mcp-for-woocommerce' ),
+		esc_html( __( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ) . ' › ' . AdminScreen::Connect->menu_title() . ' › ' . __( 'Connected apps', 'counterhand-mcp-for-woocommerce' ) )
+	);
+	?>
 </footer>

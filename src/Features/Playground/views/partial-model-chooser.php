@@ -32,17 +32,17 @@ $counterhand_selected = $chat_own_providers[ $active_id ] ?? null;
 $counterhand_key_hint = $chat_settings->masked_key();
 ?>
 <div class="counterhand-chooser">
-	<h2 class="counterhand-chooser__title"><?php esc_html_e( 'Connect a model to start chatting', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+	<h2 class="counterhand-chooser__title"><?php esc_html_e( 'Choose an AI model', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 	<p class="counterhand-chooser__lede">
-		<?php esc_html_e( 'One step, then this becomes your conversation.', 'counterhand-mcp-for-woocommerce' ); ?>
+		<?php esc_html_e( 'The chat, Rewrites and the weekly summary all use the model you choose here. The provider bills you for what you use; the chat shows each conversation\'s tokens.', 'counterhand-mcp-for-woocommerce' ); ?>
 	</p>
 
 	<?php if ( null !== $core_state ) : ?>
 		<div class="counterhand-card">
 			<div class="counterhand-card__head">
 				<span class="counterhand-card__heading">
-					<h3 class="counterhand-card__title"><?php esc_html_e( 'Let WordPress manage the model', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-					<span class="counterhand-card__desc"><?php esc_html_e( 'The recommended way — fewer steps now, nothing to maintain later.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+					<h3 class="counterhand-card__title"><?php esc_html_e( 'Use WordPress\'s AI connection', 'counterhand-mcp-for-woocommerce' ); ?></h3>
+					<span class="counterhand-card__desc"><?php esc_html_e( 'Recommended: WordPress keeps the key, and other plugins can share it.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 				</span>
 			</div>
 			<div class="counterhand-card__body">
@@ -258,7 +258,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 				<?php esc_html_e( 'Connect model', 'counterhand-mcp-for-woocommerce' ); ?>
 			</button>
 			<span class="counterhand-field__hint">
-				<?php esc_html_e( 'We send one tiny test message before saving, so a wrong key is caught here rather than on your first question.', 'counterhand-mcp-for-woocommerce' ); ?>
+				<?php esc_html_e( 'Sends one short test message first, so a wrong key is caught here rather than on your first question.', 'counterhand-mcp-for-woocommerce' ); ?>
 			</span>
 		</div>
 	</form>

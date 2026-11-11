@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\OAuth\View;
 
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
 
 defined( 'ABSPATH' ) || exit;
@@ -29,7 +30,12 @@ final readonly class ConsentScope {
 	public function unavailable_reason(): string {
 		return match ( $this->availability ) {
 			ConsentAvailability::Grantable    => '',
-			ConsentAvailability::SwitchedOff  => __( 'Switched off for this store. Switch the area on under Counterhand MCP › Access, then connect this app again.', 'counterhand-mcp-for-woocommerce' ),
+			ConsentAvailability::SwitchedOff  => sprintf(
+				/* translators: 1: the plugin's menu name, 2: the Access screen's name. */
+				__( 'Switched off for this store. Switch the area on under %1$s › %2$s, then connect this app again.', 'counterhand-mcp-for-woocommerce' ),
+				__( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ),
+				AdminScreen::Access->menu_title()
+			),
 			ConsentAvailability::NotRequested => __( 'The app did not ask for this, so it cannot be granted here. Reconnect the app to request it.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}

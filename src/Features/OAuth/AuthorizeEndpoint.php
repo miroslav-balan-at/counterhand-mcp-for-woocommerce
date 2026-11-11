@@ -232,7 +232,7 @@ final readonly class AuthorizeEndpoint {
 
 		$this->page->render(
 			FlowPage::STATE_CONSENT,
-			__( 'Authorize AI access', 'counterhand-mcp-for-woocommerce' ),
+			__( 'Approve an app', 'counterhand-mcp-for-woocommerce' ),
 			[
 				'client_name'              => $client->client_name,
 				'client_host'              => (string) wp_parse_url( $client->client_id, PHP_URL_HOST ),

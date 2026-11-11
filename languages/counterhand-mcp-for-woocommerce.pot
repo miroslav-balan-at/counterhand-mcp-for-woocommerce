@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-11T21:57:21+00:00\n"
+"POT-Creation-Date: 2026-11-11T22:32:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -89,7 +89,7 @@ msgid "List backup jobs and recent backups, start a backup now or cancel a runni
 msgstr ""
 
 #: src/Features/ActionLog/ActionLogFeature.php:83
-msgid "You are not allowed to clear the log."
+msgid "You are not allowed to clear the activity."
 msgstr ""
 
 #: src/Features/ActionLog/ActionLogFeature.php:133
@@ -105,7 +105,7 @@ msgid "Activity is not recorded. Turn on recording in Access to keep a record of
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:26
-msgid "Log cleared."
+msgid "Activity cleared."
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:32
@@ -121,7 +121,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/Features/ActionLog/Admin/views/log.php:47
-msgid "Clear log"
+msgid "Clear activity"
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:55
@@ -134,6 +134,7 @@ msgid "Tool"
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:57
+#: src/Features/OAuth/View/templates/consent.php:52
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:36
 msgid "App"
 msgstr ""
@@ -332,11 +333,11 @@ msgid "Access approved"
 msgstr ""
 
 #: src/Features/OAuth/AuthorizeEndpoint.php:235
-#: src/Features/OAuth/View/templates/consent.php:25
-msgid "Authorize AI access"
+msgid "Approve an app"
 msgstr ""
 
 #: src/Features/OAuth/View/ConsentAvailability.php:19
+#: src/Features/OAuth/View/templates/consent.php:97
 msgid "Off for this store"
 msgstr ""
 
@@ -344,11 +345,20 @@ msgstr ""
 msgid "Not requested"
 msgstr ""
 
-#: src/Features/OAuth/View/ConsentScope.php:32
-msgid "Switched off for this store. Switch the area on under Counterhand MCP › Access, then connect this app again."
+#. translators: 1: the plugin's menu name, 2: the Access screen's name.
+#: src/Features/OAuth/View/ConsentScope.php:35
+#, php-format
+msgid "Switched off for this store. Switch the area on under %1$s › %2$s, then connect this app again."
 msgstr ""
 
-#: src/Features/OAuth/View/ConsentScope.php:33
+#: src/Features/OAuth/View/ConsentScope.php:36
+#: src/Features/OAuth/View/templates/consent.php:123
+#: src/Features/OAuth/View/templates/consent.php:159
+#: src/Features/Settings/SettingsFeature.php:77
+msgid "Counterhand MCP"
+msgstr ""
+
+#: src/Features/OAuth/View/ConsentScope.php:39
 msgid "The app did not ask for this, so it cannot be granted here. Reconnect the app to request it."
 msgstr ""
 
@@ -370,64 +380,85 @@ msgstr ""
 msgid "View connections"
 msgstr ""
 
-#. translators: %s: name of the AI application requesting access
-#: src/Features/OAuth/View/templates/consent.php:31
-#, php-format
-msgid "%s wants to connect to your store."
+#: src/Features/OAuth/View/templates/consent.php:27
+msgid "An app asks to connect"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:41
+#. translators: %s: name the app gives itself, e.g. "Claude".
+#: src/Features/OAuth/View/templates/consent.php:32
+#, php-format
+msgid "Let %s work with your store?"
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:37
+msgid "It can do what you tick below, and nothing else. You can take its access away at any time."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:45
 msgid "Approving as"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:47
-msgid "Verified origin"
+#: src/Features/OAuth/View/templates/consent.php:56
+msgid "Address verified"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:52
+#: src/Features/OAuth/View/templates/consent.php:60
 msgid "Access goes to"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:57
+#: src/Features/OAuth/View/templates/consent.php:66
 msgid "This hands access to a program on your own computer. Approve only if you just started this connection yourself: any program there could ask under this app's name."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:70
+#: src/Features/OAuth/View/templates/consent.php:79
 msgid "Nothing this app asked for is currently switched on for this store, so there is nothing to approve yet."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:75
+#: src/Features/OAuth/View/templates/consent.php:84
 msgid "Choose what it may do"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:98
-msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
-msgstr ""
-
-#. translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag
-#: src/Features/OAuth/View/templates/consent.php:105
+#. translators: 1: how many permissions in this section can be granted, 2: how many it has.
+#: src/Features/OAuth/View/templates/consent.php:100
 #, php-format
-msgid "Grayed-out areas are switched off for this store. Switch them on under %1$sCounterhand MCP › Access%2$s, then connect the app again — a connection only ever holds what it was approved with."
+msgid "%1$s of %2$s can be granted"
 msgstr ""
 
 #: src/Features/OAuth/View/templates/consent.php:115
+msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
+msgstr ""
+
+#. translators: 1: link to the Access screen, named as in the menu, e.g. "Counterhand MCP › Access".
+#: src/Features/OAuth/View/templates/consent.php:122
+#, php-format
+msgid "Grayed-out areas are switched off for this store. Switch them on under %1$s, then connect the app again — a connection only ever holds what it was approved with."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:131
 msgid "This request includes permission to change store data. New products are always created as drafts for you to review."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:128
+#: src/Features/OAuth/View/templates/consent.php:144
 msgid "Approve access"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:132
+#: src/Features/OAuth/View/templates/consent.php:148
 msgid "Return to the app"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:132
+#: src/Features/OAuth/View/templates/consent.php:148
 msgid "Deny"
 msgstr ""
 
-#: src/Features/OAuth/View/templates/consent.php:139
-msgid "You can take this app's access away any time under Counterhand MCP › Connect apps › Connected apps."
+#. translators: %s: where connected apps are listed in the menu, e.g. "Counterhand MCP › Connect apps › Connected apps".
+#: src/Features/OAuth/View/templates/consent.php:158
+#, php-format
+msgid "You can take this app's access away any time under %s."
+msgstr ""
+
+#: src/Features/OAuth/View/templates/consent.php:159
+#: src/Features/Settings/ConnectTab.php:24
+msgid "Connected apps"
 msgstr ""
 
 #. translators: %s: name of the AI application
@@ -452,16 +483,16 @@ msgstr ""
 msgid "Connection help"
 msgstr ""
 
-#. translators: %d: how many tools the approval covers.
+#. translators: %d: how many actions the approval covers.
 #: src/Features/OAuth/View/templates/partial-consent-rows.php:27
 #, php-format
-msgid "Approves %d tool. Tools this plugin adds later stay off until you connect again."
-msgid_plural "Approves %d tools. Tools this plugin adds later stay off until you connect again."
+msgid "Approves %d action. Actions this plugin adds later stay off until you connect again."
+msgid_plural "Approves %d actions. Actions this plugin adds later stay off until you connect again."
 msgstr[0] ""
 msgstr[1] ""
 
 #: src/Features/OAuth/View/templates/partial-consent-rows.php:69
-msgid "Can change data"
+msgid "Changes data"
 msgstr ""
 
 #. translators: %s: store name
@@ -629,7 +660,7 @@ msgid "That approval has expired. Send your message again."
 msgstr ""
 
 #: src/Features/Playground/PlaygroundFeature.php:146
-msgid "No model is connected yet. Pick one at the top of this tab."
+msgid "No AI model is chosen yet. Choose one at the top of this screen."
 msgstr ""
 
 #: src/Features/Playground/PlaygroundFeature.php:188
@@ -727,7 +758,7 @@ msgid "WooCommerce’s Action Scheduler is not available, so rewrites cannot run
 msgstr ""
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:51
-msgid "No model is connected yet. Connect one on the Chat screen first."
+msgid "No AI model is chosen yet. Choose one on the Chat screen first."
 msgstr ""
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:55
@@ -944,7 +975,7 @@ msgid "Ask about products, orders, customers or sales…"
 msgstr ""
 
 #: src/Features/Playground/views/chat.php:97
-msgid "Connect a model above, then ask your first question here…"
+msgid "Choose an AI model above, then ask your first question here…"
 msgstr ""
 
 #: src/Features/Playground/views/chat.php:102
@@ -1060,19 +1091,20 @@ msgid "Save areas"
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:35
-msgid "Connect a model to start chatting"
+#: src/Features/Settings/DashboardScreen.php:83
+msgid "Choose an AI model"
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:37
-msgid "One step, then this becomes your conversation."
+msgid "The chat, Rewrites and the weekly summary all use the model you choose here. The provider bills you for what you use; the chat shows each conversation's tokens."
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:44
-msgid "Let WordPress manage the model"
+msgid "Use WordPress's AI connection"
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:45
-msgid "The recommended way — fewer steps now, nothing to maintain later."
+msgid "Recommended: WordPress keeps the key, and other plugins can share it."
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:50
@@ -1209,7 +1241,7 @@ msgid "Connect model"
 msgstr ""
 
 #: src/Features/Playground/views/partial-model-chooser.php:261
-msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
+msgid "Sends one short test message first, so a wrong key is caught here rather than on your first question."
 msgstr ""
 
 #: src/Features/Playground/views/partial-store-memory.php:18
@@ -1409,10 +1441,6 @@ msgstr ""
 msgid "Add an app"
 msgstr ""
 
-#: src/Features/Settings/ConnectTab.php:24
-msgid "Connected apps"
-msgstr ""
-
 #: src/Features/Settings/DashboardScreen.php:63
 msgid "Choose what AI may reach"
 msgstr ""
@@ -1449,10 +1477,6 @@ msgstr[1] ""
 
 #: src/Features/Settings/DashboardScreen.php:77
 msgid "Claude, ChatGPT or Cursor, in two steps."
-msgstr ""
-
-#: src/Features/Settings/DashboardScreen.php:83
-msgid "Choose an AI model"
 msgstr ""
 
 #: src/Features/Settings/DashboardScreen.php:84
@@ -1753,10 +1777,6 @@ msgstr ""
 
 #: src/Features/Settings/SettingsFeature.php:55
 msgid "Sponsor"
-msgstr ""
-
-#: src/Features/Settings/SettingsFeature.php:77
-msgid "Counterhand MCP"
 msgstr ""
 
 #: src/Features/Settings/SettingsFeature.php:102
@@ -2183,7 +2203,7 @@ msgstr ""
 #. translators: %s: tool group name mid-sentence, e.g. "products".
 #: src/Features/Tokens/Domain/ApiScope.php:178
 #, php-format
-msgid "Manage %s"
+msgid "Change %s"
 msgstr ""
 
 #. translators: %s: tool group name mid-sentence, e.g. "products".

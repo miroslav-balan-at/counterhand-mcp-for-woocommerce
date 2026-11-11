@@ -42,4 +42,22 @@ final readonly class ConsentSection {
 	public function is_collapsed(): bool {
 		return $this->section->is_advanced();
 	}
+
+	/** Open while it holds something to grant, so the store's switched-off areas fold away. */
+	public function starts_open(): bool {
+		return ! $this->is_collapsed() && 0 < $this->grantable_count();
+	}
+
+	public function grantable_count(): int {
+		return count( array_filter( $this->rows(), static fn ( ConsentScope $row ): bool => $row->available() ) );
+	}
+
+	public function row_count(): int {
+		return count( $this->rows() );
+	}
+
+	/** @return list<ConsentScope> */
+	private function rows(): array {
+		return array_merge( [], ...array_map( static fn ( ConsentGroup $group ): array => $group->scopes, $this->groups ) );
+	}
 }

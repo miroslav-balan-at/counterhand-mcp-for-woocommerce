@@ -80,7 +80,7 @@ final readonly class ActionLogFeature implements FeatureInterface, ScreenBodyInt
 
 	public function handle_clear(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to clear the log.', 'counterhand-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to clear the activity.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		check_admin_referer( 'counterhand_clear_log' );

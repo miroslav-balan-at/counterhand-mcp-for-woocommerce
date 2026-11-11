@@ -94,7 +94,7 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 				echo esc_attr(
 					$is_ready
 						? __( 'Ask about products, orders, customers or sales…', 'counterhand-mcp-for-woocommerce' )
-						: __( 'Connect a model above, then ask your first question here…', 'counterhand-mcp-for-woocommerce' )
+						: __( 'Choose an AI model above, then ask your first question here…', 'counterhand-mcp-for-woocommerce' )
 				);
 				?>
 				" <?php disabled( ! $is_ready ); ?>></textarea>

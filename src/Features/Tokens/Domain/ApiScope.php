@@ -103,7 +103,7 @@ enum ApiScope: string implements ScopeInterface {
 
 	/**
 	 * Consent-screen wording. Derived from the group by default — "Read
-	 * products", "Manage coupons" — so the scopes whose phrasing really is
+	 * products", "Change coupons" — so the scopes whose phrasing really is
 	 * mechanical do not each need hand-written text that only differs by a
 	 * noun. Only scopes the mechanical phrasing gets *wrong* are curated.
 	 *
@@ -130,7 +130,7 @@ enum ApiScope: string implements ScopeInterface {
 
 	/**
 	 * Only where derivation would mislead: orders:write cannot create or delete
-	 * an order, so "Manage orders" would promise more than it grants.
+	 * an order, so "Change orders" would promise more than it grants.
 	 *
 	 * @return array<string, string>
 	 */
@@ -153,7 +153,7 @@ enum ApiScope: string implements ScopeInterface {
 			self::CouponsWrite->value    => __( 'Create, edit and trash discount codes. A new coupon can be redeemed at checkout immediately.', 'counterhand-mcp-for-woocommerce' ),
 
 			// The consequence of each of these is money, personal data or the
-			// shape of the storefront — none of which "Manage <noun>" conveys.
+			// shape of the storefront — none of which "Change <noun>" conveys.
 			self::RefundsWrite->value    => __( 'Issue refunds against orders. Depending on the gateway this returns money to the customer immediately and cannot be undone here.', 'counterhand-mcp-for-woocommerce' ),
 			self::ReviewsRead->value     => __( 'See customer reviews, including reviewer names and email addresses.', 'counterhand-mcp-for-woocommerce' ),
 			self::ReviewsWrite->value    => __( 'Publish, edit, hold and delete customer reviews. Approving a review makes it public on the storefront.', 'counterhand-mcp-for-woocommerce' ),
@@ -175,7 +175,7 @@ enum ApiScope: string implements ScopeInterface {
 	public static function derived_label( ScopeGroupInterface $group, bool $is_write ): string {
 		return $is_write
 			/* translators: %s: tool group name mid-sentence, e.g. "products". */
-			? sprintf( __( 'Manage %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() )
+			? sprintf( __( 'Change %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() )
 			/* translators: %s: tool group name mid-sentence, e.g. "products". */
 			: sprintf( __( 'Read %s', 'counterhand-mcp-for-woocommerce' ), $group->noun() );
 	}

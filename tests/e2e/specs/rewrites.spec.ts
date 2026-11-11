@@ -75,7 +75,8 @@ test.describe( 'Bulk rewrites', () => {
 	} );
 
 	test.afterEach( () => {
-		products.forEach( ( id ) => wp( 'post', 'delete', String( id ), '--force' ) );
+		evaluate( `global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->prefix}counterhand_rewrites WHERE product_id IN ( ${ products.join( ',' ) } )" );` );
+		products.filter( ( id ) => 'product' === evaluate( `echo get_post_type( ${ id } );` ) ).forEach( ( id ) => wp( 'post', 'delete', String( id ), '--force' ) );
 		wp( 'term', 'delete', 'product_cat', String( category ) );
 	} );
 
@@ -122,11 +123,49 @@ test.describe( 'Bulk rewrites', () => {
 
 		try {
 			await page.goto( REWRITES );
-			await expect( page.locator( '.counterhand-chip--warn' ) ).toContainText( 'Products cannot be changed by AI' );
+			await expect( page.locator( '.counterhand-chip--warn' ).first() ).toContainText( 'Products cannot be changed by AI' );
 			await expect( page.getByRole( 'button', { name: 'Write new texts' } ) ).toHaveCount( 0 );
 		} finally {
 			restore();
 		}
+	} );
+
+	test( 'switching product writes off keeps every text ready for later', async ( { page } ) => {
+		await startJob( page );
+		const restore = patchSettings( { products_write: false } );
+
+		try {
+			await page.goto( REWRITES );
+			const apply = page.getByRole( 'button', { name: 'Apply ticked texts' } );
+			await expect( apply ).toBeDisabled();
+			await expect( page.locator( '.counterhand-rewrites__table ~ .counterhand-chip--warn' ) ).toContainText( 'then apply again' );
+
+			// A page left open from before the switch still posts.
+			await row( page, products[ 0 ] ).getByRole( 'checkbox' ).check();
+			await apply.evaluate( ( button ) => button.removeAttribute( 'disabled' ) );
+			await apply.click();
+
+			await expect( page.locator( '.counterhand-rewrites__notice' ) ).toContainText( 'then apply again' );
+			await expect( row( page, products[ 0 ] ) ).toContainText( 'Ready to review' );
+			expect( description( products[ 0 ] ) ).toBe( 'Original One' );
+		} finally {
+			restore();
+		}
+	} );
+
+	test( 'a product deleted after its job says so, links nowhere, and applying it says why it failed', async ( { page } ) => {
+		await startJob( page );
+		wp( 'post', 'delete', String( products[ 0 ] ), '--force' );
+		await page.goto( REWRITES );
+
+		await expect( row( page, products[ 0 ] ) ).toContainText( 'This product no longer exists.' );
+		await expect( row( page, products[ 0 ] ).getByRole( 'link', { name: 'Edit product' } ) ).toHaveCount( 0 );
+		await expect( row( page, products[ 1 ] ).getByRole( 'link', { name: 'Edit product' } ) ).toHaveAttribute( 'href', /post\.php\?post=\d+&action=edit/ );
+
+		await row( page, products[ 0 ] ).getByRole( 'checkbox' ).check();
+		await page.getByRole( 'button', { name: 'Apply ticked texts' } ).click();
+		await expect( row( page, products[ 0 ] ) ).toContainText( 'Failed' );
+		await expect( row( page, products[ 0 ] ) ).toContainText( 'This product no longer exists.' );
 	} );
 
 	test( 'another person cannot see, apply or undo an administrator’s texts, even by posting their ids', async ( { page, browser } ) => {

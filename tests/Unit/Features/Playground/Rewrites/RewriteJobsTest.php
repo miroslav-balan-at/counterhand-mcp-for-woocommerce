@@ -20,6 +20,7 @@ use Counterhand\Features\Playground\Rewrites\RewriteField;
 use Counterhand\Features\Playground\Rewrites\RewriteItem;
 use Counterhand\Features\Playground\Rewrites\RewriteJobs;
 use Counterhand\Features\Playground\Rewrites\RewriteQueueInterface;
+use Counterhand\Features\Playground\Rewrites\RewriteRefused;
 use Counterhand\Features\Playground\Rewrites\RewriteStatus;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Shared\Tool\ToolInterface;
@@ -53,6 +54,7 @@ final class RewriteJobsTest extends TestCase {
 		Functions\when( 'get_bloginfo' )->justReturn( 'Test store' );
 		Functions\when( 'get_current_user_id' )->justReturn( 0 );
 		Functions\when( 'wp_set_current_user' )->justReturn( null );
+		Functions\when( 'get_post_type' )->justReturn( 'product' );
 		// Like kses, it drops disallowed tags and keeps what was inside them.
 		Functions\when( 'wp_kses_post' )->alias( static fn ( string $html ): string => strip_tags( $html, '<p><b>' ) );
 	}
@@ -98,6 +100,45 @@ final class RewriteJobsTest extends TestCase {
 
 		self::assertSame( [], $this->tools->calls );
 		self::assertSame( RewriteStatus::Failed, $this->queue->items[1]->status );
+	}
+
+	public function test_apply_with_product_writes_off_refuses_and_keeps_every_text_for_later(): void {
+		$this->queue->items[1] = self::item( 1, RewriteStatus::Proposed, original: 'Old', proposal: 'New' );
+		$this->tools->state    = [ 'description' => 'Old' ];
+		$this->tools->visible  = [ 'list_products' ];
+
+		try {
+			$this->jobs()->apply( self::OWNER, [ 1 ] );
+			self::fail( 'Apply went ahead with product writes off.' );
+		} catch ( RewriteRefused $refused ) {
+			self::assertStringContainsString( 'Tick Write for Products in Settings', $refused->getMessage() );
+		}
+
+		self::assertSame( [], $this->tools->calls );
+		self::assertSame( RewriteStatus::Proposed, $this->queue->items[1]->status );
+	}
+
+	public function test_apply_for_a_deleted_product_says_so_and_writes_nothing(): void {
+		Functions\when( 'get_post_type' )->justReturn( false );
+		$this->queue->items[1] = self::item( 1, RewriteStatus::Proposed, original: 'Old', proposal: 'New' );
+
+		$this->jobs()->apply( self::OWNER, [ 1 ] );
+
+		self::assertSame( [], $this->tools->calls );
+		self::assertSame( RewriteStatus::Failed, $this->queue->items[1]->status );
+		self::assertSame( 'This product no longer exists.', $this->queue->items[1]->message );
+	}
+
+	public function test_rows_tell_a_deleted_product_from_one_without_an_edit_link(): void {
+		$this->queue->items[1] = self::item( 1, RewriteStatus::Proposed );
+		Functions\when( 'get_edit_post_link' )->justReturn( null );
+
+		$kept = $this->jobs()->rows( self::OWNER )[0];
+		self::assertTrue( $kept->product_exists );
+		self::assertNull( $kept->edit_url );
+
+		Functions\when( 'get_post_type' )->justReturn( false );
+		self::assertFalse( $this->jobs()->rows( self::OWNER )[0]->product_exists );
 	}
 
 	public function test_another_persons_items_are_never_applied_or_undone(): void {
@@ -235,7 +276,7 @@ final class FakeQueue implements RewriteQueueInterface {
 	}
 
 	public function latest_job( int $user_id ): array {
-		return [];
+		return array_values( array_filter( $this->items, static fn ( RewriteItem $item ): bool => $user_id === $item->user_id ) );
 	}
 
 	public function claim( int $id, int $user_id, RewriteStatus $from, RewriteStatus $to ): bool {

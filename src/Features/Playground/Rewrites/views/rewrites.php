@@ -4,7 +4,8 @@
  *
  * @var string|null                                                     $blocked
  * @var bool                                                            $keeps_undo
- * @var list<\Counterhand\Features\Playground\Rewrites\RewriteItem>     $items
+ * @var bool                                                            $can_apply
+ * @var list<\Counterhand\Features\Playground\Rewrites\RewriteRow>      $rows
  * @var mixed                                                           $notice
  * @var list<\Counterhand\Features\Playground\Rewrites\RewriteField>    $fields
  * @var int                                                             $limit
@@ -18,9 +19,10 @@ use Counterhand\Features\Settings\AdminScreen;
 
 defined( 'ABSPATH' ) || exit;
 
-$counterhand_waiting = count( array_filter( $items, static fn ( $item ): bool => RewriteStatus::Queued === $item->status ) );
-$counterhand_input   = array_sum( array_map( static fn ( $item ): int => $item->usage->input, $items ) );
-$counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->usage->output, $items ) );
+$counterhand_items   = array_map( static fn ( $row ) => $row->item, $rows );
+$counterhand_waiting = count( array_filter( $counterhand_items, static fn ( $item ): bool => RewriteStatus::Queued === $item->status ) );
+$counterhand_input   = array_sum( array_map( static fn ( $item ): int => $item->usage->input, $counterhand_items ) );
+$counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->usage->output, $counterhand_items ) );
 ?>
 <?php if ( is_string( $notice ) ) : ?>
 	<div class="notice notice-info counterhand-rewrites__notice" role="status"><p><?php echo esc_html( $notice ); ?></p></div>
@@ -85,7 +87,7 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 		</div>
 	</section>
 
-	<?php if ( [] !== $items ) : ?>
+	<?php if ( [] !== $rows ) : ?>
 		<section class="counterhand-card" aria-labelledby="counterhand-rewrites-review">
 			<div class="counterhand-card__head">
 				<span class="counterhand-card__heading">
@@ -126,7 +128,8 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ( $items as $counterhand_item ) : ?>
+						<?php foreach ( $rows as $counterhand_row ) : ?>
+							<?php $counterhand_item = $counterhand_row->item; ?>
 							<tr data-product="<?php echo esc_attr( (string) $counterhand_item->product_id ); ?>">
 								<th scope="row" class="check-column">
 									<?php if ( in_array( $counterhand_item->status, [ RewriteStatus::Proposed, RewriteStatus::Applied ], true ) ) : ?>
@@ -142,7 +145,11 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 									<?php if ( '' !== $counterhand_item->message ) : ?>
 										<br><span class="counterhand-muted"><?php echo esc_html( $counterhand_item->message ); ?></span>
 									<?php endif; ?>
-									<br><a href="<?php echo esc_url( (string) get_edit_post_link( $counterhand_item->product_id ) ); ?>"><?php esc_html_e( 'Edit product', 'counterhand-mcp-for-woocommerce' ); ?></a>
+									<?php if ( ! $counterhand_row->product_exists ) : ?>
+										<br><span class="counterhand-muted"><?php esc_html_e( 'This product no longer exists.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+									<?php elseif ( null !== $counterhand_row->edit_url ) : ?>
+										<br><a href="<?php echo esc_url( $counterhand_row->edit_url ); ?>"><?php esc_html_e( 'Edit product', 'counterhand-mcp-for-woocommerce' ); ?></a>
+									<?php endif; ?>
 								</td>
 								<td><div class="counterhand-rewrites__text"><?php echo wp_kses_post( $counterhand_item->original ); ?></div></td>
 								<td><div class="counterhand-rewrites__text counterhand-rewrites__text--new"><?php echo wp_kses_post( $counterhand_item->proposal ); ?></div></td>
@@ -151,10 +158,13 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 					</tbody>
 				</table>
 				<p class="counterhand-actions">
-					<button type="submit" class="button button-primary" name="counterhand_rewrite_decision" value="apply"><?php esc_html_e( 'Apply ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
+					<button type="submit" class="button button-primary" name="counterhand_rewrite_decision" value="apply" <?php disabled( ! $can_apply ); ?>><?php esc_html_e( 'Apply ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
 					<button type="submit" class="button" name="counterhand_rewrite_decision" value="discard"><?php esc_html_e( 'Discard ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
 					<button type="submit" class="button" name="counterhand_rewrite_decision" value="undo"><?php esc_html_e( 'Undo ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
 				</p>
+				<?php if ( ! $can_apply ) : ?>
+					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings, then apply again.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+				<?php endif; ?>
 				<p class="counterhand-muted"><?php esc_html_e( 'Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 			</form>
 		</section>

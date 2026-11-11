@@ -99,7 +99,7 @@
         {
             "slug": "changes",
             "label": "Undo history",
-            "description": "A record of the catalog, coupon, content, shipping and tax changes a connection makes, and undoing them. Records keep what was changed, for 30 days.",
+            "description": "A record of the catalog, coupon, content, shipping and tax changes an app makes, and undoing them. Records keep what was changed, for 30 days.",
             "tools": 2
         }
     ],

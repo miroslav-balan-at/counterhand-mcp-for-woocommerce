@@ -94,7 +94,7 @@ enum ToolGroup: string implements ScopeGroupInterface {
 			self::Settings   => __( 'Store configuration values, including currency, tax behaviour and checkout options.', 'counterhand-mcp-for-woocommerce' ),
 			self::Content    => __( 'WordPress blog posts and pages. Products and orders are not affected.', 'counterhand-mcp-for-woocommerce' ),
 			self::System     => __( 'Environment report and WooCommerce\'s maintenance tools. The most dangerous group here.', 'counterhand-mcp-for-woocommerce' ),
-			self::Changes    => __( 'A record of the catalog, coupon, content, shipping and tax changes a connection makes, and undoing them. Records keep what was changed, for 30 days.', 'counterhand-mcp-for-woocommerce' ),
+			self::Changes    => __( 'A record of the catalog, coupon, content, shipping and tax changes an app makes, and undoing them. Records keep what was changed, for 30 days.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

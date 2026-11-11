@@ -154,7 +154,7 @@ $counterhand_ordered_groups = array_values(
 			);
 			?>
 		</p>
-		<p><?php esc_html_e( 'Approved apps appear on the Connections tab, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+		<p><?php esc_html_e( 'Approved apps appear under Connected apps, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 	</footer>
 
 	<span class="screen-reader-text" role="status" id="counterhand-copy-status"></span>

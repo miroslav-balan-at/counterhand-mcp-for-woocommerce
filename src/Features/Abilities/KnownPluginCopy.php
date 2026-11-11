@@ -27,6 +27,11 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 		private ?string $installed_name = null,
 	) {}
 
+	/** @return list<string> */
+	public static function known_names(): array {
+		return array_values( self::NAMES );
+	}
+
 	public function name(): string {
 		return $this->generic()->name();
 	}

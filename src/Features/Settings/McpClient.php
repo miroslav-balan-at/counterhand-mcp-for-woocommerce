@@ -85,7 +85,7 @@ final readonly class McpClient {
 					__( 'Open Claude, then go to Customize → Connectors and press the + button.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Choose "Add custom connector", give it a name and paste the store URL.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Press Add, then Connect — your browser opens this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Approve the scopes you want to grant. On Team and Enterprise plans an owner has to add the connector first.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Approve the areas it may reach. On Team and Enterprise plans an owner has to add the connector first.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				snippet: $endpoint_url,
 				snippet_label: __( 'Server URL', 'counterhand-mcp-for-woocommerce' ),
@@ -102,7 +102,7 @@ final readonly class McpClient {
 				steps: [
 					__( 'In ChatGPT, open Settings → Apps & Connectors → Advanced and turn on Developer mode.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Back in Connectors, choose "Add custom connector" and paste the store URL.', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Connect, then approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Connect, then approve the areas it may reach on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Custom connectors are web only, and are not available on the free plan.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				snippet: $endpoint_url,
@@ -119,7 +119,7 @@ final readonly class McpClient {
 				group: ClientGroup::Local,
 				steps: [
 					__( 'Press Add to Cursor — Cursor opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Confirm, then approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Confirm, then approve the areas it may reach on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'If your browser blocks the link, paste the JSON below into your mcp.json instead.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				snippet: (string) wp_json_encode(
@@ -146,7 +146,7 @@ final readonly class McpClient {
 				group: ClientGroup::Local,
 				steps: [
 					__( 'Press Add to VS Code — VS Code opens and asks you to confirm the server.', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Confirm, then approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Confirm, then approve the areas it may reach on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Manage it later with "MCP: List Servers" from the Command Palette.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				snippet: $endpoint_url,
@@ -164,7 +164,7 @@ final readonly class McpClient {
 				steps: [
 					__( 'Run the command below in any terminal.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'Start Claude Code and run /mcp — it opens the consent screen in your browser.', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Approve the scopes you want to grant.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Approve the areas it may reach.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				// --scope user matters: without it the server is registered only
 				// for the directory the command happened to run in.
@@ -174,13 +174,13 @@ final readonly class McpClient {
 			),
 			new self(
 				id: 'other',
-				name: __( 'Any other MCP client', 'counterhand-mcp-for-woocommerce' ),
+				name: __( 'Another app', 'counterhand-mcp-for-woocommerce' ),
 				blurb: __( 'Anything implementing the Model Context Protocol over HTTP.', 'counterhand-mcp-for-woocommerce' ),
 				group: ClientGroup::Local,
 				steps: [
 					__( 'Add the store URL as a streamable HTTP MCP server.', 'counterhand-mcp-for-woocommerce' ),
 					__( 'The client discovers authorization automatically (OAuth 2.1 with PKCE).', 'counterhand-mcp-for-woocommerce' ),
-					__( 'Approve the scopes on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
+					__( 'Approve the areas it may reach on this store\'s consent screen.', 'counterhand-mcp-for-woocommerce' ),
 				],
 				snippet: $endpoint_url,
 				snippet_label: __( 'Server URL', 'counterhand-mcp-for-woocommerce' ),

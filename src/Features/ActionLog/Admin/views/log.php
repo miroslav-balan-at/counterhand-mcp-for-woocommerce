@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 <div class="counterhand-log">
 	<?php if ( ! $is_enabled ) : ?>
 		<div class="notice notice-info inline"><p>
-			<?php esc_html_e( 'The action log is currently disabled. Enable it on the Settings tab to record tool calls. PII (emails, phone numbers) is masked before storage.', 'counterhand-mcp-for-woocommerce' ); ?>
+			<?php esc_html_e( 'Activity is not recorded. Turn on recording in Access to keep a record of every call. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ); ?>
 		</p></div>
 	<?php endif; ?>
 
@@ -54,9 +54,9 @@ defined( 'ABSPATH' ) || exit;
 					<tr>
 						<th scope="col"><?php esc_html_e( 'Time (UTC)', 'counterhand-mcp-for-woocommerce' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Tool', 'counterhand-mcp-for-woocommerce' ); ?></th>
-						<th scope="col"><?php esc_html_e( 'Connection', 'counterhand-mcp-for-woocommerce' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'App', 'counterhand-mcp-for-woocommerce' ); ?></th>
 						<th scope="col"><?php esc_html_e( 'Outcome', 'counterhand-mcp-for-woocommerce' ); ?></th>
-						<th scope="col"><?php esc_html_e( 'Arguments (PII masked)', 'counterhand-mcp-for-woocommerce' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Details (personal data masked)', 'counterhand-mcp-for-woocommerce' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -65,8 +65,8 @@ defined( 'ABSPATH' ) || exit;
 							<td colspan="5" class="counterhand-log__empty">
 								<?php
 								echo $is_enabled
-									? esc_html__( 'Nothing recorded yet. The next tool call an assistant makes will appear here.', 'counterhand-mcp-for-woocommerce' )
-									: esc_html__( 'Nothing recorded. Switch the log on in Settings to start keeping the record.', 'counterhand-mcp-for-woocommerce' );
+									? esc_html__( 'Nothing recorded yet. The next call an app or the chat makes appears here.', 'counterhand-mcp-for-woocommerce' )
+									: esc_html__( 'Nothing recorded. Turn on recording in Access to start.', 'counterhand-mcp-for-woocommerce' );
 								?>
 							</td>
 						</tr>

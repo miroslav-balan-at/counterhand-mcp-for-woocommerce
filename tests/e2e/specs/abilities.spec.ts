@@ -211,7 +211,7 @@ test.describe( 'Abilities bridge', () => {
 			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp-integrations' );
 			await page.locator( '#counterhand-integration_e2e-fixture_read' ).check();
 			await expect( page.locator( '#counterhand-integration_e2e-other_read' ) ).not.toBeChecked();
-			await page.getByRole( 'button', { name: /save/i } ).first().click();
+			await page.getByRole( 'button', { name: 'Save other plugins' } ).click();
 			await expect( page.locator( '#counterhand-integration_e2e-fixture_read' ) ).toBeChecked();
 
 			const { tokens, discovery } = await connect( page, baseURL as string, [ FIXTURE_READ ] );

@@ -25,6 +25,15 @@ final readonly class UrlCouponsFeature implements FeatureInterface {
 		}
 
 		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_group' ] );
+		add_filter( ScopeGroups::SUPPORTED_PLUGINS_FILTER, [ $this, 'with_name' ] );
+	}
+
+	/**
+	 * @param  mixed $names What earlier filters returned.
+	 * @return array<mixed>
+	 */
+	public function with_name( mixed $names ): array {
+		return [ ...( is_array( $names ) ? $names : [] ), self::group()->label() ];
 	}
 
 	/**

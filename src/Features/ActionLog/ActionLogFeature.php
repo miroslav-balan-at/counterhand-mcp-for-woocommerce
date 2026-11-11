@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\ActionLog;
 
 use Counterhand\Features\ActionLog\Persistence\LogSchema;
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\ScreenBodyInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
@@ -92,7 +93,7 @@ final readonly class ActionLogFeature implements FeatureInterface, ScreenBodyInt
 		wp_safe_redirect(
 			add_query_arg(
 				[
-					'page'                => 'counterhand-mcp-log',
+					'page'                => AdminScreen::Activity->value,
 					'counterhand_cleared' => '1',
 				],
 				admin_url( 'admin.php' )

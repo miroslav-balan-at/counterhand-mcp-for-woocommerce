@@ -43,11 +43,10 @@ use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
 use Counterhand\Features\Settings\ConnectScreen;
 use Counterhand\Features\Settings\DashboardScreen;
-use Counterhand\Features\Settings\IntegrationsScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingSanitizer;
 use Counterhand\Features\Settings\SettingsFeature;
-use Counterhand\Features\Settings\SettingsScreen;
+use Counterhand\Features\Settings\AccessScreen;
 use Counterhand\Features\Settings\StoreToolPolicy;
 use Counterhand\Features\Tokens\Authentication\RateLimiter;
 use Counterhand\Features\Tokens\Authentication\TokenAuthenticator;
@@ -201,10 +200,11 @@ final class Plugin {
 			$saved_prompts
 		);
 
+		$text_model    = new ConnectedTextModel( $chat_settings, $chat_providers );
 		$weekly_report = new WeeklyReportFeature(
 			new WeeklyReport(
 				new FigureReader( $tool_dispatcher ),
-				new ReportSummary( new ConnectedTextModel( $chat_settings, $chat_providers ) ),
+				new ReportSummary( $text_model ),
 				new Subscriptions()
 			)
 		);
@@ -223,13 +223,12 @@ final class Plugin {
 			$weekly_report,
 			new SettingsFeature(
 				[
-					AdminScreen::Chat->value         => $playground,
-					AdminScreen::Rewrites->value     => $rewrites,
-					AdminScreen::Dashboard->value    => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport(), [ $weekly_report ] ),
-					AdminScreen::Connect->value      => new ConnectScreen( $tokens->admin(), $connection_matcher ),
-					AdminScreen::Integrations->value => new IntegrationsScreen( $settings ),
-					AdminScreen::Settings->value     => new SettingsScreen( $settings ),
-					AdminScreen::Log->value          => $action_log,
+					AdminScreen::Overview->value => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
+					AdminScreen::Chat->value     => $playground,
+					AdminScreen::Rewrites->value => $rewrites,
+					AdminScreen::Connect->value  => new ConnectScreen( $tokens->admin(), $connection_matcher ),
+					AdminScreen::Access->value   => new AccessScreen( $settings ),
+					AdminScreen::Activity->value => $action_log,
 				],
 				new ConnectReadiness(),
 				$connection_matcher,

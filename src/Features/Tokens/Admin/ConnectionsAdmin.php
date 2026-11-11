@@ -35,7 +35,7 @@ final readonly class ConnectionsAdmin implements ScreenBodyInterface {
 
 	public function handle_revoke(): void {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage connections.', 'counterhand-mcp-for-woocommerce' ) );
+			wp_die( esc_html__( 'You are not allowed to manage connected apps.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
 		check_admin_referer( self::NONCE_REVOKE );

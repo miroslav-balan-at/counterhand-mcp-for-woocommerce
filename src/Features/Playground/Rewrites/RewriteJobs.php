@@ -52,7 +52,7 @@ final readonly class RewriteJobs {
 		}
 
 		if ( ! $this->writes_products( $user_id ) ) {
-			return __( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings first.', 'counterhand-mcp-for-woocommerce' );
+			return __( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access first.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		return null;
@@ -199,7 +199,7 @@ final readonly class RewriteJobs {
 	public function apply( int $user_id, array $item_ids ): void {
 		// Checked before claiming: a claimed text that cannot be written would fail for good.
 		if ( ! $this->writes_products( $user_id ) ) {
-			throw new RewriteRefused( __( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings, then apply again.', 'counterhand-mcp-for-woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
+			throw new RewriteRefused( __( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again.', 'counterhand-mcp-for-woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
 		}
 
 		$agent = RewriteAgent::for_user( $user_id );

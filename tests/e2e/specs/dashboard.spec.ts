@@ -69,9 +69,9 @@ test.describe( 'Design tokens', () => {
 		await page.goto( SETTINGS );
 		const head = page.locator( '.counterhand-page-head' );
 
-		await expect( head.getByRole( 'heading', { level: 1 } ) ).toHaveText( 'Counterhand MCP settings' );
-		await expect( head.getByRole( 'navigation' ).getByRole( 'link' ) ).toHaveCount( 7 );
-		await expect( head.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'aria-current', 'page' );
+		await expect( head.getByRole( 'heading', { level: 1 } ) ).toHaveText( 'Access' );
+		await expect( head.getByRole( 'navigation' ).getByRole( 'link' ) ).toHaveText( [ 'Overview', 'Chat', 'Rewrites', 'Connect apps', 'Access', 'Activity' ] );
+		await expect( head.getByRole( 'link', { name: 'Access' } ) ).toHaveAttribute( 'aria-current', 'page' );
 		await expect( head.locator( '.counterhand-pill' ) ).toHaveText( /AI access (on|off)/ );
 
 		const ratio = await page.evaluate( () => {
@@ -91,13 +91,27 @@ test.describe( 'Design tokens', () => {
 	} );
 } );
 
-test.describe( 'Dashboard', () => {
+test.describe( 'Overview', () => {
+	test( 'lists what is left to set up, each with the one action that does it', async ( { page } ) => {
+		const restore = patchSettings( { products_read: true, action_log_enabled: false } );
+		try {
+			await page.goto( DASHBOARD );
+			const setup = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'Finish setting up' } ) } );
+			const area = setup.locator( 'li', { hasText: 'Choose what AI may reach' } );
+			await expect( area.getByText( 'Done', { exact: true } ), 'an area can be read' ).toBeVisible();
+			const record = setup.locator( 'li', { hasText: 'Record activity' } );
+			await expect( record.getByRole( 'link', { name: 'Turn on' } ) ).toHaveAttribute( 'href', /counterhand-mcp-settings/ );
+		} finally {
+			restore();
+		}
+	} );
+
 	test( 'says the log is off rather than showing a zero', async ( { page } ) => {
 		const restore = patchSettings( { action_log_enabled: false } );
 		try {
 			await page.goto( DASHBOARD );
-			await expect( page.getByText( 'Not recorded' ) ).toBeVisible();
-			await expect( page.getByRole( 'link', { name: 'Switch the log on' } ) ).toBeVisible();
+			await expect( page.getByText( 'Not recorded', { exact: true } ) ).toBeVisible();
+			await expect( page.getByRole( 'link', { name: 'Turn on recording' } ) ).toBeVisible();
 		} finally {
 			restore();
 		}
@@ -113,7 +127,7 @@ test.describe( 'Dashboard', () => {
 			await mcpCall( client, discovery.resource, tokens.access_token, 'tools/call', { name: 'get_product', arguments: { id: 99999999 } } );
 
 			await page.goto( DASHBOARD );
-			const card = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'Tool calls today' } ) } );
+			const card = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'Calls today' } ) } );
 			await expect( card.locator( '.counterhand-stat' ) ).toHaveText( '2' );
 			await expect( card.getByText( '1 failed.' ) ).toBeVisible();
 			await expect( card.locator( 'code' ) ).toHaveText( 'get_product' );
@@ -127,9 +141,9 @@ test.describe( 'Dashboard', () => {
 		const restore = patchSettings( { enabled: false, products_write: true, 'integration_e2e-fixture_read': true } );
 		try {
 			await page.goto( DASHBOARD );
-			const connector = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'Connector' } ) } );
+			const connector = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'AI access', exact: true } ) } );
 			await expect( connector.locator( '.counterhand-stat' ) ).toHaveText( 'Off' );
-			await expect( page.getByText( /Can be changed: .*Products/ ) ).toBeVisible();
+			await expect( page.getByText( /AI can change: .*Products/ ) ).toBeVisible();
 			await expect( page.locator( 'li', { hasText: 'E2e Fixture' } ).getByText( 'Can read', { exact: true } ) ).toBeVisible();
 		} finally {
 			restore();
@@ -142,9 +156,10 @@ test.describe( 'Dashboard', () => {
 		const page = await context.newPage();
 		try {
 			await page.goto( DASHBOARD );
-			await expect( page.getByRole( 'heading', { name: 'Connector' } ) ).toBeVisible();
-			await expect( page.getByText( 'Not recorded' ) ).toBeVisible();
-			for ( const name of [ 'Settings', 'Choose areas', 'Switch the log on', 'Choose plugins' ] ) {
+			await expect( page.getByRole( 'heading', { name: 'AI access', exact: true } ) ).toBeVisible();
+			await expect( page.getByText( 'Not recorded', { exact: true } ) ).toBeVisible();
+			await expect( page.locator( 'li', { hasText: 'Record activity' } ).getByText( 'An administrator can set this.' ) ).toBeVisible();
+			for ( const name of [ 'Change access', 'Choose areas', 'Turn on recording', 'Choose plugins' ] ) {
 				await expect( page.locator( '.counterhand-card__foot' ).getByRole( 'link', { name, exact: true } ) ).toHaveCount( 0 );
 			}
 			await expect( page.getByRole( 'link', { name: 'Review or revoke them' } ) ).toBeVisible();
@@ -154,24 +169,35 @@ test.describe( 'Dashboard', () => {
 		}
 	} );
 
-	for ( const path of [ SETTINGS, PLUGINS ] ) {
-		test( `a shop manager reads ${ path } and cannot save it`, async ( { browser, baseURL } ) => {
-			const context = await browser.newContext( { baseURL, storageState: shopManagerStatePath } );
-			const page = await context.newPage();
-			await page.goto( path );
-			await expect( page.getByText( 'Only a site administrator can change these.' ) ).toBeVisible();
+	test( 'a shop manager reads Access and cannot save it', async ( { browser, baseURL } ) => {
+		const restore = patchSettings( { 'integration_e2e-fixture_read': true } );
+		const context = await browser.newContext( { baseURL, storageState: shopManagerStatePath } );
+		const page = await context.newPage();
+		try {
+			await page.goto( SETTINGS );
+			await expect( page.getByText( 'Only a site administrator can change these.' ) ).toHaveCount( 1 );
 			await expect( page.locator( '.counterhand-settings-form input[type="checkbox"]' ).first() ).toBeDisabled();
 			await expect( page.locator( '.counterhand-settings-form input:not([disabled])' ) ).toHaveCount( 0 );
 			await expect( page.getByRole( 'button', { name: /save/i } ) ).toHaveCount( 0 );
+		} finally {
 			await context.close();
-		} );
+			restore();
+		}
+	} );
 
-		test( `an administrator can still save ${ path }`, async ( { page } ) => {
-			await page.goto( path );
-			await expect( page.getByText( 'Only a site administrator can change these.' ) ).toHaveCount( 0 );
-			await expect( page.getByRole( 'button', { name: /save/i } ).first() ).toBeEnabled();
-		} );
-	}
+	test( 'an administrator saves the store areas and the other plugins apart', async ( { page } ) => {
+		await page.goto( SETTINGS );
+		await expect( page.getByText( 'Only a site administrator can change these.' ) ).toHaveCount( 0 );
+		await expect( page.getByRole( 'button', { name: 'Save access' } ) ).toBeEnabled();
+		await expect( page.getByRole( 'button', { name: 'Save other plugins' } ) ).toBeEnabled();
+	} );
+
+	test( 'the old Other plugins address leads to its section on Access', async ( { page } ) => {
+		await page.goto( PLUGINS );
+		await expect( page ).toHaveURL( /page=counterhand-mcp-settings#counterhand-other-plugins$/ );
+		await expect( page.getByText( /Also works with these plugins once they are active: .*WPML/ ), 'names supported plugins that are off, never the store\'s own' ).toBeVisible();
+		await expect( page.getByRole( 'heading', { name: 'Other plugins', exact: true } ) ).toBeVisible();
+	} );
 } );
 
 test.describe( 'Two forms, one option', () => {
@@ -180,7 +206,7 @@ test.describe( 'Two forms, one option', () => {
 		try {
 			await page.goto( PLUGINS );
 			await page.locator( '#counterhand-integration_e2e-fixture_read' ).check();
-			await page.getByRole( 'button', { name: /save/i } ).first().click();
+			await page.getByRole( 'button', { name: 'Save other plugins' } ).click();
 			await expect( page.getByText( 'Settings saved.' ), 'the person is told the save worked' ).toBeVisible();
 			await expect( page.locator( '.counterhand-page-head .notice' ), 'notices sit below the header, not beside the title' ).toHaveCount( 0 );
 			await expect( page.locator( '#counterhand-integration_e2e-fixture_read' ) ).toBeChecked();
@@ -195,9 +221,8 @@ test.describe( 'Two forms, one option', () => {
 		const restore = patchSettings( { enabled: true, 'integration_e2e-fixture_read': true } );
 		try {
 			await page.goto( SETTINGS );
-			await expect( page.locator( '#counterhand-integration_e2e-fixture_read' ), 'plugins have their own screen' ).toHaveCount( 0 );
-			await expect( page.getByRole( 'link', { name: 'Tools from other plugins have their own screen.' } ) ).toHaveAttribute( 'href', /counterhand-mcp-integrations/ );
-			await page.getByRole( 'button', { name: /save/i } ).first().click();
+			await expect( page.locator( '#counterhand-integration_e2e-fixture_read' ), 'the plugin sits in its own form below' ).toBeChecked();
+			await page.getByRole( 'button', { name: 'Save access' } ).click();
 			await page.waitForURL( /settings-updated=true/ );
 			await expect( page.getByText( 'Settings saved.' ), 'the person is told the save worked' ).toBeVisible();
 			await expect( page.locator( '.counterhand-page-head .notice' ), 'notices sit below the header, not beside the title' ).toHaveCount( 0 );
@@ -234,7 +259,7 @@ test( 'the chat sends a plugin that is switched off to the screen that holds its
 	try {
 		await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
 		await page.locator( 'details', { has: page.locator( 'input[name="counterhand_chat_groups[]"]' ) } ).first().locator( 'summary' ).click();
-		await expect( page.getByRole( 'link', { name: /Switch it on in Other plugins/ } ) ).toHaveAttribute( 'href', /counterhand-mcp-integrations/ );
+		await expect( page.locator( 'a[href$="#counterhand-other-plugins"]', { hasText: 'Switch it on in Access' } ), 'a plugin leads to its section on Access' ).toBeVisible();
 	} finally {
 		wp( 'option', 'delete', 'counterhand_chat' );
 	}

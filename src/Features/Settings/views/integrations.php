@@ -1,15 +1,18 @@
 <?php
 /**
- * Other plugins' tools. Each ships off and is granted to a connection on its own.
+ * Access, the other plugins' form: each plugin's AI actions ship off and are granted
+ * to an app on their own. Its own form, so saving it never resets the store's areas.
  *
  * @var \Counterhand\Features\Settings\PluginSettings                 $settings
  * @var list<\Counterhand\Features\Tokens\Domain\ScopeGroupInterface> $integrations
+ * @var list<string>                                                  $supported
  * @var bool                                                          $other_mcp_server
  * @var bool                                                          $can_save
  */
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingsAccess;
 use Counterhand\Features\Settings\SettingsForm;
@@ -17,19 +20,28 @@ use Counterhand\Features\Settings\SettingsForm;
 defined( 'ABSPATH' ) || exit;
 
 $counterhand_option = PluginSettings::OPTION;
-
-require __DIR__ . '/other-server-notice.php';
-require __DIR__ . '/read-only-notice.php';
 ?>
+<h2 class="counterhand-group-title" id="<?php echo esc_attr( AdminScreen::OTHER_PLUGINS_ANCHOR ); ?>"><?php esc_html_e( 'Other plugins', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 <p class="description counterhand-integrations-intro">
-	<?php esc_html_e( 'Each plugin still checks its own permissions. A connection reaches a plugin only if it is switched on here and that connection was approved for it. To add a plugin to an app already connected, connect it again.', 'counterhand-mcp-for-woocommerce' ); ?>
+	<?php esc_html_e( 'AI actions other plugins offer, under the same rules as the store areas. Each plugin still checks its own permissions. An app reaches a plugin only if it is switched on here and the app was approved for it; to add one to an app already connected, connect the app again.', 'counterhand-mcp-for-woocommerce' ); ?>
 </p>
+<?php if ( [] !== $supported ) : ?>
+	<p class="description counterhand-integrations-intro">
+		<?php
+		printf(
+			/* translators: %s: plugin names, e.g. "WPML, Yoast SEO". */
+			esc_html__( 'Also works with these plugins once they are active: %s.', 'counterhand-mcp-for-woocommerce' ),
+			esc_html( wp_sprintf( '%l', $supported ) )
+		);
+		?>
+	</p>
+<?php endif; ?>
 
 <?php if ( [] === $integrations ) : ?>
 	<div class="counterhand-card">
 		<div class="counterhand-card__head">
 			<span class="counterhand-card__heading">
-				<h2 class="counterhand-card__title"><?php esc_html_e( 'No other plugin offers tools yet', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+				<h2 class="counterhand-card__title"><?php esc_html_e( 'No other plugin offers AI actions yet', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 				<span class="counterhand-card__desc"><?php esc_html_e( 'A plugin appears here once it is active and has something to offer. Some, such as SEO plugins, need their own setup finished first.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
@@ -77,6 +89,6 @@ require __DIR__ . '/read-only-notice.php';
 	<?php endforeach; ?>
 
 	<?php if ( $can_save ) : ?>
-		<?php submit_button(); ?>
+		<?php submit_button( __( 'Save other plugins', 'counterhand-mcp-for-woocommerce' ) ); ?>
 	<?php endif; ?>
 </form>

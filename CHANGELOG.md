@@ -4,6 +4,8 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* Changed: the menu follows what you do, in this order: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access, with two forms that each save only their own part; the old Other plugins address leads there. Other plugins also names the supported plugins that are not active yet, and the store areas table is striped, with each area's description on its own line. The Dashboard is called Overview and the action log Activity. Bookmarks and links in weekly report emails keep working.
+* Changed: one name for each thing across every screen: an area (was tool group), Can read and Can change (was Read and Write), an app (was connection or client), AI access (was the connector). Pointers to tabs that no longer exist now name the screen.
 * Changed: every Counterhand screen opens with one slim header: the mark, the screen's title and what it is for, whether AI access is on, and links to every Counterhand screen. Everything below it keeps WordPress's own look and your admin colour scheme.
 * Fixed: on Bulk rewrites, applying a text while Write for Products was off failed it for good, so only a new job could bring it back. Apply now refuses before touching any text, says why, and is greyed out until writes are on again.
 * Fixed: a rewrite for a product deleted since showed an "Edit product" link that went nowhere, and applying it failed with WooCommerce's raw error. The row now says the product no longer exists.

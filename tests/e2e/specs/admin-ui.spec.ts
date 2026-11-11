@@ -2,14 +2,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { anonymousContext, authorizationUrl, discover, pkcePair } from '../support/oauth';
 
 const screens = [
+	{ name: 'Overview', path: '/wp-admin/admin.php?page=counterhand-mcp-dashboard' },
 	{ name: 'Chat', path: '/wp-admin/admin.php?page=counterhand-mcp' },
-	{ name: 'Bulk rewrites', path: '/wp-admin/admin.php?page=counterhand-mcp-rewrites' },
-	{ name: 'Dashboard', path: '/wp-admin/admin.php?page=counterhand-mcp-dashboard' },
-	{ name: 'Connect AI apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect' },
+	{ name: 'Rewrites', path: '/wp-admin/admin.php?page=counterhand-mcp-rewrites' },
+	{ name: 'Connect apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect' },
 	{ name: 'Connected apps', path: '/wp-admin/admin.php?page=counterhand-mcp-connect&view=connections' },
-	{ name: 'Other plugins', path: '/wp-admin/admin.php?page=counterhand-mcp-integrations' },
-	{ name: 'Settings', path: '/wp-admin/admin.php?page=counterhand-mcp-settings' },
-	{ name: 'Action log', path: '/wp-admin/admin.php?page=counterhand-mcp-log' },
+	{ name: 'Access', path: '/wp-admin/admin.php?page=counterhand-mcp-settings' },
+	{ name: 'Activity', path: '/wp-admin/admin.php?page=counterhand-mcp-log' },
 ];
 
 /** Collects what a screen must never produce: script errors and remote requests. */

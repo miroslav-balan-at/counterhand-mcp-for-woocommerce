@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 			<p class="counterhand-weekly-report__notice" role="status"><?php echo esc_html( $notice ); ?></p>
 		<?php endif; ?>
 		<?php if ( ! $can_read ) : ?>
-			<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Reports are switched off in Settings, so there is nothing to send.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+			<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Reports cannot be read in Access, so there is nothing to send.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 		<?php else : ?>
 			<p class="counterhand-stat <?php echo $subscribed ? 'counterhand-stat--on' : 'counterhand-stat--off'; ?>">
 				<?php echo $subscribed ? esc_html__( 'On', 'counterhand-mcp-for-woocommerce' ) : esc_html__( 'Off', 'counterhand-mcp-for-woocommerce' ); ?>

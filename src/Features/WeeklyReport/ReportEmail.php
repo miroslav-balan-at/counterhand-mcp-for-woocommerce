@@ -128,7 +128,7 @@ final readonly class ReportEmail {
 		return sprintf(
 			'<p><small>%s <a href="%s">%s</a></small></p>',
 			esc_html__( 'You get this because you asked for a weekly report in Counterhand MCP.', 'counterhand-mcp-for-woocommerce' ),
-			esc_url( AdminScreen::Dashboard->url() ),
+			esc_url( AdminScreen::Overview->url() ),
 			esc_html__( 'Stop it on the Dashboard.', 'counterhand-mcp-for-woocommerce' )
 		);
 	}

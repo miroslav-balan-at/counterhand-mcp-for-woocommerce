@@ -21,7 +21,10 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 		'yoast-seo' => 'Yoast SEO',
 	];
 
-	public function __construct( private string $slug ) {}
+	public function __construct(
+		private string $slug,
+		private ?string $installed_name = null,
+	) {}
 
 	public function name(): string {
 		return $this->generic()->name();
@@ -54,6 +57,6 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 	}
 
 	private function generic(): GenericIntegrationCopy {
-		return new GenericIntegrationCopy( $this->slug, self::NAMES[ $this->slug ] ?? null );
+		return new GenericIntegrationCopy( $this->slug, self::NAMES[ $this->slug ] ?? $this->installed_name );
 	}
 }

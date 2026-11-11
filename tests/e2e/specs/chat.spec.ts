@@ -15,6 +15,19 @@ test.describe( 'Chat', () => {
 
 	test.afterAll( () => restore() );
 
+	test( 'the own-provider form is not taken for a login a browser fills in', async ( { page } ) => {
+		const unset = patchOption( 'counterhand_chat', { provider: '', model: '' } );
+
+		try {
+			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
+
+			await expect( page.locator( '#counterhand-chat-key' ) ).toHaveAttribute( 'autocomplete', 'new-password' );
+			await expect( page.locator( '#counterhand-chat-model' ) ).toHaveAttribute( 'autocomplete', 'off' );
+		} finally {
+			unset();
+		}
+	} );
+
 	test( 'a question gets the model\'s answer', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
 

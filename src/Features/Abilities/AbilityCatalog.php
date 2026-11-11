@@ -111,9 +111,10 @@ final class AbilityCatalog {
 		}
 
 		$groups = [];
+		$names  = self::installed_names( array_keys( $writable ) );
 
 		foreach ( $writable as $namespace => $is_writable ) {
-			$group = IntegrationGroup::try_of( $namespace, $is_writable, new KnownPluginCopy( $namespace ) );
+			$group = IntegrationGroup::try_of( $namespace, $is_writable, new KnownPluginCopy( $namespace, $names[ $namespace ] ?? null ) );
 
 			if ( null !== $group ) {
 				$groups[ $namespace ] = $group;
@@ -123,6 +124,58 @@ final class AbilityCatalog {
 		ksort( $groups );
 
 		return $groups;
+	}
+
+	/**
+	 * The name in each bridged plugin's own header, read only for active plugins whose
+	 * folder is the namespace, so a slug turned into words does not read "Wp Mail Smtp".
+	 *
+	 * @param list<string> $namespaces
+	 * @return array<string, string>
+	 */
+	private static function installed_names( array $namespaces ): array {
+		try {
+			return self::read_names( $namespaces );
+		} catch ( \Throwable $throwable ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->error( 'Reading plugin names failed: ' . $throwable->getMessage(), [ 'source' => 'counterhand-mcp' ] );
+			}
+
+			return [];
+		}
+	}
+
+	/**
+	 * @param list<string> $namespaces
+	 * @return array<string, string>
+	 */
+	private static function read_names( array $namespaces ): array {
+		if ( ! function_exists( 'get_plugin_data' ) && is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( ! function_exists( 'get_plugin_data' ) || ! defined( 'WP_PLUGIN_DIR' ) ) {
+			return [];
+		}
+
+		$active = array_merge( (array) get_option( 'active_plugins', [] ), array_keys( (array) get_site_option( 'active_sitewide_plugins', [] ) ) );
+		$names  = [];
+
+		foreach ( $active as $file ) {
+			$folder = dirname( (string) $file );
+
+			if ( ! in_array( $folder, $namespaces, true ) || isset( $names[ $folder ] ) ) {
+				continue;
+			}
+
+			$name = trim( (string) ( get_plugin_data( WP_PLUGIN_DIR . '/' . $file, false, false )['Name'] ?? '' ) );
+
+			if ( '' !== $name ) {
+				$names[ $folder ] = $name;
+			}
+		}
+
+		return $names;
 	}
 
 	/**

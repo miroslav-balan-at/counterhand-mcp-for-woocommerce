@@ -19,6 +19,9 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class McpClient {
 
+	/** Cut with a hash of the whole, so two long addresses that differ only at the end stay apart. */
+	private const SLUG_LENGTH = 48;
+
 	/**
 	 * @param list<string> $steps       Click-path the admin follows in that client.
 	 * @param string       $install_url Deep link that configures the client outright, if it has one.
@@ -45,11 +48,25 @@ final readonly class McpClient {
 	 * The server name this store suggests to clients that want one.
 	 *
 	 * Derived from the store rather than hardcoded to "woocommerce" so two
-	 * stores configured on the same machine do not collide in one mcp.json.
+	 * stores configured on the same machine do not collide in one mcp.json. The
+	 * address, not the title: sanitize_key() drops spaces and umlauts, so a title
+	 * read "hygienemitsystem-ihrpartnerfrhyg".
 	 */
 	public static function server_slug(): string {
-		$slug = sanitize_key( (string) get_bloginfo( 'name' ) );
-		$slug = substr( $slug, 0, 32 );
+		$home = (string) home_url();
+		$host = strtolower( trim( (string) wp_parse_url( $home, PHP_URL_HOST ), '[]' ) );
+		// idn_to_ascii() throws on an empty host or one longer than DNS allows.
+		$ascii = function_exists( 'idn_to_ascii' ) && '' !== $host && strlen( $host ) <= 253 ? idn_to_ascii( $host ) : false;
+		$host  = false === $ascii ? $host : $ascii;
+		$host  = (string) preg_replace( '/^www\./', '', $host );
+		$port  = (int) wp_parse_url( $home, PHP_URL_PORT );
+		$path  = trim( (string) wp_parse_url( $home, PHP_URL_PATH ), '/' );
+		$full  = implode( '/', array_filter( [ $host, 0 !== $port ? (string) $port : '', $path ] ) );
+		$slug  = trim( sanitize_key( (string) preg_replace( '/[.\/:]+/', '-', $full ) ), '-' );
+
+		if ( strlen( $slug ) > self::SLUG_LENGTH ) {
+			$slug = rtrim( substr( $slug, 0, self::SLUG_LENGTH - 9 ), '-' ) . '-' . substr( md5( $slug ), 0, 8 );
+		}
 
 		return '' !== $slug ? $slug : 'woocommerce';
 	}

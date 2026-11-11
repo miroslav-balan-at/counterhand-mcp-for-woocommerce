@@ -23,7 +23,7 @@ const EXPECTED = {
 		'set_global_seo_settings', 'set_homepage_seo', 'set_link_settings', 'set_module_status', 'set_plugin_preferences',
 		'set_post_type_seo_settings', 'set_sitemap_settings', 'set_website_identity',
 	],
-	backwpup: [ 'cancel_job', 'docs_overview', 'get_backup_history', 'list_jobs', 'run_job' ],
+	backwpup: [ 'cancel_job', 'get_backup_history', 'list_jobs', 'run_job' ],
 };
 
 // WPForms offers no write until its own write-access toggle is on, so it has no write scope here.

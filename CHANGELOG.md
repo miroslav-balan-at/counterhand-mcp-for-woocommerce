@@ -4,6 +4,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* Added: BackWPup is named and described on its own. Its backup logs are not offered, because they name the database server, folder paths and where backups are stored. BackWPup marks none of its abilities as read-only, so each asks first.
 * Fixed: a browser could fill a saved site login into the chat's model and API key fields, and connecting would then send that password to the AI provider as a key. Both fields now tell browsers they are not a login.
 * Fixed: active plugins on Other plugins, the Dashboard and the consent screen are named as their own header names them, such as "WP Mail SMTP" rather than "Wp Mail Smtp".
 * Changed: the server name suggested to Cursor and VS Code comes from the store's address, such as `hygienemitsystem-at`, rather than its title cut to 32 characters. A store added before keeps its old entry: adding it again creates a second one, so remove the old entry in the client and revoke its connection under Connected apps.

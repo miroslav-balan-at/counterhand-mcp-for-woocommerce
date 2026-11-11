@@ -163,14 +163,14 @@ final class AbilityCatalogTest extends TestCase {
 	}
 
 	public function test_a_plugin_whose_names_cannot_be_read_keeps_its_abilities(): void {
-		$catalog = $this->catalog( [ $this->exposed( 'backwpup/list-jobs' ) ] );
+		$catalog = $this->catalog( [ $this->exposed( 'some-backups/list-jobs' ) ] );
 		Functions\when( 'get_option' )->alias(
 			static function (): never {
 				throw new \RuntimeException( 'a plugin filter threw' );
 			}
 		);
 
-		$this->assertSame( [ 'Backwpup' ], array_map( static fn ( $group ): string => $group->label(), array_values( $catalog->groups() ) ) );
+		$this->assertSame( [ 'Some Backups' ], array_map( static fn ( $group ): string => $group->label(), array_values( $catalog->groups() ) ) );
 	}
 
 	/** @dataProvider exposure */
@@ -237,6 +237,13 @@ final class AbilityCatalogTest extends TestCase {
 		);
 
 		$this->assertSame( [ 'rank-math/get-post-schema' ], $this->names( $catalog ) );
+	}
+
+	/** Its logs name the database server, folder paths and the address of every archive. */
+	public function test_backwpup_logs_are_never_bridged(): void {
+		$catalog = $this->catalog( [ $this->exposed( 'backwpup/get-backup-logs' ), $this->exposed( 'backwpup/get-backup-history' ) ] );
+
+		$this->assertSame( [ 'backwpup/get-backup-history' ], $this->names( $catalog ) );
 	}
 
 	/** Our own tools serve them, with policies a second path would bypass. */

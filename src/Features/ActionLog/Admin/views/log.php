@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php endif; ?>
 
 	<?php if ( isset( $_GET['counterhand_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
-		<div class="notice notice-success inline"><p><?php esc_html_e( 'Log cleared.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
+		<div class="notice notice-success inline"><p><?php esc_html_e( 'Activity cleared.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 	<?php endif; ?>
 
 	<section class="counterhand-card">
@@ -44,7 +44,7 @@ defined( 'ABSPATH' ) || exit;
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-log-clear">
 				<input type="hidden" name="action" value="counterhand_clear_log">
 				<?php wp_nonce_field( 'counterhand_clear_log' ); ?>
-				<button type="submit" class="button"><?php esc_html_e( 'Clear log', 'counterhand-mcp-for-woocommerce' ); ?></button>
+				<button type="submit" class="button"><?php esc_html_e( 'Clear activity', 'counterhand-mcp-for-woocommerce' ); ?></button>
 			</form>
 		</header>
 

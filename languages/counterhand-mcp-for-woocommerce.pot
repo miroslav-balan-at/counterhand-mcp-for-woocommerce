@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-11T22:08:32+00:00\n"
+"POT-Creation-Date: 2026-11-11T22:32:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -89,7 +89,7 @@ msgid "List backup jobs and recent backups, start a backup now or cancel a runni
 msgstr ""
 
 #: src/Features/ActionLog/ActionLogFeature.php:83
-msgid "You are not allowed to clear the log."
+msgid "You are not allowed to clear the activity."
 msgstr ""
 
 #: src/Features/ActionLog/ActionLogFeature.php:133
@@ -105,7 +105,7 @@ msgid "Activity is not recorded. Turn on recording in Access to keep a record of
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:26
-msgid "Log cleared."
+msgid "Activity cleared."
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:32
@@ -121,7 +121,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: src/Features/ActionLog/Admin/views/log.php:47
-msgid "Clear log"
+msgid "Clear activity"
 msgstr ""
 
 #: src/Features/ActionLog/Admin/views/log.php:55
@@ -660,7 +660,7 @@ msgid "That approval has expired. Send your message again."
 msgstr ""
 
 #: src/Features/Playground/PlaygroundFeature.php:146
-msgid "No model is connected yet. Pick one at the top of this tab."
+msgid "No AI model is chosen yet. Choose one at the top of this screen."
 msgstr ""
 
 #: src/Features/Playground/PlaygroundFeature.php:188
@@ -758,7 +758,7 @@ msgid "WooCommerce’s Action Scheduler is not available, so rewrites cannot run
 msgstr ""
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:51
-msgid "No model is connected yet. Connect one on the Chat screen first."
+msgid "No AI model is chosen yet. Choose one on the Chat screen first."
 msgstr ""
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:55

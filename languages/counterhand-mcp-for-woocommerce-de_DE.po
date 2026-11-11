@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-11T22:08:32+00:00\n"
+"POT-Creation-Date: 2026-11-11T22:32:26+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -89,8 +89,8 @@ msgid "List backup jobs and recent backups, start a backup now or cancel a runni
 msgstr "Backup-Aufträge und letzte Backups auflisten, sofort ein Backup starten oder ein laufendes abbrechen. Ein vollständiges Backup kann den Server mehrere Minuten lang belasten. Jeder Aufruf muss ausdrücklich bestätigt werden."
 
 #: src/Features/ActionLog/ActionLogFeature.php:83
-msgid "You are not allowed to clear the log."
-msgstr "Du darfst das Protokoll nicht leeren."
+msgid "You are not allowed to clear the activity."
+msgstr "Du darfst die Aktivität nicht leeren."
 
 #: src/Features/ActionLog/ActionLogFeature.php:133
 msgid "‹ Newer"
@@ -105,8 +105,8 @@ msgid "Activity is not recorded. Turn on recording in Access to keep a record of
 msgstr "Die Aktivität wird nicht aufgezeichnet. Schalte die Aufzeichnung unter Zugriff ein, um jeden Aufruf festzuhalten. E-Mail-Adressen und Telefonnummern werden vor dem Speichern maskiert."
 
 #: src/Features/ActionLog/Admin/views/log.php:26
-msgid "Log cleared."
-msgstr "Protokoll geleert."
+msgid "Activity cleared."
+msgstr "Aktivität geleert."
 
 #: src/Features/ActionLog/Admin/views/log.php:32
 msgid "Every call, newest first"
@@ -121,8 +121,8 @@ msgstr[0] "%s aufgezeichneter Aufruf"
 msgstr[1] "%s aufgezeichnete Aufrufe"
 
 #: src/Features/ActionLog/Admin/views/log.php:47
-msgid "Clear log"
-msgstr "Protokoll leeren"
+msgid "Clear activity"
+msgstr "Aktivität leeren"
 
 #: src/Features/ActionLog/Admin/views/log.php:55
 msgid "Time (UTC)"
@@ -660,8 +660,8 @@ msgid "That approval has expired. Send your message again."
 msgstr "Diese Freigabe ist abgelaufen. Sende deine Nachricht noch einmal."
 
 #: src/Features/Playground/PlaygroundFeature.php:146
-msgid "No model is connected yet. Pick one at the top of this tab."
-msgstr "Es ist noch kein Modell verbunden. Wähle eines oben in diesem Tab aus."
+msgid "No AI model is chosen yet. Choose one at the top of this screen."
+msgstr "Noch ist kein KI-Modell gewählt. Wähle oben auf dieser Seite eines."
 
 #: src/Features/Playground/PlaygroundFeature.php:188
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
@@ -758,8 +758,8 @@ msgid "WooCommerce’s Action Scheduler is not available, so rewrites cannot run
 msgstr "Der Action Scheduler von WooCommerce ist nicht verfügbar, daher können Texte nicht im Hintergrund umgeschrieben werden."
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:51
-msgid "No model is connected yet. Connect one on the Chat screen first."
-msgstr "Es ist noch kein Modell verbunden. Verbinde zuerst eines im Chat."
+msgid "No AI model is chosen yet. Choose one on the Chat screen first."
+msgstr "Noch ist kein KI-Modell gewählt. Wähle zuerst im Chat eines."
 
 #: src/Features/Playground/Rewrites/RewriteJobs.php:55
 msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in Access first."
@@ -2704,6 +2704,21 @@ msgstr "Shop-Konfiguration und Wartung. Aktiviere das nur, wenn du weißt, warum
 #: src/Shared/Tool/ToolSection.php:51
 msgid "What other plugins on this store offer to AI apps. Each plugin still checks its own permissions."
 msgstr "Was andere Plugins in diesem Shop KI-Apps anbieten. Jedes Plugin prüft weiterhin seine eigenen Berechtigungen."
+
+#~ msgid "You are not allowed to clear the log."
+#~ msgstr "Du darfst das Protokoll nicht leeren."
+
+#~ msgid "Log cleared."
+#~ msgstr "Protokoll geleert."
+
+#~ msgid "Clear log"
+#~ msgstr "Protokoll leeren"
+
+#~ msgid "No model is connected yet. Pick one at the top of this tab."
+#~ msgstr "Es ist noch kein Modell verbunden. Wähle eines oben in diesem Tab aus."
+
+#~ msgid "No model is connected yet. Connect one on the Chat screen first."
+#~ msgstr "Es ist noch kein Modell verbunden. Verbinde zuerst eines im Chat."
 
 #~ msgid "Connect a model above, then ask your first question here…"
 #~ msgstr "Verbinde oben ein Modell und stelle dann hier deine erste Frage …"

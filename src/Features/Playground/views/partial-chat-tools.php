@@ -119,7 +119,7 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 						?>
 					</strong>
 					<p class="counterhand-callout__text">
-						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until the store exposes it. The store decides what every AI client may touch; this panel only narrows it further for chat.', 'counterhand-mcp-for-woocommerce' ); ?>
+						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until it is switched on in Access. Access decides what every app may reach; this panel only narrows it further for the chat.', 'counterhand-mcp-for-woocommerce' ); ?>
 					</p>
 					<?php
 					$counterhand_switches = [];

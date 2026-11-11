@@ -29,7 +29,16 @@ final readonly class AbilitiesFeature implements FeatureInterface {
 		}
 
 		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_groups' ] );
+		add_filter( ScopeGroups::SUPPORTED_PLUGINS_FILTER, [ $this, 'with_known_names' ] );
 		$this->tool_registry->add_late_source( [ $this, 'tools' ] );
+	}
+
+	/**
+	 * @param  mixed $names What earlier filters returned.
+	 * @return array<mixed>
+	 */
+	public function with_known_names( mixed $names ): array {
+		return [ ...( is_array( $names ) ? $names : [] ), ...KnownPluginCopy::known_names() ];
 	}
 
 	/**

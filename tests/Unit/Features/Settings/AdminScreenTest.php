@@ -10,15 +10,20 @@ use Counterhand\Tests\Unit\TestCase;
 final class AdminScreenTest extends TestCase {
 
 	/**
-	 * The chat keeps the original slug so bookmarks, the WooCommerce entry and
-	 * the OAuth flow pages all keep working after the move off tabs.
+	 * Screens were renamed and reordered, never re-addressed: bookmarks, links in
+	 * weekly report emails and the consent screen keep working.
 	 */
 	public function test_slugs_are_stable(): void {
 		self::assertSame( 'counterhand-mcp', AdminScreen::Chat->value );
 		self::assertSame(
-			[ 'counterhand-mcp', 'counterhand-mcp-rewrites', 'counterhand-mcp-dashboard', 'counterhand-mcp-connect', 'counterhand-mcp-integrations', 'counterhand-mcp-settings', 'counterhand-mcp-log' ],
+			[ 'counterhand-mcp-dashboard', 'counterhand-mcp', 'counterhand-mcp-rewrites', 'counterhand-mcp-connect', 'counterhand-mcp-settings', 'counterhand-mcp-log' ],
 			array_column( AdminScreen::cases(), 'value' )
 		);
+	}
+
+	/** Other plugins became a section of Access; its old address is only redirected now. */
+	public function test_other_plugins_is_no_screen_of_its_own(): void {
+		self::assertNull( AdminScreen::tryFrom( AdminScreen::OTHER_PLUGINS_SLUG ) );
 	}
 
 	public function test_only_the_chat_is_full_bleed(): void {

@@ -29,7 +29,7 @@ final readonly class ConsentScope {
 	public function unavailable_reason(): string {
 		return match ( $this->availability ) {
 			ConsentAvailability::Grantable    => '',
-			ConsentAvailability::SwitchedOff  => __( 'Switched off for this store. Enable the area under Counterhand MCP → Settings, then connect this app again.', 'counterhand-mcp-for-woocommerce' ),
+			ConsentAvailability::SwitchedOff  => __( 'Switched off for this store. Switch the area on under Counterhand MCP › Access, then connect this app again.', 'counterhand-mcp-for-woocommerce' ),
 			ConsentAvailability::NotRequested => __( 'The app did not ask for this, so it cannot be granted here. Reconnect the app to request it.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}

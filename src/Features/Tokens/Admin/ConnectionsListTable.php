@@ -33,8 +33,8 @@ final class ConnectionsListTable extends \WP_List_Table {
 
 	public function get_columns(): array {
 		return [
-			'client'       => __( 'Client', 'counterhand-mcp-for-woocommerce' ),
-			'scopes'       => __( 'Granted scopes', 'counterhand-mcp-for-woocommerce' ),
+			'client'       => __( 'App', 'counterhand-mcp-for-woocommerce' ),
+			'scopes'       => __( 'Areas', 'counterhand-mcp-for-woocommerce' ),
 			'status'       => __( 'Status', 'counterhand-mcp-for-woocommerce' ),
 			'created_at'   => __( 'Connected', 'counterhand-mcp-for-woocommerce' ),
 			'last_used_at' => __( 'Last used', 'counterhand-mcp-for-woocommerce' ),
@@ -48,7 +48,7 @@ final class ConnectionsListTable extends \WP_List_Table {
 	}
 
 	public function no_items(): void {
-		esc_html_e( 'No connections yet. Connect an AI assistant using the endpoint on the Connect tab.', 'counterhand-mcp-for-woocommerce' );
+		esc_html_e( 'No apps connected yet. Add one under Add an app.', 'counterhand-mcp-for-woocommerce' );
 	}
 
 	/** @param ApiToken $item */

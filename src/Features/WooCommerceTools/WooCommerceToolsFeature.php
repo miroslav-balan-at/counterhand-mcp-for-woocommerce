@@ -52,6 +52,7 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 		$this->tool_registry->add( new DescribeFieldsTool( $this->descriptors, $this->schemas ) );
 
 		add_filter( ScopeGroups::INTEGRATIONS_FILTER, [ $this, 'with_served_groups' ] );
+		add_filter( ScopeGroups::SUPPORTED_PLUGINS_FILTER, [ $this, 'with_supported_names' ] );
 
 		( new RestRequestGuards() )->register();
 		( new MultilingualRestMode() )->register();
@@ -63,5 +64,13 @@ final readonly class WooCommerceToolsFeature implements FeatureInterface {
 	 */
 	public function with_served_groups( mixed $groups ): array {
 		return [ ...( is_array( $groups ) ? $groups : [] ), ...$this->served_groups->all() ];
+	}
+
+	/**
+	 * @param  mixed $names What earlier filters returned.
+	 * @return array<mixed>
+	 */
+	public function with_supported_names( mixed $names ): array {
+		return [ ...( is_array( $names ) ? $names : [] ), ...$this->served_groups->supported_names() ];
 	}
 }

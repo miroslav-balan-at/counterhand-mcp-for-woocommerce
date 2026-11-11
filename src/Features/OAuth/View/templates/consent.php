@@ -102,7 +102,7 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 				<?php
 				printf(
 					/* translators: 1: opening link tag to the Counterhand settings screen, 2: closing link tag */
-					esc_html__( 'Grayed-out areas are switched off for this store. Enable them under %1$sCounterhand MCP → Settings%2$s, then connect the app again — a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
+					esc_html__( 'Grayed-out areas are switched off for this store. Switch them on under %1$sCounterhand MCP › Access%2$s, then connect the app again — a connection only ever holds what it was approved with.', 'counterhand-mcp-for-woocommerce' ),
 					'<a href="' . esc_url( $counterhand_settings_url ) . '" target="_blank" rel="noopener">',
 					'</a>'
 				);
@@ -136,5 +136,5 @@ $counterhand_offers_nothing = [] === $counterhand_scopes->sections;
 </div>
 
 <footer class="counterhand-card__foot">
-	<?php esc_html_e( 'You can revoke this connection anytime under WooCommerce → Counterhand MCP.', 'counterhand-mcp-for-woocommerce' ); ?>
+	<?php esc_html_e( 'You can take this app\'s access away any time under Counterhand MCP › Connect apps › Connected apps.', 'counterhand-mcp-for-woocommerce' ); ?>
 </footer>

@@ -23,6 +23,8 @@ final readonly class FlamingoFeature implements FeatureInterface {
 	) {}
 
 	public function register(): void {
+		add_filter( ScopeGroups::SUPPORTED_PLUGINS_FILTER, [ $this, 'with_name' ] );
+
 		if ( ! $this->inbox->is_installed() ) {
 			return;
 		}
@@ -42,6 +44,14 @@ final readonly class FlamingoFeature implements FeatureInterface {
 	 */
 	public function with_group( mixed $groups ): array {
 		return [ ...( is_array( $groups ) ? $groups : [] ), $this->group() ];
+	}
+
+	/**
+	 * @param  mixed $names What earlier filters returned.
+	 * @return array<mixed>
+	 */
+	public function with_name( mixed $names ): array {
+		return [ ...( is_array( $names ) ? $names : [] ), $this->group()->label() ];
 	}
 
 	private function group(): IntegrationGroup {

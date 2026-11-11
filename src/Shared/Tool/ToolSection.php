@@ -48,7 +48,7 @@ enum ToolSection: string {
 			self::Content  => __( 'The blog posts and pages around your store.', 'counterhand-mcp-for-woocommerce' ),
 			self::Store    => __( 'Shipping, tax and reference data.', 'counterhand-mcp-for-woocommerce' ),
 			self::Advanced => __( 'Store configuration and maintenance. Enable only if you know why you need it.', 'counterhand-mcp-for-woocommerce' ),
-			self::Integrations => __( 'What other plugins on this store offer to AI clients. Each plugin still checks its own permissions.', 'counterhand-mcp-for-woocommerce' ),
+			self::Integrations => __( 'What other plugins on this store offer to AI apps. Each plugin still checks its own permissions.', 'counterhand-mcp-for-woocommerce' ),
 		};
 	}
 

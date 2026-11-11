@@ -31,8 +31,8 @@ final readonly class StoreToolPolicy implements ChatToolPolicy {
 			return null;
 		}
 
-		$screen = ToolSection::Integrations === $group->section() ? AdminScreen::Integrations : AdminScreen::Settings;
+		$url = ToolSection::Integrations === $group->section() ? AdminScreen::other_plugins_url() : AdminScreen::Access->url();
 
-		return new StoreSwitchLink( $screen->url(), $screen->menu_title() );
+		return new StoreSwitchLink( $url, AdminScreen::Access->menu_title() );
 	}
 }

@@ -111,7 +111,7 @@ final class RewriteJobsTest extends TestCase {
 			$this->jobs()->apply( self::OWNER, [ 1 ] );
 			self::fail( 'Apply went ahead with product writes off.' );
 		} catch ( RewriteRefused $refused ) {
-			self::assertStringContainsString( 'Tick Write for Products in Settings', $refused->getMessage() );
+			self::assertStringContainsString( 'Switch on Can change for Products in Access', $refused->getMessage() );
 		}
 
 		self::assertSame( [], $this->tools->calls );

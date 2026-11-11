@@ -24,14 +24,14 @@ final readonly class GenericIntegrationCopy implements IntegrationCopyInterface 
 	public function description(): string {
 		return sprintf(
 			/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-			__( 'What %s offers to AI clients. It still checks its own permissions on every call.', 'counterhand-mcp-for-woocommerce' ),
+			__( 'What %s offers to AI apps. It still checks its own permissions on every call.', 'counterhand-mcp-for-woocommerce' ),
 			$this->name()
 		);
 	}
 
 	public function read_description(): string {
 		/* translators: %s: name of another plugin, e.g. "Yoast SEO". */
-		return sprintf( __( 'See the data %s offers to AI clients.', 'counterhand-mcp-for-woocommerce' ), $this->name() );
+		return sprintf( __( 'See the data %s offers to AI apps.', 'counterhand-mcp-for-woocommerce' ), $this->name() );
 	}
 
 	public function write_description(): string {

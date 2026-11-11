@@ -130,7 +130,7 @@ test.describe( 'Weekly report', () => {
 
 		try {
 			await page.goto( DASHBOARD );
-			await expect( card( page ).locator( '.counterhand-chip--warn' ) ).toContainText( 'Reports are switched off' );
+			await expect( card( page ).locator( '.counterhand-chip--warn' ) ).toContainText( 'Reports cannot be read in Access' );
 			await expect( card( page ).getByRole( 'button', { name: 'Send last week’s report now' } ) ).toHaveCount( 0 );
 
 			wp( 'user', 'meta', 'update', 'e2e-admin', 'counterhand_weekly_report', '1' );

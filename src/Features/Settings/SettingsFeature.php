@@ -16,9 +16,6 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	private const CAPABILITY = 'manage_woocommerce';
 
-	/** The screens in the in-page nav, in menu order. */
-	private const NAV = [ AdminScreen::Chat, AdminScreen::Rewrites, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ];
-
 	private ScreenAssets $assets;
 
 	/** @param array<string, ScreenBodyInterface> $bodies Keyed by AdminScreen value. */
@@ -34,6 +31,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	public function register(): void {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
+		add_action( 'admin_page_access_denied', [ $this, 'redirect_other_plugins' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_enqueue_scripts', [ $this->assets, 'enqueue' ] );
 		add_action( 'wp_ajax_counterhand_preflight', [ $this, 'handle_preflight' ] );
@@ -60,12 +58,13 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	/**
-	 * A top-level menu for the plugin's own screens, plus one WooCommerce entry
-	 * pointing at the chat — that is the screen a shop manager opens daily, so
-	 * it stays where they already work.
+	 * A top-level menu for the plugin's own screens, opening on Overview, plus one
+	 * WooCommerce entry pointing at the chat: that is the screen a shop manager
+	 * opens daily, so it stays where they already work.
 	 */
 	public function add_menu(): void {
-		$chat = AdminScreen::Chat;
+		$overview = AdminScreen::Overview;
+		$chat     = AdminScreen::Chat;
 
 		// The brand's prompt glyph, filled black as core expects — wp-admin
 		// recolours SVG menu icons to the user's admin scheme itself.
@@ -74,33 +73,36 @@ final readonly class SettingsFeature implements FeatureInterface {
 		);
 
 		add_menu_page(
-			$chat->page_title(),
+			$overview->page_title(),
 			__( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
-			$chat->value,
-			fn () => $this->render( $chat ),
+			$overview->value,
+			fn () => $this->render( $overview ),
 			$icon,
 			56
 		);
 
-		foreach ( self::NAV as $screen ) {
+		foreach ( AdminScreen::cases() as $screen ) {
 			add_submenu_page(
-				$chat->value,
+				$overview->value,
 				$screen->page_title(),
 				$screen->menu_title(),
 				self::CAPABILITY,
 				$screen->value,
-				// The top-level entry already renders the chat; a second callback would print it twice.
-				AdminScreen::Chat === $screen ? '' : fn () => $this->render( $screen )
+				// The top-level entry already renders Overview; a second callback would print it twice.
+				$overview === $screen ? '' : fn () => $this->render( $screen )
 			);
 		}
 
+		// The same page under WooCommerce, so it needs the same callback: WordPress may
+		// resolve the page through this parent and has nothing to print otherwise.
 		add_submenu_page(
 			'woocommerce',
 			$chat->page_title(),
 			__( 'AI Chat', 'counterhand-mcp-for-woocommerce' ),
 			self::CAPABILITY,
-			$chat->value
+			$chat->value,
+			fn () => $this->render( $chat )
 		);
 	}
 
@@ -147,6 +149,18 @@ final readonly class SettingsFeature implements FeatureInterface {
 		echo '</div>';
 	}
 
+	/** Other plugins became a section of Access; bookmarks and old links land on it. */
+	public function redirect_other_plugins(): void {
+		$page = sanitize_key( $_GET['page'] ?? '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- routing only, nothing is changed.
+
+		if ( AdminScreen::OTHER_PLUGINS_SLUG !== $page ) {
+			return;
+		}
+
+		wp_safe_redirect( AdminScreen::other_plugins_url() );
+		exit;
+	}
+
 	private function nav( AdminScreen $current ): string {
 		return implode(
 			'',
@@ -157,7 +171,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 					$current === $screen ? ' aria-current="page"' : '',
 					esc_html( $screen->menu_title() )
 				),
-				self::NAV
+				AdminScreen::cases()
 			)
 		);
 	}

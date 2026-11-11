@@ -497,6 +497,84 @@
 	border-top: 0;
 }
 
+/* Setup checklist on Overview ----------------------------------------------
+ * What still has to be in place, each with the one action that does it. Shown only
+ * while a step is open. A finished step takes the brand's mint tick.
+ */
+
+.counterhand-setup__steps {
+	display: grid;
+	gap: var(--counterhand-gap-small);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: counterhand-step;
+}
+
+.counterhand-setup__step {
+	display: grid;
+	grid-template-columns: 28px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	padding: 10px 12px;
+	border: 1px solid var(--counterhand-border);
+	border-radius: var(--counterhand-radius);
+	counter-increment: counterhand-step;
+}
+
+.counterhand-setup__mark {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 28px;
+	border: 1px solid var(--counterhand-border-field);
+	border-radius: 50%;
+	color: var(--counterhand-text-muted);
+	font-weight: 600;
+}
+
+.counterhand-setup__mark::before {
+	content: counter(counterhand-step);
+}
+
+.counterhand-setup__text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.counterhand-setup__step--done {
+	border-color: transparent;
+	background: var(--counterhand-head-bg);
+}
+
+.counterhand-setup__step--done .counterhand-setup__mark {
+	border-color: var(--counterhand-brand);
+	background: var(--counterhand-brand);
+	color: var(--counterhand-brand-ink);
+}
+
+.counterhand-setup__step--done .counterhand-setup__mark::before {
+	content: "✓";
+}
+
+.counterhand-setup__state {
+	color: var(--counterhand-head-underline);
+	font-weight: 600;
+}
+
+@media (max-width: 600px) {
+	.counterhand-setup__step {
+		grid-template-columns: 28px minmax(0, 1fr);
+	}
+
+	.counterhand-setup__step > :last-child {
+		grid-column: 2;
+		justify-self: start;
+	}
+}
+
 /* Connected marker on a client card -------------------------------------- */
 
 .counterhand-connected {
@@ -537,9 +615,29 @@
 /* Section band separating one family of tool groups from the next. */
 .counterhand-groups-table__section th {
 	padding-top: 16px;
-	background: var(--counterhand-surface-neutral);
+	border-top: 1px solid var(--counterhand-border);
+	background: var(--counterhand-surface-sunken);
 	text-align: left;
 	font-weight: 600;
+}
+
+/* Zebra per section: the band is each tbody's first row, so its areas start at the second. */
+.counterhand-groups-table tbody tr:not(.counterhand-groups-table__section):nth-child(odd) {
+	background: var(--counterhand-surface-neutral);
+}
+
+.counterhand-groups-table tbody tr:not(.counterhand-groups-table__section):nth-child(even) {
+	background: var(--counterhand-surface);
+}
+
+.counterhand-groups-table tbody tr:not(.counterhand-groups-table__section):hover {
+	background: var(--counterhand-accent-surface);
+}
+
+.counterhand-groups-table th[scope="row"] .counterhand-muted {
+	display: block;
+	margin-top: 2px;
+	font-weight: 400;
 }
 
 .counterhand-groups-table__section-title {

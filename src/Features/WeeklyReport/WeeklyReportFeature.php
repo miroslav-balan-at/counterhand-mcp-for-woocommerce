@@ -66,7 +66,7 @@ final readonly class WeeklyReportFeature implements FeatureInterface, DashboardC
 		$this->finish(
 			$this->report->send_to( get_current_user_id() )
 				? __( 'Last week’s report is on its way to your email address.', 'counterhand-mcp-for-woocommerce' )
-				: __( 'The report could not be sent. Check that Reports are switched on in Settings, and the WooCommerce logs.', 'counterhand-mcp-for-woocommerce' )
+				: __( 'The report could not be sent. Check that Reports can be read in Access, and the WooCommerce logs.', 'counterhand-mcp-for-woocommerce' )
 		);
 	}
 
@@ -81,7 +81,7 @@ final readonly class WeeklyReportFeature implements FeatureInterface, DashboardC
 	/** Post-redirect-get, so a refresh cannot send a second report. */
 	private function finish( string $message ): never {
 		set_transient( self::NOTICE . get_current_user_id(), $message, MINUTE_IN_SECONDS );
-		wp_safe_redirect( AdminScreen::Dashboard->url() );
+		wp_safe_redirect( AdminScreen::Overview->url() );
 		exit;
 	}
 }

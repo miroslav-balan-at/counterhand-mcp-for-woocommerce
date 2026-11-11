@@ -36,6 +36,19 @@ final class ServedIntegrationGroups {
 		return $this->groups ??= $this->served();
 	}
 
+	/** @return list<string> */
+	public function supported_names(): array {
+		$names = [];
+
+		foreach ( $this->descriptors->resources() as $resource ) {
+			if ( ToolSection::Integrations === $resource->group->section() ) {
+				$names[] = $resource->group->label();
+			}
+		}
+
+		return array_values( array_unique( $names ) );
+	}
+
 	/** @return list<ScopeGroupInterface> */
 	private function served(): array {
 		$groups = [];

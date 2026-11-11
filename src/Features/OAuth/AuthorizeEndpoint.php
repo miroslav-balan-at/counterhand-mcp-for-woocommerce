@@ -239,7 +239,7 @@ final readonly class AuthorizeEndpoint {
 				'return_host'              => (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ),
 				'returns_to_this_computer' => in_array( (string) wp_parse_url( $request->redirect_uri, PHP_URL_HOST ), [ 'localhost', '127.0.0.1', '[::1]', '::1' ], true ),
 				'scopes'                   => ConsentScopes::from( $requested, $this->published, $this->integration_tools->integration_tools_by_scope( GrantedScopeSet::of( $scopes ) ) ),
-				'settings_url'             => AdminScreen::Settings->url(),
+				'settings_url'             => AdminScreen::Access->url(),
 				'hidden'                   => [
 					'client_id'             => $request->client_id,
 					'redirect_uri'          => $request->redirect_uri,

@@ -49,7 +49,7 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 				<p class="counterhand-chip counterhand-chip--warn"><?php echo esc_html( $blocked ); ?></p>
 			<?php else : ?>
 				<?php if ( ! $keeps_undo ) : ?>
-					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Undo history is off, so applied texts cannot be undone here. To keep that option, tick Read and Write for Undo history under Advanced in Settings.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Undo history is off, so applied texts cannot be undone here. To keep that option, switch on Can read and Can change for Undo history in Access.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 				<?php endif; ?>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-rewrites__form">
 					<input type="hidden" name="action" value="<?php echo esc_attr( RewritesFeature::START_ACTION ); ?>">
@@ -163,7 +163,7 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 					<button type="submit" class="button" name="counterhand_rewrite_decision" value="undo"><?php esc_html_e( 'Undo ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
 				</p>
 				<?php if ( ! $can_apply ) : ?>
-					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings, then apply again.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 				<?php endif; ?>
 				<p class="counterhand-muted"><?php esc_html_e( 'Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 			</form>

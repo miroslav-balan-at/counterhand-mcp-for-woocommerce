@@ -18,6 +18,9 @@ final class ScopeGroups {
 
 	public const INTEGRATIONS_FILTER = 'counterhand_integration_groups';
 
+	/** Names of every plugin an integration exists for, active or not. */
+	public const SUPPORTED_PLUGINS_FILTER = 'counterhand_supported_plugins';
+
 	/** @return list<ScopeGroupInterface> */
 	public static function all(): array {
 		return [ ...ToolGroup::cases(), ...self::integrations() ];
@@ -84,6 +87,26 @@ final class ScopeGroups {
 		ksort( $unique );
 
 		return array_values( $unique );
+	}
+
+	/**
+	 * Supported plugins that offer nothing here right now, so a store owner learns
+	 * what switching one on would add. Only names this code ships, never the store's.
+	 *
+	 * @return list<string>
+	 */
+	public static function supported_but_inactive(): array {
+		$names = apply_filters( self::SUPPORTED_PLUGINS_FILTER, [] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- the constant is counterhand_ prefixed.
+
+		if ( ! is_array( $names ) ) {
+			return [];
+		}
+
+		$active   = array_map( static fn ( ScopeGroupInterface $group ): string => $group->label(), self::integrations() );
+		$inactive = array_diff( array_unique( array_filter( $names, 'is_string' ) ), $active );
+		natcasesort( $inactive );
+
+		return array_values( $inactive );
 	}
 
 	/** @return list<ScopeInterface> */

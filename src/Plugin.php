@@ -233,7 +233,8 @@ final class Plugin {
 				],
 				new ConnectReadiness(),
 				$connection_matcher,
-				new SettingSanitizer()
+				new SettingSanitizer(),
+				$settings
 			),
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),
 			new OAuthFeature( $settings, $repository, $this->tool_registry ),

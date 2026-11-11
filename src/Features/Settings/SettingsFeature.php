@@ -16,6 +16,9 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	private const CAPABILITY = 'manage_woocommerce';
 
+	/** The screens in the in-page nav, in menu order. */
+	private const NAV = [ AdminScreen::Chat, AdminScreen::Rewrites, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ];
+
 	private ScreenAssets $assets;
 
 	/** @param array<string, ScreenBodyInterface> $bodies Keyed by AdminScreen value. */
@@ -24,6 +27,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 		private ConnectReadiness $readiness,
 		private ConnectionMatcher $matcher,
 		private SettingSanitizer $sanitizer,
+		private PluginSettings $settings,
 	) {
 		$this->assets = new ScreenAssets();
 	}
@@ -79,7 +83,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 			56
 		);
 
-		foreach ( [ AdminScreen::Chat, AdminScreen::Rewrites, AdminScreen::Dashboard, AdminScreen::Connect, AdminScreen::Integrations, AdminScreen::Settings, AdminScreen::Log ] as $screen ) {
+		foreach ( self::NAV as $screen ) {
 			add_submenu_page(
 				$chat->value,
 				$screen->page_title(),
@@ -101,26 +105,33 @@ final readonly class SettingsFeature implements FeatureInterface {
 	}
 
 	/**
-	 * Shared page chrome: the brand mark, heading and subtitle, then the
-	 * screen's own body. The mark is the same prompt tile the product wears
-	 * everywhere — a chevron and a cursor, because you type and the shop
-	 * answers — drawn inline so it needs no asset request.
+	 * Shared page chrome: one slim row (the prompt tile, the title, what the screen is
+	 * for, whether AI access is on), the nav across the plugin's screens, then the
+	 * screen's own body. Kept to one row so the work starts high on the page.
 	 */
 	private function render( AdminScreen $screen ): void {
 		printf(
 			'<div class="wrap counterhand-wrap%s">
 			<header class="counterhand-page-head">
-				<span class="counterhand-page-head__mark" aria-hidden="true">
-					<svg viewBox="0 0 24 24"><path d="M6.5 7.5l5.5 4.5-5.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="14.5" y="14.5" width="4" height="3" rx=".5" fill="currentColor"/></svg>
-				</span>
-				<div class="counterhand-page-head__text">
-					<h1>%s</h1>
-					<p class="counterhand-subtitle">%s</p>
+				<div class="counterhand-page-head__row">
+					<span class="counterhand-page-head__mark" aria-hidden="true">
+						<svg viewBox="0 0 24 24"><path d="M6.5 7.5l5.5 4.5-5.5 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><rect x="14.5" y="14.5" width="4" height="3" rx=".5" fill="currentColor"/></svg>
+					</span>
+					<div class="counterhand-page-head__text">
+						<h1>%s</h1>
+						<p class="counterhand-subtitle">%s</p>
+					</div>
+					<span class="counterhand-pill%s">%s</span>
 				</div>
+				<nav class="counterhand-nav" aria-label="%s">%s</nav>
 			</header>',
 			$screen->is_full_bleed() ? ' counterhand-wrap--chat' : '',
 			esc_html( $screen->page_title() ),
-			esc_html( $screen->subtitle() )
+			esc_html( $screen->subtitle() ),
+			$this->settings->is_enabled() ? ' counterhand-pill--on' : '',
+			$this->settings->is_enabled() ? esc_html__( 'AI access on', 'counterhand-mcp-for-woocommerce' ) : esc_html__( 'AI access off', 'counterhand-mcp-for-woocommerce' ),
+			esc_attr__( 'Counterhand', 'counterhand-mcp-for-woocommerce' ),
+			$this->nav( $screen ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts in nav().
 		);
 
 		// wp-admin moves every notice to this marker, or else in beside the title.
@@ -134,6 +145,21 @@ final readonly class SettingsFeature implements FeatureInterface {
 		$this->bodies[ $screen->value ]->render_body();
 
 		echo '</div>';
+	}
+
+	private function nav( AdminScreen $current ): string {
+		return implode(
+			'',
+			array_map(
+				static fn ( AdminScreen $screen ): string => sprintf(
+					'<a href="%s"%s>%s</a>',
+					esc_url( $screen->url() ),
+					$current === $screen ? ' aria-current="page"' : '',
+					esc_html( $screen->menu_title() )
+				),
+				self::NAV
+			)
+		);
 	}
 
 	public function register_settings(): void {

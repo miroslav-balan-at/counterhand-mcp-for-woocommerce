@@ -39,7 +39,8 @@ test.describe( 'Plugins as they are once set up', () => {
 
 	test.beforeAll( async ( { browser, baseURL: storeURL } ) => {
 		baseURL = storeURL as string;
-		wp( 'plugin', 'activate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup' );
+		// Rank Math and BackWPup start their MCP servers only on an adapter someone installed; WooCommerce stopped bundling one in 11.3.
+		wp( 'plugin', 'activate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup', 'mcp-adapter' );
 		wp( 'option', 'update', 'rank_math_registration_skip', '1' );
 		const settings: Record< string, boolean > = { customers_read: true };
 		for ( const slug of Object.keys( EXPECTED ) ) {
@@ -63,7 +64,7 @@ test.describe( 'Plugins as they are once set up', () => {
 		wp( 'post', 'delete', product, '--force' );
 		restore();
 		wp( 'option', 'delete', 'rank_math_registration_skip' );
-		wp( 'plugin', 'deactivate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup' );
+		wp( 'plugin', 'deactivate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup', 'mcp-adapter' );
 	} );
 
 	for ( const [ slug, expected ] of Object.entries( EXPECTED ) ) {

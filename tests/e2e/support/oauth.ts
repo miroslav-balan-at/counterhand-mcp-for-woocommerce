@@ -135,7 +135,7 @@ export async function connect( page: Page, baseURL: string, scopes: string[], cl
 	const outcome = await runConsent( page, discovery, { scopes, verifierChallenge: challenge, state: base64url( randomBytes( 16 ) ), clientId }, async ( consent ) => {
 		// Advanced scopes are collapsed and never pre-ticked, so an admin who
 		// wants them opens the section and ticks them by hand; so does this.
-		const collapsed = consent.locator( 'details.counterhand-scopes__section--advanced:not([open]) > summary' );
+		const collapsed = consent.locator( 'details.counterhand-scopes__section:not([open]) > summary' );
 		while ( ( await collapsed.count() ) > 0 ) {
 			await collapsed.first().click();
 		}

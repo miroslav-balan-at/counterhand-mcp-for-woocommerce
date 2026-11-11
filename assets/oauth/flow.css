@@ -104,23 +104,51 @@ body.counterhand-flow {
 	overflow: hidden;
 }
 
-/* Identity — who is about to approve. Prominent, not fine print. */
-
-.counterhand-identity {
-	display: flex;
-	align-items: center;
-	gap: 10px;
+/* Who asks, who approves and where access goes, in one card: prominent, not fine print. */
+.counterhand-request {
 	margin: 0 0 20px;
-	padding: 10px 12px;
 	border: 1px solid var(--counterhand-gray-5);
 	border-radius: var(--counterhand-radius);
-	background: var(--counterhand-surface);
+}
+
+.counterhand-request__row {
+	display: grid;
+	grid-template-columns: 9rem 1fr;
+	gap: 12px;
+	align-items: center;
+	padding: 10px 12px;
+}
+
+.counterhand-request__row + .counterhand-request__row {
+	border-top: 1px solid var(--counterhand-gray-5);
+}
+
+.counterhand-request dt {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--counterhand-gray-60);
+}
+
+.counterhand-request dd {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	min-width: 0;
+}
+
+.counterhand-request code {
+	font-size: 12px;
+	word-break: break-all;
 }
 
 /* Initial-based mark: no external avatar request, so nothing can fail to load. */
 .counterhand-identity__avatar {
-	width: 36px;
-	height: 36px;
+	width: 28px;
+	height: 28px;
 	flex: 0 0 auto;
 	display: inline-flex;
 	align-items: center;
@@ -131,20 +159,6 @@ body.counterhand-flow {
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
-}
-
-.counterhand-identity__text {
-	display: flex;
-	flex-direction: column;
-	line-height: 1.35;
-	min-width: 0;
-}
-
-.counterhand-identity__label {
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	color: var(--counterhand-gray-60);
 }
 
 .counterhand-identity__name {
@@ -176,6 +190,15 @@ body.counterhand-flow {
 	line-height: 1.3;
 }
 
+.counterhand-eyebrow {
+	margin: 0 0 4px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--counterhand-gray-60);
+}
+
 .counterhand-lede {
 	margin: 0 0 16px;
 	color: var(--counterhand-gray-100);
@@ -187,38 +210,10 @@ body.counterhand-flow {
 	color: var(--counterhand-gray-60);
 }
 
-/* Verified origin -------------------------------------------------------- */
-
-.counterhand-origin {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 8px;
-	margin: 0 0 20px;
-	padding: 10px 12px;
-	background: var(--counterhand-gray-0);
-	border: 1px solid var(--counterhand-gray-5);
-	border-radius: var(--counterhand-radius);
-}
-
-.counterhand-origin__label {
-	font-size: 11px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: .04em;
-	color: var(--counterhand-gray-60);
-}
-
-.counterhand-origin code {
-	font-size: 12px;
-	word-break: break-all;
-	color: var(--counterhand-gray-100);
-}
-
 /* Scopes ----------------------------------------------------------------- */
 
 .counterhand-scopes {
-	margin: 0;
+	margin: 20px 0 0;
 	padding: 0;
 	border: 0;
 	min-width: 0;
@@ -234,33 +229,88 @@ body.counterhand-flow {
 }
 
 .counterhand-scopes__section {
-	margin: 0 0 18px;
+	margin: 0 0 10px;
+	border: 1px solid var(--counterhand-gray-5);
+	border-radius: var(--counterhand-radius);
+	interpolate-size: allow-keywords;
 }
 
-/*
- * Advanced sections ship collapsed: the groups inside can change how the store
- * charges money or run maintenance routines, so opening one is a deliberate act.
- */
-.counterhand-scopes__section--advanced > .counterhand-scopes__heading {
-	cursor: pointer;
+/* The body slides: block-size animates where ::details-content exists, and opens at once elsewhere. */
+.counterhand-scopes__section::details-content {
+	block-size: 0;
+	overflow: hidden;
+	transition: block-size .25s ease, content-visibility .25s allow-discrete;
 }
 
-.counterhand-scopes__section--advanced[open] > .counterhand-scopes__heading {
-	margin-bottom: 10px;
+.counterhand-scopes__section[open]::details-content {
+	block-size: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.counterhand-scopes__section::details-content {
+		transition: none;
+	}
 }
 
 .counterhand-scopes__heading {
 	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	list-style: none;
+}
+
+.counterhand-scopes__heading::-webkit-details-marker {
+	display: none;
+}
+
+/* A chevron that turns, so the header reads as something to open. */
+.counterhand-scopes__heading::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 8px;
+	height: 8px;
+	margin-inline-start: 4px;
+	border-right: 2px solid var(--counterhand-gray-60);
+	border-bottom: 2px solid var(--counterhand-gray-60);
+	transform: rotate(45deg);
+	transition: transform .2s ease;
+}
+
+.counterhand-scopes__section[open] > .counterhand-scopes__heading::after {
+	transform: rotate(-135deg);
+}
+
+.counterhand-scopes__heading:focus-visible {
+	outline: 2px solid var(--counterhand-blue-50);
+	outline-offset: -2px;
+}
+
+.counterhand-scopes__heading-text {
+	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	margin: 0 0 10px;
-	font-weight: 600;
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
 .counterhand-scopes__heading-desc {
 	font-size: 12px;
 	font-weight: 400;
 	color: var(--counterhand-gray-60);
+}
+
+.counterhand-scopes__count {
+	flex: 0 0 auto;
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--counterhand-gray-60);
+}
+
+.counterhand-scopes__body {
+	padding: 0 14px 6px;
 }
 
 .counterhand-scope-group {
@@ -364,10 +414,22 @@ body.counterhand-flow {
 	background: transparent;
 }
 
-.counterhand-scope__off-hint {
-	font-size: 12px;
-	color: var(--counterhand-gray-60);
-	font-style: italic;
+.counterhand-tag--verified {
+	background: var(--counterhand-success-surface);
+	color: var(--counterhand-success-text);
+	border: 1px solid var(--counterhand-success);
+}
+
+.counterhand-screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	border: 0;
+	white-space: nowrap;
 }
 
 .counterhand-tag--off {
@@ -592,8 +654,22 @@ body.counterhand-flow {
 		flex-basis: 0;
 	}
 
-	.counterhand-tag {
+	.counterhand-scope .counterhand-tag {
 		align-self: flex-start;
 		margin: 2px 0 0 26px;
+	}
+
+	.counterhand-request__row {
+		grid-template-columns: 1fr;
+		gap: 4px;
+	}
+
+	.counterhand-scopes__heading {
+		flex-wrap: wrap;
+	}
+
+	.counterhand-scopes__count {
+		order: 3;
+		flex-basis: 100%;
 	}
 }

@@ -67,7 +67,7 @@ test( 'the consent screen prints only the plugin\'s own stylesheets', async ( { 
 	} );
 
 	await page.goto( authorizationUrl( discovery, { scopes: [ 'products:read' ], verifierChallenge: pkcePair().challenge, state: 'stylesheets' } ) );
-	await expect( page.getByRole( 'heading', { name: 'Authorize AI access' } ) ).toBeVisible();
+	await expect( page.getByRole( 'heading', { name: /work with your store\?/ } ) ).toBeVisible();
 
 	expect( stylesheets.length, 'the screen loads its own styles' ).toBeGreaterThan( 0 );
 	for ( const url of stylesheets ) {

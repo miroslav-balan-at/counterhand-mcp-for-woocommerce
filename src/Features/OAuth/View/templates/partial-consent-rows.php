@@ -23,8 +23,8 @@ defined( 'ABSPATH' ) || exit;
 				<summary>
 					<?php
 					printf(
-						/* translators: %d: how many tools the approval covers. */
-						esc_html( _n( 'Approves %d tool. Tools this plugin adds later stay off until you connect again.', 'Approves %d tools. Tools this plugin adds later stay off until you connect again.', count( $counterhand_group->tool_names ), 'counterhand-mcp-for-woocommerce' ) ),
+						/* translators: %d: how many actions the approval covers. */
+						esc_html( _n( 'Approves %d action. Actions this plugin adds later stay off until you connect again.', 'Approves %d actions. Actions this plugin adds later stay off until you connect again.', count( $counterhand_group->tool_names ), 'counterhand-mcp-for-woocommerce' ) ),
 						(int) count( $counterhand_group->tool_names )
 					);
 					?>
@@ -57,8 +57,8 @@ defined( 'ABSPATH' ) || exit;
 					<span class="counterhand-scope__name"><?php echo esc_html( $counterhand_scope->label() ); ?></span>
 					<span class="counterhand-scope__desc"><?php echo esc_html( $counterhand_scope->description() ); ?></span>
 					<?php if ( $counterhand_off ) : ?>
-						<?php // Tooltips need a pointer; this line is the same answer for touch and screen readers. ?>
-						<span class="counterhand-scope__off-hint" id="<?php echo esc_attr( $counterhand_id ); ?>-off">
+						<?php // One reason under the section says it for everyone who sees; this says it to a screen reader on the row itself. ?>
+						<span class="counterhand-screen-reader-text" id="<?php echo esc_attr( $counterhand_id ); ?>-off">
 							<?php echo esc_html( $counterhand_row->unavailable_reason() ); ?>
 						</span>
 					<?php endif; ?>
@@ -66,7 +66,7 @@ defined( 'ABSPATH' ) || exit;
 				<?php if ( $counterhand_off ) : ?>
 					<span class="counterhand-tag counterhand-tag--off"><?php echo esc_html( $counterhand_row->availability->tag() ); ?></span>
 				<?php elseif ( $counterhand_scope->is_write() ) : ?>
-					<span class="counterhand-tag counterhand-tag--write"><?php esc_html_e( 'Can change data', 'counterhand-mcp-for-woocommerce' ); ?></span>
+					<span class="counterhand-tag counterhand-tag--write"><?php esc_html_e( 'Changes data', 'counterhand-mcp-for-woocommerce' ); ?></span>
 				<?php endif; ?>
 			</label>
 		<?php endforeach; ?>

@@ -125,39 +125,39 @@ final class ApiScopeTest extends TestCase {
 		$this->assertSame(
 			[
 				'products:read'    => 'Read products',
-				'products:write'   => 'Manage products',
+				'products:write'   => 'Change products',
 				'orders:read'      => 'Read orders',
 				'orders:write'     => 'Update orders',
 				'customers:read'   => 'Read customers',
 				'reports:read'     => 'Read reports',
 				'coupons:read'     => 'Read coupons',
-				'coupons:write'    => 'Manage coupons',
+				'coupons:write'    => 'Change coupons',
 
 				// Everything below is derived, which is the point: adding a
 				// group costs no wording unless the derived phrasing misleads.
 				'taxonomy:read'    => 'Read categories and tags',
-				'taxonomy:write'   => 'Manage categories and tags',
+				'taxonomy:write'   => 'Change categories and tags',
 				'variations:read'  => 'Read variations',
-				'variations:write' => 'Manage variations',
+				'variations:write' => 'Change variations',
 				'reviews:read'     => 'Read reviews',
-				'reviews:write'    => 'Manage reviews',
+				'reviews:write'    => 'Change reviews',
 				'refunds:read'     => 'Read refunds',
-				'refunds:write'    => 'Manage refunds',
+				'refunds:write'    => 'Change refunds',
 				'shipping:read'    => 'Read shipping',
-				'shipping:write'   => 'Manage shipping',
+				'shipping:write'   => 'Change shipping',
 				'taxes:read'       => 'Read taxes',
-				'taxes:write'      => 'Manage taxes',
+				'taxes:write'      => 'Change taxes',
 				'data:read'        => 'Read reference data',
 				'gateways:read'    => 'Read payment gateways',
-				'gateways:write'   => 'Manage payment gateways',
+				'gateways:write'   => 'Change payment gateways',
 				'settings:read'    => 'Read store settings',
-				'settings:write'   => 'Manage store settings',
+				'settings:write'   => 'Change store settings',
 				'content:read'     => 'Read posts and pages',
-				'content:write'    => 'Manage posts and pages',
+				'content:write'    => 'Change posts and pages',
 				'system:read'      => 'Read system tools',
-				'system:write'     => 'Manage system tools',
+				'system:write'     => 'Change system tools',
 				'changes:read'     => 'Read undo history',
-				'changes:write'    => 'Manage undo history',
+				'changes:write'    => 'Change undo history',
 			],
 			array_combine(
 				ApiScope::values(),
@@ -173,7 +173,7 @@ final class ApiScopeTest extends TestCase {
 	 */
 	public function test_orders_write_is_curated_rather_than_derived(): void {
 		$this->assertSame( 'Update orders', ApiScope::OrdersWrite->label() );
-		$this->assertNotSame( 'Manage orders', ApiScope::OrdersWrite->label() );
+		$this->assertNotSame( 'Change orders', ApiScope::OrdersWrite->label() );
 	}
 
 	/** @dataProvider all_scopes */

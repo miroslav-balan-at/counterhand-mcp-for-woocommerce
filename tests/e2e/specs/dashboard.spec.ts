@@ -156,6 +156,8 @@ test.describe( 'Two forms, one option', () => {
 			await page.goto( PLUGINS );
 			await page.locator( '#counterhand-integration_e2e-fixture_read' ).check();
 			await page.getByRole( 'button', { name: /save/i } ).first().click();
+			await expect( page.getByText( 'Settings saved.' ), 'the person is told the save worked' ).toBeVisible();
+			await expect( page.locator( '.counterhand-page-head .notice' ), 'notices sit below the header, not beside the title' ).toHaveCount( 0 );
 			await expect( page.locator( '#counterhand-integration_e2e-fixture_read' ) ).toBeChecked();
 
 			expect( stored() ).toMatchObject( { enabled: true, orders_read: true, rate_limit_per_minute: 7, 'integration_e2e-fixture_read': true } );
@@ -172,6 +174,8 @@ test.describe( 'Two forms, one option', () => {
 			await expect( page.getByRole( 'link', { name: 'Tools from other plugins have their own screen.' } ) ).toHaveAttribute( 'href', /counterhand-mcp-integrations/ );
 			await page.getByRole( 'button', { name: /save/i } ).first().click();
 			await page.waitForURL( /settings-updated=true/ );
+			await expect( page.getByText( 'Settings saved.' ), 'the person is told the save worked' ).toBeVisible();
+			await expect( page.locator( '.counterhand-page-head .notice' ), 'notices sit below the header, not beside the title' ).toHaveCount( 0 );
 
 			expect( stored()[ 'integration_e2e-fixture_read' ] ).toBe( true );
 		} finally {

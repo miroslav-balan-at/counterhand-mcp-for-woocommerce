@@ -123,6 +123,14 @@ final readonly class SettingsFeature implements FeatureInterface {
 			esc_html( $screen->subtitle() )
 		);
 
+		// wp-admin moves every notice to this marker, or else in beside the title.
+		echo '<hr class="wp-header-end">';
+
+		// WordPress prints what options.php reports after a save only on pages under Settings.
+		// Core files its "Settings saved." under general; another plugin's queued errors stay out.
+		settings_errors( 'general' );
+		settings_errors( PluginSettings::OPTION );
+
 		$this->bodies[ $screen->value ]->render_body();
 
 		echo '</div>';

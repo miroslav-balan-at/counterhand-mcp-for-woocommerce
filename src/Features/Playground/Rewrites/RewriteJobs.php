@@ -51,11 +51,15 @@ final readonly class RewriteJobs {
 			return __( 'No model is connected yet. Connect one on the Chat screen first.', 'counterhand-mcp-for-woocommerce' );
 		}
 
-		if ( ! $this->reaches( $user_id, self::WRITE_TOOL ) ) {
+		if ( ! $this->writes_products( $user_id ) ) {
 			return __( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings first.', 'counterhand-mcp-for-woocommerce' );
 		}
 
 		return null;
+	}
+
+	public function writes_products( int $user_id ): bool {
+		return $this->reaches( $user_id, self::WRITE_TOOL );
 	}
 
 	public function keeps_undo( int $user_id ): bool {
@@ -188,11 +192,25 @@ final readonly class RewriteJobs {
 		$this->queue->propose( $item->id, $name, $current, $proposal, $turn->usage );
 	}
 
-	/** @param list<int> $item_ids */
+	/**
+	 * @param list<int> $item_ids
+	 * @throws RewriteRefused When products cannot be written, before any text leaves Ready to review.
+	 */
 	public function apply( int $user_id, array $item_ids ): void {
+		// Checked before claiming: a claimed text that cannot be written would fail for good.
+		if ( ! $this->writes_products( $user_id ) ) {
+			throw new RewriteRefused( __( 'Products cannot be changed by AI on this store. Tick Write for Products in Settings, then apply again.', 'counterhand-mcp-for-woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
+		}
+
 		$agent = RewriteAgent::for_user( $user_id );
 
 		foreach ( $this->claimed( $user_id, $item_ids, RewriteStatus::Proposed, RewriteStatus::Applying ) as $item ) {
+			if ( ! self::product_exists( $item->product_id ) ) {
+				$this->queue->fail( $item->id, __( 'This product no longer exists.', 'counterhand-mcp-for-woocommerce' ) );
+
+				continue;
+			}
+
 			try {
 				$current = $this->stored( $user_id, $item->product_id, $item->field )[ $item->field->value ] ?? null;
 			} catch ( ToolCallException | RewriteRefused $refused ) {
@@ -273,9 +291,16 @@ final readonly class RewriteJobs {
 		$this->queue->forget_older_than( new \DateTimeImmutable( '-' . self::KEPT_DAYS . ' days' ) );
 	}
 
-	/** @return list<RewriteItem> */
-	public function latest( int $user_id ): array {
-		return $this->queue->latest_job( $user_id );
+	/** @return list<RewriteRow> */
+	public function rows( int $user_id ): array {
+		return array_map(
+			static fn ( RewriteItem $item ): RewriteRow => new RewriteRow(
+				$item,
+				self::product_exists( $item->product_id ),
+				get_edit_post_link( $item->product_id, 'raw' )
+			),
+			$this->queue->latest_job( $user_id )
+		);
 	}
 
 	/** @param list<int> $item_ids */
@@ -335,6 +360,10 @@ final readonly class RewriteJobs {
 		}
 
 		return $claimed;
+	}
+
+	private static function product_exists( int $product_id ): bool {
+		return 'product' === get_post_type( $product_id );
 	}
 
 	private function reaches( int $user_id, string $tool_name ): bool {

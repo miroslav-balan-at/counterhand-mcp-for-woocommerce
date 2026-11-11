@@ -4,6 +4,8 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 
 ## Unreleased
 
+* Fixed: on Bulk rewrites, applying a text while Write for Products was off failed it for good, so only a new job could bring it back. Apply now refuses before touching any text, says why, and is greyed out until writes are on again.
+* Fixed: a rewrite for a product deleted since showed an "Edit product" link that went nowhere, and applying it failed with WooCommerce's raw error. The row now says the product no longer exists.
 * Fixed: saving Settings or Other plugins now says "Settings saved.". Both screens post to WordPress's options handler, whose notice WordPress prints only on pages under Settings. Notices from WordPress and other plugins now sit below each screen's header instead of squeezed in beside its title.
 * Added: BackWPup is named and described on its own. Its backup logs are not offered, because they name the database server, folder paths and where backups are stored. BackWPup marks none of its abilities as read-only, so each asks first.
 * Fixed: a browser could fill a saved site login into the chat's model and API key fields, and connecting would then send that password to the AI provider as a key. Both fields now tell browsers they are not a login.

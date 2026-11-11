@@ -50,7 +50,8 @@ final readonly class RewritesFeature implements FeatureInterface, ScreenBodyInte
 		$user_id    = get_current_user_id();
 		$blocked    = $this->jobs->blocked_reason( $user_id );
 		$keeps_undo = $this->jobs->keeps_undo( $user_id );
-		$items      = $this->jobs->latest( $user_id );
+		$can_apply  = $this->jobs->writes_products( $user_id );
+		$rows       = $this->jobs->rows( $user_id );
 		$notice     = get_transient( self::NOTICE . $user_id );
 		$fields     = RewriteField::cases();
 		$limit      = RewriteJobs::MAX_PRODUCTS;
@@ -99,12 +100,16 @@ final readonly class RewritesFeature implements FeatureInterface, ScreenBodyInte
 
 		$user_id = get_current_user_id();
 
-		match ( $decision ) {
-			'apply'   => $this->jobs->apply( $user_id, $selected ),
-			'undo'    => $this->jobs->undo( $user_id, $selected ),
-			'discard' => $this->jobs->discard( $user_id, $selected ),
-			default   => null,
-		};
+		try {
+			match ( $decision ) {
+				'apply'   => $this->jobs->apply( $user_id, $selected ),
+				'undo'    => $this->jobs->undo( $user_id, $selected ),
+				'discard' => $this->jobs->discard( $user_id, $selected ),
+				default   => null,
+			};
+		} catch ( RewriteRefused $refused ) {
+			$this->finish( $refused->getMessage() );
+		}
 
 		$this->finish( __( 'Done. Each product’s status is below.', 'counterhand-mcp-for-woocommerce' ) );
 	}

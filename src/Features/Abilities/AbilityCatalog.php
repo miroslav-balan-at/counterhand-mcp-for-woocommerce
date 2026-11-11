@@ -42,6 +42,7 @@ final class AbilityCatalog {
 		'rank-math/get-seo-scores',
 		'rank-math/analyze-post-content',
 		'rank-math/get-llms-txt',
+		'backwpup/get-backup-logs',
 	];
 
 	/** @var ?list<\WP_Ability> */

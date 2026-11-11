@@ -23,10 +23,11 @@ const EXPECTED = {
 		'set_global_seo_settings', 'set_homepage_seo', 'set_link_settings', 'set_module_status', 'set_plugin_preferences',
 		'set_post_type_seo_settings', 'set_sitemap_settings', 'set_website_identity',
 	],
+	backwpup: [ 'cancel_job', 'get_backup_history', 'list_jobs', 'run_job' ],
 };
 
 // WPForms offers no write until its own write-access toggle is on, so it has no write scope here.
-const SCOPES = [ 'integration:yoast-seo:read', 'integration:yoast-seo:write', 'integration:wpforms:read', 'integration:rank-math:read', 'integration:rank-math:write' ];
+const SCOPES = [ 'integration:yoast-seo:read', 'integration:yoast-seo:write', 'integration:wpforms:read', 'integration:rank-math:read', 'integration:rank-math:write', 'integration:backwpup:read', 'integration:backwpup:write' ];
 
 test.describe( 'Plugins as they are once set up', () => {
 	let restore: () => void;
@@ -38,7 +39,7 @@ test.describe( 'Plugins as they are once set up', () => {
 
 	test.beforeAll( async ( { browser, baseURL: storeURL } ) => {
 		baseURL = storeURL as string;
-		wp( 'plugin', 'activate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math' );
+		wp( 'plugin', 'activate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup' );
 		wp( 'option', 'update', 'rank_math_registration_skip', '1' );
 		const settings: Record< string, boolean > = { customers_read: true };
 		for ( const slug of Object.keys( EXPECTED ) ) {
@@ -62,7 +63,7 @@ test.describe( 'Plugins as they are once set up', () => {
 		wp( 'post', 'delete', product, '--force' );
 		restore();
 		wp( 'option', 'delete', 'rank_math_registration_skip' );
-		wp( 'plugin', 'deactivate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math' );
+		wp( 'plugin', 'deactivate', 'wordpress-seo', 'wpforms-lite', 'seo-by-rank-math', 'backwpup' );
 	} );
 
 	for ( const [ slug, expected ] of Object.entries( EXPECTED ) ) {
@@ -75,7 +76,7 @@ test.describe( 'Plugins as they are once set up', () => {
 	}
 
 	test( 'nothing published carries required: true on a property, and every write says destructive', () => {
-		for ( const tool of tools.filter( ( candidate ) => /^(yoast_seo|wpforms|rank_math)_/.test( candidate.name ) ) ) {
+		for ( const tool of tools.filter( ( candidate ) => /^(yoast_seo|wpforms|rank_math|backwpup)_/.test( candidate.name ) ) ) {
 			const properties = ( tool.inputSchema.properties ?? {} ) as Record< string, { required?: unknown } >;
 			for ( const [ name, property ] of Object.entries( properties ) ) {
 				expect( typeof property.required, `${ tool.name }.${ name }` ).not.toBe( 'boolean' );
@@ -83,6 +84,16 @@ test.describe( 'Plugins as they are once set up', () => {
 		}
 
 		expect( tools.find( ( tool ) => 'rank_math_set_global_seo_settings' === tool.name )?.annotations.destructiveHint ).toBe( true );
+	} );
+
+	test( 'BackWPup\'s logs are not offered, and even listing its jobs asks first', async () => {
+		expect( names ).not.toContain( 'backwpup_get_backup_logs' );
+
+		const unconfirmed = await call( 'backwpup_list_jobs', {} );
+		expect( unconfirmed.result?.isError, JSON.stringify( unconfirmed ) ).toBe( true );
+
+		const confirmed = await call( 'backwpup_list_jobs', { confirm: true } );
+		expect( confirmed.result?.isError, JSON.stringify( confirmed ) ).toBeFalsy();
 	} );
 
 	test( 'a Yoast title cannot read protected meta, and clearing still works', async () => {

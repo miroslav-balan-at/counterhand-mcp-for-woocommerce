@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-09T16:35:39+00:00\n"
+"POT-Creation-Date: 2026-11-11T07:56:21+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -44,37 +44,49 @@ msgstr "https://github.com/miroslav-balan-at"
 msgid "Counterhand MCP for WooCommerce requires WooCommerce to be installed and active."
 msgstr "Counterhand MCP für WooCommerce benötigt ein installiertes und aktives WooCommerce."
 
-#: src/Features/Abilities/KnownPluginCopy.php:32
+#: src/Features/Abilities/KnownPluginCopy.php:36
 msgid "SEO data on any post, page or product its owner can edit, including drafts, and on recent versions site-wide search settings. The plugin's own role rules still apply."
 msgstr "SEO-Daten aller Beiträge, Seiten und Produkte, die ihr Inhaber bearbeiten darf, auch Entwürfe, und in neueren Versionen die Sucheinstellungen der gesamten Website. Die Rollenregeln des Plugins gelten weiterhin."
 
-#: src/Features/Abilities/KnownPluginCopy.php:33
+#: src/Features/Abilities/KnownPluginCopy.php:37
 msgid "SEO data on any post, page or product its owner can edit, including drafts, and Rank Math's site-wide settings. The plugin's own role rules still apply."
 msgstr "SEO-Daten aller Beiträge, Seiten und Produkte, die ihr Inhaber bearbeiten darf, auch Entwürfe, und die websiteweiten Einstellungen von Rank Math. Die Rollenregeln des Plugins gelten weiterhin."
 
-#: src/Features/Abilities/KnownPluginCopy.php:34
+#: src/Features/Abilities/KnownPluginCopy.php:38
 msgid "Your forms. With WPForms Pro this includes submissions, which are personal data. Form editing also needs WPForms' own write access, under WPForms » Tools » AI MCP."
 msgstr "Deine Formulare. Mit WPForms Pro gehören auch die Einsendungen dazu, und das sind personenbezogene Daten. Zum Bearbeiten von Formularen ist außerdem der Schreibzugriff von WPForms nötig, unter WPForms » Tools » AI MCP."
 
-#: src/Features/Abilities/KnownPluginCopy.php:41
+#: src/Features/Abilities/KnownPluginCopy.php:39
+msgid "Your backup jobs and recent backups, and starting or cancelling a backup. BackWPup marks none of these as read-only, so each needs changing allowed and asks first. Backup logs are not offered: they name the database server, folder paths and where backups are stored."
+msgstr "Deine Backup-Aufträge und letzten Backups, dazu ein Backup starten oder abbrechen. BackWPup kennzeichnet nichts davon als nur lesend, daher braucht jedes davon die Erlaubnis zum Ändern und fragt vorher nach. Backup-Protokolle werden nicht angeboten: Sie nennen den Datenbankserver, Ordnerpfade und den Speicherort der Backups."
+
+#: src/Features/Abilities/KnownPluginCopy.php:46
 msgid "See titles, permalinks, status and SEO fields of any post, page or product the approving user can edit, including drafts."
 msgstr "Titel, Permalinks, Status und SEO-Felder aller Beiträge, Seiten und Produkte sehen, die der genehmigende Benutzer bearbeiten darf, auch Entwürfe."
 
-#: src/Features/Abilities/KnownPluginCopy.php:42
+#: src/Features/Abilities/KnownPluginCopy.php:47
 msgid "See SEO data, redirections and 404 logs, and the same details of any post, page or product the approving user can edit, including drafts."
 msgstr "SEO-Daten, Weiterleitungen und 404-Protokolle sehen, außerdem dieselben Angaben aller Beiträge, Seiten und Produkte, die der genehmigende Benutzer bearbeiten darf, auch Entwürfe."
 
-#: src/Features/Abilities/KnownPluginCopy.php:43
+#: src/Features/Abilities/KnownPluginCopy.php:48
 msgid "See your forms. With WPForms Pro, also see submissions, including names, email addresses and everything people wrote."
 msgstr "Deine Formulare sehen. Mit WPForms Pro auch die Einsendungen, samt Namen, E-Mail-Adressen und allem, was die Leute geschrieben haben."
 
-#: src/Features/Abilities/KnownPluginCopy.php:50
+#: src/Features/Abilities/KnownPluginCopy.php:49
+msgid "Nothing on its own: BackWPup marks none of its abilities as read-only, so even listing backups needs changing allowed."
+msgstr "Für sich allein nichts: BackWPup kennzeichnet keine seiner Funktionen als nur lesend, daher braucht schon das Auflisten von Backups die Erlaubnis zum Ändern."
+
+#: src/Features/Abilities/KnownPluginCopy.php:56
 msgid "Change SEO titles, noindex and canonical URLs, and on recent versions switch off sitemaps, schema and social tags or rewrite who the site says it is. A noindex removes a page from search results. Every change needs explicit confirmation."
 msgstr "SEO-Titel, Noindex und kanonische URLs ändern und in neueren Versionen Sitemaps, Schema und Social-Tags abschalten oder ändern, wie sich die Website selbst darstellt. Ein Noindex entfernt eine Seite aus den Suchergebnissen. Jede Änderung muss ausdrücklich bestätigt werden."
 
-#: src/Features/Abilities/KnownPluginCopy.php:51
+#: src/Features/Abilities/KnownPluginCopy.php:57
 msgid "Change site-wide SEO settings, including noindex for the whole site and which modules are on, and apply automatic fixes to core settings. Every change needs explicit confirmation."
 msgstr "Websiteweite SEO-Einstellungen ändern, auch Noindex für die gesamte Website und welche Module aktiv sind, und automatische Korrekturen an Grundeinstellungen anwenden. Jede Änderung muss ausdrücklich bestätigt werden."
+
+#: src/Features/Abilities/KnownPluginCopy.php:58
+msgid "List backup jobs and recent backups, start a backup now or cancel a running one. A full backup can load the server for several minutes. Every call needs explicit confirmation."
+msgstr "Backup-Aufträge und letzte Backups auflisten, sofort ein Backup starten oder ein laufendes abbrechen. Ein vollständiges Backup kann den Server mehrere Minuten lang belasten. Jeder Aufruf muss ausdrücklich bestätigt werden."
 
 #: src/Features/ActionLog/ActionLogFeature.php:82
 msgid "You are not allowed to clear the log."
@@ -1156,36 +1168,36 @@ msgstr "Gespeichert (%s) – leer lassen, um ihn zu behalten"
 msgid "Paste your provider API key"
 msgstr "Füge den API-Schlüssel deines Anbieters ein"
 
-#: src/Features/Playground/views/partial-model-chooser.php:208
+#: src/Features/Playground/views/partial-model-chooser.php:209
 msgid "Stored in your database and sent only to the provider you chose. Ollama runs locally and needs no key."
 msgstr "Wird in deiner Datenbank gespeichert und nur an den gewählten Anbieter gesendet. Ollama läuft lokal und braucht keinen Schlüssel."
 
-#: src/Features/Playground/views/partial-model-chooser.php:210
+#: src/Features/Playground/views/partial-model-chooser.php:211
 msgid "Get a key:"
 msgstr "Schlüssel holen:"
 
-#: src/Features/Playground/views/partial-model-chooser.php:232
+#: src/Features/Playground/views/partial-model-chooser.php:233
 msgid "Remove the saved key"
 msgstr "Gespeicherten Schlüssel entfernen"
 
-#: src/Features/Playground/views/partial-model-chooser.php:242
+#: src/Features/Playground/views/partial-model-chooser.php:243
 #: src/Shared/Tool/ToolSection.php:38
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: src/Features/Playground/views/partial-model-chooser.php:243
+#: src/Features/Playground/views/partial-model-chooser.php:244
 msgid "Only for a custom OpenAI-compatible endpoint. The other providers fill this in for you."
 msgstr "Nur für einen eigenen OpenAI-kompatiblen Endpunkt. Bei den anderen Anbietern wird das automatisch ausgefüllt."
 
-#: src/Features/Playground/views/partial-model-chooser.php:247
+#: src/Features/Playground/views/partial-model-chooser.php:248
 msgid "Base URL"
 msgstr "Basis-URL"
 
-#: src/Features/Playground/views/partial-model-chooser.php:257
+#: src/Features/Playground/views/partial-model-chooser.php:258
 msgid "Connect model"
 msgstr "Modell verbinden"
 
-#: src/Features/Playground/views/partial-model-chooser.php:260
+#: src/Features/Playground/views/partial-model-chooser.php:261
 msgid "We send one tiny test message before saving, so a wrong key is caught here rather than on your first question."
 msgstr "Vor dem Speichern senden wir eine winzige Testnachricht – so fällt ein falscher Schlüssel schon hier auf und nicht erst bei deiner ersten Frage."
 
@@ -1402,159 +1414,159 @@ msgstr "App hinzufügen"
 msgid "Connected apps"
 msgstr "Verbundene Apps"
 
-#: src/Features/Settings/McpClient.php:64
+#: src/Features/Settings/McpClient.php:81
 msgid "Claude"
 msgstr "Claude"
 
-#: src/Features/Settings/McpClient.php:65
+#: src/Features/Settings/McpClient.php:82
 msgid "Web, mobile and the desktop app — one connection covers all three, and it shows up in Claude Code too."
 msgstr "Web, mobil und die Desktop-App — eine Verbindung deckt alle drei ab und erscheint auch in Claude Code."
 
-#: src/Features/Settings/McpClient.php:68
+#: src/Features/Settings/McpClient.php:85
 msgid "Open Claude, then go to Customize → Connectors and press the + button."
 msgstr "Öffne Claude, gehe zu Anpassen → Konnektoren und klicke auf die Schaltfläche +."
 
-#: src/Features/Settings/McpClient.php:69
+#: src/Features/Settings/McpClient.php:86
 msgid "Choose \"Add custom connector\", give it a name and paste the store URL."
 msgstr "Wähle \"Benutzerdefinierten Konnektor hinzufügen\", gib ihm einen Namen und füge die Shop-URL ein."
 
-#: src/Features/Settings/McpClient.php:70
+#: src/Features/Settings/McpClient.php:87
 msgid "Press Add, then Connect — your browser opens this store's consent screen."
 msgstr "Klicke auf Hinzufügen und dann auf Verbinden — dein Browser öffnet den Berechtigungsbildschirm dieses Shops."
 
-#: src/Features/Settings/McpClient.php:71
+#: src/Features/Settings/McpClient.php:88
 msgid "Approve the scopes you want to grant. On Team and Enterprise plans an owner has to add the connector first."
 msgstr "Bestätige die Berechtigungen, die du gewähren möchtest. Bei Team- und Enterprise-Tarifen muss zuerst ein Inhaber den Konnektor hinzufügen."
 
-#: src/Features/Settings/McpClient.php:74
-#: src/Features/Settings/McpClient.php:92
-#: src/Features/Settings/McpClient.php:136
-#: src/Features/Settings/McpClient.php:169
+#: src/Features/Settings/McpClient.php:91
+#: src/Features/Settings/McpClient.php:109
+#: src/Features/Settings/McpClient.php:153
+#: src/Features/Settings/McpClient.php:186
 msgid "Server URL"
 msgstr "Server-URL"
 
-#: src/Features/Settings/McpClient.php:76
+#: src/Features/Settings/McpClient.php:93
 msgid "Copy URL & open Claude"
 msgstr "URL kopieren & Claude öffnen"
 
-#: src/Features/Settings/McpClient.php:82
+#: src/Features/Settings/McpClient.php:99
 msgid "ChatGPT"
 msgstr "ChatGPT"
 
-#: src/Features/Settings/McpClient.php:83
+#: src/Features/Settings/McpClient.php:100
 msgid "Add the store as a custom connector. Needs a paid plan with developer mode switched on."
 msgstr "Füge den Shop als benutzerdefinierten Konnektor hinzu. Erfordert einen kostenpflichtigen Tarif mit eingeschaltetem Entwicklermodus."
 
-#: src/Features/Settings/McpClient.php:86
+#: src/Features/Settings/McpClient.php:103
 msgid "In ChatGPT, open Settings → Apps & Connectors → Advanced and turn on Developer mode."
 msgstr "Öffne in ChatGPT Einstellungen → Apps & Konnektoren → Erweitert und aktiviere den Entwicklermodus."
 
-#: src/Features/Settings/McpClient.php:87
+#: src/Features/Settings/McpClient.php:104
 msgid "Back in Connectors, choose \"Add custom connector\" and paste the store URL."
 msgstr "Wähle dann unter Konnektoren \"Benutzerdefinierten Konnektor hinzufügen\" und füge die Shop-URL ein."
 
-#: src/Features/Settings/McpClient.php:88
+#: src/Features/Settings/McpClient.php:105
 msgid "Connect, then approve the scopes on this store's consent screen."
 msgstr "Verbinde dich und bestätige dann die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
 
-#: src/Features/Settings/McpClient.php:89
+#: src/Features/Settings/McpClient.php:106
 msgid "Custom connectors are web only, and are not available on the free plan."
 msgstr "Benutzerdefinierte Konnektoren gibt es nur im Web und nicht im kostenlosen Tarif."
 
-#: src/Features/Settings/McpClient.php:94
+#: src/Features/Settings/McpClient.php:111
 msgid "Copy URL & open ChatGPT"
 msgstr "URL kopieren & ChatGPT öffnen"
 
-#: src/Features/Settings/McpClient.php:100
+#: src/Features/Settings/McpClient.php:117
 msgid "Cursor"
 msgstr "Cursor"
 
-#: src/Features/Settings/McpClient.php:101
+#: src/Features/Settings/McpClient.php:118
 msgid "Use store tools inside the Cursor editor."
 msgstr "Nutze die Shop-Tools direkt im Cursor-Editor."
 
-#: src/Features/Settings/McpClient.php:104
+#: src/Features/Settings/McpClient.php:121
 msgid "Press Add to Cursor — Cursor opens and asks you to confirm the server."
 msgstr "Klicke auf „Zu Cursor hinzufügen“ — Cursor öffnet sich und bittet dich, den Server zu bestätigen."
 
-#: src/Features/Settings/McpClient.php:105
-#: src/Features/Settings/McpClient.php:132
+#: src/Features/Settings/McpClient.php:122
+#: src/Features/Settings/McpClient.php:149
 msgid "Confirm, then approve the scopes on this store's consent screen."
 msgstr "Bestätige und genehmige anschließend die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
 
-#: src/Features/Settings/McpClient.php:106
+#: src/Features/Settings/McpClient.php:123
 msgid "If your browser blocks the link, paste the JSON below into your mcp.json instead."
 msgstr "Falls dein Browser den Link blockiert, füge stattdessen das JSON unten in deine mcp.json ein."
 
-#: src/Features/Settings/McpClient.php:119
+#: src/Features/Settings/McpClient.php:136
 msgid "mcp.json"
 msgstr "mcp.json"
 
-#: src/Features/Settings/McpClient.php:121
+#: src/Features/Settings/McpClient.php:138
 msgid "Add to Cursor"
 msgstr "Zu Cursor hinzufügen"
 
-#: src/Features/Settings/McpClient.php:127
+#: src/Features/Settings/McpClient.php:144
 msgid "VS Code"
 msgstr "VS Code"
 
-#: src/Features/Settings/McpClient.php:128
+#: src/Features/Settings/McpClient.php:145
 msgid "Use store tools from Copilot Chat in Visual Studio Code."
 msgstr "Nutze die Shop-Tools über Copilot Chat in Visual Studio Code."
 
-#: src/Features/Settings/McpClient.php:131
+#: src/Features/Settings/McpClient.php:148
 msgid "Press Add to VS Code — VS Code opens and asks you to confirm the server."
 msgstr "Klicke auf „Zu VS Code hinzufügen“ — VS Code öffnet sich und bittet dich, den Server zu bestätigen."
 
-#: src/Features/Settings/McpClient.php:133
+#: src/Features/Settings/McpClient.php:150
 msgid "Manage it later with \"MCP: List Servers\" from the Command Palette."
 msgstr "Verwalte ihn später über \"MCP: List Servers\" in der Befehlspalette."
 
-#: src/Features/Settings/McpClient.php:138
+#: src/Features/Settings/McpClient.php:155
 msgid "Add to VS Code"
 msgstr "Zu VS Code hinzufügen"
 
-#: src/Features/Settings/McpClient.php:144
+#: src/Features/Settings/McpClient.php:161
 msgid "Claude Code"
 msgstr "Claude Code"
 
-#: src/Features/Settings/McpClient.php:145
+#: src/Features/Settings/McpClient.php:162
 msgid "Manage the store from your terminal. Already covered if you connected Claude above."
 msgstr "Verwalte den Shop aus deinem Terminal. Bereits abgedeckt, wenn du oben Claude verbunden hast."
 
-#: src/Features/Settings/McpClient.php:148
+#: src/Features/Settings/McpClient.php:165
 msgid "Run the command below in any terminal."
 msgstr "Führe den Befehl unten in einem beliebigen Terminal aus."
 
-#: src/Features/Settings/McpClient.php:149
+#: src/Features/Settings/McpClient.php:166
 msgid "Start Claude Code and run /mcp — it opens the consent screen in your browser."
 msgstr "Starte Claude Code und führe /mcp aus — der Berechtigungsbildschirm öffnet sich in deinem Browser."
 
-#: src/Features/Settings/McpClient.php:150
+#: src/Features/Settings/McpClient.php:167
 msgid "Approve the scopes you want to grant."
 msgstr "Bestätige die Berechtigungen, die du gewähren möchtest."
 
-#: src/Features/Settings/McpClient.php:155
+#: src/Features/Settings/McpClient.php:172
 msgid "Terminal command"
 msgstr "Terminal-Befehl"
 
-#: src/Features/Settings/McpClient.php:160
+#: src/Features/Settings/McpClient.php:177
 msgid "Any other MCP client"
 msgstr "Jeder andere MCP-Client"
 
-#: src/Features/Settings/McpClient.php:161
+#: src/Features/Settings/McpClient.php:178
 msgid "Anything implementing the Model Context Protocol over HTTP."
 msgstr "Alles, was das Model Context Protocol über HTTP implementiert."
 
-#: src/Features/Settings/McpClient.php:164
+#: src/Features/Settings/McpClient.php:181
 msgid "Add the store URL as a streamable HTTP MCP server."
 msgstr "Füge die Shop-URL als MCP-Server vom Typ \"Streamable HTTP\" hinzu."
 
-#: src/Features/Settings/McpClient.php:165
+#: src/Features/Settings/McpClient.php:182
 msgid "The client discovers authorization automatically (OAuth 2.1 with PKCE)."
 msgstr "Der Client erkennt die Autorisierung automatisch (OAuth 2.1 mit PKCE)."
 
-#: src/Features/Settings/McpClient.php:166
+#: src/Features/Settings/McpClient.php:183
 msgid "Approve the scopes on this store's consent screen."
 msgstr "Bestätige die Berechtigungen auf dem Berechtigungsbildschirm dieses Shops."
 
@@ -1960,7 +1972,7 @@ msgid_plural "+%d more"
 msgstr[0] "+%d weiterer"
 msgstr[1] "+%d weitere"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:129
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:130
 msgid "Revoke"
 msgstr "Widerrufen"
 

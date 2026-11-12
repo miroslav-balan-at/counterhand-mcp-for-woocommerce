@@ -1,7 +1,7 @@
-=== Counterhand MCP for WooCommerce — AI Agent Server for Claude, ChatGPT & Cursor ===
+=== Counterhand – WooCommerce MCP Server for Claude, ChatGPT & Cursor ===
 Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
-Tags: woocommerce, mcp, mcp-server, claude, chatgpt
+Tags: woocommerce, mcp, mcp-server, claude, ai-agent
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
@@ -9,15 +9,30 @@ Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The WooCommerce-native MCP server. Let Claude, ChatGPT and Cursor read sales, manage inventory and orders as an AI agent — with OAuth consent.
+Let Claude, ChatGPT or Cursor work your WooCommerce store: sales, stock, orders, product texts. You approve every app and every risky change.
 
 == Description ==
 
-Counterhand MCP connects your WooCommerce store to AI assistants through the Model Context Protocol (MCP) — with security as the first-class feature. It is free, open source (GPL) and self-hosted: Counterhand runs no service of its own in between. Store data reaches only the AI apps you connect, and the provider you choose for the built-in chat.
+**Your WooCommerce store, inside Claude, ChatGPT and Cursor.** Ask what sold last week, find low stock, draft better product texts or look up an order, from the AI app you already use or from a chat inside wp-admin. Each app gets only the areas you tick, and anything risky waits for your Approve.
+
+* **Approve, don't paste keys** — apps connect through a consent screen in your browser. You tick what each one may read and change, and take it back with one click.
+* **Changes wait for you** — anything that moves money or reaches a customer, such as a price change, a refund or a new coupon, runs only after you approve it. A price change shows the price before and after.
+* **Rewrites you approve one by one** — the AI model drafts new descriptions for a whole category; nothing is saved until you tick it.
+* **Free and self-hosted** — open source (GPL), no account, no service of ours in between. Store data reaches only the apps you connect and the AI model you choose.
+
+= Ask it things like =
+
+* "What sold last week, and how does that compare with the week before?"
+* "Which products are running low? Draft a restock list."
+* "Rewrite the short descriptions in Kitchen & Table to sound warmer."
+* "Which orders have been on hold for more than three days?"
+* "Raise the price of the sage mug to 16." It waits for your Approve.
 
 Home page and documentation: [counterhand.app](https://counterhand.app/).
 
-Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an assistant connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
+= Built for security =
+
+Your store gets one MCP endpoint at `https://yourstore.com/mcp`. Apps connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an app connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
 
 * **OAuth 2.1 with PKCE** — the modern MCP authorization standard. Client identity via Client ID Metadata Documents (CIMD); no client secrets, no manual registration.
 * **You approve what each app may do** — the consent screen asks "Let this app work with your store?" and lists the requested permissions under plain headings (Catalog, Sales, Insights, Content, Store setup, Advanced, Other plugins) as checkboxes you can narrow before approving. Changing never implies reading, and Advanced and Other plugins stay folded and are never pre-ticked.
@@ -228,10 +243,14 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Screenshots ==
 
-1. Access — every store area is its own switch, with Can read and Can change separate.
-2. Connect apps — one endpoint URL for Claude, ChatGPT, Cursor, VS Code and Claude Code, with a reachability check.
-3. Chat — ask your store questions in plain language from wp-admin, on a model WordPress manages or your own key.
-4. Activity — every call apps and the chat made, with personal data masked before it is stored.
+1. You decide what each AI app may do: Claude, ChatGPT or Cursor connect through a consent screen in your browser.
+2. Changes wait for you: the chat shows a price change before and after, and runs it only when you approve.
+3. Ask your store in plain words, right in wp-admin, on the AI model you choose.
+4. Rewrites: the AI model drafts new product texts for a category, and you approve each one.
+5. The weekly report: last week's sales by email every Monday, with a short summary written by AI on top.
+6. Access: every store area is its own switch, with Can read and Can change separate.
+7. Activity: every call apps and the chat made, with personal data masked before it is stored.
+8. Connect apps: one address for Claude, ChatGPT, Cursor and VS Code.
 
 == Changelog ==
 

@@ -5,6 +5,8 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 ## 2.0.0
 
 * Changed: tested with WooCommerce 11.3.
+* Fixed: the weekly report email pointed to the Dashboard to stop it; it now names Overview.
+* Changed: the plugin's description and the wordpress.org listing say what it does for a store first, with new screenshots of the 2.0 screens.
 * Changed: the privacy policy text WordPress suggests now names Rewrites and the weekly report's AI summary, and the readme's external services section describes what each sends.
 * Changed: the consent screen asks "Let Claude work with your store?" and puts who approves, the app and where access goes in one card, with only the app's address marked as verified, because its name is its own claim. Each section (Catalog, Sales, …) slides open and closed: one holding something to grant starts open, one switched off for the store starts closed and says so, and Advanced and Other plugins stay closed and unticked. Write permissions read "Change products" rather than "Manage products".
 * Changed: the chat's first screen is "Choose an AI model" and says what else uses the model: Rewrites and the weekly summary.

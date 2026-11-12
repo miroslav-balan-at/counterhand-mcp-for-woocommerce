@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-12T06:38:03+00:00\n"
+"POT-Creation-Date: 2026-11-12T07:52:27+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -27,8 +27,8 @@ msgstr "https://counterhand.app"
 
 #. Description of the plugin
 #: counterhand-mcp-for-woocommerce.php
-msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
-msgstr "Mache deinen WooCommerce-Shop zu einem sicheren MCP-Server, damit KI-Assistenten wie Claude, ChatGPT und Cursor Produkte, Bestellungen, Kunden und Berichte abfragen und verwalten können — geschützt durch widerrufbare API-Token mit fein abgestuften Berechtigungen."
+msgid "Let Claude, ChatGPT and Cursor work your WooCommerce store through an MCP server with OAuth consent: you approve what each app may read and change, and every risky change."
+msgstr "Lass Claude, ChatGPT und Cursor über einen MCP-Server mit OAuth-Freigabe mit deinem WooCommerce-Shop arbeiten: Du gibst frei, was jede App lesen und ändern darf, und jede riskante Änderung."
 
 #. Author of the plugin
 #: counterhand-mcp-for-woocommerce.php
@@ -2323,9 +2323,10 @@ msgstr "Bestellungen öffnen"
 msgid "You get this because you asked for a weekly report in Counterhand MCP."
 msgstr "Du bekommst diese E-Mail, weil du in Counterhand MCP einen Wochenbericht angefordert hast."
 
-#: src/Features/WeeklyReport/ReportEmail.php:132
-msgid "Stop it on the Dashboard."
-msgstr "In der Übersicht abbestellen."
+#. translators: %s: the name of the plugin's Overview screen.
+#: src/Features/WeeklyReport/ReportEmail.php:135
+msgid "Stop it on %s."
+msgstr "Abbestellen unter %s."
 
 #. translators: 1: first day of the week, 2: last day of the week, both as dates.
 #: src/Features/WeeklyReport/ReportWeek.php:38
@@ -2704,6 +2705,12 @@ msgstr "Shop-Konfiguration und Wartung. Aktiviere das nur, wenn du weißt, warum
 #: src/Shared/Tool/ToolSection.php:51
 msgid "What other plugins on this store offer to AI apps. Each plugin still checks its own permissions."
 msgstr "Was andere Plugins in diesem Shop KI-Apps anbieten. Jedes Plugin prüft weiterhin seine eigenen Berechtigungen."
+
+#~ msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
+#~ msgstr "Mache deinen WooCommerce-Shop zu einem sicheren MCP-Server, damit KI-Assistenten wie Claude, ChatGPT und Cursor Produkte, Bestellungen, Kunden und Berichte abfragen und verwalten können — geschützt durch widerrufbare API-Token mit fein abgestuften Berechtigungen."
+
+#~ msgid "Stop it on the Dashboard."
+#~ msgstr "In der Übersicht abbestellen."
 
 #~ msgid "You are not allowed to clear the log."
 #~ msgstr "Du darfst das Protokoll nicht leeren."

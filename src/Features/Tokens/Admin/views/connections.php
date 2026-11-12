@@ -12,7 +12,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<?php if ( isset( $_GET['counterhand_revoked'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+<?php if ( isset( $_GET['counterhand_revoked'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- only decides whether to show the notice; the revoke itself checked its nonce. ?>
 	<div class="notice notice-success inline"><p><?php esc_html_e( 'Access revoked.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 <?php endif; ?>
 

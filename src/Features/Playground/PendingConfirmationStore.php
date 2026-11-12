@@ -37,7 +37,11 @@ final readonly class PendingConfirmationStore {
 
 		$name = self::transient_name( $user_id, $key );
 		$data = get_transient( $name );
-		delete_transient( $name );
+
+		// Only the request whose delete succeeds runs the calls; a double submit loses here.
+		if ( ! delete_transient( $name ) ) {
+			return null;
+		}
 
 		return PendingConfirmation::from_array( $data );
 	}

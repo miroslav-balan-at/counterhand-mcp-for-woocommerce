@@ -8,16 +8,17 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ConnectTab;
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<nav class="counterhand-subnav" aria-label="<?php esc_attr_e( 'Connect AI apps', 'counterhand-mcp-for-woocommerce' ); ?>">
+<nav class="counterhand-subnavigation" aria-label="<?php echo esc_attr( AdminScreen::Connect->menu_title() ); ?>">
 	<?php foreach ( ConnectTab::cases() as $counterhand_tab ) : ?>
-		<a href="<?php echo esc_url( $counterhand_tab->url() ); ?>" class="counterhand-subnav__link"<?php echo $active === $counterhand_tab ? ' aria-current="page"' : ''; ?>>
+		<a href="<?php echo esc_url( $counterhand_tab->url() ); ?>" class="counterhand-subnavigation__link"<?php echo $active === $counterhand_tab ? ' aria-current="page"' : ''; ?>>
 			<?php echo esc_html( $counterhand_tab->label() ); ?>
 			<?php if ( ! empty( $counts[ $counterhand_tab->value ] ) ) : ?>
-				<span class="counterhand-subnav__count"><?php echo esc_html( (string) $counts[ $counterhand_tab->value ] ); ?></span>
+				<span class="counterhand-subnavigation__count"><?php echo esc_html( (string) $counts[ $counterhand_tab->value ] ); ?></span>
 			<?php endif; ?>
 		</a>
 	<?php endforeach; ?>

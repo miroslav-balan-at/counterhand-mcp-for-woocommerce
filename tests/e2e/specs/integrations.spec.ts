@@ -340,6 +340,11 @@ test.describe( 'Advanced Custom Fields with the real plugin', () => {
 
 		expect( refused.isError ).toBe( true );
 		expect( wp( 'post', 'meta', 'get', product, '_price' ) ).toBe( '10' );
+
+		const byKey = await call( 'update_product_custom_fields', { id: Number( product ), acf: { field_e2e_price: '0.01' } } );
+
+		expect( byKey.isError, 'ACF finds a field by key before name' ).toBe( true );
+		expect( wp( 'post', 'meta', 'get', product, '_price' ) ).toBe( '10' );
 		await client.dispose();
 	} );
 

@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final readonly class ActionLogger {
 
-	private const PERSONAL_FIELDS = [ 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'postcode', 'state', 'vat_id', 'customer_note', 'note', 'reviewer', 'review', 'username', 'display_name' ];
+	private const PERSONAL_FIELDS = [ 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'postcode', 'state', 'vat_id', 'customer_note', 'note', 'reviewer', 'review', 'username', 'display_name', 'search' ];
 
 	public function log( string $tool_name, string $token_label, bool $is_error, array $arguments ): void {
 		global $wpdb;

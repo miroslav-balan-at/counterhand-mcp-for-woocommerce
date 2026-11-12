@@ -2,8 +2,21 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
-## Unreleased
+## 2.0.0
 
+* Changed: tested with WooCommerce 11.3.
+* Fixed: the weekly report email pointed to the Dashboard to stop it; it now names Overview.
+* Security: choosing the chat's AI model, removing its key and choosing the chat's areas are for administrators only, as Access is. A shop manager could point the model at another address, and the stored key went with it. The stored key is now kept only for the provider and address it was saved for.
+* Security: for an app that can show a form, a confirm argument the model sets is always ignored. A price sent as false skipped the form and still ran on the model's own confirm. The form lists short values such as prices first and says when it cuts text, and an approval cannot be spent twice by two retries at once.
+* Security: an ACF field given by its key is judged by the name it is stored under, so a field named _price cannot be written through its key. Tax, sale dates and Germanized's deposit, photovoltaic and differential taxation now need confirmation on product and variation writes. Abilities registered under the name of one of our own integrations are not bridged. WPML string tools reach only the texts customers read in WooCommerce emails, not a recipient address.
+* Fixed: clearing Activity is for administrators only, because it holds refunds and integration calls kept whatever the setting says. Searches are masked in Activity like names.
+* Fixed: approving with nothing ticked counts as declining, rather than creating a connection that can reach nothing. A chat approval clicked twice runs once.
+* Fixed: a Rewrites item whose background run timed out or crashed is marked failed instead of waiting forever, and rewrite jobs are included in WordPress's personal data export and erasure.
+* Security: a URL coupon link is refused when it would capture a category or other archive served at the site root, or any public post type, and a longer link is no longer refused just because a slug starts with its first letters. Protected meta is refused on each order line, as on the order itself.
+* Fixed: a Rewrites text whose apply or undo was cut short by a crash or timeout is marked failed with a hint to check the product, instead of staying "Being applied" for good.
+* Fixed: deactivating the plugin across a network clears every site's scheduled jobs. Instructions to apps, the chat and the screens after approving name Access and Connected apps instead of Settings and connections.
+* Changed: the plugin's description and the wordpress.org listing say what it does for a store first, with new screenshots of the 2.0 screens.
+* Changed: the privacy policy text WordPress suggests now names Rewrites and the weekly report's AI summary, and the readme's external services section describes what each sends.
 * Changed: the consent screen asks "Let Claude work with your store?" and puts who approves, the app and where access goes in one card, with only the app's address marked as verified, because its name is its own claim. Each section (Catalog, Sales, …) slides open and closed: one holding something to grant starts open, one switched off for the store starts closed and says so, and Advanced and Other plugins stay closed and unticked. Write permissions read "Change products" rather than "Manage products".
 * Changed: the chat's first screen is "Choose an AI model" and says what else uses the model: Rewrites and the weekly summary.
 * Changed: the menu follows what you do, in this order: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access, with two forms that each save only their own part; the old Other plugins address leads there. Other plugins also names the supported plugins that are not active yet, and the store areas table is striped, with each area's description on its own line. The Dashboard is called Overview and the action log Activity. Bookmarks and links in weekly report emails keep working.
@@ -47,6 +60,29 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 * Changed: a client's metadata document is cached as its `Cache-Control` says, between one minute and one hour.
 * Added: chat with Claude uses prompt caching and keeps the most common tools loaded, resumes a paused turn, and says when the model declines.
 * Added: MCP prompts for common store routines, a `counterhand://store/profile` resource, and envelope output schemas on read tools.
+
+## 1.3.2
+* Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending; WooCommerce sends no email of its own for it.
+
+## 1.3.1
+* Fixed: the OAuth discovery documents are now served from the request path, so another plugin registering the same `/.well-known/` rewrite can no longer answer for this one and break the connection.
+
+## 1.3.0
+* Changes that need approval are now approved by you, not the model: the Chat tab pauses before a risky change, shows exactly what the assistant wants to run, and only your Approve button lets it happen. Nothing in that turn runs until you decide.
+* AI apps that declare refresh support (Claude Code, for example) receive one-hour access tokens and a rotating refresh token, so a leaked token is useful for an hour rather than a month. A refresh token replayed after it was retired revokes the connection. Apps without refresh support keep the 30-day token they had, so nothing changes for them.
+* An app's identity document URL must now carry a path, as the Client ID Metadata Document specification requires.
+* The OAuth consent pages refuse to be shown inside another site's frame, so a store administrator cannot be tricked into approving a connection they did not open.
+* Authorization responses now carry the issuer (RFC 9207) and the discovery document says so, which lets AI apps detect a mix-up between authorization servers.
+* The connecting app's identity document is read with a size limit.
+* Deleting the plugin also removes the Chat tab's saved provider key.
+* Speaks MCP protocol revision 2025-11-25 alongside the earlier ones.
+* Tested with WooCommerce 11.1.
+
+## 1.2.2
+* The connecting app's identity document is fetched through WordPress's safe HTTP function, which refuses private-network and loopback addresses.
+* Uninstall no longer runs a raw query against the options table; the plugin's short-lived transients expire on their own and WordPress's daily cleanup removes them.
+* The readme discloses that the Chat tab can install the official AI Provider plugins from WordPress.org on request.
+* On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
 
 ## 1.2.1
 * The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.

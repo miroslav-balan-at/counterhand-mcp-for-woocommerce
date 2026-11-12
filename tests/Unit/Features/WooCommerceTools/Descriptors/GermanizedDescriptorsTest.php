@@ -60,7 +60,7 @@ final class GermanizedDescriptorsTest extends TestCase {
 				}
 
 				if ( null !== $resource->meta ) {
-					$this->assertSame( $keep, $resource->meta_write_params, $resource->id );
+					$this->assertSame( $keep, $resource->meta_write_parameters, $resource->id );
 				}
 			}
 		}

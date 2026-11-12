@@ -11,6 +11,8 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\AdminScreen;
+
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="counterhand-card__body counterhand-card__body--centered">
@@ -27,7 +29,7 @@ defined( 'ABSPATH' ) || exit;
 	<p class="counterhand-hint"><?php esc_html_e( 'Nothing was connected. Try starting the connection again from your AI assistant.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
 	<div class="counterhand-actions counterhand-actions--single">
-		<a class="counterhand-button counterhand-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=counterhand-mcp-connect' ) ); ?>">
+		<a class="counterhand-button counterhand-button--secondary" href="<?php echo esc_url( AdminScreen::Connect->url() ); ?>">
 			<?php esc_html_e( 'Connection help', 'counterhand-mcp-for-woocommerce' ); ?>
 		</a>
 	</div>

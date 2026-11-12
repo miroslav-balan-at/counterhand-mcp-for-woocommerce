@@ -13,6 +13,7 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\ConnectTab;
 use Counterhand\Features\Settings\ClientGroup;
 
 defined( 'ABSPATH' ) || exit;
@@ -154,7 +155,15 @@ $counterhand_ordered_groups = array_values(
 			);
 			?>
 		</p>
-		<p><?php esc_html_e( 'Approved apps appear under Connected apps, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+		<p>
+		<?php
+			printf(
+				/* translators: %s: the name of the Connected apps view. */
+				esc_html__( 'Approved apps appear under %s, where you can revoke any of them.', 'counterhand-mcp-for-woocommerce' ),
+				esc_html( ConnectTab::Connections->label() )
+			);
+			?>
+			</p>
 	</footer>
 
 	<span class="screen-reader-text" role="status" id="counterhand-copy-status"></span>

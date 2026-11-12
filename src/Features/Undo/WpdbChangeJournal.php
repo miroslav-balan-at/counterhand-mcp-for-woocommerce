@@ -25,7 +25,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 		$key = bin2hex( random_bytes( 16 ) );
 
 		$saved = $wpdb->insert(
-			self::table(),
+			self::table_name(),
 			[
 				'change_key'   => $key,
 				'token_id'     => $agent->token->id,
@@ -46,7 +46,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function find( string $key, AuthenticatedAgent $agent ): ?RecordedChange {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -64,7 +64,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function recent( AuthenticatedAgent $agent, int $limit ): array {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -82,7 +82,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function claim( string $key ): bool {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 
 		return 1 === $wpdb->query(
 			$wpdb->prepare(
@@ -96,7 +96,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function release( string $key ): void {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 
 		$wpdb->query( $wpdb->prepare( "UPDATE {$table} SET undone_at = NULL WHERE change_key = %s", $key ) );
 	}
@@ -104,7 +104,7 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function made_by( int $user_id ): array {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d ORDER BY id DESC", $user_id ) );
 
 		return array_map(
@@ -120,19 +120,19 @@ final readonly class WpdbChangeJournal implements ChangeJournalInterface, Change
 	public function forget( int $user_id ): int {
 		global $wpdb;
 
-		return (int) $wpdb->delete( self::table(), [ 'user_id' => $user_id ], [ '%d' ] );
+		return (int) $wpdb->delete( self::table_name(), [ 'user_id' => $user_id ], [ '%d' ] );
 	}
 
 	public function purge_expired(): void {
 		global $wpdb;
 
-		$table = self::table();
+		$table = self::table_name();
 
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", self::oldest() ) );
 	}
 
 	/** A store updated without anyone visiting the admin has no table yet, and agents and cron reach it first. */
-	private static function table(): string {
+	private static function table_name(): string {
 		ChangeSchema::maybe_upgrade();
 
 		return ChangeSchema::table_name();

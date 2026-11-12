@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-11T22:32:26+00:00\n"
+"POT-Creation-Date: 2026-11-12T14:39:26+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -27,8 +27,8 @@ msgstr "https://counterhand.app"
 
 #. Description of the plugin
 #: counterhand-mcp-for-woocommerce.php
-msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
-msgstr "Mache deinen WooCommerce-Shop zu einem sicheren MCP-Server, damit KI-Assistenten wie Claude, ChatGPT und Cursor Produkte, Bestellungen, Kunden und Berichte abfragen und verwalten können — geschützt durch widerrufbare API-Token mit fein abgestuften Berechtigungen."
+msgid "Let Claude, ChatGPT and Cursor work your WooCommerce store through an MCP server with OAuth consent: you approve what each app may read and change, and every risky change."
+msgstr "Lass Claude, ChatGPT und Cursor über einen MCP-Server mit OAuth-Freigabe mit deinem WooCommerce-Shop arbeiten: Du gibst frei, was jede App lesen und ändern darf, und jede riskante Änderung."
 
 #. Author of the plugin
 #: counterhand-mcp-for-woocommerce.php
@@ -88,89 +88,93 @@ msgstr "Websiteweite SEO-Einstellungen ändern, auch Noindex für die gesamte We
 msgid "List backup jobs and recent backups, start a backup now or cancel a running one. A full backup can load the server for several minutes. Every call needs explicit confirmation."
 msgstr "Backup-Aufträge und letzte Backups auflisten, sofort ein Backup starten oder ein laufendes abbrechen. Ein vollständiges Backup kann den Server mehrere Minuten lang belasten. Jeder Aufruf muss ausdrücklich bestätigt werden."
 
-#: src/Features/ActionLog/ActionLogFeature.php:83
+#: src/Features/ActionLog/ActionLogFeature.php:85
 msgid "You are not allowed to clear the activity."
 msgstr "Du darfst die Aktivität nicht leeren."
 
-#: src/Features/ActionLog/ActionLogFeature.php:133
+#: src/Features/ActionLog/ActionLogFeature.php:135
 msgid "‹ Newer"
 msgstr "‹ Neuere"
 
-#: src/Features/ActionLog/ActionLogFeature.php:134
+#: src/Features/ActionLog/ActionLogFeature.php:136
 msgid "Older ›"
 msgstr "Ältere ›"
 
-#: src/Features/ActionLog/Admin/views/log.php:21
-msgid "Activity is not recorded. Turn on recording in Access to keep a record of every call. Emails and phone numbers are masked before anything is stored."
-msgstr "Die Aktivität wird nicht aufgezeichnet. Schalte die Aufzeichnung unter Zugriff ein, um jeden Aufruf festzuhalten. E-Mail-Adressen und Telefonnummern werden vor dem Speichern maskiert."
-
+#. translators: %s: the name of the plugin's Access screen.
 #: src/Features/ActionLog/Admin/views/log.php:26
+#, php-format
+msgid "Activity is not recorded. An administrator can turn on recording in %s to keep a record of every call. Emails and phone numbers are masked before anything is stored."
+msgstr "Die Aktivität wird nicht aufgezeichnet. Eine Administratorin oder ein Administrator kann die Aufzeichnung unter %s einschalten, um jeden Aufruf festzuhalten. E-Mail-Adressen und Telefonnummern werden vor dem Speichern maskiert."
+
+#: src/Features/ActionLog/Admin/views/log.php:34
 msgid "Activity cleared."
 msgstr "Aktivität geleert."
 
-#: src/Features/ActionLog/Admin/views/log.php:32
+#: src/Features/ActionLog/Admin/views/log.php:40
 msgid "Every call, newest first"
 msgstr "Jeder Aufruf, neueste zuerst"
 
 #. translators: %s: number of recorded calls.
-#: src/Features/ActionLog/Admin/views/log.php:37
+#: src/Features/ActionLog/Admin/views/log.php:45
 #, php-format
 msgid "%s recorded call"
 msgid_plural "%s recorded calls"
 msgstr[0] "%s aufgezeichneter Aufruf"
 msgstr[1] "%s aufgezeichnete Aufrufe"
 
-#: src/Features/ActionLog/Admin/views/log.php:47
+#: src/Features/ActionLog/Admin/views/log.php:56
 msgid "Clear activity"
 msgstr "Aktivität leeren"
 
-#: src/Features/ActionLog/Admin/views/log.php:55
+#: src/Features/ActionLog/Admin/views/log.php:65
 msgid "Time (UTC)"
 msgstr "Zeit (UTC)"
 
-#: src/Features/ActionLog/Admin/views/log.php:56
+#: src/Features/ActionLog/Admin/views/log.php:66
 #: src/Features/Privacy/PrivacyFeature.php:83
 msgid "Tool"
 msgstr "Tool"
 
-#: src/Features/ActionLog/Admin/views/log.php:57
-#: src/Features/OAuth/View/templates/consent.php:52
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:36
+#: src/Features/ActionLog/Admin/views/log.php:67
+#: src/Features/OAuth/View/templates/consent.php:53
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
 msgid "App"
 msgstr "App"
 
-#: src/Features/ActionLog/Admin/views/log.php:58
+#: src/Features/ActionLog/Admin/views/log.php:68
 msgid "Outcome"
 msgstr "Ergebnis"
 
-#: src/Features/ActionLog/Admin/views/log.php:59
+#: src/Features/ActionLog/Admin/views/log.php:69
 msgid "Details (personal data masked)"
 msgstr "Details (personenbezogene Daten maskiert)"
 
-#: src/Features/ActionLog/Admin/views/log.php:68
+#: src/Features/ActionLog/Admin/views/log.php:78
 msgid "Nothing recorded yet. The next call an app or the chat makes appears here."
 msgstr "Noch nichts aufgezeichnet. Der nächste Aufruf einer App oder des Chats erscheint hier."
 
-#: src/Features/ActionLog/Admin/views/log.php:69
-msgid "Nothing recorded. Turn on recording in Access to start."
-msgstr "Nichts aufgezeichnet. Schalte die Aufzeichnung unter Zugriff ein, um zu beginnen."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/ActionLog/Admin/views/log.php:82
+#, php-format
+msgid "Nothing recorded. An administrator can turn on recording in %s."
+msgstr "Nichts aufgezeichnet. Eine Administratorin oder ein Administrator kann die Aufzeichnung unter %s einschalten."
 
-#: src/Features/ActionLog/Admin/views/log.php:84
+#: src/Features/ActionLog/Admin/views/log.php:100
 #: src/Features/Playground/Rewrites/RewriteStatus.php:24
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: src/Features/ActionLog/Admin/views/log.php:85
+#: src/Features/ActionLog/Admin/views/log.php:101
 msgid "Succeeded"
 msgstr "Erfolgreich"
 
 #. translators: 1: current page number, 2: total number of pages.
-#: src/Features/ActionLog/Admin/views/log.php:102
+#: src/Features/ActionLog/Admin/views/log.php:118
 #, php-format
 msgid "Page %1$s of %2$s"
 msgstr "Seite %1$s von %2$s"
 
-#: src/Features/ActionLog/Admin/views/log.php:108
+#: src/Features/ActionLog/Admin/views/log.php:124
 msgid "Log pages"
 msgstr "Protokollseiten"
 
@@ -245,7 +249,7 @@ msgid "Order"
 msgstr "Bestellung"
 
 #: src/Features/McpApps/ViewText.php:25
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
 msgid "Status"
 msgstr "Status"
 
@@ -287,13 +291,19 @@ msgstr "Nachher"
 msgid "Empty"
 msgstr "Leer"
 
+#. translators: 1: the start of the change, 2: how many characters were left out.
+#: src/Features/McpServer/McpServer.php:438
+#, php-format
+msgid "%1$s… (%2$d more characters)"
+msgstr "%1$s… (%2$d weitere Zeichen)"
+
 #. translators: 1: tool name, 2: the arguments as JSON
-#: src/Features/McpServer/McpServer.php:431
+#: src/Features/McpServer/McpServer.php:464
 #, php-format
 msgid "Allow this change to the store? %1$s: %2$s"
 msgstr "Diese Änderung am Shop freigeben? %1$s: %2$s"
 
-#: src/Features/McpServer/McpServer.php:437
+#: src/Features/McpServer/McpServer.php:470
 msgid "Approve this change"
 msgstr "Diese Änderung freigeben"
 
@@ -322,22 +332,22 @@ msgstr "App konnte nicht überprüft werden"
 msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
 msgstr "Die Identität der App, die Zugriff anfordert, konnte nicht bestätigt werden — es wurde daher nichts verbunden. Das kann passieren, wenn die App falsch konfiguriert ist oder der Link verändert wurde."
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:152
-#: src/Features/OAuth/View/templates/denied.php:22
+#: src/Features/OAuth/AuthorizeEndpoint.php:168
+#: src/Features/OAuth/View/templates/denied.php:24
 msgid "Access not granted"
 msgstr "Zugriff nicht gewährt"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:198
-#: src/Features/OAuth/View/templates/connected.php:24
+#: src/Features/OAuth/AuthorizeEndpoint.php:199
+#: src/Features/OAuth/View/templates/connected.php:26
 msgid "Access approved"
 msgstr "Zugriff genehmigt"
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:235
+#: src/Features/OAuth/AuthorizeEndpoint.php:236
 msgid "Approve an app"
 msgstr "App genehmigen"
 
 #: src/Features/OAuth/View/ConsentAvailability.php:19
-#: src/Features/OAuth/View/templates/consent.php:97
+#: src/Features/OAuth/View/templates/consent.php:98
 msgid "Off for this store"
 msgstr "Für diesen Shop ausgeschaltet"
 
@@ -352,8 +362,8 @@ msgid "Switched off for this store. Switch the area on under %1$s › %2$s, then
 msgstr "Für diesen Shop ausgeschaltet. Schalte den Bereich unter %1$s › %2$s ein und verbinde diese App dann erneut."
 
 #: src/Features/OAuth/View/ConsentScope.php:36
-#: src/Features/OAuth/View/templates/consent.php:123
-#: src/Features/OAuth/View/templates/consent.php:159
+#: src/Features/OAuth/View/templates/consent.php:124
+#: src/Features/OAuth/View/templates/consent.php:160
 #: src/Features/Settings/SettingsFeature.php:77
 msgid "Counterhand MCP"
 msgstr "Counterhand MCP"
@@ -367,119 +377,106 @@ msgid "Connection problem"
 msgstr "Verbindungsproblem"
 
 #. translators: %s: name of the AI application
-#: src/Features/OAuth/View/templates/connected.php:30
+#: src/Features/OAuth/View/templates/connected.php:32
 #, php-format
 msgid "%s may now use your store with the permissions below."
 msgstr "%s darf deinen Shop jetzt mit den unten aufgeführten Berechtigungen nutzen."
 
-#: src/Features/OAuth/View/templates/connected.php:44
+#: src/Features/OAuth/View/templates/connected.php:46
 msgid "Return to your AI assistant to finish connecting. You can close this tab."
 msgstr "Kehre zu deinem KI-Assistenten zurück, um die Verbindung abzuschließen. Du kannst diesen Tab schließen."
 
-#: src/Features/OAuth/View/templates/connected.php:48
-msgid "View connections"
-msgstr "Verbindungen anzeigen"
-
-#: src/Features/OAuth/View/templates/consent.php:27
+#: src/Features/OAuth/View/templates/consent.php:28
 msgid "An app asks to connect"
 msgstr "Eine App möchte sich verbinden"
 
 #. translators: %s: name the app gives itself, e.g. "Claude".
-#: src/Features/OAuth/View/templates/consent.php:32
+#: src/Features/OAuth/View/templates/consent.php:33
 #, php-format
 msgid "Let %s work with your store?"
 msgstr "Darf %s mit deinem Shop arbeiten?"
 
-#: src/Features/OAuth/View/templates/consent.php:37
+#: src/Features/OAuth/View/templates/consent.php:38
 msgid "It can do what you tick below, and nothing else. You can take its access away at any time."
 msgstr "Sie kann tun, was du unten ankreuzt, und sonst nichts. Du kannst ihr den Zugriff jederzeit wieder entziehen."
 
-#: src/Features/OAuth/View/templates/consent.php:45
+#: src/Features/OAuth/View/templates/consent.php:46
 msgid "Approving as"
 msgstr "Genehmigung als"
 
-#: src/Features/OAuth/View/templates/consent.php:56
+#: src/Features/OAuth/View/templates/consent.php:57
 msgid "Address verified"
 msgstr "Adresse geprüft"
 
-#: src/Features/OAuth/View/templates/consent.php:60
+#: src/Features/OAuth/View/templates/consent.php:61
 msgid "Access goes to"
 msgstr "Der Zugriff geht an"
 
-#: src/Features/OAuth/View/templates/consent.php:66
+#: src/Features/OAuth/View/templates/consent.php:67
 msgid "This hands access to a program on your own computer. Approve only if you just started this connection yourself: any program there could ask under this app's name."
 msgstr "Damit erhält ein Programm auf deinem eigenen Computer Zugriff. Genehmige nur, wenn du diese Verbindung gerade selbst gestartet hast: Jedes Programm dort könnte unter dem Namen dieser App anfragen."
 
-#: src/Features/OAuth/View/templates/consent.php:79
+#: src/Features/OAuth/View/templates/consent.php:80
 msgid "Nothing this app asked for is currently switched on for this store, so there is nothing to approve yet."
 msgstr "Nichts von dem, was diese App angefragt hat, ist für diesen Shop derzeit eingeschaltet — es gibt also noch nichts zu genehmigen."
 
-#: src/Features/OAuth/View/templates/consent.php:84
+#: src/Features/OAuth/View/templates/consent.php:85
 msgid "Choose what it may do"
 msgstr "Wähle, was sie tun darf"
 
 #. translators: 1: how many permissions in this section can be granted, 2: how many it has.
-#: src/Features/OAuth/View/templates/consent.php:100
+#: src/Features/OAuth/View/templates/consent.php:101
 #, php-format
 msgid "%1$s of %2$s can be granted"
 msgstr "%1$s von %2$s können gewährt werden"
 
-#: src/Features/OAuth/View/templates/consent.php:115
+#: src/Features/OAuth/View/templates/consent.php:116
 msgid "Uncheck anything you would rather not grant. You can revoke the whole connection later."
 msgstr "Entferne den Haken bei allem, was du lieber nicht gewähren möchtest. Du kannst die gesamte Verbindung später widerrufen."
 
 #. translators: 1: link to the Access screen, named as in the menu, e.g. "Counterhand MCP › Access".
-#: src/Features/OAuth/View/templates/consent.php:122
+#: src/Features/OAuth/View/templates/consent.php:123
 #, php-format
 msgid "Grayed-out areas are switched off for this store. Switch them on under %1$s, then connect the app again — a connection only ever holds what it was approved with."
 msgstr "Ausgegraute Bereiche sind für diesen Shop ausgeschaltet. Schalte sie unter %1$s ein und verbinde die App dann erneut — eine Verbindung behält immer nur, was bei ihrer Genehmigung freigegeben wurde."
 
-#: src/Features/OAuth/View/templates/consent.php:131
+#: src/Features/OAuth/View/templates/consent.php:132
 msgid "This request includes permission to change store data. New products are always created as drafts for you to review."
 msgstr "Diese Anfrage umfasst die Berechtigung, Shop-Daten zu ändern. Neue Produkte werden immer als Entwürfe angelegt, damit du sie prüfen kannst."
 
-#: src/Features/OAuth/View/templates/consent.php:144
+#: src/Features/OAuth/View/templates/consent.php:145
 msgid "Approve access"
 msgstr "Zugriff genehmigen"
 
-#: src/Features/OAuth/View/templates/consent.php:148
+#: src/Features/OAuth/View/templates/consent.php:149
 msgid "Return to the app"
 msgstr "Zurück zur App"
 
-#: src/Features/OAuth/View/templates/consent.php:148
+#: src/Features/OAuth/View/templates/consent.php:149
 msgid "Deny"
 msgstr "Ablehnen"
 
 #. translators: %s: where connected apps are listed in the menu, e.g. "Counterhand MCP › Connect apps › Connected apps".
-#: src/Features/OAuth/View/templates/consent.php:158
+#: src/Features/OAuth/View/templates/consent.php:159
 #, php-format
 msgid "You can take this app's access away any time under %s."
 msgstr "Du kannst dieser App den Zugriff jederzeit unter %s wieder entziehen."
 
-#: src/Features/OAuth/View/templates/consent.php:159
-#: src/Features/Settings/ConnectTab.php:24
-msgid "Connected apps"
-msgstr "Verbundene Apps"
-
 #. translators: %s: name of the AI application
-#: src/Features/OAuth/View/templates/denied.php:28
+#: src/Features/OAuth/View/templates/denied.php:30
 #, php-format
 msgid "You declined the request from %s. Nothing was shared and no connection was created."
 msgstr "Du hast die Anfrage von %s abgelehnt. Es wurde nichts geteilt und keine Verbindung erstellt."
 
-#: src/Features/OAuth/View/templates/denied.php:34
+#: src/Features/OAuth/View/templates/denied.php:36
 msgid "You can close this tab. If you meant to allow it, start the connection again from your AI assistant."
 msgstr "Du kannst diesen Tab schließen. Wenn du den Zugriff eigentlich erlauben wolltest, starte die Verbindung erneut aus deinem KI-Assistenten."
 
-#: src/Features/OAuth/View/templates/denied.php:38
-msgid "Manage connections"
-msgstr "Verbindungen verwalten"
-
-#: src/Features/OAuth/View/templates/error.php:27
+#: src/Features/OAuth/View/templates/error.php:29
 msgid "Nothing was connected. Try starting the connection again from your AI assistant."
 msgstr "Es wurde nichts verbunden. Starte die Verbindung erneut aus deinem KI-Assistenten."
 
-#: src/Features/OAuth/View/templates/error.php:31
+#: src/Features/OAuth/View/templates/error.php:33
 msgid "Connection help"
 msgstr "Hilfe zur Verbindung"
 
@@ -600,74 +597,78 @@ msgid "You are not allowed to change the store notes."
 msgstr "Du darfst die Shop-Notizen nicht ändern."
 
 #: src/Features/Playground/ChatNotesFeature.php:60
-#: src/Features/Playground/PlaygroundFeature.php:139
+#: src/Features/Playground/PlaygroundFeature.php:140
 #: src/Features/Settings/SettingsFeature.php:204
 #: src/Features/Settings/SettingsFeature.php:218
 msgid "Not allowed."
 msgstr "Nicht erlaubt."
 
-#: src/Features/Playground/ModelConnect.php:79
+#: src/Features/Playground/ModelConnect.php:81
 msgid "You are not allowed to install plugins."
 msgstr "Du darfst keine Plugins installieren."
 
-#: src/Features/Playground/ModelConnect.php:87
+#: src/Features/Playground/ModelConnect.php:89
 msgid "Unknown provider plugin."
 msgstr "Unbekanntes Anbieter-Plugin."
 
-#: src/Features/Playground/ModelConnect.php:93
+#: src/Features/Playground/ModelConnect.php:95
 msgid "The provider plugin could not be installed. Try it from the Plugins screen."
 msgstr "Das Anbieter-Plugin konnte nicht installiert werden. Versuche es über die Plugin-Seite."
 
 #. translators: %s: provider plugin name
-#: src/Features/Playground/ModelConnect.php:106
+#: src/Features/Playground/ModelConnect.php:108
 #, php-format
 msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr "%s ist installiert. Letzter Schritt: Hinterlege deinen API-Schlüssel dort, wo WordPress ihn aufbewahrt."
 
-#: src/Features/Playground/ModelConnect.php:136
-#: src/Features/Playground/PlaygroundFeature.php:204
+#: src/Features/Playground/ModelConnect.php:143
+#: src/Features/Playground/PlaygroundFeature.php:205
 msgid "You are not allowed to change these settings."
 msgstr "Du darfst diese Einstellungen nicht ändern."
 
-#: src/Features/Playground/ModelConnect.php:144
+#: src/Features/Playground/ModelConnect.php:151
 msgid "The saved key was removed."
 msgstr "Der gespeicherte Schlüssel wurde entfernt."
 
-#: src/Features/Playground/ModelConnect.php:156
+#: src/Features/Playground/ModelConnect.php:163
 msgid "Choose a model provider first."
 msgstr "Wähle zuerst einen Modell-Anbieter."
 
-#: src/Features/Playground/ModelConnect.php:163
+#: src/Features/Playground/ModelConnect.php:177
 msgid "This provider needs an API key."
 msgstr "Dieser Anbieter benötigt einen API-Schlüssel."
 
 #: src/Features/Playground/ModelConnect.php:178
+msgid "Type the API key again: the provider or its address changed."
+msgstr "Gib den API-Schlüssel erneut ein: Der Anbieter oder seine Adresse hat sich geändert."
+
+#: src/Features/Playground/ModelConnect.php:195
 msgid "The model could not be reached. Check the details and try again."
 msgstr "Das Modell konnte nicht erreicht werden. Prüfe die Angaben und versuche es erneut."
 
 #. translators: 1: provider name, 2: model name
-#: src/Features/Playground/ModelConnect.php:188
+#: src/Features/Playground/ModelConnect.php:209
 #, php-format
 msgid "Connected to %1$s%2$s."
 msgstr "Verbunden mit %1$s%2$s."
 
-#: src/Features/Playground/PlaygroundFeature.php:114
+#: src/Features/Playground/PlaygroundFeature.php:115
 msgid "Type a message first."
 msgstr "Gib zuerst eine Nachricht ein."
 
-#: src/Features/Playground/PlaygroundFeature.php:130
+#: src/Features/Playground/PlaygroundFeature.php:131
 msgid "That approval has expired. Send your message again."
 msgstr "Diese Freigabe ist abgelaufen. Sende deine Nachricht noch einmal."
 
-#: src/Features/Playground/PlaygroundFeature.php:146
+#: src/Features/Playground/PlaygroundFeature.php:147
 msgid "No AI model is chosen yet. Choose one at the top of this screen."
 msgstr "Noch ist kein KI-Modell gewählt. Wähle oben auf dieser Seite eines."
 
-#: src/Features/Playground/PlaygroundFeature.php:188
+#: src/Features/Playground/PlaygroundFeature.php:189
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Die Chat-Anfrage ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
-#: src/Features/Playground/PlaygroundFeature.php:304
+#: src/Features/Playground/PlaygroundFeature.php:305
 msgid "Admin chat"
 msgstr "Admin-Chat"
 
@@ -753,81 +754,122 @@ msgstr "Beschreibung"
 msgid "Short description"
 msgstr "Kurzbeschreibung"
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:47
+#: src/Features/Playground/Rewrites/RewriteJobs.php:48
 msgid "WooCommerce’s Action Scheduler is not available, so rewrites cannot run in the background."
 msgstr "Der Action Scheduler von WooCommerce ist nicht verfügbar, daher können Texte nicht im Hintergrund umgeschrieben werden."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:51
-msgid "No AI model is chosen yet. Choose one on the Chat screen first."
-msgstr "Noch ist kein KI-Modell gewählt. Wähle zuerst im Chat eines."
+#. translators: %s: the name of the plugin's Chat screen.
+#: src/Features/Playground/Rewrites/RewriteJobs.php:54
+#, php-format
+msgid "No AI model is chosen yet. Choose one on %s first."
+msgstr "Noch ist kein KI-Modell gewählt. Wähle zuerst im %s eines."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:55
-msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in Access first."
-msgstr "Produkte kann die KI in diesem Shop nicht ändern. Schalte zuerst unter Zugriff „Darf ändern“ für Produkte ein."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/Rewrites/RewriteJobs.php:62
+#, php-format
+msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in %s first."
+msgstr "Produkte kann die KI in diesem Shop nicht ändern. Schalte zuerst unter %s „Darf ändern“ für Produkte ein."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:80
+#: src/Features/Playground/Rewrites/RewriteJobs.php:89
 msgid "Say what the new text should do differently."
 msgstr "Beschreibe, was der neue Text anders machen soll."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:106
+#: src/Features/Playground/Rewrites/RewriteJobs.php:115
 msgid "That category has no products."
 msgstr "Diese Kategorie enthält keine Produkte."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:141
+#: src/Features/Playground/Rewrites/RewriteJobs.php:147
+msgid "Writing this text stopped before it finished. Start a new job to try again."
+msgstr "Das Schreiben dieses Textes wurde vor dem Ende abgebrochen. Starte einen neuen Auftrag, um es erneut zu versuchen."
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:173
 msgid "The person who started this job can no longer manage the store."
 msgstr "Die Person, die diesen Auftrag gestartet hat, darf den Shop nicht mehr verwalten."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:148
-msgid "No model is connected any more."
-msgstr "Es ist kein Modell mehr verbunden."
+#: src/Features/Playground/Rewrites/RewriteJobs.php:180
+msgid "No AI model is chosen any more."
+msgstr "Es ist kein KI-Modell mehr gewählt."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:187
+#: src/Features/Playground/Rewrites/RewriteJobs.php:219
 msgid "The model returned no text."
 msgstr "Das Modell hat keinen Text geliefert."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:202
-#: src/Features/Playground/Rewrites/views/rewrites.php:166
-msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again."
-msgstr "Produkte kann die KI in diesem Shop nicht ändern. Schalte unter Zugriff „Darf ändern“ für Produkte ein und übernimm den Text dann erneut."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/Rewrites/RewriteJobs.php:238
+#: src/Features/Playground/Rewrites/views/rewrites.php:179
+#, php-format
+msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again."
+msgstr "Produkte kann die KI in diesem Shop nicht ändern. Schalte unter %s „Darf ändern“ für Produkte ein und übernimm den Text dann erneut."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:209
-#: src/Features/Playground/Rewrites/views/rewrites.php:149
+#: src/Features/Playground/Rewrites/RewriteJobs.php:248
+#: src/Features/Playground/Rewrites/views/rewrites.php:158
 msgid "This product no longer exists."
 msgstr "Dieses Produkt gibt es nicht mehr."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:228
+#: src/Features/Playground/Rewrites/RewriteJobs.php:267
 msgid "The product’s text changed after the model read it. Start a new job to rewrite the current text."
 msgstr "Der Produkttext wurde geändert, nachdem das Modell ihn gelesen hat. Starte einen neuen Auftrag, um den aktuellen Text umzuschreiben."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:253
+#: src/Features/Playground/Rewrites/RewriteJobs.php:292
 msgid "Applied without undo history, so this cannot be undone here."
 msgstr "Ohne Rückgängig-Verlauf übernommen, daher lässt sich das hier nicht rückgängig machen."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:323
+#: src/Features/Playground/Rewrites/RewriteJobs.php:362
 msgid "Products cannot be changed by AI on this store any more."
 msgstr "Produkte dürfen in diesem Shop nicht mehr von KI geändert werden."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:342
+#: src/Features/Playground/Rewrites/RewriteJobs.php:381
 msgid "The rewrite failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Das Umschreiben ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
+#: src/Features/Playground/Rewrites/RewriteJobs.php:426
+msgid "Undoing stopped before it finished. Check the product’s text."
+msgstr "Das Rückgängigmachen wurde vor dem Ende abgebrochen. Prüfe den Text des Produkts."
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:427
+msgid "Applying stopped before it finished. Check the product: its text may already be the new one."
+msgstr "Das Übernehmen wurde vor dem Ende abgebrochen. Prüfe das Produkt: Sein Text kann schon der neue sein."
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:27
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:40
+msgid "Counterhand rewrites"
+msgstr "Counterhand-Umschreibungen"
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:55
+msgid "Product texts rewritten by AI"
+msgstr "Von KI umgeschriebene Produkttexte"
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:59
+#: src/Features/Playground/Rewrites/views/rewrites.php:134
+msgid "Product"
+msgstr "Produkt"
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:63
+msgid "Instructions"
+msgstr "Anweisungen"
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:67
+#: src/Features/Privacy/PrivacyFeature.php:87
+msgid "Made at"
+msgstr "Vorgenommen am"
+
 #. translators: %d: number of products.
-#: src/Features/Playground/Rewrites/RewritesFeature.php:80
+#: src/Features/Playground/Rewrites/RewritesFeature.php:84
 #, php-format
 msgid "%d product is queued. Its new text appears below when the model has written it."
 msgid_plural "%d products are queued. Their new texts appear below as the model writes them."
 msgstr[0] "%d Produkt ist eingereiht. Sein neuer Text erscheint unten, sobald das Modell ihn geschrieben hat."
 msgstr[1] "%d Produkte sind eingereiht. Ihre neuen Texte erscheinen unten, sobald das Modell sie schreibt."
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:98
+#: src/Features/Playground/Rewrites/RewritesFeature.php:102
 msgid "Tick the products first."
 msgstr "Wähle zuerst die Produkte aus."
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:114
+#: src/Features/Playground/Rewrites/RewritesFeature.php:118
 msgid "Done. Each product’s status is below."
 msgstr "Erledigt. Den Stand jedes Produkts siehst du unten."
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:119
+#: src/Features/Playground/Rewrites/RewritesFeature.php:123
 msgid "You are not allowed to rewrite products."
 msgstr "Du darfst keine Produkttexte umschreiben."
 
@@ -863,193 +905,201 @@ msgstr "Verworfen"
 msgid "Start a rewrite"
 msgstr "Texte umschreiben lassen"
 
-#. translators: %d: maximum number of products in one job.
+#. translators: 1: the name of the plugin's Chat screen, 2: maximum number of products in one job.
 #: src/Features/Playground/Rewrites/views/rewrites.php:40
 #, php-format
-msgid "The model connected on the Chat screen writes a new text for up to %d products in the category. Nothing changes on your store until you approve a text below."
-msgstr "Das im Chat verbundene Modell schreibt einen neuen Text für bis zu %d Produkte der Kategorie. In deinem Shop ändert sich nichts, bis du unten einen Text freigibst."
+msgid "The AI model chosen on %1$s writes a new text for up to %2$d products in the category. Nothing changes on your store until you approve a text below."
+msgstr "Das im %1$s gewählte KI-Modell schreibt einen neuen Text für bis zu %2$d Produkte der Kategorie. In deinem Shop ändert sich nichts, bis du unten einen Text freigibst."
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:52
-msgid "Undo history is off, so applied texts cannot be undone here. To keep that option, switch on Can read and Can change for Undo history in Access."
-msgstr "Der Rückgängig-Verlauf ist aus, übernommene Texte lassen sich hier also nicht rückgängig machen. Damit das möglich bleibt, schalte unter Zugriff „Darf lesen“ und „Darf ändern“ für den Rückgängig-Verlauf ein."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/Rewrites/views/rewrites.php:57
+#, php-format
+msgid "Undo history is off, so applied texts cannot be undone here. To keep that option, switch on Can read and Can change for Undo history in %s."
+msgstr "Der Rückgängig-Verlauf ist aus, übernommene Texte lassen sich hier also nicht rückgängig machen. Damit das möglich bleibt, schalte unter %s „Darf lesen“ und „Darf ändern“ für den Rückgängig-Verlauf ein."
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:58
+#: src/Features/Playground/Rewrites/views/rewrites.php:67
 msgid "Category"
 msgstr "Kategorie"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:73
+#: src/Features/Playground/Rewrites/views/rewrites.php:82
 msgid "Text to rewrite"
 msgstr "Umzuschreibender Text"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:81
+#: src/Features/Playground/Rewrites/views/rewrites.php:90
 msgid "What should the new text do differently?"
 msgstr "Was soll der neue Text anders machen?"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:82
+#: src/Features/Playground/Rewrites/views/rewrites.php:91
 msgid "For example: shorter, friendlier, and start with what the product is for."
 msgstr "Zum Beispiel: kürzer, freundlicher und zuerst sagen, wofür das Produkt da ist."
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:84
+#: src/Features/Playground/Rewrites/views/rewrites.php:93
 msgid "Write new texts"
 msgstr "Neue Texte schreiben"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:94
+#: src/Features/Playground/Rewrites/views/rewrites.php:103
 msgid "Review"
 msgstr "Prüfen"
 
 #. translators: 1: tokens sent to the model, 2: tokens the model wrote.
-#: src/Features/Playground/Rewrites/views/rewrites.php:99
+#: src/Features/Playground/Rewrites/views/rewrites.php:108
 #, php-format
 msgid "Model usage so far: %1$s tokens in, %2$s tokens out."
 msgstr "Modellverbrauch bisher: %1$s Tokens rein, %2$s Tokens raus."
 
 #. translators: %d: number of products still waiting for the model.
-#: src/Features/Playground/Rewrites/views/rewrites.php:111
+#: src/Features/Playground/Rewrites/views/rewrites.php:120
 #, php-format
 msgid "Refresh (%d waiting)"
 msgstr "Aktualisieren (%d warten)"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:124
+#: src/Features/Playground/Rewrites/views/rewrites.php:133
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:125
-msgid "Product"
-msgstr "Produkt"
-
-#: src/Features/Playground/Rewrites/views/rewrites.php:126
+#: src/Features/Playground/Rewrites/views/rewrites.php:135
 msgid "Current text"
 msgstr "Aktueller Text"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:127
+#: src/Features/Playground/Rewrites/views/rewrites.php:136
 msgid "New text"
 msgstr "Neuer Text"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:151
+#: src/Features/Playground/Rewrites/views/rewrites.php:160
 msgid "Edit product"
 msgstr "Produkt bearbeiten"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:161
+#: src/Features/Playground/Rewrites/views/rewrites.php:170
 msgid "Apply ticked texts"
 msgstr "Ausgewählte Texte übernehmen"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:162
+#: src/Features/Playground/Rewrites/views/rewrites.php:171
 msgid "Discard ticked texts"
 msgstr "Ausgewählte Texte verwerfen"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:163
+#: src/Features/Playground/Rewrites/views/rewrites.php:172
 msgid "Undo ticked texts"
 msgstr "Ausgewählte Texte rückgängig machen"
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:168
+#: src/Features/Playground/Rewrites/views/rewrites.php:185
 msgid "Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong."
 msgstr "Übernehmen schreibt nur ausgewählte Texte, die zur Prüfung bereit sind, Verwerfen verwirft sie, und Rückgängig stellt ausgewählte, schon übernommene Texte wieder her. Lies jeden Text vorher: Das Modell kann Fakten falsch wiedergeben."
 
-#: src/Features/Playground/views/chat.php:46
-msgid "No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in Access."
-msgstr "Kein Bereich ist eingeschaltet, der Assistent kann also nichts lesen oder ändern. Schalte unter Zugriff mindestens einen Bereich ein."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/views/chat.php:52
+#, php-format
+msgid "No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in %s."
+msgstr "Kein Bereich ist eingeschaltet, der Assistent kann also nichts lesen oder ändern. Schalte unter %s mindestens einen Bereich ein."
 
-#: src/Features/Playground/views/chat.php:63
+#. translators: %s: the name of the plugin's Chat screen.
+#: src/Features/Playground/views/chat.php:73
+#, php-format
+msgid "No AI model is chosen yet. An administrator chooses one on %s."
+msgstr "Noch ist kein KI-Modell gewählt. Eine Administratorin oder ein Administrator wählt eines unter %s."
+
+#: src/Features/Playground/views/chat.php:82
 msgid "Ask about your store"
 msgstr "Frag etwas über deinen Shop"
 
-#: src/Features/Playground/views/chat.php:64
+#: src/Features/Playground/views/chat.php:83
 msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
 msgstr "Ganz normale Sprache genügt – der Assistent schlägt die Antwort mit denselben Tools nach, die auch eine externe KI-App verwenden würde."
 
-#: src/Features/Playground/views/chat.php:75
+#: src/Features/Playground/views/chat.php:94
 msgid "Saved questions"
 msgstr "Gespeicherte Fragen"
 
-#: src/Features/Playground/views/chat.php:79
+#: src/Features/Playground/views/chat.php:98
 #: src/Features/Settings/ScreenAssets.php:149
 msgid "Forget this question"
 msgstr "Diese Frage entfernen"
 
-#: src/Features/Playground/views/chat.php:90
+#: src/Features/Playground/views/chat.php:109
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/Features/Playground/views/chat.php:96
+#: src/Features/Playground/views/chat.php:115
 msgid "Ask about products, orders, customers or sales…"
 msgstr "Frag nach Produkten, Bestellungen, Kunden oder Verkäufen …"
 
-#: src/Features/Playground/views/chat.php:97
+#: src/Features/Playground/views/chat.php:116
 msgid "Choose an AI model above, then ask your first question here…"
 msgstr "Wähle oben ein KI-Modell und stell dann hier deine erste Frage…"
 
-#: src/Features/Playground/views/chat.php:102
+#: src/Features/Playground/views/chat.php:121
 msgid "Save question"
 msgstr "Frage speichern"
 
-#: src/Features/Playground/views/chat.php:105
+#: src/Features/Playground/views/chat.php:124
 msgid "Send"
 msgstr "Senden"
 
 #. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/chat.php:116
+#: src/Features/Playground/views/chat.php:135
 #, php-format
 msgid "%1$s to send · %2$s for a new line"
 msgstr "%1$s zum Senden · %2$s für eine neue Zeile"
 
-#: src/Features/Playground/views/chat.php:117
+#: src/Features/Playground/views/chat.php:136
 msgid "Enter"
 msgstr "Enter"
 
-#: src/Features/Playground/views/chat.php:118
+#: src/Features/Playground/views/chat.php:137
 msgid "Shift+Enter"
 msgstr "Umschalt+Enter"
 
-#: src/Features/Playground/views/chat.php:133
+#: src/Features/Playground/views/chat.php:153
 msgid "Change"
 msgstr "Ändern"
 
-#: src/Features/Playground/views/chat.php:138
+#: src/Features/Playground/views/chat.php:159
 msgid "Clear conversation"
 msgstr "Unterhaltung löschen"
 
-#: src/Features/Playground/views/chat.php:148
-msgid "The assistant uses the same tools an AI app would, limited to the areas switched on in Access. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
-msgstr "Der Assistent nutzt dieselben Werkzeuge wie eine KI-App, beschränkt auf die unter Zugriff eingeschalteten Bereiche. Shop-Daten, die der Assistent liest – auch Namen, Adressen und Bestellungen von Kunden –, gehen an den gewählten Modellanbieter. Prüfe, ob du mit ihm einen Auftragsverarbeitungsvertrag brauchst."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/views/chat.php:172
+#, php-format
+msgid "The assistant uses the same tools an AI app would, limited to the areas switched on in %s. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
+msgstr "Der Assistent nutzt dieselben Werkzeuge wie eine KI-App, beschränkt auf die unter %s eingeschalteten Bereiche. Shop-Daten, die der Assistent liest – auch Namen, Adressen und Bestellungen von Kunden –, gehen an den gewählten Modellanbieter. Prüfe, ob du mit ihm einen Auftragsverarbeitungsvertrag brauchst."
 
 #. translators: %d: how many tools the chat can currently call.
-#: src/Features/Playground/views/partial-chat-tools.php:41
+#: src/Features/Playground/views/partial-chat-tools.php:44
 #, php-format
 msgid "%d tool"
 msgid_plural "%d tools"
 msgstr[0] "%d Tool"
 msgstr[1] "%d Tools"
 
-#: src/Features/Playground/views/partial-chat-tools.php:46
+#: src/Features/Playground/views/partial-chat-tools.php:49
 msgid "available to chat"
 msgstr "für den Chat verfügbar"
 
 #. translators: %d: the most tools one message can carry.
-#: src/Features/Playground/views/partial-chat-tools.php:53
+#: src/Features/Playground/views/partial-chat-tools.php:56
 #, php-format
 msgid "over the %d-tool limit"
 msgstr "über dem Limit von %d Tools"
 
-#. translators: %d: how many further tools are waiting on a store setting.
-#: src/Features/Playground/views/partial-chat-tools.php:63
+#. translators: 1: how many further tools are waiting on a store setting, 2: the name of the Access screen.
+#: src/Features/Playground/views/partial-chat-tools.php:66
 #, php-format
-msgid "%d more waiting on Settings"
-msgid_plural "%d more waiting on Settings"
-msgstr[0] "%d weiteres wartet auf die Einstellungen"
-msgstr[1] "%d weitere warten auf die Einstellungen"
+msgid "%1$d more waiting on %2$s"
+msgid_plural "%1$d more waiting on %2$s"
+msgstr[0] "%1$d weiteres wartet auf %2$s"
+msgstr[1] "%1$d weitere warten auf %2$s"
 
-#: src/Features/Playground/views/partial-chat-tools.php:76
+#: src/Features/Playground/views/partial-chat-tools.php:81
 msgid "Each area you pick is described to the model on every message, so keep it to what you actually ask about."
 msgstr "Jeder Bereich, den du auswählst, wird dem Modell bei jeder Nachricht beschrieben – beschränke dich also auf das, wonach du tatsächlich fragst."
 
 #. translators: 1: how many tools are selected, 2: the per-message maximum.
-#: src/Features/Playground/views/partial-chat-tools.php:87
+#: src/Features/Playground/views/partial-chat-tools.php:92
 #, php-format
 msgid "Too many areas picked: %1$d tools, and one message can carry %2$d."
 msgstr "Zu viele Bereiche ausgewählt: %1$d Tools, aber eine Nachricht kann nur %2$d übertragen."
 
 #. translators: %d: how many tools have to go.
-#: src/Features/Playground/views/partial-chat-tools.php:97
+#: src/Features/Playground/views/partial-chat-tools.php:102
 #, php-format
 msgid "Every message fails until you untick at least %d tool below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
 msgid_plural "Every message fails until you untick at least %d tools below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
@@ -1057,47 +1107,49 @@ msgstr[0] "Jede Nachricht schlägt fehl, bis du unten mindestens %d Tool abwähl
 msgstr[1] "Jede Nachricht schlägt fehl, bis du unten mindestens %d Tools abwählst. Ab dieser Menge greift ein Modell ohnehin öfter zum falschen Tool – und die Definitionen kosten mehr als die Unterhaltung selbst. Das Abwählen hier schränkt nur den Chat ein; deine anderen KI-Apps behalten alles."
 
 #. translators: %s: comma-separated list of area names.
-#: src/Features/Playground/views/partial-chat-tools.php:114
+#: src/Features/Playground/views/partial-chat-tools.php:119
 #, php-format
 msgid "%s is switched off for the whole store"
 msgstr "%s ist für den gesamten Shop ausgeschaltet"
 
-#: src/Features/Playground/views/partial-chat-tools.php:122
-msgid "Picking it here is remembered, but the chat cannot reach it until it is switched on in Access. Access decides what every app may reach; this panel only narrows it further for the chat."
-msgstr "Die Auswahl hier bleibt gespeichert, aber der Chat erreicht den Bereich erst, wenn er unter Zugriff eingeschaltet ist. Zugriff entscheidet, was jede App erreichen darf; diese Leiste schränkt das für den Chat nur weiter ein."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/Playground/views/partial-chat-tools.php:130
+#, php-format
+msgid "Picking it here is remembered, but the chat cannot reach it until it is switched on in %1$s. %1$s decides what every app may reach; this panel only narrows it further for the chat."
+msgstr "Die Auswahl hier bleibt gespeichert, aber der Chat erreicht den Bereich erst, wenn er unter %1$s eingeschaltet ist. %1$s entscheidet, was jede App erreichen darf; diese Leiste schränkt das für den Chat nur weiter ein."
 
-#. translators: %s: name of an admin screen, e.g. "Settings".
-#: src/Features/Playground/views/partial-chat-tools.php:138
+#. translators: %s: name of an admin screen, e.g. "Access".
+#: src/Features/Playground/views/partial-chat-tools.php:149
 #, php-format
 msgid "Switch it on in %s"
 msgstr "In %s einschalten"
 
 #. translators: %s: comma-separated list of area names.
-#: src/Features/Playground/views/partial-chat-tools.php:154
+#: src/Features/Playground/views/partial-chat-tools.php:165
 #, php-format
 msgid "The chat can read but not change %s — writing is still switched off for it on this store."
 msgstr "Der Chat kann %s lesen, aber nicht ändern – Schreiben ist dafür in diesem Shop noch ausgeschaltet."
 
 #. translators: %d: how many tools this area would add.
-#: src/Features/Playground/views/partial-chat-tools.php:183
+#: src/Features/Playground/views/partial-chat-tools.php:194
 #, php-format
 msgid "%d tool off"
 msgid_plural "%d tools off"
 msgstr[0] "%d Tool aus"
 msgstr[1] "%d Tools aus"
 
-#: src/Features/Playground/views/partial-chat-tools.php:195
+#: src/Features/Playground/views/partial-chat-tools.php:209
 msgid "Save areas"
 msgstr "Bereiche speichern"
 
 #: src/Features/Playground/views/partial-model-chooser.php:35
-#: src/Features/Settings/DashboardScreen.php:83
+#: src/Features/Settings/OverviewScreen.php:83
 msgid "Choose an AI model"
 msgstr "Ein KI-Modell wählen"
 
 #: src/Features/Playground/views/partial-model-chooser.php:37
-msgid "The chat, Rewrites and the weekly summary all use the model you choose here. The provider bills you for what you use; the chat shows each conversation's tokens."
-msgstr "Der Chat, das Umschreiben von Texten und die wöchentliche Zusammenfassung nutzen das Modell, das du hier wählst. Der Anbieter rechnet ab, was du nutzt; der Chat zeigt die Tokens jedes Gesprächs."
+msgid "The chat, Rewrites and the weekly report all use the model you choose here. The provider bills you for what you use; the chat shows each conversation's tokens."
+msgstr "Der Chat, das Umschreiben von Texten und der Wochenbericht nutzen das Modell, das du hier wählst. Der Anbieter rechnet ab, was du nutzt; der Chat zeigt die Tokens jedes Gesprächs."
 
 #: src/Features/Playground/views/partial-model-chooser.php:44
 msgid "Use WordPress's AI connection"
@@ -1274,8 +1326,8 @@ msgid "No notes yet. Only an administrator can add them."
 msgstr "Noch keine Notizen. Nur ein Administrator kann welche hinzufügen."
 
 #: src/Features/Privacy/PrivacyFeature.php:39
-msgid "AI assistants you connect to this store can read and change the data you grant them, which can include customers' names, addresses, orders and messages. That data goes to the assistant's provider under your agreement with them. If you use the built-in chat, store data you ask about is sent to the AI provider you configured. A log of assistant actions, with names, addresses, email addresses and phone numbers masked, is kept if you switch it on, and always for maintenance, settings, payment and refund actions. If you grant undo history, the previous values of changed catalog, content, shipping and tax records are kept for 30 days. Check whether you need a data processing agreement with your AI providers, and describe this use in your own words."
-msgstr "KI-Assistenten, die du mit diesem Shop verbindest, können die freigegebenen Daten lesen und ändern, darunter Namen, Adressen, Bestellungen und Nachrichten von Kunden. Diese Daten gehen unter deiner Vereinbarung mit ihm an den Anbieter des Assistenten. Wenn du den integrierten Chat nutzt, gehen Shop-Daten, nach denen du fragst, an den eingestellten KI-Anbieter. Ein Protokoll der Assistenten-Aktionen, mit maskierten Namen, Adressen, E-Mail-Adressen und Telefonnummern, wird geführt, wenn du es einschaltest, und immer für Wartungs-, Einstellungs-, Zahlungs- und Rückerstattungsaktionen. Wenn du den Rückgängig-Verlauf freigibst, werden die vorherigen Werte geänderter Katalog-, Inhalts-, Versand- und Steuerdaten 30 Tage aufbewahrt. Prüfe, ob du mit deinen KI-Anbietern einen Auftragsverarbeitungsvertrag brauchst, und beschreibe diese Nutzung mit deinen eigenen Worten."
+msgid "AI assistants you connect to this store can read and change the data you grant them, which can include customers' names, addresses, orders and messages. That data goes to the assistant's provider under your agreement with them. If you choose an AI model, store data is sent to its provider: what you ask about in the built-in chat, the product texts you ask it to rewrite, and, for people who asked for the weekly report, last week's sales figures for its summary. A log of assistant actions, with names, addresses, email addresses and phone numbers masked, is kept if you switch it on, and always for maintenance, settings, payment and refund actions. If you grant undo history, the previous values of changed catalog, content, shipping and tax records are kept for 30 days. Rewrite jobs, with the instructions given, are kept for 30 days. Check whether you need a data processing agreement with your AI providers, and describe this use in your own words."
+msgstr "KI-Assistenten, die du mit diesem Shop verbindest, können die freigegebenen Daten lesen und ändern, darunter Namen, Adressen, Bestellungen und Nachrichten von Kunden. Diese Daten gehen unter deiner Vereinbarung mit ihm an den Anbieter des Assistenten. Wenn du ein KI-Modell wählst, gehen Shop-Daten an dessen Anbieter: wonach du im integrierten Chat fragst, die Produkttexte, die du umschreiben lässt, und für alle, die den Wochenbericht bestellt haben, die Umsatzzahlen der Vorwoche für dessen Zusammenfassung. Ein Protokoll der Assistenten-Aktionen, mit maskierten Namen, Adressen, E-Mail-Adressen und Telefonnummern, wird geführt, wenn du es einschaltest, und immer für Wartungs-, Einstellungs-, Zahlungs- und Rückerstattungsaktionen. Wenn du den Rückgängig-Verlauf freigibst, werden die vorherigen Werte geänderter Katalog-, Inhalts-, Versand- und Steuerdaten 30 Tage aufbewahrt. Aufträge zum Umschreiben werden samt ihren Anweisungen 30 Tage aufbewahrt. Prüfe, ob du mit deinen KI-Anbietern einen Auftragsverarbeitungsvertrag brauchst, und beschreibe diese Nutzung mit deinen eigenen Worten."
 
 #: src/Features/Privacy/PrivacyFeature.php:51
 #: src/Features/Privacy/PrivacyFeature.php:64
@@ -1285,10 +1337,6 @@ msgstr "Counterhand Rückgängig-Verlauf"
 #: src/Features/Privacy/PrivacyFeature.php:79
 msgid "Changes made through an AI connection"
 msgstr "Über eine KI-Verbindung vorgenommene Änderungen"
-
-#: src/Features/Privacy/PrivacyFeature.php:87
-msgid "Made at"
-msgstr "Vorgenommen am"
 
 #: src/Features/Privacy/PrivacyFeature.php:91
 msgid "Fields"
@@ -1392,8 +1440,8 @@ msgstr "Der Endpunkt konnte nicht erreicht werden: %s"
 #. translators: %d: HTTP status code
 #: src/Features/Settings/ConnectReadiness.php:112
 #, php-format
-msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work."
-msgstr "Der Endpunkt hat mit Status %d statt einer OAuth-Challenge geantwortet. Prüfe, ob der Connector aktiviert ist und die Permalinks funktionieren."
+msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that AI access is on and that permalinks work."
+msgstr "Der Endpunkt hat mit Status %d statt einer OAuth-Challenge geantwortet. Prüfe, ob der KI-Zugriff an ist und die Permalinks funktionieren."
 
 #. translators: %s: error message
 #: src/Features/Settings/ConnectReadiness.php:126
@@ -1441,63 +1489,9 @@ msgstr "Der Hostname des Shops hat keine öffentliche Domain-Endung und kann dah
 msgid "Add an app"
 msgstr "App hinzufügen"
 
-#: src/Features/Settings/DashboardScreen.php:63
-msgid "Choose what AI may reach"
-msgstr "Wähle, was die KI erreichen darf"
-
-#. translators: %s: number of store areas AI may read.
-#: src/Features/Settings/DashboardScreen.php:66
-#, php-format
-msgid "%s area can be read."
-msgid_plural "%s areas can be read."
-msgstr[0] "%s Bereich kann gelesen werden."
-msgstr[1] "%s Bereiche können gelesen werden."
-
-#: src/Features/Settings/DashboardScreen.php:67
-msgid "No area is switched on yet."
-msgstr "Noch ist kein Bereich eingeschaltet."
-
-#: src/Features/Settings/DashboardScreen.php:69
-#: src/Features/Settings/views/dashboard.php:129
-msgid "Choose areas"
-msgstr "Bereiche auswählen"
-
-#: src/Features/Settings/DashboardScreen.php:73
-#: src/Features/Settings/DashboardScreen.php:79
-msgid "Connect an app"
-msgstr "Eine App verbinden"
-
-#. translators: %s: number of connected AI apps.
-#: src/Features/Settings/DashboardScreen.php:76
-#, php-format
-msgid "%s app is connected."
-msgid_plural "%s apps are connected."
-msgstr[0] "%s App ist verbunden."
-msgstr[1] "%s Apps sind verbunden."
-
-#: src/Features/Settings/DashboardScreen.php:77
-msgid "Claude, ChatGPT or Cursor, in two steps."
-msgstr "Claude, ChatGPT oder Cursor, in zwei Schritten."
-
-#: src/Features/Settings/DashboardScreen.php:84
-msgid "The chat, Rewrites and the weekly summary need one."
-msgstr "Der Chat, das Umschreiben von Texten und die wöchentliche Zusammenfassung brauchen eins."
-
-#: src/Features/Settings/DashboardScreen.php:86
-msgid "Choose a model"
-msgstr "Modell wählen"
-
-#: src/Features/Settings/DashboardScreen.php:90
-msgid "Record activity"
-msgstr "Aktivität aufzeichnen"
-
-#: src/Features/Settings/DashboardScreen.php:91
-msgid "See every call AI makes, with personal details masked."
-msgstr "Sieh jeden Aufruf der KI, mit maskierten persönlichen Daten."
-
-#: src/Features/Settings/DashboardScreen.php:93
-msgid "Turn on"
-msgstr "Einschalten"
+#: src/Features/Settings/ConnectTab.php:24
+msgid "Connected apps"
+msgstr "Verbundene Apps"
 
 #: src/Features/Settings/McpClient.php:81
 msgid "Claude"
@@ -1655,8 +1649,66 @@ msgstr "Der Client erkennt die Autorisierung automatisch (OAuth 2.1 mit PKCE)."
 msgid "Approve the areas it may reach on this store's consent screen."
 msgstr "Genehmige auf der Freigabeseite dieses Shops die Bereiche, die sie erreichen darf."
 
+#: src/Features/Settings/OverviewScreen.php:63
+msgid "Choose what AI may reach"
+msgstr "Wähle, was die KI erreichen darf"
+
+#. translators: %s: number of store areas AI may read.
+#: src/Features/Settings/OverviewScreen.php:66
+#, php-format
+msgid "%s area can be read."
+msgid_plural "%s areas can be read."
+msgstr[0] "%s Bereich kann gelesen werden."
+msgstr[1] "%s Bereiche können gelesen werden."
+
+#: src/Features/Settings/OverviewScreen.php:67
+msgid "No area is switched on yet."
+msgstr "Noch ist kein Bereich eingeschaltet."
+
+#: src/Features/Settings/OverviewScreen.php:69
+#: src/Features/Settings/views/overview.php:129
+msgid "Choose areas"
+msgstr "Bereiche auswählen"
+
+#: src/Features/Settings/OverviewScreen.php:73
+#: src/Features/Settings/OverviewScreen.php:79
+msgid "Connect an app"
+msgstr "Eine App verbinden"
+
+#. translators: %s: number of connected AI apps.
+#: src/Features/Settings/OverviewScreen.php:76
+#, php-format
+msgid "%s app is connected."
+msgid_plural "%s apps are connected."
+msgstr[0] "%s App ist verbunden."
+msgstr[1] "%s Apps sind verbunden."
+
+#: src/Features/Settings/OverviewScreen.php:77
+msgid "Claude, ChatGPT or Cursor, in two steps."
+msgstr "Claude, ChatGPT oder Cursor, in zwei Schritten."
+
+#: src/Features/Settings/OverviewScreen.php:84
+msgid "The chat, Rewrites and the weekly report need one."
+msgstr "Der Chat, das Umschreiben von Texten und der Wochenbericht brauchen eins."
+
+#: src/Features/Settings/OverviewScreen.php:86
+msgid "Choose a model"
+msgstr "Modell wählen"
+
+#: src/Features/Settings/OverviewScreen.php:90
+msgid "Record activity"
+msgstr "Aktivität aufzeichnen"
+
+#: src/Features/Settings/OverviewScreen.php:91
+msgid "See every call AI makes, with personal details masked."
+msgstr "Sieh jeden Aufruf der KI, mit maskierten persönlichen Daten."
+
+#: src/Features/Settings/OverviewScreen.php:93
+msgid "Turn on"
+msgstr "Einschalten"
+
 #: src/Features/Settings/ScreenAssets.php:90
-#: src/Features/Settings/views/connect.php:57
+#: src/Features/Settings/views/connect.php:58
 msgid "Checking the store…"
 msgstr "Shop wird geprüft…"
 
@@ -1669,7 +1721,7 @@ msgid "Waiting for the app to connect…"
 msgstr "Warte auf die Verbindung der App…"
 
 #: src/Features/Settings/ScreenAssets.php:93
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:39
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:40
 msgid "Connected"
 msgstr "Verbunden"
 
@@ -1791,168 +1843,53 @@ msgstr "KI-Zugriff an"
 msgid "AI access off"
 msgstr "KI-Zugriff aus"
 
-#: src/Features/Settings/views/connect-navigation.php:15
-msgid "Connect AI apps"
-msgstr "KI-Apps verbinden"
-
-#: src/Features/Settings/views/connect.php:38
+#: src/Features/Settings/views/connect.php:39
 msgid "Your store address"
 msgstr "Deine Shop-Adresse"
 
-#: src/Features/Settings/views/connect.php:40
+#: src/Features/Settings/views/connect.php:41
 msgid "Paste this one URL into any AI app. The app identifies itself with its own published address, so there is no token to create and nothing to copy back — you just approve what it may do."
 msgstr "Füge diese eine URL in eine beliebige KI-App ein. Die App identifiziert sich mit ihrer eigenen veröffentlichten Adresse — du musst also keinen Schlüssel erstellen und nichts zurückkopieren. Du bestätigst nur, was sie tun darf."
 
-#: src/Features/Settings/views/connect.php:49
-#: src/Features/Settings/views/connect.php:127
+#: src/Features/Settings/views/connect.php:50
+#: src/Features/Settings/views/connect.php:128
 msgid "Copied!"
 msgstr "Kopiert!"
 
-#: src/Features/Settings/views/connect.php:50
-#: src/Features/Settings/views/connect.php:128
+#: src/Features/Settings/views/connect.php:51
+#: src/Features/Settings/views/connect.php:129
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/Features/Settings/views/connect.php:59
+#: src/Features/Settings/views/connect.php:60
 msgid "Check again"
 msgstr "Erneut prüfen"
 
-#: src/Features/Settings/views/connect.php:82
+#: src/Features/Settings/views/connect.php:83
 msgid "✓ Connected"
 msgstr "✓ Verbunden"
 
-#: src/Features/Settings/views/connect.php:137
+#: src/Features/Settings/views/connect.php:138
 msgid "Official setup documentation"
 msgstr "Offizielle Einrichtungsdokumentation"
 
 #. translators: %s: fallback REST URL
-#: src/Features/Settings/views/connect.php:152
+#: src/Features/Settings/views/connect.php:153
 #, php-format
 msgid "If your host breaks pretty permalinks, the same endpoint also answers at %s."
 msgstr "Falls dein Hoster sprechende Permalinks nicht unterstützt, ist derselbe Endpunkt auch unter %s erreichbar."
 
-#: src/Features/Settings/views/connect.php:157
-msgid "Approved apps appear under Connected apps, where you can revoke any of them."
-msgstr "Genehmigte Apps erscheinen unter Verbundene Apps, wo du jede wieder trennen kannst."
-
-#: src/Features/Settings/views/dashboard.php:34
-msgid "Finish setting up"
-msgstr "Einrichtung abschließen"
-
-#. translators: 1: steps done, 2: all steps.
-#: src/Features/Settings/views/dashboard.php:39
+#. translators: %s: the name of the Connected apps view.
+#: src/Features/Settings/views/connect.php:162
 #, php-format
-msgid "%1$s of %2$s done. Nothing here changes the shop for customers."
-msgstr "%1$s von %2$s erledigt. Nichts davon ändert den Shop für Kunden."
+msgid "Approved apps appear under %s, where you can revoke any of them."
+msgstr "Genehmigte Apps erscheinen unter %s, wo du jede wieder trennen kannst."
 
-#: src/Features/Settings/views/dashboard.php:57
-msgid "Done"
-msgstr "Erledigt"
-
-#: src/Features/Settings/views/dashboard.php:61
-msgid "An administrator can set this."
-msgstr "Das kann ein Administrator einstellen."
-
-#: src/Features/Settings/views/dashboard.php:73
-#: src/Features/Settings/views/settings.php:37
-msgid "AI access"
-msgstr "KI-Zugriff"
-
-#: src/Features/Settings/views/dashboard.php:78
-#: src/Features/WeeklyReport/views/card.php:33
-msgid "On"
-msgstr "An"
-
-#: src/Features/Settings/views/dashboard.php:78
-#: src/Features/Settings/views/dashboard.php:195
-#: src/Features/WeeklyReport/views/card.php:33
-msgid "Off"
-msgstr "Aus"
-
-#: src/Features/Settings/views/dashboard.php:83
-msgid "Apps you have approved can reach this store."
-msgstr "Von dir freigegebene Apps können auf diesen Shop zugreifen."
-
-#: src/Features/Settings/views/dashboard.php:84
-msgid "No outside AI app can reach this store."
-msgstr "Keine externe KI-App kann auf diesen Shop zugreifen."
-
-#: src/Features/Settings/views/dashboard.php:89
-msgid "Change access"
-msgstr "Zugriff ändern"
-
-#: src/Features/Settings/views/dashboard.php:96
-msgid "Apps"
-msgstr "Apps"
-
-#: src/Features/Settings/views/dashboard.php:102
-msgid "Review or revoke them"
-msgstr "Prüfen oder widerrufen"
-
-#: src/Features/Settings/views/dashboard.php:108
-msgid "Areas AI can read"
-msgstr "Bereiche, die die KI lesen kann"
-
-#: src/Features/Settings/views/dashboard.php:109
-msgid "The most any app can get. Each app holds only what it was approved for."
-msgstr "Das Höchste, was eine App bekommen kann. Jede App hat nur, wofür sie genehmigt wurde."
-
-#: src/Features/Settings/views/dashboard.php:117
-msgid "AI can change none of them."
-msgstr "Die KI kann keinen davon ändern."
-
-#. translators: %s: comma-separated names of areas of the store, e.g. "Products, Orders".
-#: src/Features/Settings/views/dashboard.php:121
-#, php-format
-msgid "AI can change: %s."
-msgstr "Die KI kann ändern: %s."
-
-#: src/Features/Settings/views/dashboard.php:136
-msgid "Calls today"
-msgstr "Aufrufe heute"
-
-#: src/Features/Settings/views/dashboard.php:141
-msgid "Not recorded"
-msgstr "Nicht aufgezeichnet"
-
-#: src/Features/Settings/views/dashboard.php:142
-msgid "Activity is not recorded, so nothing here can say what apps have done."
-msgstr "Die Aktivität wird nicht aufgezeichnet, daher kann hier nichts zeigen, was Apps getan haben."
-
-#. translators: %s: number of tool calls that failed.
-#: src/Features/Settings/views/dashboard.php:149
-#, php-format
-msgid "%s failed."
-msgid_plural "%s failed."
-msgstr[0] "%s fehlgeschlagen."
-msgstr[1] "%s fehlgeschlagen."
-
-#: src/Features/Settings/views/dashboard.php:170
-msgid "Open Activity"
-msgstr "Aktivität öffnen"
-
-#: src/Features/Settings/views/dashboard.php:172
-msgid "Turn on recording"
-msgstr "Aufzeichnung einschalten"
-
-#: src/Features/Settings/views/dashboard.php:180
 #: src/Features/Settings/views/integrations.php:24
+#: src/Features/Settings/views/overview.php:188
 #: src/Shared/Tool/ToolSection.php:39
 msgid "Other plugins"
 msgstr "Andere Plugins"
-
-#: src/Features/Settings/views/dashboard.php:191
-msgid "Can read and change"
-msgstr "Darf lesen und ändern"
-
-#: src/Features/Settings/views/dashboard.php:193
-#: src/Features/Settings/views/settings.php:61
-msgid "Can read"
-msgstr "Darf lesen"
-
-#: src/Features/Settings/views/dashboard.php:204
-msgid "Choose plugins"
-msgstr "Plugins auswählen"
 
 #: src/Features/Settings/views/integrations.php:26
 msgid "AI actions other plugins offer, under the same rules as the store areas. Each plugin still checks its own permissions. An app reaches a plugin only if it is switched on here and the app was approved for it; to add one to an app already connected, connect the app again."
@@ -1983,6 +1920,121 @@ msgstr "Auf diesem Shop läuft ein weiterer MCP-Server."
 #: src/Features/Settings/views/other-server-notice.php:19
 msgid "A plugin such as Rank Math or the MCP Adapter has started its own, under /wp-json/mcp/. It lets a logged-in user reach abilities directly, including WooCommerce's own, without the switches, permissions and confirmations below. To turn it off, return false from the mcp_adapter_create_default_server and wpmedia_mcp_oauth_server_enabled filters. While its OAuth server is on, its connector may also not work beside this plugin, because both answer the same discovery address."
 msgstr "Ein Plugin wie Rank Math oder der MCP Adapter hat unter /wp-json/mcp/ einen eigenen gestartet. Damit erreicht ein angemeldeter Benutzer Abilities direkt, auch die von WooCommerce, ohne die Schalter, Berechtigungen und Bestätigungen weiter unten. Zum Abschalten gib in den Filtern mcp_adapter_create_default_server und wpmedia_mcp_oauth_server_enabled false zurück. Solange sein OAuth-Server aktiv ist, funktioniert sein Connector neben diesem Plugin womöglich nicht, weil beide dieselbe Discovery-Adresse beantworten."
+
+#: src/Features/Settings/views/overview.php:34
+msgid "Finish setting up"
+msgstr "Einrichtung abschließen"
+
+#. translators: 1: steps done, 2: all steps.
+#: src/Features/Settings/views/overview.php:39
+#, php-format
+msgid "%1$s of %2$s done. Nothing here changes the shop for customers."
+msgstr "%1$s von %2$s erledigt. Nichts davon ändert den Shop für Kunden."
+
+#: src/Features/Settings/views/overview.php:57
+msgid "Done"
+msgstr "Erledigt"
+
+#: src/Features/Settings/views/overview.php:61
+msgid "An administrator can set this."
+msgstr "Das kann ein Administrator einstellen."
+
+#: src/Features/Settings/views/overview.php:73
+#: src/Features/Settings/views/settings.php:37
+msgid "AI access"
+msgstr "KI-Zugriff"
+
+#: src/Features/Settings/views/overview.php:78
+#: src/Features/WeeklyReport/views/card.php:50
+msgid "On"
+msgstr "An"
+
+#: src/Features/Settings/views/overview.php:78
+#: src/Features/Settings/views/overview.php:203
+#: src/Features/WeeklyReport/views/card.php:50
+msgid "Off"
+msgstr "Aus"
+
+#: src/Features/Settings/views/overview.php:83
+msgid "Apps you have approved can reach this store."
+msgstr "Von dir freigegebene Apps können auf diesen Shop zugreifen."
+
+#: src/Features/Settings/views/overview.php:84
+msgid "No outside AI app can reach this store."
+msgstr "Keine externe KI-App kann auf diesen Shop zugreifen."
+
+#: src/Features/Settings/views/overview.php:89
+msgid "Change access"
+msgstr "Zugriff ändern"
+
+#: src/Features/Settings/views/overview.php:96
+msgid "Apps"
+msgstr "Apps"
+
+#: src/Features/Settings/views/overview.php:102
+msgid "Review or revoke them"
+msgstr "Prüfen oder widerrufen"
+
+#: src/Features/Settings/views/overview.php:108
+msgid "Areas AI can read"
+msgstr "Bereiche, die die KI lesen kann"
+
+#: src/Features/Settings/views/overview.php:109
+msgid "The most any app can get. Each app holds only what it was approved for."
+msgstr "Das Höchste, was eine App bekommen kann. Jede App hat nur, wofür sie genehmigt wurde."
+
+#: src/Features/Settings/views/overview.php:117
+msgid "AI can change none of them."
+msgstr "Die KI kann keinen davon ändern."
+
+#. translators: %s: comma-separated names of areas of the store, e.g. "Products, Orders".
+#: src/Features/Settings/views/overview.php:121
+#, php-format
+msgid "AI can change: %s."
+msgstr "Die KI kann ändern: %s."
+
+#: src/Features/Settings/views/overview.php:136
+msgid "Calls today"
+msgstr "Aufrufe heute"
+
+#: src/Features/Settings/views/overview.php:141
+msgid "Not recorded"
+msgstr "Nicht aufgezeichnet"
+
+#: src/Features/Settings/views/overview.php:142
+msgid "Activity is not recorded, so nothing here can say what apps have done."
+msgstr "Die Aktivität wird nicht aufgezeichnet, daher kann hier nichts zeigen, was Apps getan haben."
+
+#. translators: %s: number of tool calls that failed.
+#: src/Features/Settings/views/overview.php:149
+#, php-format
+msgid "%s failed."
+msgid_plural "%s failed."
+msgstr[0] "%s fehlgeschlagen."
+msgstr[1] "%s fehlgeschlagen."
+
+#. translators: %s: the name of the plugin's Activity screen.
+#: src/Features/Settings/views/overview.php:174
+#, php-format
+msgid "Open %s"
+msgstr "%s öffnen"
+
+#: src/Features/Settings/views/overview.php:180
+msgid "Turn on recording"
+msgstr "Aufzeichnung einschalten"
+
+#: src/Features/Settings/views/overview.php:199
+msgid "Can read and change"
+msgstr "Darf lesen und ändern"
+
+#: src/Features/Settings/views/overview.php:201
+#: src/Features/Settings/views/settings.php:61
+msgid "Can read"
+msgstr "Darf lesen"
+
+#: src/Features/Settings/views/overview.php:212
+msgid "Choose plugins"
+msgstr "Plugins auswählen"
 
 #: src/Features/Settings/views/read-only-notice.php:17
 msgid "Only a site administrator can change these."
@@ -2060,39 +2112,41 @@ msgstr "Zugriff speichern"
 msgid "You are not allowed to manage connected apps."
 msgstr "Du darfst verbundene Apps nicht verwalten."
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:37
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:38
 msgid "Areas"
 msgstr "Bereiche"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:40
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:41
 msgid "Last used"
 msgstr "Zuletzt verwendet"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:41
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:42
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:51
-msgid "No apps connected yet. Add one under Add an app."
-msgstr "Noch keine Apps verbunden. Füge eine unter App hinzufügen hinzu."
+#. translators: %s: the name of the Add an app view.
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:54
+#, php-format
+msgid "No apps connected yet. Add one under %s."
+msgstr "Noch keine Apps verbunden. Füge eine unter %s hinzu."
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:62
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:67
 msgid "ago"
 msgstr "her"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:63
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:68
 msgid "never"
 msgstr "nie"
 
 #. translators: %d: number of further tool groups this token can reach.
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:104
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:109
 #, php-format
 msgid "+%d more"
 msgid_plural "+%d more"
 msgstr[0] "+%d weiterer"
 msgstr[1] "+%d weitere"
 
-#: src/Features/Tokens/Admin/ConnectionsListTable.php:130
+#: src/Features/Tokens/Admin/ConnectionsListTable.php:135
 msgid "Revoke"
 msgstr "Widerrufen"
 
@@ -2261,7 +2315,7 @@ msgid "Give any existing coupon a link or remove one. Anyone with the link gets 
 msgstr "Jedem bestehenden Gutschein einen Link geben oder ihn entfernen. Wer den Link hat, bekommt den Rabatt, deshalb muss jede Änderung ausdrücklich bestätigt werden. Gutscheine lassen sich damit weder anlegen noch im Rabatt ändern."
 
 #: src/Features/WeeklyReport/ReportAgent.php:26
-#: src/Features/WeeklyReport/views/card.php:21
+#: src/Features/WeeklyReport/views/card.php:22
 msgid "Weekly report"
 msgstr "Wochenbericht"
 
@@ -2323,9 +2377,11 @@ msgstr "Bestellungen öffnen"
 msgid "You get this because you asked for a weekly report in Counterhand MCP."
 msgstr "Du bekommst diese E-Mail, weil du in Counterhand MCP einen Wochenbericht angefordert hast."
 
-#: src/Features/WeeklyReport/ReportEmail.php:132
-msgid "Stop it on the Dashboard."
-msgstr "In der Übersicht abbestellen."
+#. translators: %s: the name of the plugin's Overview screen.
+#: src/Features/WeeklyReport/ReportEmail.php:135
+#, php-format
+msgid "Stop it on %s."
+msgstr "Abbestellen unter %s."
 
 #. translators: 1: first day of the week, 2: last day of the week, both as dates.
 #: src/Features/WeeklyReport/ReportWeek.php:38
@@ -2333,39 +2389,43 @@ msgstr "In der Übersicht abbestellen."
 msgid "%1$s to %2$s"
 msgstr "%1$s bis %2$s"
 
-#: src/Features/WeeklyReport/views/card.php:22
-msgid "Last week’s sales, best sellers and waiting orders, by email every Monday morning. With a model connected on the Chat screen, a short summary written by AI comes first."
-msgstr "Umsatz, Bestseller und offene Bestellungen der letzten Woche, jeden Montagmorgen per E-Mail. Ist im Chat ein Modell verbunden, steht eine kurze, von KI geschriebene Zusammenfassung am Anfang."
+#. translators: %s: the name of the plugin's Chat screen.
+#: src/Features/WeeklyReport/views/card.php:27
+#, php-format
+msgid "Last week’s sales, best sellers and waiting orders, by email every Monday morning. With an AI model chosen on %s, a short summary written by AI comes first."
+msgstr "Umsatz, Bestseller und offene Bestellungen der letzten Woche, jeden Montagmorgen per E-Mail. Ist im %s ein KI-Modell gewählt, steht eine kurze, von KI geschriebene Zusammenfassung am Anfang."
 
-#: src/Features/WeeklyReport/views/card.php:30
-msgid "Reports cannot be read in Access, so there is nothing to send."
-msgstr "Berichte dürfen unter Zugriff nicht gelesen werden, daher gibt es nichts zu senden."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/WeeklyReport/views/card.php:43
+#, php-format
+msgid "Reports cannot be read in %s, so there is nothing to send."
+msgstr "Berichte dürfen unter %s nicht gelesen werden, daher gibt es nichts zu senden."
 
 #. translators: 1: email address, 2: date and time of the next report.
-#: src/Features/WeeklyReport/views/card.php:40
+#: src/Features/WeeklyReport/views/card.php:57
 #, php-format
 msgid "Sent to %1$s. Next one: %2$s."
 msgstr "Geht an %1$s. Nächster Bericht: %2$s."
 
 #. translators: %s: email address.
-#: src/Features/WeeklyReport/views/card.php:46
+#: src/Features/WeeklyReport/views/card.php:63
 #, php-format
 msgid "Sent to %s."
 msgstr "Geht an %s."
 
-#: src/Features/WeeklyReport/views/card.php:48
+#: src/Features/WeeklyReport/views/card.php:65
 msgid "Only you get it, at your own address. Nobody is signed up for anyone else."
 msgstr "Nur du bekommst ihn, an deine eigene Adresse. Niemand wird für jemand anderen angemeldet."
 
-#: src/Features/WeeklyReport/views/card.php:57
+#: src/Features/WeeklyReport/views/card.php:74
 msgid "Stop the weekly report"
 msgstr "Wochenbericht abbestellen"
 
-#: src/Features/WeeklyReport/views/card.php:57
+#: src/Features/WeeklyReport/views/card.php:74
 msgid "Email me every Monday"
 msgstr "Jeden Montag per E-Mail"
 
-#: src/Features/WeeklyReport/views/card.php:62
+#: src/Features/WeeklyReport/views/card.php:79
 msgid "Send last week’s report now"
 msgstr "Bericht der letzten Woche jetzt senden"
 
@@ -2381,11 +2441,13 @@ msgstr "Du bekommst den Wochenbericht nicht mehr."
 msgid "Last week’s report is on its way to your email address."
 msgstr "Der Bericht der letzten Woche ist unterwegs an deine E-Mail-Adresse."
 
-#: src/Features/WeeklyReport/WeeklyReportFeature.php:69
-msgid "The report could not be sent. Check that Reports can be read in Access, and the WooCommerce logs."
-msgstr "Der Bericht konnte nicht gesendet werden. Prüfe, ob Berichte unter Zugriff gelesen werden dürfen, und die WooCommerce-Logs."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:71
+#, php-format
+msgid "The report could not be sent. Check that Reports can be read in %s, and the WooCommerce logs."
+msgstr "Der Bericht konnte nicht gesendet werden. Prüfe, ob Berichte unter %s gelesen werden dürfen, und die WooCommerce-Logs."
 
-#: src/Features/WeeklyReport/WeeklyReportFeature.php:75
+#: src/Features/WeeklyReport/WeeklyReportFeature.php:79
 msgid "You are not allowed to see store reports."
 msgstr "Du darfst die Shop-Berichte nicht sehen."
 
@@ -2704,6 +2766,24 @@ msgstr "Shop-Konfiguration und Wartung. Aktiviere das nur, wenn du weißt, warum
 #: src/Shared/Tool/ToolSection.php:51
 msgid "What other plugins on this store offer to AI apps. Each plugin still checks its own permissions."
 msgstr "Was andere Plugins in diesem Shop KI-Apps anbieten. Jedes Plugin prüft weiterhin seine eigenen Berechtigungen."
+
+#~ msgid "Open Activity"
+#~ msgstr "Aktivität öffnen"
+
+#~ msgid "View connections"
+#~ msgstr "Verbindungen anzeigen"
+
+#~ msgid "Manage connections"
+#~ msgstr "Verbindungen verwalten"
+
+#~ msgid "Connect AI apps"
+#~ msgstr "KI-Apps verbinden"
+
+#~ msgid "Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens."
+#~ msgstr "Mache deinen WooCommerce-Shop zu einem sicheren MCP-Server, damit KI-Assistenten wie Claude, ChatGPT und Cursor Produkte, Bestellungen, Kunden und Berichte abfragen und verwalten können — geschützt durch widerrufbare API-Token mit fein abgestuften Berechtigungen."
+
+#~ msgid "Stop it on the Dashboard."
+#~ msgstr "In der Übersicht abbestellen."
 
 #~ msgid "You are not allowed to clear the log."
 #~ msgstr "Du darfst das Protokoll nicht leeren."

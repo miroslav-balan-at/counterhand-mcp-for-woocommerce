@@ -8,6 +8,7 @@ use Counterhand\Features\ActionLog\Persistence\LogSchema;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\ScreenBodyInterface;
+use Counterhand\Features\Settings\SettingsAccess;
 use Counterhand\Features\Tokens\Domain\ScopeGroups;
 use Counterhand\Shared\FeatureInterface;
 
@@ -78,8 +79,9 @@ final readonly class ActionLogFeature implements FeatureInterface, ScreenBodyInt
 		);
 	}
 
+	/** Administrators only: the log holds refunds and integration calls that are kept whatever the setting says. */
 	public function handle_clear(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! SettingsAccess::can_save() ) {
 			wp_die( esc_html__( 'You are not allowed to clear the activity.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
@@ -136,7 +138,8 @@ final readonly class ActionLogFeature implements FeatureInterface, ScreenBodyInt
 		);
 
 		$is_enabled  = $this->settings->is_action_log_enabled();
-		$clear_nonce = wp_create_nonce( 'counterhand_clear_log' );
+		$can_clear   = SettingsAccess::can_save();
+		$access_name = AdminScreen::Access->menu_title();
 
 		include __DIR__ . '/Admin/views/log.php';
 	}

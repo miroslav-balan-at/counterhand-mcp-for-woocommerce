@@ -114,13 +114,13 @@ body {
  * the screens stays on WordPress's colours and the person's admin colour scheme.
  */
 :root {
-	--counterhand-head-bg: #e9f8f0;
+	--counterhand-head-background: #e9f8f0;
 	--counterhand-head-text: #1d2327;
 	/* 7.0:1 on the tint. */
 	--counterhand-head-text-muted: #50575e;
 	--counterhand-head-line: #c6ebd7;
 	/* The brand's deep green: 4.6:1 on the tint, where the mint would be 1.6:1. */
 	--counterhand-head-underline: #0f7a4d;
-	--counterhand-pill-on-bg: #4ade9a;
+	--counterhand-pill-on-background: #4ade9a;
 	--counterhand-pill-on-text: #06231a;
 }

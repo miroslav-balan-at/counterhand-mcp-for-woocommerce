@@ -9,7 +9,7 @@
  *
  * Areas the store withholds stay tickable rather than disabled. A disabled box
  * says "no" without saying why or where to fix it, and the choice is still worth
- * recording for the moment the area is switched on in Settings.
+ * recording for the moment the area is switched on in Access.
  *
  * @var list<\Counterhand\Shared\Tool\ToolInterface>              $tools
  * @var list<\Counterhand\Shared\Tool\ToolGroup>                  $chat_groups
@@ -17,9 +17,12 @@
  * @var array<string, \Counterhand\Features\Playground\ChatArea>  $chat_areas
  * @var \Counterhand\Features\Playground\ChatToolPolicy           $store_policy
  * @var int|null                                                 $tool_limit Null when the model searches its tools.
+ * @var bool                                                     $can_choose_model
  */
 
 declare( strict_types=1 );
+
+use Counterhand\Features\Settings\AdminScreen;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -59,9 +62,10 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 			<span class="counterhand-pill counterhand-pill--warn">
 				<?php
 				printf(
-					/* translators: %d: how many further tools are waiting on a store setting. */
-					esc_html( _n( '%d more waiting on Settings', '%d more waiting on Settings', $counterhand_withheld, 'counterhand-mcp-for-woocommerce' ) ),
-					(int) $counterhand_withheld
+					/* translators: 1: how many further tools are waiting on a store setting, 2: the name of the Access screen. */
+					esc_html( _n( '%1$d more waiting on %2$s', '%1$d more waiting on %2$s', $counterhand_withheld, 'counterhand-mcp-for-woocommerce' ) ),
+					(int) $counterhand_withheld,
+					esc_html( AdminScreen::Access->menu_title() )
 				);
 				?>
 			</span>
@@ -71,6 +75,7 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-chat-tools__form">
 		<input type="hidden" name="action" value="counterhand_save_chat_tools">
 		<?php wp_nonce_field( 'counterhand_save_chat_tools' ); ?>
+		<fieldset class="counterhand-chat-tools__fields" <?php disabled( ! $can_choose_model ); ?>>
 
 		<p class="counterhand-chat-tools__lede">
 			<?php esc_html_e( 'Each area you pick is described to the model on every message, so keep it to what you actually ask about.', 'counterhand-mcp-for-woocommerce' ); ?>
@@ -119,7 +124,13 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 						?>
 					</strong>
 					<p class="counterhand-callout__text">
-						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until it is switched on in Access. Access decides what every app may reach; this panel only narrows it further for the chat.', 'counterhand-mcp-for-woocommerce' ); ?>
+						<?php
+						printf(
+							/* translators: %s: the name of the plugin's Access screen. */
+							esc_html__( 'Picking it here is remembered, but the chat cannot reach it until it is switched on in %1$s. %1$s decides what every app may reach; this panel only narrows it further for the chat.', 'counterhand-mcp-for-woocommerce' ),
+							esc_html( AdminScreen::Access->menu_title() )
+						);
+						?>
 					</p>
 					<?php
 					$counterhand_switches = [];
@@ -134,7 +145,7 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 						<a class="counterhand-callout__action" href="<?php echo esc_url( $counterhand_switch->url ); ?>">
 							<?php
 							printf(
-								/* translators: %s: name of an admin screen, e.g. "Settings". */
+								/* translators: %s: name of an admin screen, e.g. "Access". */
 								esc_html__( 'Switch it on in %s', 'counterhand-mcp-for-woocommerce' ),
 								esc_html( $counterhand_switch->screen_title )
 							);
@@ -192,6 +203,10 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 			</fieldset>
 		<?php endforeach; ?>
 
-		<?php submit_button( __( 'Save areas', 'counterhand-mcp-for-woocommerce' ), 'secondary', 'submit', false ); ?>
+		</fieldset>
+
+		<?php if ( $can_choose_model ) : ?>
+			<?php submit_button( __( 'Save areas', 'counterhand-mcp-for-woocommerce' ), 'secondary', 'submit', false ); ?>
+		<?php endif; ?>
 	</form>
 </details>

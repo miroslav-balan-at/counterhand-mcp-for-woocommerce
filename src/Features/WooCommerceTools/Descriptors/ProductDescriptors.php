@@ -132,7 +132,7 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				null,
 				null,
 				MetaOwner::Post,
-				meta_write_params: GermanizedDescriptors::KEEP_AGE_CHECK
+				meta_write_parameters: GermanizedDescriptors::KEEP_AGE_CHECK
 			),
 		];
 	}
@@ -174,7 +174,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				new FieldProfile( self::UPDATE_FIELDS, self::ITEM_FIELDS ),
 				'Only the fields you pass are changed. Use status "publish" to take a draft live. categories replaces the stored list rather than adding to it.',
 				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK,
-				confirm_when_sent: [ 'regular_price', 'sale_price' ]
+				// Sale dates, tax and Germanized's deposit, photovoltaic and differential taxation all change what customers pay.
+				confirm_when_sent: [ 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class', 'food', 'photovoltaic_system', 'differential_taxation' ]
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product' ),

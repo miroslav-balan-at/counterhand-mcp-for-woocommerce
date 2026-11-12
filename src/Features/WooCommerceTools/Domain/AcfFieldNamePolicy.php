@@ -9,17 +9,24 @@ defined( 'ABSPATH' ) || exit;
 /**
  * ACF stores a field's value under the field's own name. A field group on products with
  * a field named _price would make these tools write the price, past products:write,
- * and the same for every other protected key.
+ * and the same for every other protected key. ACF finds a field by its key before its
+ * name, so a submitted field_… key is judged by the name it stands for.
  */
 final readonly class AcfFieldNamePolicy implements ArgumentPolicy {
 
 	public function verdict( array $arguments ): Verdict {
 		foreach ( array_keys( is_array( $arguments['acf'] ?? null ) ? $arguments['acf'] : [] ) as $name ) {
-			if ( str_starts_with( (string) $name, '_' ) ) {
+			if ( str_starts_with( (string) $name, '_' ) || str_starts_with( self::stored_name( (string) $name ), '_' ) ) {
 				return Verdict::deny( sprintf( '"%s" is stored under a protected name, which this tool cannot write. An administrator can change it in the editor.', $name ) );
 			}
 		}
 
 		return Verdict::allow();
+	}
+
+	private static function stored_name( string $selector ): string {
+		$field = function_exists( 'acf_get_field' ) ? acf_get_field( $selector ) : null;
+
+		return is_array( $field ) && is_string( $field['name'] ?? null ) ? $field['name'] : $selector;
 	}
 }

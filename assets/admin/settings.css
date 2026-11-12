@@ -15,7 +15,7 @@
  */
 
 /* Links between two views of one screen, the current one marked by weight and rule as well as colour. */
-.counterhand-subnav {
+.counterhand-subnavigation {
 	display: flex;
 	flex-wrap: wrap;
 	gap: var(--counterhand-gap);
@@ -23,7 +23,7 @@
 	border-bottom: 1px solid var(--counterhand-border);
 }
 
-.counterhand-subnav__link {
+.counterhand-subnavigation__link {
 	margin-bottom: -1px;
 	padding: var(--counterhand-gap-small) 2px;
 	border-bottom: 2px solid transparent;
@@ -32,18 +32,18 @@
 	text-decoration: none;
 }
 
-.counterhand-subnav__link:hover {
+.counterhand-subnavigation__link:hover {
 	color: var(--counterhand-accent-hover);
 }
 
-.counterhand-subnav__link[aria-current="page"] {
+.counterhand-subnavigation__link[aria-current="page"] {
 	border-bottom-color: var(--counterhand-accent);
 	color: var(--counterhand-text);
 	font-weight: 600;
 }
 
 /* Live-connection count, so the view says whether there is anything to review. */
-.counterhand-subnav__count {
+.counterhand-subnavigation__count {
 	display: inline-block;
 	min-width: 18px;
 	margin-left: 4px;
@@ -108,7 +108,7 @@
  */
 
 .counterhand-clients,
-.counterhand-dashboard,
+.counterhand-overview,
 .counterhand-settings-form {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
@@ -118,7 +118,7 @@
 
 /* The grid supplies the rhythm; the cards' own bottom margin would double it. */
 .counterhand-clients > .counterhand-card,
-.counterhand-dashboard > .counterhand-card,
+.counterhand-overview > .counterhand-card,
 .counterhand-settings-form > .counterhand-card {
 	margin-bottom: 0;
 }
@@ -455,7 +455,7 @@
 	color: var(--counterhand-text-subtle);
 }
 
-/* Dashboard -------------------------------------------------------------- */
+/* Overview --------------------------------------------------------------- */
 
 .counterhand-stat {
 	margin: 0;
@@ -473,17 +473,17 @@
 	color: var(--counterhand-text-muted);
 }
 
-.counterhand-dashboard__note {
+.counterhand-overview__note {
 	max-width: var(--counterhand-prose);
 	margin: var(--counterhand-gap-small) 0 0;
 	color: var(--counterhand-text-muted);
 }
 
-.counterhand-dashboard__list {
+.counterhand-overview__list {
 	margin: 0;
 }
 
-.counterhand-dashboard__list li {
+.counterhand-overview__list li {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -493,7 +493,7 @@
 	border-top: 1px solid var(--counterhand-surface-sunken);
 }
 
-.counterhand-dashboard__list li:first-child {
+.counterhand-overview__list li:first-child {
 	border-top: 0;
 }
 
@@ -546,7 +546,7 @@
 
 .counterhand-setup__step--done {
 	border-color: transparent;
-	background: var(--counterhand-head-bg);
+	background: var(--counterhand-head-background);
 }
 
 .counterhand-setup__step--done .counterhand-setup__mark {
@@ -776,7 +776,7 @@
 
 .counterhand-page-head {
 	margin: 0 0 var(--counterhand-gap);
-	background: var(--counterhand-head-bg, var(--counterhand-surface));
+	background: var(--counterhand-head-background, var(--counterhand-surface));
 	color: var(--counterhand-head-text, var(--counterhand-text));
 	border: 1px solid var(--counterhand-head-line, var(--counterhand-border));
 	border-radius: var(--counterhand-radius-card);
@@ -833,7 +833,7 @@
 	color: var(--counterhand-head-text-muted, var(--counterhand-text-muted));
 }
 
-.counterhand-nav {
+.counterhand-navigation {
 	display: flex;
 	gap: 2px;
 	padding: 0 8px;
@@ -842,7 +842,7 @@
 	scrollbar-width: none;
 }
 
-.counterhand-wrap .counterhand-nav a {
+.counterhand-wrap .counterhand-navigation a {
 	position: relative;
 	padding: 9px 12px 10px;
 	color: var(--counterhand-head-text-muted, var(--counterhand-text-muted));
@@ -852,12 +852,12 @@
 	white-space: nowrap;
 }
 
-.counterhand-wrap .counterhand-nav a:hover,
-.counterhand-wrap .counterhand-nav a[aria-current="page"] {
+.counterhand-wrap .counterhand-navigation a:hover,
+.counterhand-wrap .counterhand-navigation a[aria-current="page"] {
 	color: var(--counterhand-head-text, var(--counterhand-text));
 }
 
-.counterhand-nav a[aria-current="page"]::after {
+.counterhand-navigation a[aria-current="page"]::after {
 	content: "";
 	position: absolute;
 	left: 12px;
@@ -893,7 +893,7 @@
 }
 
 .counterhand-pill--on {
-	background: var(--counterhand-pill-on-bg, var(--counterhand-success-surface));
+	background: var(--counterhand-pill-on-background, var(--counterhand-success-surface));
 	border-color: color-mix(in srgb, var(--counterhand-brand) 55%, transparent);
 	color: var(--counterhand-pill-on-text, var(--counterhand-success-text));
 }

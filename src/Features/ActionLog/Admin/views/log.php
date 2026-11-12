@@ -5,6 +5,8 @@
  *
  * @var list<array<string, string>> $entries
  * @var bool                        $is_enabled
+ * @var bool                        $can_clear
+ * @var string                      $access_name
  * @var int                         $total
  * @var int                         $paged
  * @var int                         $pages
@@ -18,7 +20,13 @@ defined( 'ABSPATH' ) || exit;
 <div class="counterhand-log">
 	<?php if ( ! $is_enabled ) : ?>
 		<div class="notice notice-info inline"><p>
-			<?php esc_html_e( 'Activity is not recorded. Turn on recording in Access to keep a record of every call. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ); ?>
+			<?php
+			printf(
+				/* translators: %s: the name of the plugin's Access screen. */
+				esc_html__( 'Activity is not recorded. An administrator can turn on recording in %s to keep a record of every call. Emails and phone numbers are masked before anything is stored.', 'counterhand-mcp-for-woocommerce' ),
+				esc_html( $access_name )
+			);
+			?>
 		</p></div>
 	<?php endif; ?>
 
@@ -41,11 +49,13 @@ defined( 'ABSPATH' ) || exit;
 				</p>
 			</div>
 
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-log-clear">
-				<input type="hidden" name="action" value="counterhand_clear_log">
-				<?php wp_nonce_field( 'counterhand_clear_log' ); ?>
-				<button type="submit" class="button"><?php esc_html_e( 'Clear activity', 'counterhand-mcp-for-woocommerce' ); ?></button>
-			</form>
+			<?php if ( $can_clear ) : ?>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-log-clear">
+					<input type="hidden" name="action" value="counterhand_clear_log">
+					<?php wp_nonce_field( 'counterhand_clear_log' ); ?>
+					<button type="submit" class="button"><?php esc_html_e( 'Clear activity', 'counterhand-mcp-for-woocommerce' ); ?></button>
+				</form>
+			<?php endif; ?>
 		</header>
 
 		<div class="counterhand-card__body counterhand-log__body">
@@ -66,7 +76,13 @@ defined( 'ABSPATH' ) || exit;
 								<?php
 								echo $is_enabled
 									? esc_html__( 'Nothing recorded yet. The next call an app or the chat makes appears here.', 'counterhand-mcp-for-woocommerce' )
-									: esc_html__( 'Nothing recorded. Turn on recording in Access to start.', 'counterhand-mcp-for-woocommerce' );
+									: esc_html(
+										sprintf(
+											/* translators: %s: the name of the plugin's Access screen. */
+											__( 'Nothing recorded. An administrator can turn on recording in %s.', 'counterhand-mcp-for-woocommerce' ),
+											$access_name
+										)
+									);
 								?>
 							</td>
 						</tr>

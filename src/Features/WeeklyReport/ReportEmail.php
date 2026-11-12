@@ -129,7 +129,13 @@ final readonly class ReportEmail {
 			'<p><small>%s <a href="%s">%s</a></small></p>',
 			esc_html__( 'You get this because you asked for a weekly report in Counterhand MCP.', 'counterhand-mcp-for-woocommerce' ),
 			esc_url( AdminScreen::Overview->url() ),
-			esc_html__( 'Stop it on the Dashboard.', 'counterhand-mcp-for-woocommerce' )
+			esc_html(
+				sprintf(
+					/* translators: %s: the name of the plugin's Overview screen. */
+					__( 'Stop it on %s.', 'counterhand-mcp-for-woocommerce' ),
+					AdminScreen::Overview->menu_title()
+				)
+			)
 		);
 	}
 

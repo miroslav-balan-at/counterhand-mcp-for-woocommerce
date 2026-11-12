@@ -385,6 +385,22 @@ final class GeneratedToolTest extends TestCase {
 		$this->assertSame( [], $this->gateway->calls );
 	}
 
+	public function test_protected_meta_is_refused_on_an_order_line_as_on_the_order(): void {
+		foreach ( [ 'line_items', 'shipping_lines', 'fee_lines', 'coupon_lines' ] as $list ) {
+			try {
+				$this->tool( Operation::CreateItem )->execute( [ $list => [ [ 'meta_data' => [ [ 'key' => '_wc_cog_item_total_cost', 'value' => '0' ] ] ] ] ] );
+				$this->fail( "Protected meta on {$list} was written." );
+			} catch ( ToolCallException $e ) {
+				$this->assertStringContainsString( '_wc_cog_item_total_cost', $e->getMessage() );
+			}
+		}
+
+		$this->assertSame( [], $this->gateway->calls );
+
+		$this->tool( Operation::CreateItem )->execute( [ 'line_items' => [ [ 'meta_data' => [ [ 'key' => 'gift_note', 'value' => 'For Anna' ] ] ] ] ] );
+		$this->assertCount( 1, $this->gateway->calls );
+	}
+
 	public function test_a_policy_that_allows_does_not_interfere(): void {
 		$policy = new class() implements ArgumentPolicy {
 			public function verdict( array $arguments ): Verdict {

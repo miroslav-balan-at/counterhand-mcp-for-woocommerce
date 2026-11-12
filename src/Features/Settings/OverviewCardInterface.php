@@ -6,8 +6,8 @@ namespace Counterhand\Features\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
-/** A card another feature adds to the Dashboard, rendered after the built-in ones. */
-interface DashboardCardInterface {
+/** A card another feature adds to Overview, rendered after the built-in ones. */
+interface OverviewCardInterface {
 
 	public function render_card(): void;
 }

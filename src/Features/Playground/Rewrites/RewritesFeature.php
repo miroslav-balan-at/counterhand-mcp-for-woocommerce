@@ -20,11 +20,15 @@ final readonly class RewritesFeature implements FeatureInterface, ScreenBodyInte
 	private const NOTICE     = 'counterhand_rewrites_notice_';
 	private const CAPABILITY = 'manage_woocommerce';
 
-	public function __construct( private RewriteJobs $jobs ) {}
+	public function __construct( private RewriteJobs $jobs, private RewritePrivacy $privacy ) {}
 
 	public function register(): void {
 		add_action( 'admin_init', [ RewriteSchema::class, 'maybe_upgrade' ] );
+		$this->privacy->register();
 		add_action( RewriteJobs::HOOK, [ $this->jobs, 'run' ] );
+		add_action( 'action_scheduler_failed_execution', [ $this->jobs, 'fail_action' ] );
+		add_action( 'action_scheduler_unexpected_shutdown', [ $this->jobs, 'fail_action' ] );
+		add_action( 'action_scheduler_failed_action', [ $this->jobs, 'fail_action' ] );
 		add_action( 'admin_post_' . self::START_ACTION, [ $this, 'handle_start' ] );
 		add_action( 'admin_post_' . self::REVIEW_ACTION, [ $this, 'handle_review' ] );
 		add_filter( ToolDispatcherInterface::SERVES_TOOLS_FILTER, [ $this, 'serves_tools_here' ] );

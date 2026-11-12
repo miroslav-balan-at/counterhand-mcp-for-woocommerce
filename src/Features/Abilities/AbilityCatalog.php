@@ -26,8 +26,10 @@ final class AbilityCatalog {
 	 * mcp-adapter/*: meta-tools that call any ability, which would bypass every gate.
 	 * acf/*: served by our own tools too. Its abilities return password fields, and
 	 * registering a field group named _price would let our tools write that meta.
+	 * germanized/*, germanized-pro/*, wpml/*, the Cost of Goods and URL Coupons slugs: our own
+	 * integrations, which an ability there would join, under our grant and our consent wording.
 	 */
-	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand', 'contact-form-7', 'flamingo', 'acf', 'woocommerce-shipment-tracking' ];
+	private const SKIPPED_NAMESPACES = [ 'woocommerce', 'core', 'mcp-adapter', 'counterhand', 'contact-form-7', 'flamingo', 'acf', 'woocommerce-shipment-tracking', 'germanized', 'germanized-pro', 'wpml', 'woocommerce-cost-of-goods', 'woocommerce-url-coupons' ];
 
 	/**
 	 * Each read and returned more than its plugin's scope should reach:

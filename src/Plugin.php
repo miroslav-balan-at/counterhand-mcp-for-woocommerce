@@ -34,6 +34,7 @@ use Counterhand\Features\Playground\StoreMemory;
 use Counterhand\Features\Playbooks\PlaybookCatalog;
 use Counterhand\Features\Playground\Rewrites\Persistence\RewriteSchema;
 use Counterhand\Features\Playground\Rewrites\RewriteJobs;
+use Counterhand\Features\Playground\Rewrites\RewritePrivacy;
 use Counterhand\Features\Playground\Rewrites\RewritesFeature;
 use Counterhand\Features\Playground\Rewrites\WpdbRewriteQueue;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
@@ -42,7 +43,7 @@ use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
 use Counterhand\Features\Settings\ConnectScreen;
-use Counterhand\Features\Settings\DashboardScreen;
+use Counterhand\Features\Settings\OverviewScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingSanitizer;
 use Counterhand\Features\Settings\SettingsFeature;
@@ -124,7 +125,26 @@ final class Plugin {
 		flush_rewrite_rules();
 	}
 
-	public static function deactivate(): void {
+	public static function deactivate( bool $network_wide = false ): void {
+		if ( ! $network_wide || ! is_multisite() ) {
+			self::deactivate_site();
+
+			return;
+		}
+
+		foreach ( get_sites(
+			[
+				'fields' => 'ids',
+				'number' => 0,
+			]
+		) as $site_id ) {
+			switch_to_blog( (int) $site_id );
+			self::deactivate_site();
+			restore_current_blog();
+		}
+	}
+
+	private static function deactivate_site(): void {
 		flush_rewrite_rules();
 		wp_clear_scheduled_hook( 'counterhand_purge_log' );
 		wp_clear_scheduled_hook( UndoFeature::PURGE_HOOK );
@@ -209,7 +229,8 @@ final class Plugin {
 			)
 		);
 
-		$rewrites = new RewritesFeature( new RewriteJobs( $tool_dispatcher, new WpdbRewriteQueue(), $chat_settings, $chat_providers ) );
+		$rewrite_queue = new WpdbRewriteQueue();
+		$rewrites      = new RewritesFeature( new RewriteJobs( $tool_dispatcher, $rewrite_queue, $chat_settings, $chat_providers ), new RewritePrivacy( $rewrite_queue ) );
 
 		$descriptors        = new StaticDescriptorCatalog();
 		$connection_matcher = new ConnectionMatcher( $repository );
@@ -223,7 +244,7 @@ final class Plugin {
 			$weekly_report,
 			new SettingsFeature(
 				[
-					AdminScreen::Overview->value => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
+					AdminScreen::Overview->value => new OverviewScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
 					AdminScreen::Chat->value     => $playground,
 					AdminScreen::Rewrites->value => $rewrites,
 					AdminScreen::Connect->value  => new ConnectScreen( $tokens->admin(), $connection_matcher ),

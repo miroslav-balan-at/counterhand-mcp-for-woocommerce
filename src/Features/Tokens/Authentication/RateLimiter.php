@@ -33,7 +33,7 @@ final readonly class RateLimiter {
 		// The window is in the key, because writing a transient restarts its expiry, which
 		// would let a steady agent be refused while well under its per-minute budget.
 		$now           = time();
-		$transient_key = 'counterhand_rl_' . $token_id . '_' . (int) floor( $now / self::WINDOW_SECONDS );
+		$transient_key = 'counterhand_rate_limit_' . $token_id . '_' . (int) floor( $now / self::WINDOW_SECONDS );
 		$current_count = (int) get_transient( $transient_key );
 
 		if ( $current_count + $requests > $limit ) {

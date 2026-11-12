@@ -25,10 +25,13 @@
  * @var string                                                                      $prompts_nonce
  * @var string                                                                      $store_memory
  * @var bool                                                                        $can_edit_memory
+ * @var bool                                                                        $can_choose_model
  * @var string                                                                      $storage_key
  */
 
 declare( strict_types=1 );
+
+use Counterhand\Features\Settings\AdminScreen;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -43,7 +46,13 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 
 	<?php if ( $is_ready && [] === $tools ) : ?>
 		<div class="notice notice-warning inline"><p>
-			<?php esc_html_e( 'No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in Access.', 'counterhand-mcp-for-woocommerce' ); ?>
+			<?php
+			printf(
+				/* translators: %s: the name of the plugin's Access screen. */
+				esc_html__( 'No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in %s.', 'counterhand-mcp-for-woocommerce' ),
+				esc_html( AdminScreen::Access->menu_title() )
+			);
+			?>
 		</p></div>
 	<?php endif; ?>
 
@@ -56,7 +65,17 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 		<div class="counterhand-chat__log <?php echo $is_ready ? '' : 'counterhand-chat__log--setup'; ?>"
 			id="counterhand-chat-log" <?php echo $is_ready ? 'role="log" aria-live="polite"' : ''; ?>>
 
-			<?php if ( ! $is_ready ) : ?>
+			<?php if ( ! $is_ready && ! $can_choose_model ) : ?>
+				<p class="counterhand-chat__empty-hint">
+					<?php
+					printf(
+						/* translators: %s: the name of the plugin's Chat screen. */
+						esc_html__( 'No AI model is chosen yet. An administrator chooses one on %s.', 'counterhand-mcp-for-woocommerce' ),
+						esc_html( AdminScreen::Chat->menu_title() )
+					);
+					?>
+				</p>
+			<?php elseif ( ! $is_ready ) : ?>
 				<?php require __DIR__ . '/partial-model-chooser.php'; ?>
 			<?php else : ?>
 				<div class="counterhand-chat__empty" id="counterhand-chat-empty">
@@ -129,9 +148,11 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 						// as just the provider label for it.
 						echo esc_html( rtrim( $counterhand_active->label() . ' · ' . $chat_settings->model(), ' ·' ) );
 						?>
-						<a href="<?php echo esc_url( add_query_arg( 'counterhand_change_model', '1' ) ); ?>">
-							<?php esc_html_e( 'Change', 'counterhand-mcp-for-woocommerce' ); ?>
-						</a>
+						<?php if ( $can_choose_model ) : ?>
+							<a href="<?php echo esc_url( add_query_arg( 'counterhand_change_model', '1' ) ); ?>">
+								<?php esc_html_e( 'Change', 'counterhand-mcp-for-woocommerce' ); ?>
+							</a>
+						<?php endif; ?>
 					</span>
 				<?php endif; ?>
 				<button type="button" class="button-link counterhand-chat__reset" id="counterhand-chat-reset" <?php disabled( ! $is_ready ); ?>>
@@ -145,6 +166,12 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 	<?php require __DIR__ . '/partial-store-memory.php'; ?>
 
 	<p class="description counterhand-chat__note">
-		<?php esc_html_e( 'The assistant uses the same tools an AI app would, limited to the areas switched on in Access. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ); ?>
+		<?php
+		printf(
+			/* translators: %s: the name of the plugin's Access screen. */
+			esc_html__( 'The assistant uses the same tools an AI app would, limited to the areas switched on in %s. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ),
+			esc_html( AdminScreen::Access->menu_title() )
+		);
+		?>
 	</p>
 </div>

@@ -142,6 +142,27 @@ final readonly class WpdbRewriteQueue implements RewriteQueueInterface {
 		$wpdb->update( RewriteSchema::table_name(), $values, [ 'id' => $id ] );
 	}
 
+	public function made_by( int $user_id ): array {
+		global $wpdb;
+
+		RewriteSchema::maybe_upgrade();
+
+		$table = RewriteSchema::table_name();
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d ORDER BY id ASC", $user_id ) );
+
+		return array_map( [ self::class, 'from_row' ], (array) $rows );
+	}
+
+	public function forget_user( int $user_id ): int {
+		global $wpdb;
+
+		RewriteSchema::maybe_upgrade();
+
+		$table = RewriteSchema::table_name();
+
+		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE user_id = %d", $user_id ) );
+	}
+
 	private static function from_row( object $row ): RewriteItem {
 		return new RewriteItem(
 			id: (int) $row->id,

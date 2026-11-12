@@ -114,6 +114,40 @@ test.describe( 'A person decides what moves money or reaches a customer', () => 
 		expect( ( await forms( 'update_product', args, approve ) ).error.code, 'an approval is spent once' ).toBe( -32602 );
 	} );
 
+	test( 'a gated field sent as false still needs the person, whatever confirm the model sets', async ( { browser, baseURL } ) => {
+		const { forms } = await caller( browser, baseURL as string );
+		wp( 'wc', 'product', 'update', product, '--sale_price=8', '--user=e2e-admin' );
+		const salePrice = () => wp( 'post', 'meta', 'get', product, '_sale_price' );
+
+		const sent = ( await forms( 'update_product', { id: Number( product ), sale_price: false, confirm: true } ) ).result;
+
+		expect( sent.resultType === 'complete' && ! sent.isError, 'the model could not approve its own change' ).toBe( false );
+		expect( salePrice() ).toBe( '8' );
+	} );
+
+	test( 'the form shows the price even behind long text, and says when it cuts', async ( { browser, baseURL } ) => {
+		const { forms } = await caller( browser, baseURL as string );
+
+		const asked = ( await forms( 'update_product', { id: Number( product ), description: 'x'.repeat( 1500 ), regular_price: '77' } ) ).result;
+		const message: string = asked.inputRequests.confirm_change.params.message;
+
+		expect( message ).toContain( '"regular_price":"77"' );
+		expect( message ).toMatch( /more characters\)$/ );
+	} );
+
+	test( 'two retries with one approval change the store once', async ( { browser, baseURL } ) => {
+		const { forms } = await caller( browser, baseURL as string );
+		const args = { id: Number( product ), regular_price: '42' };
+		const asked = ( await forms( 'update_product', args ) ).result;
+		const approve = { inputResponses: { confirm_change: { action: 'accept', content: { approve: true } } }, requestState: asked.requestState };
+
+		const [ first, second ] = await Promise.all( [ forms( 'update_product', args, approve ), forms( 'update_product', args, approve ) ] );
+		const spent = [ first, second ].filter( ( reply ) => reply.error?.code === -32602 );
+
+		expect( spent, 'one of the two is refused as already used' ).toHaveLength( 1 );
+		expect( price() ).toBe( '42' );
+	} );
+
 	test( 'an approval is for one connection only', async ( { browser, baseURL } ) => {
 		const one = await caller( browser, baseURL as string );
 		const other = await caller( browser, baseURL as string );

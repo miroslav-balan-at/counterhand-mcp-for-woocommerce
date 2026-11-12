@@ -3,7 +3,7 @@
  * Plugin Name:       Counterhand MCP for WooCommerce
  * Plugin URI:        https://counterhand.app
  * Description:       Turn your WooCommerce store into a secure MCP server so AI assistants like Claude, ChatGPT and Cursor can query and manage products, orders, customers and reports — guarded by scoped, revocable API tokens.
- * Version:           1.3.2
+ * Version:           2.0.0
  * Requires at least: 6.6
  * Requires PHP:      8.2
  * Requires Plugins:  woocommerce
@@ -15,14 +15,14 @@
  * Domain Path:       /languages
  *
  * WC requires at least: 8.0
- * WC tested up to:      11.2
+ * WC tested up to:      11.3
  */
 
 declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COUNTERHAND_VERSION', '1.3.2' );
+define( 'COUNTERHAND_VERSION', '2.0.0' );
 define( 'COUNTERHAND_PLUGIN_FILE', __FILE__ );
 define( 'COUNTERHAND_PLUGIN_DIR', __DIR__ );
 

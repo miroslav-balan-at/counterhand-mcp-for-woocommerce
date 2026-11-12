@@ -2,8 +2,10 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
-## Unreleased
+## 2.0.0
 
+* Changed: tested with WooCommerce 11.3.
+* Changed: the privacy policy text WordPress suggests now names Rewrites and the weekly report's AI summary, and the readme's external services section describes what each sends.
 * Changed: the consent screen asks "Let Claude work with your store?" and puts who approves, the app and where access goes in one card, with only the app's address marked as verified, because its name is its own claim. Each section (Catalog, Sales, …) slides open and closed: one holding something to grant starts open, one switched off for the store starts closed and says so, and Advanced and Other plugins stay closed and unticked. Write permissions read "Change products" rather than "Manage products".
 * Changed: the chat's first screen is "Choose an AI model" and says what else uses the model: Rewrites and the weekly summary.
 * Changed: the menu follows what you do, in this order: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access, with two forms that each save only their own part; the old Other plugins address leads there. Other plugins also names the supported plugins that are not active yet, and the store areas table is striped, with each area's description on its own line. The Dashboard is called Overview and the action log Activity. Bookmarks and links in weekly report emails keep working.
@@ -47,6 +49,29 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 * Changed: a client's metadata document is cached as its `Cache-Control` says, between one minute and one hour.
 * Added: chat with Claude uses prompt caching and keeps the most common tools loaded, resumes a paused turn, and says when the model declines.
 * Added: MCP prompts for common store routines, a `counterhand://store/profile` resource, and envelope output schemas on read tools.
+
+## 1.3.2
+* Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending; WooCommerce sends no email of its own for it.
+
+## 1.3.1
+* Fixed: the OAuth discovery documents are now served from the request path, so another plugin registering the same `/.well-known/` rewrite can no longer answer for this one and break the connection.
+
+## 1.3.0
+* Changes that need approval are now approved by you, not the model: the Chat tab pauses before a risky change, shows exactly what the assistant wants to run, and only your Approve button lets it happen. Nothing in that turn runs until you decide.
+* AI apps that declare refresh support (Claude Code, for example) receive one-hour access tokens and a rotating refresh token, so a leaked token is useful for an hour rather than a month. A refresh token replayed after it was retired revokes the connection. Apps without refresh support keep the 30-day token they had, so nothing changes for them.
+* An app's identity document URL must now carry a path, as the Client ID Metadata Document specification requires.
+* The OAuth consent pages refuse to be shown inside another site's frame, so a store administrator cannot be tricked into approving a connection they did not open.
+* Authorization responses now carry the issuer (RFC 9207) and the discovery document says so, which lets AI apps detect a mix-up between authorization servers.
+* The connecting app's identity document is read with a size limit.
+* Deleting the plugin also removes the Chat tab's saved provider key.
+* Speaks MCP protocol revision 2025-11-25 alongside the earlier ones.
+* Tested with WooCommerce 11.1.
+
+## 1.2.2
+* The connecting app's identity document is fetched through WordPress's safe HTTP function, which refuses private-network and loopback addresses.
+* Uninstall no longer runs a raw query against the options table; the plugin's short-lived transients expire on their own and WordPress's daily cleanup removes them.
+* The readme discloses that the Chat tab can install the official AI Provider plugins from WordPress.org on request.
+* On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
 
 ## 1.2.1
 * The OAuth consent pages load their stylesheets through WordPress's own style queue instead of writing `<link>` tags, and print only this plugin's own two sheets so nothing else can inject assets into a consent screen.

@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.3.2
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,19 +20,19 @@ Home page and documentation: [counterhand.app](https://counterhand.app/).
 Your store gets a clean MCP endpoint at `https://yourstore.com/mcp`. Assistants connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an assistant connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
 
 * **OAuth 2.1 with PKCE** — the modern MCP authorization standard. Client identity via Client ID Metadata Documents (CIMD); no client secrets, no manual registration.
-* **You approve scopes per connection** — the consent screen groups the requested scopes under plain headings (Catalog, Sales, Insights, Content, Store setup, Advanced) as checkboxes you can narrow before approving. Write never implies read, and anything under Advanced is collapsed and never pre-ticked.
-* **Fail-closed security** — disabled tool groups and missing scopes make tools invisible AND uncallable. A connection can never do more than the administrator who approved it; demoting or removing that user instantly disables it.
+* **You approve what each app may do** — the consent screen asks "Let this app work with your store?" and lists the requested permissions under plain headings (Catalog, Sales, Insights, Content, Store setup, Advanced, Other plugins) as checkboxes you can narrow before approving. Changing never implies reading, and Advanced and Other plugins stay folded and are never pre-ticked.
+* **Fail-closed security** — an area switched off for the store, or a permission the app was not granted, makes its tools invisible AND uncallable. A connection can never do more than the administrator who approved it; demoting or removing that user instantly disables it.
 * **Audience-bound, hashed tokens** — access tokens are bound to your store (RFC 8707) and stored as SHA-256 hashes. Constant-time verification, no authentication oracle, per-connection rate limiting. Apps that can refresh get one-hour access tokens and a rotating refresh token; a replayed refresh token revokes the connection.
 * **Safe defaults for writes** — products and posts are created as drafts for human review; deletion moves to trash unless permanent deletion is explicitly requested.
 * **Confirmation for the dangerous few** — changing a store setting, enabling or disabling a payment gateway, or running a WooCommerce maintenance tool each require an explicit confirmation argument, so an assistant has to tell you what it is about to do and get your agreement first.
 * **Credentials stay out of reach** — settings named like an API key, secret, password or token are never writable through the API, payment gateway credentials are neither read nor written, and maintenance routines that cannot be undone (resetting user roles, deleting tax rates, dropping order tables, running the database migration) are refused outright.
 * **Custom fields are guarded** — WordPress's own private fields are hidden, and the keys that hold roles, capabilities and login sessions can be neither read nor written. Customer custom fields are read-only.
-* **Revoke anytime** — the Connections tab lists every connected assistant; one click cuts off its access.
-* **Opt-in action log** — record every tool call with PII (emails, phone numbers) masked before storage, configurable retention, one-click clearing.
+* **Revoke anytime** — Connect apps › Connected apps lists every app; one click cuts off its access.
+* **Opt-in activity log** — record every tool call, with names, addresses, emails and phone numbers masked before storage, configurable retention and one-click clearing.
 
 = What you can ask an assistant to do =
 
-Once connected, an AI agent works your store through plain requests, and the Chat tab gives you the same as an in-admin chatbot. What the tool groups cover, in everyday terms:
+Once connected, an AI agent works your store through plain requests, and the Chat screen gives you the same as an in-admin chatbot. What the areas cover, in everyday terms:
 
 * **Inventory and catalog** — check stock levels, find products that are low or out of stock, adjust quantities and prices, create draft products, and manage variations, categories, tags and coupons.
 * **Orders, refunds and customers** — look up an order, list what shipped today, add an order note, issue a refund, or pull up a customer's history.
@@ -40,9 +40,9 @@ Once connected, an AI agent works your store through plain requests, and the Cha
 * **Automation of repetitive work** — rewriting product descriptions, tidying categories or drafting posts and pages becomes one instruction instead of a hundred clicks; every change still passes WooCommerce's own validation, and the risky ones need your confirmation.
 * **Store setup** — shipping zones and rates, tax rates and, behind Advanced, settings, payment gateways and maintenance tools.
 
-= 132 tools, in groups you switch on individually =
+= 132 tools, in areas you switch on one by one =
 
-Every group is a separate switch in Settings, with read and write as separate axes. A fresh install exposes **Products, Orders and Reports, read-only** — everything else is off until you turn it on, and upgrading never widens what your store exposes.
+Every area is its own switch on the Access screen, with Can read and Can change as separate switches. A fresh install exposes **Products, Orders and Reports, read-only** — everything else is off until you turn it on, and upgrading never widens what your store exposes.
 
 * **Catalog** — Products (11), Categories & tags (25), Variations (5), Reviews (5), Coupons (8)
 * **Sales** — Orders (11), Refunds (4), Customers (3)
@@ -63,13 +63,20 @@ Off until you switch each on: WPML, Germanized and Germanized Pro, Contact Form 
 
 = Two ways to use AI with your store =
 
-**Chat with your store, inside WooCommerce.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat tab tests it before saving, so a wrong key is caught immediately.
+**Chat with your store, inside wp-admin.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat screen tests it before saving, so a wrong key is caught immediately.
 
-**Connect AI apps you already use.** The Connect AI apps tab shows one URL to paste into Claude, ChatGPT, Claude Code or any other MCP client — one click installs it into Cursor and VS Code. There is no token to create and nothing to copy back: the app identifies itself with its own published address (CIMD), and you approve exactly what it may do on a consent screen in your browser. No local proxy, no Node.js required.
+**Connect AI apps you already use.** The Connect apps screen shows one URL to paste into Claude, ChatGPT, Claude Code or any other MCP client — one click installs it into Cursor and VS Code. There is no token to create and nothing to copy back: the app identifies itself with its own published address (CIMD), and you approve exactly what it may do on a consent screen in your browser. No local proxy, no Node.js required.
+
+= More than tools =
+
+* **Overview** — opens first: what is still to set up, whether AI access is on, the connected apps, and what AI did today.
+* **Rewrites** — the chat's AI model drafts new descriptions or short descriptions for up to 25 products in a category, in the background. Nothing changes until you approve each text, a text edited since the model read it is never overwritten, and with undo history on an applied text can be undone.
+* **Weekly report** — each person can ask for last week's sales, best sellers and waiting orders by email every Monday, as WooCommerce's own reports state them. With an AI model chosen, a short summary written by AI comes first, labelled as such.
+* **Activity** — every call apps and the chat made, newest first, if you switch recording on.
 
 = How this differs from WooCommerce's built-in MCP =
 
-WooCommerce ships an experimental MCP server behind a feature flag, authenticated with REST API keys and covering a handful of product and order abilities. Counterhand adds what a self-hosted store still lacks: OAuth 2.1 browser consent instead of copied keys, the whole WooCommerce and WordPress surface (coupons, customers, reports, shipping, tax, settings, posts and pages), per-connection scopes with one-click revocation, confirmation-gated risky writes, an audit log, and the in-admin chat. The two can run side by side.
+WooCommerce registers a handful of product and order abilities, which the separate MCP adapter plugin can offer to AI clients, signed in with an application password. Counterhand adds what a self-hosted store still lacks: OAuth 2.1 browser consent instead of copied keys, the whole WooCommerce and WordPress surface (coupons, customers, reports, shipping, tax, settings, posts and pages), permissions chosen per app with one-click revocation, confirmation-gated risky writes, an activity log, undo, and the in-admin chat. The two can run side by side.
 
 = Free, open source, sponsor-supported =
 
@@ -83,15 +90,19 @@ The plugin contacts no server of its own, collects no usage data and phones no t
 
 This plugin does not depend on any service of its own. It never contacts the plugin author, and it sends no analytics or telemetry anywhere. Every outbound request below happens only as a direct result of something you do in wp-admin, and most stores will only ever use one of them.
 
-= AI model providers (in-admin chat only) =
+= AI model providers (chat, Rewrites and the weekly report summary) =
 
-The "Chat" tab lets a store administrator ask questions about the store in plain language. Answering a question means sending it to an AI model, so this is the one feature that transmits store data to a third party. It is used only when you open the Chat tab and send a message; if you never use the chat, no request is ever made to any of these services.
+Three features send store data to the AI model you choose on the Chat screen: the chat, Rewrites and the AI summary in the weekly report. They are the only features that transmit store data to a third party, and none of them sends anything until you choose a model. If you never choose one, no request is ever made to any of these services.
 
-On WordPress 7.0 and later the chat uses the AI model WordPress itself manages under Settings → Connectors, so this plugin never handles the API key and the provider is whichever one you configured in WordPress. On earlier WordPress versions, you choose a provider on the Chat tab and supply your own API key.
+On WordPress 7.0 and later the AI model can be the one WordPress itself manages under Settings → Connectors, so this plugin never handles the API key and the provider is whichever one you configured in WordPress. Otherwise you choose a provider on the Chat screen and supply your own API key.
 
-**What is sent, and when:** only when an administrator sends a chat message (and on each follow-up step of answering it) the plugin transmits, to the provider you chose: your message text, the earlier messages in that chat conversation, the list of enabled tool definitions (tool names, descriptions and argument schemas), and the results of any tool the model calls to answer you. **Those tool results contain your store's data** — for example product, order, customer or report records the model looked up in order to answer. A short system instruction accompanies the request, authenticated with your own API key (or, on WordPress 7.0 and later, by WordPress's connector, so this plugin never sees the key). Nothing is sent on a schedule or in the background.
+**What is sent, and when:** only when an administrator sends a chat message (and on each follow-up step of answering it) the plugin transmits, to the provider you chose: your message text, the earlier messages in that chat conversation, the list of enabled tool definitions (tool names, descriptions and argument schemas), and the results of any tool the model calls to answer you. **Those tool results contain your store's data** — for example product, order, customer or report records the model looked up in order to answer. A short system instruction accompanies the request, authenticated with your own API key (or, on WordPress 7.0 and later, by WordPress's connector, so this plugin never sees the key).
 
-There is one other, smaller request: when you save an API key on the Chat tab, the plugin sends a single "ping" message to the provider to check the key works before storing it, so a wrong key is reported immediately. That check contains no store data.
+**Rewrites:** only when an administrator or shop manager starts a rewrite job, the plugin sends each chosen product's name, current description or short description and the person's instructions to the model, one product at a time, in the background through WooCommerce's Action Scheduler. Nothing else about the store is sent, and nothing is sent after the job ends.
+
+**Weekly report summary:** only for a person who asked for the weekly report, and only while a model is chosen, the plugin sends last week's figures (sales totals, best sellers by name and quantity, order counts) to the model every Monday morning to write a short summary. No customer data is included. Without a model the report goes out without a summary and nothing is sent.
+
+There is one other, smaller request: when you save an API key on the Chat screen, the plugin sends a single "ping" message to the provider to check the key works before storing it, so a wrong key is reported immediately. That check contains no store data.
 
 The provider you select determines the destination:
 
@@ -111,24 +122,24 @@ When an AI assistant connects to your store, it identifies itself with a Client 
 
 = WordPress.org (installing an AI provider plugin) =
 
-On WordPress 7.0 and later, the Chat tab can install the official "AI Provider for Anthropic", "AI Provider for OpenAI" or "AI Provider for Google" plugin for you. This happens only when an administrator with permission to install plugins clicks the matching button. WordPress then fetches the plugin from the WordPress.org plugin directory the same way Plugins → Add New does, subject to the [WordPress.org privacy policy](https://wordpress.org/about/privacy/). No store data is sent; the API key for the provider is entered afterwards on WordPress's own Settings → Connectors screen.
+On WordPress 7.0 and later, the Chat screen can install the official "AI Provider for Anthropic", "AI Provider for OpenAI" or "AI Provider for Google" plugin for you. This happens only when an administrator with permission to install plugins clicks the matching button. WordPress then fetches the plugin from the WordPress.org plugin directory the same way Plugins → Add New does, subject to the [WordPress.org privacy policy](https://wordpress.org/about/privacy/). No store data is sent; the API key for the provider is entered afterwards on WordPress's own Settings → Connectors screen.
 
 = Your own store (reachability check) =
 
-The "Connect AI apps" tab reports whether your MCP endpoint is actually reachable and advertising OAuth discovery. To find out, the plugin requests **your own site's** URLs (`/mcp` and `/.well-known/oauth-protected-resource`) over HTTP.
+The "Connect apps" screen reports whether your MCP endpoint is actually reachable and advertising OAuth discovery. To find out, the plugin requests **your own site's** URLs (`/mcp` and `/.well-known/oauth-protected-resource`) over HTTP.
 
-This is not a third-party service: the request goes to your own domain and no data leaves your server's control. It runs only while an administrator is viewing that tab.
+This is not a third-party service: the request goes to your own domain and no data leaves your server's control. It runs only while an administrator is viewing that screen.
 
-= Links on the Connect AI apps tab =
+= Links on the Connect apps screen =
 
-That tab also shows documentation links for Claude, ChatGPT, Cursor and VS Code, and "add to editor" buttons. These are ordinary links and buttons in your browser — the plugin makes no request to those sites, and nothing is sent unless you click through.
+That screen also shows documentation links for Claude, ChatGPT, Cursor and VS Code, and "add to editor" buttons. These are ordinary links and buttons in your browser — the plugin makes no request to those sites, and nothing is sent unless you click through.
 
 == Installation ==
 
 1. In wp-admin go to Plugins → Add New, search for "Counterhand MCP" and click Install, then Activate. WooCommerce must already be active.
-2. Open WooCommerce → Counterhand MCP. On the Settings tab switch on the tool groups your assistants may use — Products, Orders and Reports are on, read-only, by default.
-3. On the Connect AI apps tab copy the endpoint URL (`https://yourstore.com/mcp`) into Claude, ChatGPT, Claude Code, Cursor or VS Code — or use the one-click install buttons.
-4. Approve the connection on the consent screen that opens in your browser. It appears on the Connections tab, where you can revoke it at any time.
+2. Open Counterhand MCP in the admin menu. Overview lists what is still to set up. On Access switch on the areas AI may read and change — Products, Orders and Reports can be read by default, and nothing can be changed.
+3. On Connect apps copy the endpoint URL (`https://yourstore.com/mcp`) into Claude, ChatGPT, Claude Code, Cursor or VS Code — or use the one-click install buttons.
+4. Approve the app on the consent screen that opens in your browser. It appears under Connect apps › Connected apps, where you can revoke it at any time.
 
 Your store must be reachable over HTTPS from the public internet for cloud assistants (Claude, ChatGPT); Claude Code, Cursor and VS Code connect from your own machine and work with a local site too.
 
@@ -136,11 +147,11 @@ Your store must be reachable over HTTPS from the public internet for cloud assis
 
 = Is it really free? =
 
-Yes. Every tool, the chat, OAuth and the action log are in the one free plugin, licensed GPLv2 or later. There is no Pro version and nothing is unlocked by paying. If it saves you time, you can support its maintenance through [GitHub Sponsors](https://github.com/sponsors/miroslav-balan-at).
+Yes. Every tool, the chat, Rewrites, the weekly report, OAuth and the activity log are in the one free plugin, licensed GPLv2 or later. There is no Pro version and nothing is unlocked by paying. If it saves you time, you can support its maintenance through [GitHub Sponsors](https://github.com/sponsors/miroslav-balan-at).
 
 = How does an assistant connect? =
 
-Add the endpoint URL (`https://yourstore.com/mcp`) to your MCP client — no token needed. The client discovers the OAuth authorization server, opens your browser to a consent screen, and you approve which scopes it may use. Approved assistants appear on the Connections tab.
+Add the endpoint URL (`https://yourstore.com/mcp`) to your MCP client — no token needed. The client discovers the OAuth authorization server, opens your browser to a consent screen, and you approve what it may do. Approved apps appear under Connect apps › Connected apps.
 
 = The endpoint or discovery documents return 404 or 403 =
 
@@ -154,15 +165,15 @@ Any MCP client implementing the current authorization spec (OAuth 2.1 + PKCE + P
 
 = Claude or ChatGPT cannot see my store =
 
-Those apps connect from the vendor's own servers, not from your browser, so your store has to be reachable from the public internet over HTTPS. A local development site works fine with Claude Code, Cursor and VS Code, which connect from your own machine. The Connect AI apps tab checks this for you and says which of the two situations you are in.
+Those apps connect from the vendor's own servers, not from your browser, so your store has to be reachable from the public internet over HTTPS. A local development site works fine with Claude Code, Cursor and VS Code, which connect from your own machine. The Connect apps screen checks this for you and says which of the two situations you are in.
 
 = An assistant says a tool does not exist =
 
-Three things have to agree before a tool is callable: the group is switched on in Settings, the connection was granted that scope on the consent screen, and WooCommerce's own permission check passes for the logged-in owner of the connection. If any one of them says no, the tool is invisible *and* uncallable — it is never merely hidden. Check the Settings tab first, then the connection's scopes on the Connections tab.
+Three things have to agree before a tool is callable: its area is switched on under Access, the app was granted it on the consent screen, and WooCommerce's own permission check passes for the logged-in owner of the connection. If any one of them says no, the tool is invisible *and* uncallable — it is never merely hidden. Check Access first, then reconnect the app: a connection only ever holds what it was approved with.
 
 = Can an assistant break my store? =
 
-The things that could are gated separately. Store settings, payment gateways and system maintenance are their own groups, off by default, sitting behind a collapsed Advanced heading that is never pre-ticked; each of their write tools requires an explicit confirmation; and the maintenance routines that cannot be undone are refused whatever an assistant sends. Calls to those three groups are recorded in the action log even if you have logging switched off.
+The things that could are gated separately. Store settings, payment gateways and system maintenance are their own areas, off by default, sitting behind a folded Advanced heading that is never pre-ticked; each of their write tools requires an explicit confirmation; and the maintenance routines that cannot be undone are refused whatever an assistant sends. Calls to those three areas are recorded in Activity even if you have recording switched off.
 
 = Can I connect a client that only supports bearer headers? =
 
@@ -170,29 +181,29 @@ The security model is OAuth-first. If you need a raw bearer token for a script o
 
 = Does it work with other plugins, through WordPress abilities? =
 
-On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools on the "Other plugins" screen. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in the action log. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
+On WordPress 6.9 or newer, abilities that other plugins offer to AI clients, such as Yoast SEO's post SEO data and WPForms' forms, appear as tools under Access › Other plugins. Each plugin is off until you switch it on, has its own read and write permission on the consent screen, and still runs its own permission check. Every write needs explicit confirmation, and every call is recorded in Activity. A connection holds only the tools listed when you approved it: anything a plugin adds in a later update stays off until you connect the app again. WooCommerce's and WordPress's own abilities are not bridged, because the tools above already cover them under their own permissions.
 
 = Does it work with Contact Form 7 and Flamingo? =
 
-With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on in the "Other plugins" screen, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
+With Contact Form 7 active, an assistant can list, create, edit and delete its forms. With Flamingo active, it can read the form submissions Flamingo stores and move them to the trash. Each is off until you switch it on under Access › Other plugins, and has its own permissions on the consent screen. Flamingo's messages hold personal data, so grant them only to an app you trust with it. Editing or deleting a form, and removing a message, need explicit confirmation.
 
 = Does it work with Advanced Custom Fields? =
 
-With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on in the "Other plugins" screen, and it cannot change anything else about those items.
+With ACF active, an assistant can read and change custom field values on posts, pages and products, for field groups with "Show in REST API" switched on. Password fields are never returned or set. It is off until you switch it on under Access › Other plugins, and it cannot change anything else about those items.
 
 = Does it work with Germanized? =
 
-With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on in the "Other plugins" screen. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
+With Germanized active, an assistant can manage delivery times, units, price labels, deposit types, manufacturers, nutrients and allergens, and set these legal details on products, for example to find products missing a delivery time. It is off until you switch it on under Access › Other plugins. It cannot change a product's price, status or tax status through these tools, though a deposit set on a product is added to what customers pay. Bank details are never included. Changes to products and deposit types, and every deletion, need explicit confirmation.
 
 = Does it work with WPML? =
 
-With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on in the "Other plugins" screen. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
+With WPML and WooCommerce Multilingual active, an assistant can find products, categories, tags and attribute terms missing a translation, add translations and change their text, including variations, custom text fields and strings such as email subjects. It is off until you switch it on under Access › Other plugins. It cannot change an original, or any price or stock: those come from the original. A new product translation starts as a draft, and publishing it needs explicit confirmation. Category, tag and attribute translations are visible as soon as they are saved. Setting a string needs explicit confirmation, and payment settings are out of reach.
 
 Have a person check any translated legal wording, such as withdrawal or safety text. Whatever you switch on, a product changed through any tool now updates its translations too, as it does in the WooCommerce REST API. With Multilingual's multi-currency mode on, the product tools can also read and set a product's own price in each currency.
 
 = Which other paid plugins does it work with? =
 
-Each of these is off until you switch it on in the "Other plugins" screen.
+Each of these is off until you switch it on under Access › Other plugins.
 
 * WooCommerce Shipment Tracking: read, add and remove tracking numbers on orders. Changes need explicit confirmation.
 * Germanized Pro: look up issued invoices. Read-only, with no addresses or files.
@@ -201,7 +212,7 @@ Each of these is off until you switch it on in the "Other plugins" screen.
 
 = Can an assistant preview a change, or undo one? =
 
-An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Settings and granted to a connection, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
+An assistant can ask what a change to a product, variation, category, coupon, shipping or tax setting, post or page would do before saving it. With "Undo history" switched on under Access and granted to an app, it can also undo that connection's own changes for 30 days. An undo needs explicit confirmation, checks the result, and restores the record, not what followed from it: emails already sent stay sent, orders already placed keep their prices, and a price customers saw may still count as your lowest in the last 30 days. It is refused if the fields have changed again, or if something created has since been edited or sold. Orders, refunds, customers, reviews, payment gateways, store settings, custom fields and other plugins' tools are not covered, a deletion cannot be undone, and some changes, such as a shipping method's settings, say they have no undo.
 
 = Are there ready-made routines? =
 
@@ -217,47 +228,34 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Screenshots ==
 
-1. Settings — every tool group is its own switch, with read and write as separate axes.
-2. Connect AI apps — one endpoint URL for Claude, ChatGPT, Cursor, VS Code and Claude Code, with a reachability check.
+1. Access — every store area is its own switch, with Can read and Can change separate.
+2. Connect apps — one endpoint URL for Claude, ChatGPT, Cursor, VS Code and Claude Code, with a reachability check.
 3. Chat — ask your store questions in plain language from wp-admin, on a model WordPress manages or your own key.
-4. Action log — every tool call, with personal data masked before it is stored.
+4. Activity — every call apps and the chat made, with personal data masked before it is stored.
 
 == Changelog ==
 
-= Unreleased =
-* Fixed: on a store with WPML, a product changed through any tool now updates its translations, and a translation sent with a language is saved in that language and linked. Before, prices stayed old on translations with no error.
-* Changed: tools can no longer write protected custom fields (names starting with an underscore) through `meta_data`, which went past the rule the custom field tools follow. A client setting them that way now gets an error.
-* Added: integrations for WPML, WooCommerce Shipment Tracking, Germanized Pro invoices, WooCommerce Cost of Goods, WooCommerce URL Coupons, Germanized, Advanced Custom Fields, Contact Form 7 and Flamingo, and abilities that other plugins offer to AI clients, such as Yoast SEO. All are off until you switch them on.
-* Added: an assistant can preview a change before saving it, and with "Undo history" switched on and granted, undo a connection's own changes for 30 days.
-* Added: support for the MCP 2026-07-28 protocol revision alongside the earlier one.
-* Added: MCP prompts for common store routines, a store profile resource, and output schemas on read tools.
+= 2.0.0 =
+* New: a menu that follows what you do: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access. Old bookmarks and links in emails keep working.
+* New: Rewrites. The chat's AI model drafts new product descriptions for up to 25 products in a category, and nothing changes until you approve each text.
+* New: a weekly report by email, which each person asks for on Overview, with an optional summary written by AI on top of WooCommerce's own figures.
+* New: the chat offers ready-made routines, saved questions and store notes, keeps a conversation across a reload, and shows a price change before and after you approve it.
+* New: the consent screen asks "Let this app work with your store?", names who approves, the app and where access goes, and folds each section.
+* New: integrations for WPML, Germanized and Germanized Pro, WooCommerce Shipment Tracking, Cost of Goods, URL Coupons, Advanced Custom Fields, Contact Form 7, Flamingo, BackWPup, and the abilities other plugins such as Yoast SEO, Rank Math and WPForms offer to AI clients. All are off until you switch them on.
+* New: an assistant can preview a change before saving it, and with "Undo history" switched on and granted, undo an app's own changes for 30 days.
+* New: views for hosts that support MCP Apps, MCP prompts, a store profile resource and support for the MCP 2026-07-28 protocol revision.
+* Changed: one name for each thing on every screen: an area with Can read and Can change, an app, AI access, Activity.
+* Changed: tools can no longer write protected custom fields (names starting with an underscore) through `meta_data`. A client that set them that way now gets an error.
+* Fixed: on a store with WPML, a product changed through any tool now updates its translations.
+* Fixed: a browser could fill a saved site login into the chat's API key field.
+* Tested with WooCommerce 11.3.
 
 = 1.3.2 =
 * Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending; WooCommerce sends no email of its own for it.
-
-= 1.3.1 =
-* Fixed: the OAuth discovery documents are now served from the request path, so another plugin registering the same `/.well-known/` rewrite can no longer answer for this one and break the connection.
-
-= 1.3.0 =
-* Changes that need approval are now approved by you, not the model: the Chat tab pauses before a risky change, shows exactly what the assistant wants to run, and only your Approve button lets it happen. Nothing in that turn runs until you decide.
-* AI apps that declare refresh support (Claude Code, for example) receive one-hour access tokens and a rotating refresh token, so a leaked token is useful for an hour rather than a month. A refresh token replayed after it was retired revokes the connection. Apps without refresh support keep the 30-day token they had, so nothing changes for them.
-* An app's identity document URL must now carry a path, as the Client ID Metadata Document specification requires.
-* The OAuth consent pages refuse to be shown inside another site's frame, so a store administrator cannot be tricked into approving a connection they did not open.
-* Authorization responses now carry the issuer (RFC 9207) and the discovery document says so, which lets AI apps detect a mix-up between authorization servers.
-* The connecting app's identity document is read with a size limit.
-* Deleting the plugin also removes the Chat tab's saved provider key.
-* Speaks MCP protocol revision 2025-11-25 alongside the earlier ones.
-* Tested with WooCommerce 11.1.
-
-= 1.2.2 =
-* The connecting app's identity document is fetched through WordPress's safe HTTP function, which refuses private-network and loopback addresses.
-* Uninstall no longer runs a raw query against the options table; the plugin's short-lived transients expire on their own and WordPress's daily cleanup removes them.
-* The readme discloses that the Chat tab can install the official AI Provider plugins from WordPress.org on request.
-* On WordPress 7.0 and later the Chat tab no longer offers its own field for a WordPress connector key. It now reports which providers WordPress has and whether their key works, asked of the WordPress AI Client, and links to Settings → Connectors for entering the key — so the plugin never reads or writes a connector's stored API key.
 
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
-= 1.3.0 =
-Risky changes from the Chat tab now wait for your approval. Security hardening of the OAuth consent flow and tested with WooCommerce 11.1. Connected assistants keep working; apps that can refresh will start doing so on their next connection.
+= 2.0.0 =
+A new menu by task (Overview, Chat, Rewrites, Connect apps, Access, Activity); old links keep working. Tools no longer write protected custom fields through meta_data. New integrations ship off.

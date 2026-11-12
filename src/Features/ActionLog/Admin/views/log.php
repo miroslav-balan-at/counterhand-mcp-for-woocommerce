@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 		</p></div>
 	<?php endif; ?>
 
-	<?php if ( isset( $_GET['counterhand_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+	<?php if ( isset( $_GET['counterhand_cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- only decides whether to show the notice; the clear itself checked its nonce. ?>
 		<div class="notice notice-success inline"><p><?php esc_html_e( 'Activity cleared.', 'counterhand-mcp-for-woocommerce' ); ?></p></div>
 	<?php endif; ?>
 

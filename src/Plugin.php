@@ -44,6 +44,7 @@ use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
 use Counterhand\Features\Settings\ConnectScreen;
 use Counterhand\Features\Settings\OverviewScreen;
+use Counterhand\Features\Settings\ReviewInvitation;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingSanitizer;
 use Counterhand\Features\Settings\SettingsFeature;
@@ -234,6 +235,7 @@ final class Plugin {
 
 		$descriptors        = new StaticDescriptorCatalog();
 		$connection_matcher = new ConnectionMatcher( $repository );
+		$review_invitation  = new ReviewInvitation( $connection_matcher );
 
 		$this->features = [
 			$tokens,
@@ -242,9 +244,10 @@ final class Plugin {
 			new ChatNotesFeature( $store_memory, $saved_prompts ),
 			$rewrites,
 			$weekly_report,
+			$review_invitation,
 			new SettingsFeature(
 				[
-					AdminScreen::Overview->value => new OverviewScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
+					AdminScreen::Overview->value => new OverviewScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report, $review_invitation ] ),
 					AdminScreen::Chat->value     => $playground,
 					AdminScreen::Rewrites->value => $rewrites,
 					AdminScreen::Connect->value  => new ConnectScreen( $tokens->admin(), $connection_matcher ),

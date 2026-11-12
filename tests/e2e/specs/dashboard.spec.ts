@@ -137,6 +137,40 @@ test.describe( 'Overview', () => {
 		}
 	} );
 
+	test( 'asks for a review once an app is connected, and either answer retires it', async ( { page, baseURL } ) => {
+		const forget = () => {
+			try {
+				wp( 'user', 'meta', 'delete', '1', 'counterhand_review_invitation' );
+			} catch {
+				// Nothing stored yet, which is what a new person looks like.
+			}
+		};
+		const restore = patchSettings( { enabled: true, products_read: true } );
+		forget();
+		try {
+			await connect( page, baseURL as string, [ 'products:read' ] );
+			await page.goto( DASHBOARD );
+			const card = page.locator( 'section', { has: page.getByRole( 'heading', { name: 'Does Counterhand help your store?' } ) } );
+			await expect( card ).toBeVisible();
+
+			await page.context().route( /wordpress\.org/, ( route ) => route.fulfill( { contentType: 'text/html', body: '<p>review form</p>' } ) );
+			const [ review ] = await Promise.all( [ page.waitForEvent( 'popup' ), card.getByRole( 'button', { name: 'Write a review' } ).click() ] );
+			await review.waitForLoadState();
+			expect( review.url() ).toBe( 'https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce/reviews/#new-post' );
+			await page.reload();
+			await expect( card, 'asked once is enough' ).toHaveCount( 0 );
+
+			forget();
+			await page.reload();
+			await card.getByRole( 'button', { name: 'Don’t show this again' } ).click();
+			await expect( page ).toHaveURL( /page=counterhand-mcp-dashboard/ );
+			await expect( card ).toHaveCount( 0 );
+		} finally {
+			forget();
+			restore();
+		}
+	} );
+
 	test( 'states the connector, what can be changed and who is on', async ( { page } ) => {
 		const restore = patchSettings( { enabled: false, products_write: true, 'integration_e2e-fixture_read': true } );
 		try {

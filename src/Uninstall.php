@@ -57,6 +57,7 @@ final class Uninstall {
 		wp_clear_scheduled_hook( 'counterhand_weekly_report' );
 		delete_metadata( 'user', 0, 'counterhand_weekly_report', '', true );
 		delete_metadata( 'user', 0, 'counterhand_saved_prompts', '', true );
+		delete_metadata( 'user', 0, 'counterhand_review_invitation', '', true );
 
 		// WooCommerce may already be gone, and its scheduler with it.
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {

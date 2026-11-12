@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-12T16:48:17+00:00\n"
+"POT-Creation-Date: 2026-11-12T19:59:22+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -27,8 +27,8 @@ msgstr "https://counterhand.app"
 
 #. Description of the plugin
 #: counterhand-mcp-for-woocommerce.php
-msgid "Let Claude, ChatGPT and Cursor work your WooCommerce store through an MCP server with OAuth consent: you approve what each app may read and change, and every risky change."
-msgstr "Lass Claude, ChatGPT und Cursor über einen MCP-Server mit OAuth-Freigabe mit deinem WooCommerce-Shop arbeiten: Du gibst frei, was jede App lesen und ändern darf, und jede riskante Änderung."
+msgid "Run your WooCommerce store from Claude, ChatGPT, Copilot and other MCP apps, or a chat in wp-admin on the AI model you choose. You approve what each app may read and change, and every risky change."
+msgstr "Steuere deinen WooCommerce-Shop aus Claude, ChatGPT, Copilot und anderen MCP-Apps oder aus einem Chat in wp-admin mit dem KI-Modell deiner Wahl. Du gibst frei, was jede App lesen und ändern darf, und jede riskante Änderung."
 
 #. Author of the plugin
 #: counterhand-mcp-for-woocommerce.php
@@ -212,34 +212,34 @@ msgid "This could not be shown."
 msgstr "Das konnte nicht angezeigt werden."
 
 #: src/Features/McpApps/ViewText.php:18
-#: src/Features/WeeklyReport/ReportEmail.php:70
+#: src/Features/WeeklyReport/ReportEmail.php:71
 #: src/Shared/Tool/ToolSection.php:34
 msgid "Sales"
 msgstr "Verkauf"
 
 #: src/Features/McpApps/ViewText.php:19
-#: src/Features/WeeklyReport/ReportEmail.php:61
+#: src/Features/WeeklyReport/ReportEmail.php:62
 msgid "Total sales"
 msgstr "Gesamtumsatz"
 
 #: src/Features/McpApps/ViewText.php:20
-#: src/Features/WeeklyReport/ReportEmail.php:62
+#: src/Features/WeeklyReport/ReportEmail.php:63
 msgid "Net sales"
 msgstr "Nettoumsatz"
 
 #: src/Features/McpApps/ViewText.php:21
-#: src/Features/WeeklyReport/ReportEmail.php:63
+#: src/Features/WeeklyReport/ReportEmail.php:64
 #: src/Shared/Tool/ToolGroup.php:59
 msgid "Orders"
 msgstr "Bestellungen"
 
 #: src/Features/McpApps/ViewText.php:22
-#: src/Features/WeeklyReport/ReportEmail.php:64
+#: src/Features/WeeklyReport/ReportEmail.php:65
 msgid "Items sold"
 msgstr "Verkaufte Artikel"
 
 #: src/Features/McpApps/ViewText.php:23
-#: src/Features/WeeklyReport/ReportEmail.php:65
+#: src/Features/WeeklyReport/ReportEmail.php:66
 #: src/Shared/Tool/ToolGroup.php:66
 msgid "Refunds"
 msgstr "Rückerstattungen"
@@ -292,18 +292,18 @@ msgid "Empty"
 msgstr "Leer"
 
 #. translators: 1: the start of the change, 2: how many characters were left out.
-#: src/Features/McpServer/McpServer.php:438
+#: src/Features/McpServer/McpServer.php:439
 #, php-format
 msgid "%1$s… (%2$d more characters)"
 msgstr "%1$s… (%2$d weitere Zeichen)"
 
 #. translators: 1: tool name, 2: the arguments as JSON
-#: src/Features/McpServer/McpServer.php:464
+#: src/Features/McpServer/McpServer.php:465
 #, php-format
 msgid "Allow this change to the store? %1$s: %2$s"
 msgstr "Diese Änderung am Shop freigeben? %1$s: %2$s"
 
-#: src/Features/McpServer/McpServer.php:470
+#: src/Features/McpServer/McpServer.php:471
 msgid "Approve this change"
 msgstr "Diese Änderung freigeben"
 
@@ -597,7 +597,7 @@ msgid "You are not allowed to change the store notes."
 msgstr "Du darfst die Shop-Notizen nicht ändern."
 
 #: src/Features/Playground/ChatNotesFeature.php:60
-#: src/Features/Playground/PlaygroundFeature.php:140
+#: src/Features/Playground/PlaygroundFeature.php:141
 #: src/Features/Settings/SettingsFeature.php:204
 #: src/Features/Settings/SettingsFeature.php:218
 msgid "Not allowed."
@@ -622,7 +622,7 @@ msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr "%s ist installiert. Letzter Schritt: Hinterlege deinen API-Schlüssel dort, wo WordPress ihn aufbewahrt."
 
 #: src/Features/Playground/ModelConnect.php:143
-#: src/Features/Playground/PlaygroundFeature.php:205
+#: src/Features/Playground/PlaygroundFeature.php:206
 msgid "You are not allowed to change these settings."
 msgstr "Du darfst diese Einstellungen nicht ändern."
 
@@ -652,23 +652,23 @@ msgstr "Das Modell konnte nicht erreicht werden. Prüfe die Angaben und versuche
 msgid "Connected to %1$s%2$s."
 msgstr "Verbunden mit %1$s%2$s."
 
-#: src/Features/Playground/PlaygroundFeature.php:115
+#: src/Features/Playground/PlaygroundFeature.php:116
 msgid "Type a message first."
 msgstr "Gib zuerst eine Nachricht ein."
 
-#: src/Features/Playground/PlaygroundFeature.php:131
+#: src/Features/Playground/PlaygroundFeature.php:132
 msgid "That approval has expired. Send your message again."
 msgstr "Diese Freigabe ist abgelaufen. Sende deine Nachricht noch einmal."
 
-#: src/Features/Playground/PlaygroundFeature.php:147
+#: src/Features/Playground/PlaygroundFeature.php:148
 msgid "No AI model is chosen yet. Choose one at the top of this screen."
 msgstr "Noch ist kein KI-Modell gewählt. Wähle oben auf dieser Seite eines."
 
-#: src/Features/Playground/PlaygroundFeature.php:189
+#: src/Features/Playground/PlaygroundFeature.php:190
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Die Chat-Anfrage ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
-#: src/Features/Playground/PlaygroundFeature.php:305
+#: src/Features/Playground/PlaygroundFeature.php:306
 msgid "Admin chat"
 msgstr "Admin-Chat"
 
@@ -1723,6 +1723,10 @@ msgstr "Sieh jeden Aufruf der KI, mit maskierten persönlichen Daten."
 msgid "Turn on"
 msgstr "Einschalten"
 
+#: src/Features/Settings/ReviewInvitation.php:42
+msgid "You are not allowed to manage this store."
+msgstr "Du darfst diesen Shop nicht verwalten."
+
 #: src/Features/Settings/ScreenAssets.php:90
 #: src/Features/Settings/views/connect.php:58
 msgid "Checking the store…"
@@ -2056,6 +2060,22 @@ msgstr "Plugins auswählen"
 msgid "Only a site administrator can change these."
 msgstr "Nur Website-Administratoren können das ändern."
 
+#: src/Features/Settings/views/review-invitation.php:15
+msgid "Does Counterhand help your store?"
+msgstr "Hilft Counterhand deinem Shop?"
+
+#: src/Features/Settings/views/review-invitation.php:16
+msgid "A review on wordpress.org helps other store owners find it. It takes a minute, and it is what keeps a free plugin going."
+msgstr "Eine Bewertung auf wordpress.org hilft anderen Shop-Betreiberinnen und -Betreibern, es zu finden. Das dauert eine Minute und hält ein kostenloses Plugin am Leben."
+
+#: src/Features/Settings/views/review-invitation.php:23
+msgid "Write a review"
+msgstr "Bewertung schreiben"
+
+#: src/Features/Settings/views/review-invitation.php:24
+msgid "Don’t show this again"
+msgstr "Nicht mehr anzeigen"
+
 #: src/Features/Settings/views/settings.php:38
 msgid "Off means the store's address for apps does not exist: no app and no chat can reach anything. Use it to stop everything at once."
 msgstr "Aus bedeutet, dass die Adresse des Shops für Apps nicht existiert: Keine App und kein Chat erreicht etwas. Damit stoppst du alles auf einmal."
@@ -2336,65 +2356,65 @@ msgid "Weekly report"
 msgstr "Wochenbericht"
 
 #. translators: 1: store name, 2: the week, e.g. "3 November 2026 to 9 November 2026".
-#: src/Features/WeeklyReport/ReportEmail.php:29
+#: src/Features/WeeklyReport/ReportEmail.php:30
 #, php-format
 msgid "Weekly report for %1$s: %2$s"
 msgstr "Wochenbericht für %1$s: %2$s"
 
-#: src/Features/WeeklyReport/ReportEmail.php:33
+#: src/Features/WeeklyReport/ReportEmail.php:34
 msgid "Your week in the store"
 msgstr "Deine Woche im Shop"
 
-#: src/Features/WeeklyReport/ReportEmail.php:55
+#: src/Features/WeeklyReport/ReportEmail.php:56
 msgid "Written by AI from the figures below. Check it against them."
 msgstr "Von KI aus den Zahlen unten geschrieben. Prüfe es anhand dieser Zahlen."
 
-#: src/Features/WeeklyReport/ReportEmail.php:71
+#: src/Features/WeeklyReport/ReportEmail.php:72
 msgid "Figure"
 msgstr "Kennzahl"
 
-#: src/Features/WeeklyReport/ReportEmail.php:72
+#: src/Features/WeeklyReport/ReportEmail.php:73
 msgid "This week"
 msgstr "Diese Woche"
 
-#: src/Features/WeeklyReport/ReportEmail.php:73
+#: src/Features/WeeklyReport/ReportEmail.php:74
 msgid "Week before"
 msgstr "Woche davor"
 
-#: src/Features/WeeklyReport/ReportEmail.php:85
+#: src/Features/WeeklyReport/ReportEmail.php:86
 msgid "Best sellers"
 msgstr "Bestseller"
 
-#: src/Features/WeeklyReport/ReportEmail.php:88
+#: src/Features/WeeklyReport/ReportEmail.php:89
 msgid "Nothing was sold this week."
 msgstr "Diese Woche wurde nichts verkauft."
 
 #. translators: 1: product name, 2: number sold.
-#: src/Features/WeeklyReport/ReportEmail.php:99
+#: src/Features/WeeklyReport/ReportEmail.php:100
 #, php-format
 msgid "%1$s: %2$s sold"
 msgstr "%1$s: %2$s verkauft"
 
-#: src/Features/WeeklyReport/ReportEmail.php:113
+#: src/Features/WeeklyReport/ReportEmail.php:114
 msgid "Waiting now"
 msgstr "Jetzt offen"
 
 #. translators: 1: number of orders processing, 2: number of orders on hold.
-#: src/Features/WeeklyReport/ReportEmail.php:117
+#: src/Features/WeeklyReport/ReportEmail.php:118
 #, php-format
 msgid "%1$s orders processing and %2$s on hold."
 msgstr "%1$s Bestellungen in Bearbeitung und %2$s in Wartestellung."
 
-#: src/Features/WeeklyReport/ReportEmail.php:123
+#: src/Features/WeeklyReport/ReportEmail.php:124
 msgid "Open the orders"
 msgstr "Bestellungen öffnen"
 
-#: src/Features/WeeklyReport/ReportEmail.php:130
+#: src/Features/WeeklyReport/ReportEmail.php:131
 msgid "You get this because you asked for a weekly report in Counterhand MCP."
 msgstr "Du bekommst diese E-Mail, weil du in Counterhand MCP einen Wochenbericht angefordert hast."
 
 #. translators: %s: the name of the plugin's Overview screen.
-#: src/Features/WeeklyReport/ReportEmail.php:135
+#: src/Features/WeeklyReport/ReportEmail.php:136
 #, php-format
 msgid "Stop it on %s."
 msgstr "Abbestellen unter %s."
@@ -2467,11 +2487,11 @@ msgstr "Der Bericht konnte nicht gesendet werden. Prüfe, ob Berichte unter %s g
 msgid "You are not allowed to see store reports."
 msgstr "Du darfst die Shop-Berichte nicht sehen."
 
-#: src/Features/WooCommerceTools/Application/StoreProfileResource.php:42
+#: src/Features/WooCommerceTools/Application/StoreProfileResource.php:43
 msgid "Store profile"
 msgstr "Shop-Profil"
 
-#: src/Features/WooCommerceTools/Application/StoreProfileResource.php:43
+#: src/Features/WooCommerceTools/Application/StoreProfileResource.php:44
 msgid "Currency, country, how prices treat tax, units, and what this connection can reach."
 msgstr "Währung, Land, wie Preise die Steuer behandeln, Einheiten und worauf diese Verbindung zugreifen kann."
 

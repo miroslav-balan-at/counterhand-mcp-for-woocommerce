@@ -71,8 +71,17 @@ final readonly class ActionLogger {
 		// Phone-like sequences (7+ digits, allowing separators) → keep last 2.
 		return (string) preg_replace_callback(
 			'/\+?\d[\d\s\/-]{6,}\d/',
-			static fn ( array $matches ): string => '***' . substr( preg_replace( '/\D/', '', $matches[0] ), -2 ),
+			static fn ( array $matches ): string => self::is_date( $matches[0] ) ? $matches[0] : '***' . substr( preg_replace( '/\D/', '', $matches[0] ), -2 ),
 			$text
 		);
+	}
+
+	/** A report's date range matched the phone pattern; a real calendar date is no one's number. */
+	private static function is_date( string $candidate ): bool {
+		if ( 1 !== preg_match( '/^(\d{4})-(\d{2})-(\d{2})(?: \d{2})?$/', $candidate, $parts ) ) {
+			return false;
+		}
+
+		return (int) $parts[1] >= 1900 && (int) $parts[1] <= 2199 && checkdate( (int) $parts[2], (int) $parts[3], (int) $parts[1] );
 	}
 }

@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Counterhand\Features\WeeklyReport;
 
 use Counterhand\Features\Settings\AdminScreen;
+use Counterhand\Shared\StoreName;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,7 +22,7 @@ final readonly class ReportEmail {
 	) {}
 
 	public static function of( WeeklyFigures $figures, ?string $summary ): self {
-		$store = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+		$store = StoreName::plain();
 
 		return new self(
 			subject: sprintf(

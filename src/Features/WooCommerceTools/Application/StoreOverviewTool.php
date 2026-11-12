@@ -7,6 +7,7 @@ namespace Counterhand\Features\WooCommerceTools\Application;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Shared\Tool\ToolInterface;
+use Counterhand\Shared\StoreName;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -81,7 +82,7 @@ final readonly class StoreOverviewTool implements ToolInterface {
 		$product_counts = (array) wp_count_posts( 'product' );
 
 		return [
-			'store_name'       => get_bloginfo( 'name' ),
+			'store_name'       => StoreName::plain(),
 			'store_url'        => home_url(),
 			'currency'         => get_woocommerce_currency(),
 			'country'          => WC()->countries->get_base_country(),

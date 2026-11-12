@@ -2,6 +2,14 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 2.1.1
+
+* Added: Overview invites each person, once an app is connected, to review the plugin on wordpress.org, where ratings decide search rank. "Write a review" opens the review form in a new tab, and either button retires the card for that person (user meta, removed on uninstall). Nothing is offered in return.
+* Changed: the readme's tags swap `ai-agent` for `chatgpt`, the term the leading MCP plugins share.
+* Fixed: Activity masked a calendar date as if it were a phone number, so a weekly report's date range showed as "***02". A real date between 1900 and 2199 is now kept; a number shaped like a date that is no real date, such as 0664-12-34, is still masked.
+* Fixed: the store name went out HTML-escaped ("Linden &amp; Co.") to apps and models: in `get_store_overview`, the store profile resource, the MCP instructions, and the chat, Rewrites and weekly summary prompts. One helper, `StoreName::plain()`, decodes it; markup keeps WordPress's own escaping.
+* Changed: the listing title, short description and opening, the plugin description and the banner name what the plugin works with today: Claude, ChatGPT, Copilot and other MCP apps, and the chat's models (Claude, GPT, Gemini, Grok, Mistral, DeepSeek, local).
+
 ## 2.1.0
 
 * Added: the chat's model chooser offers Grok (xAI), Mistral, DeepSeek and OpenRouter, with each address filled in and a link to get a key. They use the same OpenAI-compatible adapter as Gemini and the custom endpoint, so the tool limit for that format applies. xAI lists this format as legacy next to its Responses API but still serves it.

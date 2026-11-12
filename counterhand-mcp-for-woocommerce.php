@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Counterhand MCP for WooCommerce
  * Plugin URI:        https://counterhand.app
- * Description:       Let Claude, ChatGPT and Cursor work your WooCommerce store through an MCP server with OAuth consent: you approve what each app may read and change, and every risky change.
- * Version:           2.1.0
+ * Description:       Run your WooCommerce store from Claude, ChatGPT, Copilot and other MCP apps, or a chat in wp-admin on the AI model you choose. You approve what each app may read and change, and every risky change.
+ * Version:           2.1.1
  * Requires at least: 6.6
  * Requires PHP:      8.2
  * Requires Plugins:  woocommerce
@@ -22,7 +22,7 @@ declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'COUNTERHAND_VERSION', '2.1.0' );
+define( 'COUNTERHAND_VERSION', '2.1.1' );
 define( 'COUNTERHAND_PLUGIN_FILE', __FILE__ );
 define( 'COUNTERHAND_PLUGIN_DIR', __DIR__ );
 

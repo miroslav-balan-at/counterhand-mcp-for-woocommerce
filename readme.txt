@@ -1,19 +1,19 @@
-=== Counterhand MCP for WooCommerce – MCP Server & AI Agent for Claude, ChatGPT & Cursor ===
+=== Counterhand MCP for WooCommerce – AI Agent & MCP Server for Claude, ChatGPT, Gemini & More ===
 Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
-Tags: woocommerce, mcp, mcp-server, claude, ai-agent
+Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Let Claude, ChatGPT or Cursor work your WooCommerce store: sales, stock, orders, product texts. You approve every app and every risky change.
+Run your WooCommerce store from Claude, ChatGPT, Copilot or a chat in wp-admin on Gemini, Grok and more. You approve every app and risky change.
 
 == Description ==
 
-**Your WooCommerce store, inside Claude, ChatGPT and Cursor.** Ask what sold last week, find low stock, draft better product texts or look up an order, from the AI app you already use or from a chat inside wp-admin. Each app gets only the areas you tick, and anything risky waits for your Approve.
+**Your WooCommerce store, inside the AI you already use:** Claude, ChatGPT, Copilot and other MCP apps, or a chat in wp-admin on Claude, GPT, Gemini, Grok, Mistral, DeepSeek or a local model. Ask what sold last week, find low stock, draft better product texts or look up an order. Each app gets only the areas you tick, and anything risky waits for your Approve.
 
 * **Approve, don't paste keys** — apps connect through a consent screen in your browser. You tick what each one may read and change, and take it back with one click.
 * **Changes wait for you** — anything that moves money or reaches a customer, such as a price change, a refund or a new coupon, runs only after you approve it. A price change shows the price before and after.
@@ -252,31 +252,20 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Changelog ==
 
+= 2.1.1 =
+* New: once an app is connected, Overview asks once whether you would review the plugin on wordpress.org. Either button hides it for good.
+* Fixed: Activity masked dates, such as a report's date range, as if they were phone numbers.
+* Fixed: apps and AI models got the store's name with HTML entities in it, in the store overview, the store profile and their instructions.
+
 = 2.1.0 =
 * New: the chat can run on Grok (xAI), Mistral, DeepSeek and OpenRouter, each a choice of its own with its address filled in and a link to get a key.
-
-= 2.0.0 =
-* New: a menu that follows what you do: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access. Old bookmarks and links in emails keep working.
-* New: Rewrites. The chat's AI model drafts new product descriptions for up to 25 products in a category, and nothing changes until you approve each text.
-* New: a weekly report by email, which each person asks for on Overview, with an optional summary written by AI on top of WooCommerce's own figures.
-* New: the chat offers ready-made routines, saved questions and store notes, keeps a conversation across a reload, and shows a price change before and after you approve it.
-* New: the consent screen asks "Let this app work with your store?", names who approves, the app and where access goes, and folds each section.
-* New: integrations for WPML, Germanized and Germanized Pro, WooCommerce Shipment Tracking, Cost of Goods, URL Coupons, Advanced Custom Fields, Contact Form 7, Flamingo, BackWPup, and the abilities other plugins such as Yoast SEO, Rank Math and WPForms offer to AI clients. All are off until you switch them on.
-* New: an assistant can preview a change before saving it, and with "Undo history" switched on and granted, undo an app's own changes for 30 days.
-* New: views for hosts that support MCP Apps, MCP prompts, a store profile resource and support for the MCP 2026-07-28 protocol revision.
-* Changed: one name for each thing on every screen: an area with Can read and Can change, an app, AI access, Activity.
-* Changed: tools can no longer write protected custom fields (names starting with an underscore) through `meta_data`. A client that set them that way now gets an error.
-* Fixed: on a store with WPML, a product changed through any tool now updates its translations.
-* Fixed: a browser could fill a saved site login into the chat's API key field.
-* Security: the chat's AI model and its key are for administrators only, a model cannot approve its own change in apps that show a form, and ACF, tax and Germanized writes are checked more strictly.
-* Tested with WooCommerce 11.3.
 
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
+= 2.1.1 =
+Activity keeps report dates readable, and apps get the store name without HTML entities.
+
 = 2.1.0 =
 The chat can run on Grok, Mistral, DeepSeek and OpenRouter.
-
-= 2.0.0 =
-A new menu by task (Overview, Chat, Rewrites, Connect apps, Access, Activity); old links keep working. Tools no longer write protected custom fields through meta_data. New integrations ship off.

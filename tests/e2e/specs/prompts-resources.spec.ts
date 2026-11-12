@@ -61,9 +61,17 @@ test.describe( 'Prompts, resources and output schemas', () => {
 		expect( listed.map( ( resource: { uri: string } ) => resource.uri ) ).toEqual( [ PROFILE ] );
 		expect( ( await reports.legacy( 'resources/templates/list' ) ).result.resourceTemplates ).toEqual( [] );
 
-		const read = ( await reports.legacy( 'resources/read', { uri: PROFILE } ) ).result.contents[ 0 ];
+		const storeName = wp( 'option', 'get', 'blogname' );
+		wp( 'option', 'update', 'blogname', 'Linden & Co. Home Goods' );
+		let read;
+		try {
+			read = ( await reports.legacy( 'resources/read', { uri: PROFILE } ) ).result.contents[ 0 ];
+		} finally {
+			wp( 'option', 'update', 'blogname', storeName );
+		}
 		expect( read.mimeType ).toBe( 'application/json' );
 		const profile = JSON.parse( read.text );
+		expect( profile.name, 'WordPress stores the name escaped; an app gets it as text' ).toBe( 'Linden & Co. Home Goods' );
 		expect( profile.currency ).toBe( wp( 'option', 'get', 'woocommerce_currency' ) );
 		expect( profile.this_connection ).toEqual( [ expect.stringMatching( /report/i ) ] );
 		expect( profile.shipping_zones, 'this grant could not list them' ).toBeUndefined();

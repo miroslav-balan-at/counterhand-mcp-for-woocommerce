@@ -10,6 +10,7 @@ use Counterhand\Features\McpServer\ToolDispatcherInterface;
 use Counterhand\Features\Tokens\Authentication\AuthenticatedAgent;
 use Counterhand\Features\Tokens\Domain\ScopeSummary;
 use Counterhand\Shared\Tool\ToolInterface;
+use Counterhand\Shared\StoreName;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -55,7 +56,7 @@ final readonly class StoreProfileResource implements ResourceSourceInterface {
 
 		return (string) wp_json_encode(
 			[
-				'name'               => get_bloginfo( 'name' ),
+				'name'               => StoreName::plain(),
 				'url'                => home_url(),
 				'currency'           => get_option( 'woocommerce_currency' ),
 				'country'            => get_option( 'woocommerce_default_country' ),

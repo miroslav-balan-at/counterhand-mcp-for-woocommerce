@@ -1,4 +1,4 @@
-=== Counterhand – WooCommerce MCP Server for Claude, ChatGPT & Cursor ===
+=== Counterhand MCP for WooCommerce – MCP Server & AI Agent for Claude, ChatGPT & Cursor ===
 Contributors: mirumd
 Donate link: https://github.com/sponsors/miroslav-balan-at
 Tags: woocommerce, mcp, mcp-server, claude, ai-agent
@@ -17,7 +17,6 @@ Let Claude, ChatGPT or Cursor work your WooCommerce store: sales, stock, orders,
 
 * **Approve, don't paste keys** — apps connect through a consent screen in your browser. You tick what each one may read and change, and take it back with one click.
 * **Changes wait for you** — anything that moves money or reaches a customer, such as a price change, a refund or a new coupon, runs only after you approve it. A price change shows the price before and after.
-* **Rewrites you approve one by one** — the AI model drafts new descriptions for a whole category; nothing is saved until you tick it.
 * **Free and self-hosted** — open source (GPL), no account, no service of ours in between. Store data reaches only the apps you connect and the AI model you choose.
 
 = Ask it things like =
@@ -32,7 +31,7 @@ Home page and documentation: [counterhand.app](https://counterhand.app/).
 
 = Built for security =
 
-Your store gets one MCP endpoint at `https://yourstore.com/mcp`. Apps connect through a **browser consent flow** (OAuth 2.1) — no tokens to copy. When an app connects, your browser opens a consent screen where you, as a store administrator, choose exactly what it may do and approve.
+Your store gets one MCP endpoint at `https://yourstore.com/mcp`, and apps connect through a browser consent flow (OAuth 2.1), never a copied key.
 
 * **OAuth 2.1 with PKCE** — the modern MCP authorization standard. Client identity via Client ID Metadata Documents (CIMD); no client secrets, no manual registration.
 * **You approve what each app may do** — the consent screen asks "Let this app work with your store?" and lists the requested permissions under plain headings (Catalog, Sales, Insights, Content, Store setup, Advanced, Other plugins) as checkboxes you can narrow before approving. Changing never implies reading, and Advanced and Other plugins stay folded and are never pre-ticked.
@@ -44,16 +43,6 @@ Your store gets one MCP endpoint at `https://yourstore.com/mcp`. Apps connect th
 * **Custom fields are guarded** — WordPress's own private fields are hidden, and the keys that hold roles, capabilities and login sessions can be neither read nor written. Customer custom fields are read-only.
 * **Revoke anytime** — Connect apps › Connected apps lists every app; one click cuts off its access.
 * **Opt-in activity log** — record every tool call, with names, addresses, emails and phone numbers masked before storage, configurable retention and one-click clearing.
-
-= What you can ask an assistant to do =
-
-Once connected, an AI agent works your store through plain requests, and the Chat screen gives you the same as an in-admin chatbot. What the areas cover, in everyday terms:
-
-* **Inventory and catalog** — check stock levels, find products that are low or out of stock, adjust quantities and prices, create draft products, and manage variations, categories, tags and coupons.
-* **Orders, refunds and customers** — look up an order, list what shipped today, add an order note, issue a refund, or pull up a customer's history.
-* **Sales dashboard questions** — "what did we sell last week?", top sellers, revenue by period and coupon usage, answered from WooCommerce's own reports.
-* **Automation of repetitive work** — rewriting product descriptions, tidying categories or drafting posts and pages becomes one instruction instead of a hundred clicks; every change still passes WooCommerce's own validation, and the risky ones need your confirmation.
-* **Store setup** — shipping zones and rates, tax rates and, behind Advanced, settings, payment gateways and maintenance tools.
 
 = 132 tools, in areas you switch on one by one =
 
@@ -68,7 +57,7 @@ Every area is its own switch on the Access screen, with Can read and Can change 
 
 Tools delegate to WooCommerce's own REST controllers, so validation, stock handling and HPOS compatibility behave exactly like the standard API. Their input schemas are read from those controllers at runtime rather than copied into this plugin, so a WooCommerce update that adds a field surfaces it automatically, and one that removes a field cannot leave a tool advertising it.
 
-Each tool offers the ten or so fields that matter rather than all hundred WooCommerce declares, which keeps assistants accurate. When one of the rest is needed, `describe_woocommerce_fields` returns the full list for any tool — and writes accept those extra fields directly.
+Each tool offers the ten or so fields that matter, which keeps assistants accurate; `describe_woocommerce_fields` reveals the rest when one is needed.
 
 Visibility is decided by WooCommerce too: before a tool is offered, this plugin runs WooCommerce's own permission check for that endpoint. A shop manager therefore sees a different set of tools from an administrator, without this plugin keeping a list of who may do what.
 
@@ -78,14 +67,14 @@ Off until you switch each on: WPML, Germanized and Germanized Pro, Contact Form 
 
 = Two ways to use AI with your store =
 
-**Chat with your store, inside wp-admin.** Ask questions in plain language from wp-admin and the assistant looks the answer up with the same tools an outside app would use. A change that is not easily undone stops and waits for your Approve button — the model cannot wave it through on its own. On WordPress 7.0 and later it uses the AI model WordPress already manages under Settings → Connectors, so this plugin never handles an API key. On older WordPress, connect Claude, ChatGPT, Gemini or a local Ollama model with your own key — the Chat screen tests it before saving, so a wrong key is caught immediately.
+**Chat inside wp-admin**, on the AI model WordPress manages under Settings → Connectors (WordPress 7.0 and later), or on Claude, ChatGPT, Gemini or a local Ollama model with your own key. It uses the same tools an outside app would, and a change that is not easily undone waits for your Approve button.
 
-**Connect AI apps you already use.** The Connect apps screen shows one URL to paste into Claude, ChatGPT, Claude Code or any other MCP client — one click installs it into Cursor and VS Code. There is no token to create and nothing to copy back: the app identifies itself with its own published address (CIMD), and you approve exactly what it may do on a consent screen in your browser. No local proxy, no Node.js required.
+**Connect the AI apps you already use.** Paste one URL into Claude, ChatGPT, Claude Code or any other MCP client, or add the store to Cursor and VS Code in one click. No token to create, no local proxy, no Node.js.
 
 = More than tools =
 
 * **Overview** — opens first: what is still to set up, whether AI access is on, the connected apps, and what AI did today.
-* **Rewrites** — the chat's AI model drafts new descriptions or short descriptions for up to 25 products in a category, in the background. Nothing changes until you approve each text, a text edited since the model read it is never overwritten, and with undo history on an applied text can be undone.
+* **Rewrites** — the AI model drafts new descriptions for up to 25 products in a category. Nothing changes until you approve each text, and with undo history on an applied text can be undone.
 * **Weekly report** — each person can ask for last week's sales, best sellers and waiting orders by email every Monday, as WooCommerce's own reports state them. With an AI model chosen, a short summary written by AI comes first, labelled as such.
 * **Activity** — every call apps and the chat made, newest first, if you switch recording on.
 

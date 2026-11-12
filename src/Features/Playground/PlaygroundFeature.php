@@ -70,7 +70,8 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 	public function render_body(): void {
 		// "Change" in the chat footer reopens the chooser without disconnecting
 		// anything, so switching models never means leaving the tab.
-		$changing = isset( $_GET['counterhand_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
+		$can_choose_model = SettingsAccess::can_save();
+		$changing         = $can_choose_model && isset( $_GET['counterhand_change_model'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- toggles a read-only view.
 
 		$tools         = $this->tools->visible_for( $this->synthetic_agent() );
 		$chat_groups   = $this->settings->groups();
@@ -200,7 +201,7 @@ final readonly class PlaygroundFeature implements FeatureInterface, ScreenBodyIn
 	}
 
 	public function handle_save_tools(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! SettingsAccess::can_save() ) {
 			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 

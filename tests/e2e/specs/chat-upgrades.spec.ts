@@ -97,6 +97,32 @@ test.describe( 'Chat upgrades', () => {
 		await manager.close();
 	} );
 
+	test( 'only an administrator chooses the model, its areas, and clears Activity', async ( { page, browser } ) => {
+		const before = wp( 'option', 'get', 'counterhand_chat', '--format=json' );
+
+		await page.goto( CHAT );
+		await expect( page.locator( '.counterhand-chat__model a', { hasText: 'Change' } ) ).toBeVisible();
+
+		const manager = await browser.newPage( { storageState: shopManagerStatePath } );
+		await manager.goto( CHAT );
+		await expect( manager.locator( '.counterhand-chat__model a', { hasText: 'Change' } ) ).toHaveCount( 0 );
+		await expect( manager.locator( '.counterhand-chat-tools__form [type=submit]' ) ).toHaveCount( 0 );
+		await expect( manager.locator( '.counterhand-chat-tools__fields' ) ).toHaveAttribute( 'disabled', /.*/ );
+		await expect( manager.locator( '.counterhand-chat-tools__fields input[type=checkbox]' ).first() ).toBeDisabled();
+
+		// Refused on capability, before any nonce is looked at.
+		for ( const [ action, refusal ] of [ [ 'counterhand_save_chat', 'not allowed to change' ], [ 'counterhand_save_chat_tools', 'not allowed to change' ], [ 'counterhand_clear_log', 'not allowed to clear' ] ] ) {
+			const response = await manager.request.post( '/wp-admin/admin-post.php', { form: { action, counterhand_chat_provider: 'openai', counterhand_chat_base_url: 'https://elsewhere.example/v1' } } );
+			expect( await response.text(), action ).toContain( refusal );
+		}
+
+		await manager.goto( '/wp-admin/admin.php?page=counterhand-mcp-log' );
+		await expect( manager.getByRole( 'button', { name: 'Clear activity' } ) ).toHaveCount( 0 );
+		await manager.close();
+
+		expect( wp( 'option', 'get', 'counterhand_chat', '--format=json' ) ).toBe( before );
+	} );
+
 	test( 'a saved question stays for that person and is sent as typed', async ( { page, browser } ) => {
 		await page.goto( CHAT );
 		await page.locator( '#counterhand-chat-input' ).fill( 'my usual question' );

@@ -116,6 +116,29 @@ final readonly class RewriteJobs {
 	}
 
 	/**
+	 * Action Scheduler marks a run that timed out or died as failed without calling us,
+	 * which left its item Queued for good.
+	 */
+	public function fail_action( mixed $action_id ): void {
+		if ( ! class_exists( \ActionScheduler::class ) ) {
+			return;
+		}
+
+		$action = \ActionScheduler::store()->fetch_action( (string) $action_id );
+		$args   = $action->get_args();
+		if ( self::HOOK !== $action->get_hook() || ! isset( $args['item'] ) ) {
+			return;
+		}
+
+		$item = $this->queue->find( (int) $args['item'] );
+		if ( null === $item || RewriteStatus::Queued !== $item->status ) {
+			return;
+		}
+
+		$this->queue->fail( $item->id, __( 'Writing this text stopped before it finished. Start a new job to try again.', 'counterhand-mcp-for-woocommerce' ) );
+	}
+
+	/**
 	 * Runs in the background with no user, so it takes on the job's owner and asks
 	 * again: someone demoted since starting the job gets nothing written for them.
 	 */

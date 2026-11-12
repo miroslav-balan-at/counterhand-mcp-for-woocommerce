@@ -21,7 +21,7 @@ $counterhand_scopes         = $context['scopes'];
 $counterhand_settings_url   = $context['settings_url'];
 $counterhand_has_write      = $counterhand_scopes->has_write();
 $counterhand_client_name    = $context['client_name'];
-$counterhand_offers_nothing = [] === $counterhand_scopes->sections;
+$counterhand_offers_nothing = ! $counterhand_scopes->has_grantable();
 ?>
 <div class="counterhand-card__body">
 	<p class="counterhand-eyebrow"><?php esc_html_e( 'An app asks to connect', 'counterhand-mcp-for-woocommerce' ); ?></p>

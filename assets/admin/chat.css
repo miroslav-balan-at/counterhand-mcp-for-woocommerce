@@ -611,6 +611,13 @@
 	color: var(--counterhand-error-text);
 }
 
+.counterhand-chat-tools__fields {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+}
+
 .counterhand-chat-tools__form {
 	padding: var(--counterhand-gap);
 	border: 1px solid var(--counterhand-gray-5);

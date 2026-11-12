@@ -39,4 +39,10 @@ interface RewriteQueueInterface {
 	public function mark( int $id, RewriteStatus $status, string $message ): void;
 
 	public function forget_older_than( \DateTimeImmutable $cutoff ): void;
+
+	/** @return list<RewriteItem> */
+	public function made_by( int $user_id ): array;
+
+	/** @return int How many items went. */
+	public function forget_user( int $user_id ): int;
 }

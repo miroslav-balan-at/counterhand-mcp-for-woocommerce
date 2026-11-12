@@ -109,7 +109,7 @@ final readonly class ConnectReadiness {
 
 		return sprintf(
 			/* translators: %d: HTTP status code */
-			__( 'The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work.', 'counterhand-mcp-for-woocommerce' ),
+			__( 'The endpoint answered with status %d instead of an OAuth challenge. Check that AI access is on and that permalinks work.', 'counterhand-mcp-for-woocommerce' ),
 			$status
 		);
 	}

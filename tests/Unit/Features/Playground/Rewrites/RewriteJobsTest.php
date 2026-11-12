@@ -307,6 +307,17 @@ final class FakeQueue implements RewriteQueueInterface {
 
 	public function forget_older_than( \DateTimeImmutable $cutoff ): void {}
 
+	public function made_by( int $user_id ): array {
+		return array_values( array_filter( $this->items, static fn ( RewriteItem $item ): bool => $user_id === $item->user_id ) );
+	}
+
+	public function forget_user( int $user_id ): int {
+		$mine        = $this->made_by( $user_id );
+		$this->items = array_filter( $this->items, static fn ( RewriteItem $item ): bool => $user_id !== $item->user_id );
+
+		return count( $mine );
+	}
+
 	private function replace( int $id, RewriteStatus $status, ?string $product_name = null, ?string $original = null, ?string $proposal = null, ?TokenUsage $usage = null, string $message = '', ?string $change_key = null ): void {
 		$item = $this->items[ $id ];
 

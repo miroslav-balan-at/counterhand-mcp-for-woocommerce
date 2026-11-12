@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * exact arguments, so an approval cannot be moved to another call, and it expires.
  *
  * Single use is enforced here as well, because a replayed approval of a refund would
- * refund twice. add_option() is the atomic part: its key is unique in the database.
+ * refund twice. The insert is the atomic part: the option name is unique in the database.
  */
 final readonly class ConfirmationState {
 
@@ -72,7 +72,13 @@ final readonly class ConfirmationState {
 
 	/** False if this approval was already spent. */
 	public function consume( string $nonce ): bool {
-		return add_option( self::USED_PREFIX . $nonce, time() + self::TTL_SECONDS, '', false );
+		global $wpdb;
+
+		// add_option() upserts, so two retries a second apart both reported success and both ran.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- no core API inserts only when absent.
+		$inserted = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'off')", self::USED_PREFIX . $nonce, (string) ( time() + self::TTL_SECONDS ) ) );
+
+		return 1 === $inserted;
 	}
 
 	public function purge_expired(): void {

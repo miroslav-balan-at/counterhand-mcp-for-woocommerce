@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-12T07:52:27+00:00\n"
+"POT-Creation-Date: 2026-11-12T08:14:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: counterhand-mcp-for-woocommerce\n"
@@ -88,89 +88,93 @@ msgstr ""
 msgid "List backup jobs and recent backups, start a backup now or cancel a running one. A full backup can load the server for several minutes. Every call needs explicit confirmation."
 msgstr ""
 
-#: src/Features/ActionLog/ActionLogFeature.php:83
+#: src/Features/ActionLog/ActionLogFeature.php:85
 msgid "You are not allowed to clear the activity."
 msgstr ""
 
-#: src/Features/ActionLog/ActionLogFeature.php:133
+#: src/Features/ActionLog/ActionLogFeature.php:135
 msgid "‹ Newer"
 msgstr ""
 
-#: src/Features/ActionLog/ActionLogFeature.php:134
+#: src/Features/ActionLog/ActionLogFeature.php:136
 msgid "Older ›"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:21
-msgid "Activity is not recorded. Turn on recording in Access to keep a record of every call. Emails and phone numbers are masked before anything is stored."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/ActionLog/Admin/views/log.php:26
+#, php-format
+msgid "Activity is not recorded. An administrator can turn on recording in %s to keep a record of every call. Emails and phone numbers are masked before anything is stored."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:26
+#: src/Features/ActionLog/Admin/views/log.php:34
 msgid "Activity cleared."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:32
+#: src/Features/ActionLog/Admin/views/log.php:40
 msgid "Every call, newest first"
 msgstr ""
 
 #. translators: %s: number of recorded calls.
-#: src/Features/ActionLog/Admin/views/log.php:37
+#: src/Features/ActionLog/Admin/views/log.php:45
 #, php-format
 msgid "%s recorded call"
 msgid_plural "%s recorded calls"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/ActionLog/Admin/views/log.php:47
+#: src/Features/ActionLog/Admin/views/log.php:56
 msgid "Clear activity"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:55
+#: src/Features/ActionLog/Admin/views/log.php:65
 msgid "Time (UTC)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:56
+#: src/Features/ActionLog/Admin/views/log.php:66
 #: src/Features/Privacy/PrivacyFeature.php:83
 msgid "Tool"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:57
+#: src/Features/ActionLog/Admin/views/log.php:67
 #: src/Features/OAuth/View/templates/consent.php:52
 #: src/Features/Tokens/Admin/ConnectionsListTable.php:36
 msgid "App"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:58
+#: src/Features/ActionLog/Admin/views/log.php:68
 msgid "Outcome"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:59
+#: src/Features/ActionLog/Admin/views/log.php:69
 msgid "Details (personal data masked)"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:68
+#: src/Features/ActionLog/Admin/views/log.php:78
 msgid "Nothing recorded yet. The next call an app or the chat makes appears here."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:69
-msgid "Nothing recorded. Turn on recording in Access to start."
+#. translators: %s: the name of the plugin's Access screen.
+#: src/Features/ActionLog/Admin/views/log.php:82
+#, php-format
+msgid "Nothing recorded. An administrator can turn on recording in %s."
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:84
+#: src/Features/ActionLog/Admin/views/log.php:100
 #: src/Features/Playground/Rewrites/RewriteStatus.php:24
 msgid "Failed"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:85
+#: src/Features/ActionLog/Admin/views/log.php:101
 msgid "Succeeded"
 msgstr ""
 
 #. translators: 1: current page number, 2: total number of pages.
-#: src/Features/ActionLog/Admin/views/log.php:102
+#: src/Features/ActionLog/Admin/views/log.php:118
 #, php-format
 msgid "Page %1$s of %2$s"
 msgstr ""
 
-#: src/Features/ActionLog/Admin/views/log.php:108
+#: src/Features/ActionLog/Admin/views/log.php:124
 msgid "Log pages"
 msgstr ""
 
@@ -287,13 +291,19 @@ msgstr ""
 msgid "Empty"
 msgstr ""
 
+#. translators: 1: the start of the change, 2: how many characters were left out.
+#: src/Features/McpServer/McpServer.php:438
+#, php-format
+msgid "%1$s… (%2$d more characters)"
+msgstr ""
+
 #. translators: 1: tool name, 2: the arguments as JSON
-#: src/Features/McpServer/McpServer.php:431
+#: src/Features/McpServer/McpServer.php:464
 #, php-format
 msgid "Allow this change to the store? %1$s: %2$s"
 msgstr ""
 
-#: src/Features/McpServer/McpServer.php:437
+#: src/Features/McpServer/McpServer.php:470
 msgid "Approve this change"
 msgstr ""
 
@@ -322,17 +332,17 @@ msgstr ""
 msgid "We could not confirm the identity of the app requesting access, so nothing was connected. This can happen if the app is misconfigured or the link was altered."
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:152
-#: src/Features/OAuth/View/templates/denied.php:22
+#: src/Features/OAuth/AuthorizeEndpoint.php:168
+#: src/Features/OAuth/View/templates/denied.php:24
 msgid "Access not granted"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:198
-#: src/Features/OAuth/View/templates/connected.php:24
+#: src/Features/OAuth/AuthorizeEndpoint.php:199
+#: src/Features/OAuth/View/templates/connected.php:26
 msgid "Access approved"
 msgstr ""
 
-#: src/Features/OAuth/AuthorizeEndpoint.php:235
+#: src/Features/OAuth/AuthorizeEndpoint.php:236
 msgid "Approve an app"
 msgstr ""
 
@@ -367,17 +377,13 @@ msgid "Connection problem"
 msgstr ""
 
 #. translators: %s: name of the AI application
-#: src/Features/OAuth/View/templates/connected.php:30
+#: src/Features/OAuth/View/templates/connected.php:32
 #, php-format
 msgid "%s may now use your store with the permissions below."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/connected.php:44
+#: src/Features/OAuth/View/templates/connected.php:46
 msgid "Return to your AI assistant to finish connecting. You can close this tab."
-msgstr ""
-
-#: src/Features/OAuth/View/templates/connected.php:48
-msgid "View connections"
 msgstr ""
 
 #: src/Features/OAuth/View/templates/consent.php:27
@@ -462,24 +468,20 @@ msgid "Connected apps"
 msgstr ""
 
 #. translators: %s: name of the AI application
-#: src/Features/OAuth/View/templates/denied.php:28
+#: src/Features/OAuth/View/templates/denied.php:30
 #, php-format
 msgid "You declined the request from %s. Nothing was shared and no connection was created."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/denied.php:34
+#: src/Features/OAuth/View/templates/denied.php:36
 msgid "You can close this tab. If you meant to allow it, start the connection again from your AI assistant."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/denied.php:38
-msgid "Manage connections"
-msgstr ""
-
-#: src/Features/OAuth/View/templates/error.php:27
+#: src/Features/OAuth/View/templates/error.php:29
 msgid "Nothing was connected. Try starting the connection again from your AI assistant."
 msgstr ""
 
-#: src/Features/OAuth/View/templates/error.php:31
+#: src/Features/OAuth/View/templates/error.php:33
 msgid "Connection help"
 msgstr ""
 
@@ -600,74 +602,78 @@ msgid "You are not allowed to change the store notes."
 msgstr ""
 
 #: src/Features/Playground/ChatNotesFeature.php:60
-#: src/Features/Playground/PlaygroundFeature.php:139
+#: src/Features/Playground/PlaygroundFeature.php:140
 #: src/Features/Settings/SettingsFeature.php:204
 #: src/Features/Settings/SettingsFeature.php:218
 msgid "Not allowed."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:79
+#: src/Features/Playground/ModelConnect.php:81
 msgid "You are not allowed to install plugins."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:87
+#: src/Features/Playground/ModelConnect.php:89
 msgid "Unknown provider plugin."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:93
+#: src/Features/Playground/ModelConnect.php:95
 msgid "The provider plugin could not be installed. Try it from the Plugins screen."
 msgstr ""
 
 #. translators: %s: provider plugin name
-#: src/Features/Playground/ModelConnect.php:106
+#: src/Features/Playground/ModelConnect.php:108
 #, php-format
 msgid "%s is installed. Last step: add your API key where WordPress keeps it."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:136
-#: src/Features/Playground/PlaygroundFeature.php:204
+#: src/Features/Playground/ModelConnect.php:143
+#: src/Features/Playground/PlaygroundFeature.php:205
 msgid "You are not allowed to change these settings."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:144
+#: src/Features/Playground/ModelConnect.php:151
 msgid "The saved key was removed."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:156
+#: src/Features/Playground/ModelConnect.php:163
 msgid "Choose a model provider first."
 msgstr ""
 
-#: src/Features/Playground/ModelConnect.php:163
+#: src/Features/Playground/ModelConnect.php:177
 msgid "This provider needs an API key."
 msgstr ""
 
 #: src/Features/Playground/ModelConnect.php:178
+msgid "Type the API key again: the provider or its address changed."
+msgstr ""
+
+#: src/Features/Playground/ModelConnect.php:195
 msgid "The model could not be reached. Check the details and try again."
 msgstr ""
 
 #. translators: 1: provider name, 2: model name
-#: src/Features/Playground/ModelConnect.php:188
+#: src/Features/Playground/ModelConnect.php:209
 #, php-format
 msgid "Connected to %1$s%2$s."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:114
+#: src/Features/Playground/PlaygroundFeature.php:115
 msgid "Type a message first."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:130
+#: src/Features/Playground/PlaygroundFeature.php:131
 msgid "That approval has expired. Send your message again."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:146
+#: src/Features/Playground/PlaygroundFeature.php:147
 msgid "No AI model is chosen yet. Choose one at the top of this screen."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:188
+#: src/Features/Playground/PlaygroundFeature.php:189
 msgid "The chat request failed unexpectedly. Check the WooCommerce logs for details."
 msgstr ""
 
-#: src/Features/Playground/PlaygroundFeature.php:304
+#: src/Features/Playground/PlaygroundFeature.php:305
 msgid "Admin chat"
 msgstr ""
 
@@ -773,61 +779,88 @@ msgstr ""
 msgid "That category has no products."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:141
+#: src/Features/Playground/Rewrites/RewriteJobs.php:138
+msgid "Writing this text stopped before it finished. Start a new job to try again."
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewriteJobs.php:164
 msgid "The person who started this job can no longer manage the store."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:148
+#: src/Features/Playground/Rewrites/RewriteJobs.php:171
 msgid "No model is connected any more."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:187
+#: src/Features/Playground/Rewrites/RewriteJobs.php:210
 msgid "The model returned no text."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:202
+#: src/Features/Playground/Rewrites/RewriteJobs.php:225
 #: src/Features/Playground/Rewrites/views/rewrites.php:166
 msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:209
+#: src/Features/Playground/Rewrites/RewriteJobs.php:232
 #: src/Features/Playground/Rewrites/views/rewrites.php:149
 msgid "This product no longer exists."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:228
+#: src/Features/Playground/Rewrites/RewriteJobs.php:251
 msgid "The product’s text changed after the model read it. Start a new job to rewrite the current text."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:253
+#: src/Features/Playground/Rewrites/RewriteJobs.php:276
 msgid "Applied without undo history, so this cannot be undone here."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:323
+#: src/Features/Playground/Rewrites/RewriteJobs.php:346
 msgid "Products cannot be changed by AI on this store any more."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:342
+#: src/Features/Playground/Rewrites/RewriteJobs.php:365
 msgid "The rewrite failed unexpectedly. Check the WooCommerce logs for details."
 msgstr ""
 
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:27
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:40
+msgid "Counterhand rewrites"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:55
+msgid "Product texts rewritten by AI"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:59
+#: src/Features/Playground/Rewrites/views/rewrites.php:125
+msgid "Product"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:63
+msgid "Instructions"
+msgstr ""
+
+#: src/Features/Playground/Rewrites/RewritePrivacy.php:67
+#: src/Features/Privacy/PrivacyFeature.php:87
+msgid "Made at"
+msgstr ""
+
 #. translators: %d: number of products.
-#: src/Features/Playground/Rewrites/RewritesFeature.php:80
+#: src/Features/Playground/Rewrites/RewritesFeature.php:84
 #, php-format
 msgid "%d product is queued. Its new text appears below when the model has written it."
 msgid_plural "%d products are queued. Their new texts appear below as the model writes them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:98
+#: src/Features/Playground/Rewrites/RewritesFeature.php:102
 msgid "Tick the products first."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:114
+#: src/Features/Playground/Rewrites/RewritesFeature.php:118
 msgid "Done. Each product’s status is below."
 msgstr ""
 
-#: src/Features/Playground/Rewrites/RewritesFeature.php:119
+#: src/Features/Playground/Rewrites/RewritesFeature.php:123
 msgid "You are not allowed to rewrite products."
 msgstr ""
 
@@ -913,10 +946,6 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: src/Features/Playground/Rewrites/views/rewrites.php:125
-msgid "Product"
-msgstr ""
-
 #: src/Features/Playground/Rewrites/views/rewrites.php:126
 msgid "Current text"
 msgstr ""
@@ -945,111 +974,117 @@ msgstr ""
 msgid "Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:46
+#: src/Features/Playground/views/chat.php:49
 msgid "No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in Access."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:63
+#. translators: %s: the name of the plugin's Chat screen.
+#: src/Features/Playground/views/chat.php:67
+#, php-format
+msgid "No AI model is chosen yet. An administrator chooses one on %s."
+msgstr ""
+
+#: src/Features/Playground/views/chat.php:76
 msgid "Ask about your store"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:64
+#: src/Features/Playground/views/chat.php:77
 msgid "Plain language works — the assistant looks the answer up with the same tools an outside AI app would use."
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:75
+#: src/Features/Playground/views/chat.php:88
 msgid "Saved questions"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:79
+#: src/Features/Playground/views/chat.php:92
 #: src/Features/Settings/ScreenAssets.php:149
 msgid "Forget this question"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:90
+#: src/Features/Playground/views/chat.php:103
 msgid "Message"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:96
+#: src/Features/Playground/views/chat.php:109
 msgid "Ask about products, orders, customers or sales…"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:97
+#: src/Features/Playground/views/chat.php:110
 msgid "Choose an AI model above, then ask your first question here…"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:102
+#: src/Features/Playground/views/chat.php:115
 msgid "Save question"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:105
+#: src/Features/Playground/views/chat.php:118
 msgid "Send"
 msgstr ""
 
 #. translators: 1: Enter key name, 2: Shift+Enter key combination
-#: src/Features/Playground/views/chat.php:116
+#: src/Features/Playground/views/chat.php:129
 #, php-format
 msgid "%1$s to send · %2$s for a new line"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:117
+#: src/Features/Playground/views/chat.php:130
 msgid "Enter"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:118
+#: src/Features/Playground/views/chat.php:131
 msgid "Shift+Enter"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:133
+#: src/Features/Playground/views/chat.php:147
 msgid "Change"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:138
+#: src/Features/Playground/views/chat.php:153
 msgid "Clear conversation"
 msgstr ""
 
-#: src/Features/Playground/views/chat.php:148
+#: src/Features/Playground/views/chat.php:163
 msgid "The assistant uses the same tools an AI app would, limited to the areas switched on in Access. Store data the assistant reads, which can include customers' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them."
 msgstr ""
 
 #. translators: %d: how many tools the chat can currently call.
-#: src/Features/Playground/views/partial-chat-tools.php:41
+#: src/Features/Playground/views/partial-chat-tools.php:44
 #, php-format
 msgid "%d tool"
 msgid_plural "%d tools"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:46
+#: src/Features/Playground/views/partial-chat-tools.php:49
 msgid "available to chat"
 msgstr ""
 
 #. translators: %d: the most tools one message can carry.
-#: src/Features/Playground/views/partial-chat-tools.php:53
+#: src/Features/Playground/views/partial-chat-tools.php:56
 #, php-format
 msgid "over the %d-tool limit"
 msgstr ""
 
-#. translators: %d: how many further tools are waiting on a store setting.
-#: src/Features/Playground/views/partial-chat-tools.php:63
+#. translators: 1: how many further tools are waiting on a store setting, 2: the name of the Access screen.
+#: src/Features/Playground/views/partial-chat-tools.php:66
 #, php-format
-msgid "%d more waiting on Settings"
-msgid_plural "%d more waiting on Settings"
+msgid "%1$d more waiting on %2$s"
+msgid_plural "%1$d more waiting on %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:76
+#: src/Features/Playground/views/partial-chat-tools.php:81
 msgid "Each area you pick is described to the model on every message, so keep it to what you actually ask about."
 msgstr ""
 
 #. translators: 1: how many tools are selected, 2: the per-message maximum.
-#: src/Features/Playground/views/partial-chat-tools.php:87
+#: src/Features/Playground/views/partial-chat-tools.php:92
 #, php-format
 msgid "Too many areas picked: %1$d tools, and one message can carry %2$d."
 msgstr ""
 
 #. translators: %d: how many tools have to go.
-#: src/Features/Playground/views/partial-chat-tools.php:97
+#: src/Features/Playground/views/partial-chat-tools.php:102
 #, php-format
 msgid "Every message fails until you untick at least %d tool below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
 msgid_plural "Every message fails until you untick at least %d tools below. Past this many, a model starts picking the wrong tool anyway — and the definitions cost more than the conversation. Unticking here only narrows the chat; your other AI apps keep everything."
@@ -1057,36 +1092,36 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: comma-separated list of area names.
-#: src/Features/Playground/views/partial-chat-tools.php:114
+#: src/Features/Playground/views/partial-chat-tools.php:119
 #, php-format
 msgid "%s is switched off for the whole store"
 msgstr ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:122
+#: src/Features/Playground/views/partial-chat-tools.php:127
 msgid "Picking it here is remembered, but the chat cannot reach it until it is switched on in Access. Access decides what every app may reach; this panel only narrows it further for the chat."
 msgstr ""
 
-#. translators: %s: name of an admin screen, e.g. "Settings".
-#: src/Features/Playground/views/partial-chat-tools.php:138
+#. translators: %s: name of an admin screen, e.g. "Access".
+#: src/Features/Playground/views/partial-chat-tools.php:143
 #, php-format
 msgid "Switch it on in %s"
 msgstr ""
 
 #. translators: %s: comma-separated list of area names.
-#: src/Features/Playground/views/partial-chat-tools.php:154
+#: src/Features/Playground/views/partial-chat-tools.php:159
 #, php-format
 msgid "The chat can read but not change %s — writing is still switched off for it on this store."
 msgstr ""
 
 #. translators: %d: how many tools this area would add.
-#: src/Features/Playground/views/partial-chat-tools.php:183
+#: src/Features/Playground/views/partial-chat-tools.php:188
 #, php-format
 msgid "%d tool off"
 msgid_plural "%d tools off"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Features/Playground/views/partial-chat-tools.php:195
+#: src/Features/Playground/views/partial-chat-tools.php:203
 msgid "Save areas"
 msgstr ""
 
@@ -1286,10 +1321,6 @@ msgstr ""
 msgid "Changes made through an AI connection"
 msgstr ""
 
-#: src/Features/Privacy/PrivacyFeature.php:87
-msgid "Made at"
-msgstr ""
-
 #: src/Features/Privacy/PrivacyFeature.php:91
 msgid "Fields"
 msgstr ""
@@ -1392,7 +1423,7 @@ msgstr ""
 #. translators: %d: HTTP status code
 #: src/Features/Settings/ConnectReadiness.php:112
 #, php-format
-msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that the connector is enabled and that permalinks work."
+msgid "The endpoint answered with status %d instead of an OAuth challenge. Check that AI access is on and that permalinks work."
 msgstr ""
 
 #. translators: %s: error message
@@ -1789,10 +1820,6 @@ msgstr ""
 
 #: src/Features/Settings/SettingsFeature.php:134
 msgid "AI access off"
-msgstr ""
-
-#: src/Features/Settings/views/connect-navigation.php:15
-msgid "Connect AI apps"
 msgstr ""
 
 #: src/Features/Settings/views/connect.php:38

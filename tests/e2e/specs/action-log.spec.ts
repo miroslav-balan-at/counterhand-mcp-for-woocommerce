@@ -26,7 +26,7 @@ test.describe( 'Action log', () => {
 		await expect( row.locator( '.counterhand-log__pill--ok' ) ).toBeVisible();
 
 		const recorded = await row.locator( '.counterhand-log-args' ).textContent();
-		expect( recorded ).toContain( 'j***@e***.test' );
+		expect( recorded, 'a search can be a customer\'s name, so it is masked whole' ).toContain( '"search":"***"' );
 		expect( recorded, 'the address itself never reaches the log' ).not.toContain( 'jane.doe' );
 	} );
 } );

@@ -256,6 +256,7 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 * Changed: tools can no longer write protected custom fields (names starting with an underscore) through `meta_data`. A client that set them that way now gets an error.
 * Fixed: on a store with WPML, a product changed through any tool now updates its translations.
 * Fixed: a browser could fill a saved site login into the chat's API key field.
+* Security: the chat's AI model and its key are for administrators only, a model cannot approve its own change in apps that show a form, and ACF, tax and Germanized writes are checked more strictly.
 * Tested with WooCommerce 11.3.
 
 = 1.3.2 =

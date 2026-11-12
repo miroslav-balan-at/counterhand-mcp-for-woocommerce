@@ -25,6 +25,8 @@ final readonly class WpmlStrings implements TranslatableStringsInterface {
 	/** WooCommerce's block strings, one context per block. */
 	private const CONTEXT_PREFIX = 'woocommerce/';
 
+	private const EMAIL_TEXTS = [ 'subject', 'heading', 'additional_content', 'mail_content', 'footer_text', 'custom_message' ];
+
 	/** Named here because WPML has no route to ask: the one exception to never hardcoding a capability. */
 	private const CAPABILITIES = [ 'wpml_manage_string_translation', 'manage_translations' ];
 
@@ -94,24 +96,29 @@ final readonly class WpmlStrings implements TranslatableStringsInterface {
 	/**
 	 * The email settings of WooCommerce's own emails, not every admin_texts_ context,
 	 * which also holds payment gateways. The list comes from WooCommerce, so an email a
-	 * plugin adds is reachable and a gateway never is.
+	 * plugin adds is reachable and a gateway never is. Within them only the words a
+	 * customer reads: an administrator may register the recipient too, and a changed
+	 * one would send new orders, with customers' addresses, somewhere else.
 	 *
 	 * @return array{string, list<string>} SQL with placeholders, and their values.
 	 */
 	private function reachable(): array {
 		global $wpdb;
 
-		$contexts = self::WHOLE_CONTEXTS;
+		$emails = [];
 
 		foreach ( WC()->mailer()->get_emails() as $email ) {
-			$contexts[] = 'admin_texts_woocommerce_' . $email->id . '_settings';
+			$emails[] = 'admin_texts_woocommerce_' . $email->id . '_settings';
 		}
 
-		$placeholders = implode( ', ', array_fill( 0, count( $contexts ), '%s' ) );
+		$whole_placeholders = implode( ', ', array_fill( 0, count( self::WHOLE_CONTEXTS ), '%s' ) );
+		$email_placeholders = implode( ', ', array_fill( 0, max( 1, count( $emails ) ), '%s' ) );
+		$email_names        = array_map( static fn ( string $name ): string => '%]' . $wpdb->esc_like( $name ) . '%', self::EMAIL_TEXTS );
+		$name_conditions    = implode( ' OR ', array_fill( 0, count( $email_names ), 's.name LIKE %s' ) );
 
 		return [
-			"( s.context IN ( {$placeholders} ) OR s.context LIKE %s )",
-			[ ...$contexts, $wpdb->esc_like( self::CONTEXT_PREFIX ) . '%' ],
+			"( s.context IN ( {$whole_placeholders} ) OR s.context LIKE %s OR ( s.context IN ( {$email_placeholders} ) AND ( {$name_conditions} ) ) )",
+			[ ...self::WHOLE_CONTEXTS, $wpdb->esc_like( self::CONTEXT_PREFIX ) . '%', ...( [] !== $emails ? $emails : [ '' ] ), ...$email_names ],
 		];
 	}
 

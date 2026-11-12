@@ -6,7 +6,9 @@ namespace Counterhand\Features\Playground;
 
 use Counterhand\Features\Playground\Provider\CoreAiClientProvider;
 use Counterhand\Features\Playground\Provider\ProviderConfig;
+use Counterhand\Features\Playground\Provider\ProviderInterface;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
+use Counterhand\Features\Settings\SettingsAccess;
 use Counterhand\Shared\Exception\ToolCallException;
 
 defined( 'ABSPATH' ) || exit;
@@ -131,8 +133,13 @@ final readonly class ModelConnect {
 		return is_string( $basename ) ? $basename : null;
 	}
 
+	/** Administrators only: the key and the address decide where every chat, rewrite and report summary is sent. */
+	private function stored_base_url( ProviderInterface $provider ): string {
+		return '' !== $this->settings->base_url() ? $this->settings->base_url() : $provider->default_base_url();
+	}
+
 	public function handle_save(): void {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! SettingsAccess::can_save() ) {
 			wp_die( esc_html__( 'You are not allowed to change these settings.', 'counterhand-mcp-for-woocommerce' ) );
 		}
 
@@ -156,17 +163,27 @@ final readonly class ModelConnect {
 			$this->redirect_back( new ConnectResult( false, __( 'Choose a model provider first.', 'counterhand-mcp-for-woocommerce' ) ) );
 		}
 
-		// Blank key field means "keep the stored one" — no retyping secrets.
-		$effective_key = '' !== $key ? $key : $this->settings->api_key();
+		$base_url = '' !== $base_url ? $base_url : $provider->default_base_url();
+
+		// A blank key field keeps the stored key only for the provider and address it was saved for, so a changed address never receives it.
+		$same_destination = $provider_id === $this->settings->provider_id() && $base_url === $this->stored_base_url( $provider );
+		$effective_key    = '' !== $key || ! $same_destination ? $key : $this->settings->api_key();
 
 		if ( $provider->needs_key() && '' === $effective_key ) {
-			$this->redirect_back( new ConnectResult( false, __( 'This provider needs an API key.', 'counterhand-mcp-for-woocommerce' ) ) );
+			$this->redirect_back(
+				new ConnectResult(
+					false,
+					$same_destination
+						? __( 'This provider needs an API key.', 'counterhand-mcp-for-woocommerce' )
+						: __( 'Type the API key again: the provider or its address changed.', 'counterhand-mcp-for-woocommerce' )
+				)
+			);
 		}
 
 		$config = new ProviderConfig(
 			api_key: $effective_key,
 			model: $model,
-			base_url: '' !== $base_url ? $base_url : $provider->default_base_url(),
+			base_url: $base_url,
 			system_prompt: '',
 		);
 
@@ -176,6 +193,10 @@ final readonly class ModelConnect {
 			$this->redirect_back( new ConnectResult( false, $exception->getMessage() ) );
 		} catch ( \Throwable ) {
 			$this->redirect_back( new ConnectResult( false, __( 'The model could not be reached. Check the details and try again.', 'counterhand-mcp-for-woocommerce' ) ) );
+		}
+
+		if ( ! $same_destination && '' === $key ) {
+			$this->settings->forget_key();
 		}
 
 		$this->settings->save( $provider_id, $model, $config->base_url, $key );

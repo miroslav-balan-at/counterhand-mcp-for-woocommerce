@@ -137,7 +137,23 @@ final readonly class AuthorizeEndpoint {
 
 		$approved = isset( $_POST['counterhand_approve'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
 
-		if ( ! $approved ) {
+		/*
+		 * Three-way intersection: what the request carried, what the admin
+		 * ticked, and what the store publishes. The first two arrive from the
+		 * browser and are client-writable, so without the third a crafted POST
+		 * could mint a grant for a group the store has switched off. Settings
+		 * changing between render and approval collapses to the same case.
+		 */
+		$granted = array_values(
+			array_intersect(
+				$request->scopes,
+				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['counterhand_scopes'] ?? [] ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+				$this->published->values()
+			)
+		);
+
+		// Approving nothing is a denial: an empty grant would still count as a connected app.
+		if ( ! $approved || [] === $granted ) {
 			// Tell the client (spec: error=access_denied + original state) and, if
 			// it has no usable callback, show the admin a calm dead-end page.
 			$this->redirector->redirect_with(
@@ -153,21 +169,6 @@ final readonly class AuthorizeEndpoint {
 				[ 'client_name' => $client->client_name ]
 			);
 		}
-
-		/*
-		 * Three-way intersection: what the request carried, what the admin
-		 * ticked, and what the store publishes. The first two arrive from the
-		 * browser and are client-writable, so without the third a crafted POST
-		 * could mint a grant for a group the store has switched off. Settings
-		 * changing between render and approval collapses to the same case.
-		 */
-		$granted = array_values(
-			array_intersect(
-				$request->scopes,
-				array_map( 'sanitize_text_field', wp_unslash( (array) ( $_POST['counterhand_scopes'] ?? [] ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
-				$this->published->values()
-			)
-		);
 
 		$code = $this->code_store->mint(
 			new AuthorizationGrant(

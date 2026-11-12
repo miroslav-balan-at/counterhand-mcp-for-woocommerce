@@ -12,6 +12,8 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\ConnectTab;
+
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="counterhand-card__body counterhand-card__body--centered">
@@ -44,8 +46,8 @@ defined( 'ABSPATH' ) || exit;
 	<p class="counterhand-hint"><?php esc_html_e( 'Return to your AI assistant to finish connecting. You can close this tab.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 
 	<div class="counterhand-actions counterhand-actions--single">
-		<a class="counterhand-button counterhand-button--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=counterhand-mcp-connect&view=connections' ) ); ?>">
-			<?php esc_html_e( 'View connections', 'counterhand-mcp-for-woocommerce' ); ?>
+		<a class="counterhand-button counterhand-button--primary" href="<?php echo esc_url( ConnectTab::Connections->url() ); ?>">
+			<?php echo esc_html( ConnectTab::Connections->label() ); ?>
 		</a>
 	</div>
 </div>

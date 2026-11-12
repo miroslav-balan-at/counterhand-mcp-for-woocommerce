@@ -137,7 +137,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 		<summary class="counterhand-card__head">
 			<span class="counterhand-card__heading">
 				<h3 class="counterhand-card__title"><?php esc_html_e( 'Use your own provider account', 'counterhand-mcp-for-woocommerce' ); ?></h3>
-				<span class="counterhand-card__desc"><?php esc_html_e( 'Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama.', 'counterhand-mcp-for-woocommerce' ); ?></span>
+				<span class="counterhand-card__desc"><?php esc_html_e( 'Paste an API key from Anthropic, OpenAI, Google, xAI, Mistral, DeepSeek or OpenRouter — or run a local model with Ollama.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</summary>
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">

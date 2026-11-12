@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Counterhand MCP for WooCommerce 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/counterhand-mcp-for-woocommerce\n"
-"POT-Creation-Date: 2026-11-12T14:39:26+00:00\n"
+"POT-Creation-Date: 2026-11-12T16:48:17+00:00\n"
 "PO-Revision-Date: 2026-08-07 12:00+0200\n"
 "Last-Translator: Counterhand <support@counterhand.app>\n"
 "Language-Team: German\n"
@@ -718,22 +718,38 @@ msgstr "ChatGPT (OpenAI)"
 msgid "Gemini (Google)"
 msgstr "Gemini (Google)"
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:69
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:72
+msgid "Grok (xAI)"
+msgstr "Grok (xAI)"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:85
+msgid "Mistral"
+msgstr "Mistral"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:99
+msgid "DeepSeek"
+msgstr "DeepSeek"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:114
+msgid "OpenRouter (many models, one key)"
+msgstr "OpenRouter (viele Modelle, ein Schlüssel)"
+
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:126
 msgid "Ollama (on this server)"
 msgstr "Ollama (auf diesem Server)"
 
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:81
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:138
 msgid "Custom OpenAI-compatible endpoint"
 msgstr "Eigener OpenAI-kompatibler Endpunkt"
 
 #. translators: %s: transport error message
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:243
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:300
 #, php-format
 msgid "Could not reach the model endpoint: %s"
 msgstr "Der Modell-Endpunkt konnte nicht erreicht werden: %s"
 
 #. translators: 1: HTTP status, 2: API error message
-#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:248
+#: src/Features/Playground/Provider/OpenAiCompatibleProvider.php:305
 #, php-format
 msgid "The model endpoint returned %1$d: %2$s"
 msgstr "Der Modell-Endpunkt hat %1$d zurückgegeben: %2$s"
@@ -795,38 +811,38 @@ msgid "The model returned no text."
 msgstr "Das Modell hat keinen Text geliefert."
 
 #. translators: %s: the name of the plugin's Access screen.
-#: src/Features/Playground/Rewrites/RewriteJobs.php:238
+#: src/Features/Playground/Rewrites/RewriteJobs.php:236
 #: src/Features/Playground/Rewrites/views/rewrites.php:179
 #, php-format
 msgid "Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again."
 msgstr "Produkte kann die KI in diesem Shop nicht ändern. Schalte unter %s „Darf ändern“ für Produkte ein und übernimm den Text dann erneut."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:248
+#: src/Features/Playground/Rewrites/RewriteJobs.php:247
 #: src/Features/Playground/Rewrites/views/rewrites.php:158
 msgid "This product no longer exists."
 msgstr "Dieses Produkt gibt es nicht mehr."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:267
+#: src/Features/Playground/Rewrites/RewriteJobs.php:266
 msgid "The product’s text changed after the model read it. Start a new job to rewrite the current text."
 msgstr "Der Produkttext wurde geändert, nachdem das Modell ihn gelesen hat. Starte einen neuen Auftrag, um den aktuellen Text umzuschreiben."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:292
+#: src/Features/Playground/Rewrites/RewriteJobs.php:291
 msgid "Applied without undo history, so this cannot be undone here."
 msgstr "Ohne Rückgängig-Verlauf übernommen, daher lässt sich das hier nicht rückgängig machen."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:362
+#: src/Features/Playground/Rewrites/RewriteJobs.php:361
 msgid "Products cannot be changed by AI on this store any more."
 msgstr "Produkte dürfen in diesem Shop nicht mehr von KI geändert werden."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:381
+#: src/Features/Playground/Rewrites/RewriteJobs.php:380
 msgid "The rewrite failed unexpectedly. Check the WooCommerce logs for details."
 msgstr "Das Umschreiben ist unerwartet fehlgeschlagen. Details findest du in den WooCommerce-Protokollen."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:426
+#: src/Features/Playground/Rewrites/RewriteJobs.php:425
 msgid "Undoing stopped before it finished. Check the product’s text."
 msgstr "Das Rückgängigmachen wurde vor dem Ende abgebrochen. Prüfe den Text des Produkts."
 
-#: src/Features/Playground/Rewrites/RewriteJobs.php:427
+#: src/Features/Playground/Rewrites/RewriteJobs.php:426
 msgid "Applying stopped before it finished. Check the product: its text may already be the new one."
 msgstr "Das Übernehmen wurde vor dem Ende abgebrochen. Prüfe das Produkt: Sein Text kann schon der neue sein."
 
@@ -1222,8 +1238,8 @@ msgid "Use your own provider account"
 msgstr "Eigenes Anbieterkonto verwenden"
 
 #: src/Features/Playground/views/partial-model-chooser.php:140
-msgid "Paste an API key from Anthropic, OpenAI or Google — or run a local model with Ollama."
-msgstr "Füge einen API-Schlüssel von Anthropic, OpenAI oder Google ein – oder betreibe ein lokales Modell mit Ollama."
+msgid "Paste an API key from Anthropic, OpenAI, Google, xAI, Mistral, DeepSeek or OpenRouter — or run a local model with Ollama."
+msgstr "Füge einen API-Schlüssel von Anthropic, OpenAI, Google, xAI, Mistral, DeepSeek oder OpenRouter ein – oder betreibe ein lokales Modell mit Ollama."
 
 #: src/Features/Playground/views/partial-model-chooser.php:149
 msgid "Provider"

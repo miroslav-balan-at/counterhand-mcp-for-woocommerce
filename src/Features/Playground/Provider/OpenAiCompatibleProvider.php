@@ -62,6 +62,63 @@ final readonly class OpenAiCompatibleProvider extends HttpProvider {
 		);
 	}
 
+	/**
+	 * xAI marks chat completions as legacy in favour of its Responses API, but
+	 * still serves it (checked November 2026); a shutdown would need an adapter.
+	 */
+	public static function xai(): self {
+		return new self(
+			id: 'xai',
+			label: static fn (): string => __( 'Grok (xAI)', 'counterhand-mcp-for-woocommerce' ),
+			default_base_url: 'https://api.x.ai/v1', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- the admin chooses this provider and supplies the key; the AI Client has no xAI connector.
+			models: [
+				'grok-4.7' => 'Grok 4.7',
+			],
+			base_url_required: false,
+			key_url: 'https://console.x.ai/',
+		);
+	}
+
+	public static function mistral(): self {
+		return new self(
+			id: 'mistral',
+			label: static fn (): string => __( 'Mistral', 'counterhand-mcp-for-woocommerce' ),
+			default_base_url: 'https://api.mistral.ai/v1', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- the admin chooses this provider and supplies the key; the AI Client has no Mistral connector.
+			models: [
+				'mistral-large-latest'  => 'Mistral Large',
+				'mistral-medium-latest' => 'Mistral Medium',
+			],
+			base_url_required: false,
+			key_url: 'https://console.mistral.ai/api-keys',
+		);
+	}
+
+	public static function deepseek(): self {
+		return new self(
+			id: 'deepseek',
+			label: static fn (): string => __( 'DeepSeek', 'counterhand-mcp-for-woocommerce' ),
+			default_base_url: 'https://api.deepseek.com', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- the admin chooses this provider and supplies the key; the AI Client has no DeepSeek connector.
+			models: [
+				'deepseek-flash'  => 'DeepSeek Flash',
+				'deepseek-v4-pro' => 'DeepSeek V4 Pro',
+			],
+			base_url_required: false,
+			key_url: 'https://platform.deepseek.com/api_keys',
+		);
+	}
+
+	/** Many vendors' models behind one key; model names take the form vendor/model. */
+	public static function openrouter(): self {
+		return new self(
+			id: 'openrouter',
+			label: static fn (): string => __( 'OpenRouter (many models, one key)', 'counterhand-mcp-for-woocommerce' ),
+			default_base_url: 'https://openrouter.ai/api/v1', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- the admin chooses this provider and supplies the key; the AI Client has no OpenRouter connector.
+			models: [],
+			base_url_required: false,
+			key_url: 'https://openrouter.ai/settings/keys', // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- a link the admin follows to create a key; nothing is requested from it.
+		);
+	}
+
 	/** A model running on the same machine: no account, no key, no data leaving. */
 	public static function ollama(): self {
 		return new self(

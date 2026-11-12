@@ -28,6 +28,28 @@ test.describe( 'Chat', () => {
 		}
 	} );
 
+	test( 'Grok, Mistral, DeepSeek and OpenRouter are offered with a link to get a key', async ( { page } ) => {
+		const unset = patchOption( 'counterhand_chat', { provider: '', model: '' } );
+
+		try {
+			await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
+
+			for ( const [ id, keys ] of [
+				[ 'xai', 'https://console.x.ai/' ],
+				[ 'mistral', 'https://console.mistral.ai/api-keys' ],
+				[ 'deepseek', 'https://platform.deepseek.com/api_keys' ],
+				[ 'openrouter', 'https://openrouter.ai/settings/keys' ],
+			] ) {
+				await expect( page.locator( `input[name="counterhand_chat_provider"][value="${ id }"]` ) ).toHaveCount( 1 );
+				await expect( page.locator( `a[href="${ keys }"]` ) ).toHaveCount( 1 );
+			}
+
+			await expect( page.locator( '#counterhand-chat-model-list option[value="grok-4.7"]' ) ).toHaveCount( 1 );
+		} finally {
+			unset();
+		}
+	} );
+
 	test( 'a question gets the model\'s answer', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=counterhand-mcp' );
 

@@ -33,6 +33,10 @@ final readonly class ProviderRegistry {
 				new AnthropicProvider(),
 				OpenAiCompatibleProvider::openai(),
 				OpenAiCompatibleProvider::google(),
+				OpenAiCompatibleProvider::xai(),
+				OpenAiCompatibleProvider::mistral(),
+				OpenAiCompatibleProvider::deepseek(),
+				OpenAiCompatibleProvider::openrouter(),
 				OpenAiCompatibleProvider::ollama(),
 				OpenAiCompatibleProvider::compatible(),
 			]

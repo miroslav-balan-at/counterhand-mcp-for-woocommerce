@@ -2,6 +2,11 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 2.1.0
+
+* Added: the chat's model chooser offers Grok (xAI), Mistral, DeepSeek and OpenRouter, with each address filled in and a link to get a key. They use the same OpenAI-compatible adapter as Gemini and the custom endpoint, so the tool limit for that format applies. xAI lists this format as legacy next to its Responses API but still serves it.
+* Changed: the readme names every model the chat can use, with an FAQ entry, and its external services section lists the four new providers with their terms and privacy policies.
+
 ## 2.0.0
 
 * Changed: tested with WooCommerce 11.3.

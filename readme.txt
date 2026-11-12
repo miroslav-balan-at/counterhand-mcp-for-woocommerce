@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, mcp-server, claude, ai-agent
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,7 +67,7 @@ Off until you switch each on: WPML, Germanized and Germanized Pro, Contact Form 
 
 = Two ways to use AI with your store =
 
-**Chat inside wp-admin**, on the AI model WordPress manages under Settings → Connectors (WordPress 7.0 and later), or on Claude, ChatGPT, Gemini or a local Ollama model with your own key. It uses the same tools an outside app would, and a change that is not easily undone waits for your Approve button.
+**Chat inside wp-admin**, on the AI model WordPress manages under Settings → Connectors (WordPress 7.0 and later), or with your own key on Claude, ChatGPT, Gemini, Grok, Mistral, DeepSeek, any model on OpenRouter, or a local Ollama model. Any other OpenAI-compatible endpoint works too. It uses the same tools an outside app would, and a change that is not easily undone waits for your Approve button.
 
 **Connect the AI apps you already use.** Paste one URL into Claude, ChatGPT, Claude Code or any other MCP client, or add the store to Cursor and VS Code in one click. No token to create, no local proxy, no Node.js.
 
@@ -113,6 +113,10 @@ The provider you select determines the destination:
 * **Anthropic (Claude)** — `https://api.anthropic.com`. [Terms of service](https://www.anthropic.com/legal/consumer-terms), [privacy policy](https://www.anthropic.com/legal/privacy).
 * **OpenAI (ChatGPT)** — `https://api.openai.com`. [Terms of use](https://openai.com/policies/terms-of-use/), [privacy policy](https://openai.com/policies/privacy-policy/).
 * **Google (Gemini)** — `https://generativelanguage.googleapis.com`. [Terms of service](https://policies.google.com/terms), [privacy policy](https://policies.google.com/privacy).
+* **xAI (Grok)** — `https://api.x.ai`. [Terms of service](https://x.ai/legal/terms-of-service-enterprise), [privacy policy](https://x.ai/legal/privacy-policy).
+* **Mistral** — `https://api.mistral.ai`. [Terms of service](https://mistral.ai/terms), [privacy policy](https://mistral.ai/terms#privacy-policy).
+* **DeepSeek** — `https://api.deepseek.com`. [Terms of service](https://cdn.deepseek.com/policies/en-US/deepseek-open-platform-terms-of-service.html), [privacy policy](https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html).
+* **OpenRouter** — `https://openrouter.ai`, which passes the request on to the company behind the model you name. [Terms of service](https://openrouter.ai/terms), [privacy policy](https://openrouter.ai/privacy).
 * **Ollama** — a model running on your own server (`http://localhost:11434` by default). No data leaves your machine and no account or key is needed.
 * **Custom OpenAI-compatible endpoint** — any URL you enter yourself. The data goes wherever you point it, under that operator's terms; if that is a self-hosted model, nothing leaves your infrastructure.
 
@@ -166,6 +170,10 @@ Two causes: (1) pretty permalinks — the endpoint is also available at `/wp-jso
 = Which AI clients work? =
 
 Any MCP client implementing the current authorization spec (OAuth 2.1 + PKCE + Protected Resource Metadata, with CIMD client identity): Claude on web, mobile and desktop, ChatGPT, Claude Code, Cursor, VS Code, and others.
+
+= Which AI models can the chat use? =
+
+Choose one under Chat: Claude (Anthropic), ChatGPT (OpenAI), Gemini (Google), Grok (xAI), Mistral, DeepSeek, OpenRouter with one key for many vendors' models, or Ollama on your own server. Any other endpoint that speaks OpenAI's chat format works too, such as LM Studio or vLLM: choose "Custom OpenAI-compatible endpoint" and enter its address. The model must be able to call tools. On WordPress 7.0 and later the chat can also use the model WordPress manages under Settings → Connectors.
 
 = Claude or ChatGPT cannot see my store =
 
@@ -244,6 +252,9 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Changelog ==
 
+= 2.1.0 =
+* New: the chat can run on Grok (xAI), Mistral, DeepSeek and OpenRouter, each a choice of its own with its address filled in and a link to get a key.
+
 = 2.0.0 =
 * New: a menu that follows what you do: Overview, Chat, Rewrites, Connect apps, Access and Activity. Overview opens first and lists what is still to set up. Settings and Other plugins are now one screen, Access. Old bookmarks and links in emails keep working.
 * New: Rewrites. The chat's AI model drafts new product descriptions for up to 25 products in a category, and nothing changes until you approve each text.
@@ -260,12 +271,12 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 * Security: the chat's AI model and its key are for administrators only, a model cannot approve its own change in apps that show a form, and ACF, tax and Germanized writes are checked more strictly.
 * Tested with WooCommerce 11.3.
 
-= 1.3.2 =
-* Added: `create_order` — creates an unpaid order and returns its payment link, so an agent can take an order over email or chat and send the customer somewhere to pay. Always pending; WooCommerce sends no email of its own for it.
-
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
+
+= 2.1.0 =
+The chat can run on Grok, Mistral, DeepSeek and OpenRouter.
 
 = 2.0.0 =
 A new menu by task (Overview, Chat, Rewrites, Connect apps, Access, Activity); old links keep working. Tools no longer write protected custom fields through meta_data. New integrations ship off.

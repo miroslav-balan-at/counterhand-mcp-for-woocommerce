@@ -39,6 +39,30 @@ final class ProviderReadinessTest extends TestCase {
 		self::assertFalse( $provider->is_ready( $this->config( '', 'gpt-5' ) ) );
 	}
 
+	/**
+	 * @return array<string, array{OpenAiCompatibleProvider, string}>
+	 */
+	public static function hosted_presets(): array {
+		return [
+			'xai'        => [ OpenAiCompatibleProvider::xai(), 'https://api.x.ai/v1' ],
+			'mistral'    => [ OpenAiCompatibleProvider::mistral(), 'https://api.mistral.ai/v1' ],
+			'deepseek'   => [ OpenAiCompatibleProvider::deepseek(), 'https://api.deepseek.com' ],
+			'openrouter' => [ OpenAiCompatibleProvider::openrouter(), 'https://openrouter.ai/api/v1' ],
+		];
+	}
+
+	/**
+	 * @dataProvider hosted_presets
+	 */
+	public function test_a_hosted_preset_needs_key_and_model_but_no_address( OpenAiCompatibleProvider $provider, string $base_url ): void {
+		self::assertSame( $base_url, $provider->default_base_url() );
+		self::assertFalse( $provider->needs_base_url() );
+		self::assertNotSame( '', $provider->key_url() );
+		self::assertTrue( $provider->is_ready( $this->config( 'key', 'some-model' ) ) );
+		self::assertFalse( $provider->is_ready( $this->config( '', 'some-model' ) ) );
+		self::assertFalse( $provider->is_ready( $this->config( 'key', '' ) ) );
+	}
+
 	public function test_ollama_needs_only_a_model(): void {
 		$provider = OpenAiCompatibleProvider::ollama();
 

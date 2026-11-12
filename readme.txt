@@ -100,7 +100,7 @@ On WordPress 7.0 and later the AI model can be the one WordPress itself manages 
 
 **Rewrites:** only when an administrator or shop manager starts a rewrite job, the plugin sends each chosen product's name, current description or short description and the person's instructions to the model, one product at a time, in the background through WooCommerce's Action Scheduler. Nothing else about the store is sent, and nothing is sent after the job ends.
 
-**Weekly report summary:** only for a person who asked for the weekly report, and only while a model is chosen, the plugin sends last week's figures (sales totals, best sellers by name and quantity, order counts) to the model every Monday morning to write a short summary. No customer data is included. Without a model the report goes out without a summary and nothing is sent.
+**Weekly report summary:** only for a person who asked for the weekly report, and only while a model is chosen, the plugin sends the store's name and the figures for last week and the week before (sales totals, best sellers by name and quantity, the number of orders waiting) to the model every Monday morning to write a short summary. No customer data is included. Without a model the report goes out without a summary and nothing is sent.
 
 There is one other, smaller request: when you save an API key on the Chat screen, the plugin sends a single "ping" message to the provider to check the key works before storing it, so a wrong key is reported immediately. That check contains no store data.
 

@@ -231,14 +231,13 @@ final readonly class RewriteJobs {
 	public function apply( int $user_id, array $item_ids ): void {
 		// Checked before claiming: a claimed text that cannot be written would fail for good.
 		if ( ! $this->writes_products( $user_id ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
-			throw new RewriteRefused(
-				sprintf(
-					/* translators: %s: the name of the plugin's Access screen. */
-					__( 'Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again.', 'counterhand-mcp-for-woocommerce' ),
-					AdminScreen::Access->menu_title()
-				)
+			$refusal = sprintf(
+				/* translators: %s: the name of the plugin's Access screen. */
+				__( 'Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again.', 'counterhand-mcp-for-woocommerce' ),
+				AdminScreen::Access->menu_title()
 			);
+
+			throw new RewriteRefused( $refusal ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
 		}
 
 		$agent = RewriteAgent::for_user( $user_id );

@@ -12,6 +12,8 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 * Fixed: clearing Activity is for administrators only, because it holds refunds and integration calls kept whatever the setting says. Searches are masked in Activity like names.
 * Fixed: approving with nothing ticked counts as declining, rather than creating a connection that can reach nothing. A chat approval clicked twice runs once.
 * Fixed: a Rewrites item whose background run timed out or crashed is marked failed instead of waiting forever, and rewrite jobs are included in WordPress's personal data export and erasure.
+* Security: a URL coupon link is refused when it would capture a category or other archive served at the site root, or any public post type, and a longer link is no longer refused just because a slug starts with its first letters. Protected meta is refused on each order line, as on the order itself.
+* Fixed: a Rewrites text whose apply or undo was cut short by a crash or timeout is marked failed with a hint to check the product, instead of staying "Being applied" for good.
 * Fixed: deactivating the plugin across a network clears every site's scheduled jobs. Instructions to apps, the chat and the screens after approving name Access and Connected apps instead of Settings and connections.
 * Changed: the plugin's description and the wordpress.org listing say what it does for a store first, with new screenshots of the 2.0 screens.
 * Changed: the privacy policy text WordPress suggests now names Rewrites and the weekly report's AI summary, and the readme's external services section describes what each sends.

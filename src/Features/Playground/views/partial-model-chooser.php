@@ -34,7 +34,7 @@ $counterhand_key_hint = $chat_settings->masked_key();
 <div class="counterhand-chooser">
 	<h2 class="counterhand-chooser__title"><?php esc_html_e( 'Choose an AI model', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 	<p class="counterhand-chooser__lede">
-		<?php esc_html_e( 'The chat, Rewrites and the weekly summary all use the model you choose here. The provider bills you for what you use; the chat shows each conversation\'s tokens.', 'counterhand-mcp-for-woocommerce' ); ?>
+		<?php esc_html_e( 'The chat, Rewrites and the weekly report all use the model you choose here. The provider bills you for what you use; the chat shows each conversation\'s tokens.', 'counterhand-mcp-for-woocommerce' ); ?>
 	</p>
 
 	<?php if ( null !== $core_state ) : ?>

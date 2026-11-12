@@ -124,7 +124,13 @@ $counterhand_excess     = null !== $tool_limit ? count( $tools ) - $tool_limit :
 						?>
 					</strong>
 					<p class="counterhand-callout__text">
-						<?php esc_html_e( 'Picking it here is remembered, but the chat cannot reach it until it is switched on in Access. Access decides what every app may reach; this panel only narrows it further for the chat.', 'counterhand-mcp-for-woocommerce' ); ?>
+						<?php
+						printf(
+							/* translators: %s: the name of the plugin's Access screen. */
+							esc_html__( 'Picking it here is remembered, but the chat cannot reach it until it is switched on in %1$s. %1$s decides what every app may reach; this panel only narrows it further for the chat.', 'counterhand-mcp-for-woocommerce' ),
+							esc_html( AdminScreen::Access->menu_title() )
+						);
+						?>
 					</p>
 					<?php
 					$counterhand_switches = [];

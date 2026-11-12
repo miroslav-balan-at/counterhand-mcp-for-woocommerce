@@ -59,8 +59,6 @@ final readonly class CouponUrlRules {
 	}
 
 	private function starts_something( string $path ): bool {
-		global $wpdb;
-
 		foreach ( array_keys( (array) get_option( 'rewrite_rules', [] ) ) as $rule ) {
 			$literal = rtrim( (string) preg_split( self::REGEX_START, (string) $rule, 2 )[0], '/' );
 
@@ -73,7 +71,31 @@ final readonly class CouponUrlRules {
 			return true;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- no core API finds posts by the start of their slug.
-		return null !== $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name LIKE %s AND post_status = 'publish' AND post_type IN ('page', 'post', 'product') LIMIT 1", $wpdb->esc_like( (string) strtok( $path, '/' ) ) . '%' ) );
+		return $this->slug_is_taken( $path );
+	}
+
+	/**
+	 * A link captures every address that starts with it, so one word captures every slug starting
+	 * with that word, and a longer link the section its first word names. Term archives can sit at
+	 * the root too, when a plugin removes their base, which no rewrite rule above starts with.
+	 */
+	private function slug_is_taken( string $path ): bool {
+		global $wpdb;
+
+		$segments = explode( '/', $path );
+		$pattern  = 1 === count( $segments ) ? $wpdb->esc_like( $path ) . '%' : $wpdb->esc_like( $segments[0] );
+
+		$post_types = array_values( get_post_types( [ 'public' => true ] ) );
+		$taxonomies = array_values( get_taxonomies( [ 'public' => true ] ) );
+
+		$post_placeholders = implode( ', ', array_fill( 0, max( 1, count( $post_types ) ), '%s' ) );
+		$term_placeholders = implode( ', ', array_fill( 0, max( 1, count( $taxonomies ) ), '%s' ) );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- no core API finds posts or terms by the start of their slug; the placeholders are counted above.
+		$post = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_name LIKE %s AND post_status = 'publish' AND post_type IN ( {$post_placeholders} ) LIMIT 1", $pattern, ...( [] !== $post_types ? $post_types : [ '' ] ) ) );
+		$term = $wpdb->get_var( $wpdb->prepare( "SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tt ON tt.term_id = t.term_id WHERE t.slug LIKE %s AND tt.taxonomy IN ( {$term_placeholders} ) LIMIT 1", $pattern, ...( [] !== $taxonomies ? $taxonomies : [ '' ] ) ) );
+		// phpcs:enable
+
+		return null !== $post || null !== $term;
 	}
 }

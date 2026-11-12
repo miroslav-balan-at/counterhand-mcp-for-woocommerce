@@ -12,7 +12,7 @@
  * @var \Counterhand\Features\ActionLog\ActivitySummary|null          $activity
  * @var bool                                                          $other_mcp_server
  * @var bool                                                          $can_save
- * @var list<\Counterhand\Features\Settings\DashboardCardInterface>    $cards
+ * @var list<\Counterhand\Features\Settings\OverviewCardInterface>    $cards
  * @var list<\Counterhand\Features\Settings\SetupStep>                $setup
  */
 
@@ -66,18 +66,18 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 		</div>
 	</section>
 <?php endif; ?>
-<div class="counterhand-dashboard">
-	<section class="counterhand-card" aria-labelledby="counterhand-dashboard-connector">
+<div class="counterhand-overview">
+	<section class="counterhand-card" aria-labelledby="counterhand-overview-connector">
 		<div class="counterhand-card__head">
 			<span class="counterhand-card__heading">
-				<h2 class="counterhand-card__title" id="counterhand-dashboard-connector"><?php esc_html_e( 'AI access', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+				<h2 class="counterhand-card__title" id="counterhand-overview-connector"><?php esc_html_e( 'AI access', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 			</span>
 		</div>
 		<div class="counterhand-card__body">
 			<p class="counterhand-stat <?php echo $is_enabled ? 'counterhand-stat--on' : 'counterhand-stat--off'; ?>">
 				<?php echo $is_enabled ? esc_html__( 'On', 'counterhand-mcp-for-woocommerce' ) : esc_html__( 'Off', 'counterhand-mcp-for-woocommerce' ); ?>
 			</p>
-			<p class="counterhand-dashboard__note">
+			<p class="counterhand-overview__note">
 				<?php
 				echo $is_enabled
 					? esc_html__( 'Apps you have approved can reach this store.', 'counterhand-mcp-for-woocommerce' )
@@ -90,10 +90,10 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 		<?php endif; ?>
 	</section>
 
-	<section class="counterhand-card" aria-labelledby="counterhand-dashboard-connections">
+	<section class="counterhand-card" aria-labelledby="counterhand-overview-connections">
 		<div class="counterhand-card__head">
 			<span class="counterhand-card__heading">
-				<h2 class="counterhand-card__title" id="counterhand-dashboard-connections"><?php esc_html_e( 'Apps', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+				<h2 class="counterhand-card__title" id="counterhand-overview-connections"><?php esc_html_e( 'Apps', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 			</span>
 		</div>
 		<div class="counterhand-card__body">
@@ -102,16 +102,16 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 		<div class="counterhand-card__foot"><a href="<?php echo esc_url( ConnectTab::Connections->url() ); ?>"><?php esc_html_e( 'Review or revoke them', 'counterhand-mcp-for-woocommerce' ); ?></a></div>
 	</section>
 
-	<section class="counterhand-card" aria-labelledby="counterhand-dashboard-exposed">
+	<section class="counterhand-card" aria-labelledby="counterhand-overview-exposed">
 		<div class="counterhand-card__head">
 			<span class="counterhand-card__heading">
-				<h2 class="counterhand-card__title" id="counterhand-dashboard-exposed"><?php esc_html_e( 'Areas AI can read', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+				<h2 class="counterhand-card__title" id="counterhand-overview-exposed"><?php esc_html_e( 'Areas AI can read', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 				<span class="counterhand-card__desc"><?php esc_html_e( 'The most any app can get. Each app holds only what it was approved for.', 'counterhand-mcp-for-woocommerce' ); ?></span>
 			</span>
 		</div>
 		<div class="counterhand-card__body">
 			<p class="counterhand-stat"><?php echo esc_html( number_format_i18n( $readable_groups ) ); ?></p>
-			<p class="counterhand-dashboard__note">
+			<p class="counterhand-overview__note">
 				<?php
 				if ( [] === $writable_groups ) {
 					esc_html_e( 'AI can change none of them.', 'counterhand-mcp-for-woocommerce' );
@@ -130,19 +130,19 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 		<?php endif; ?>
 	</section>
 
-	<section class="counterhand-card" aria-labelledby="counterhand-dashboard-activity">
+	<section class="counterhand-card" aria-labelledby="counterhand-overview-activity">
 		<div class="counterhand-card__head">
 			<span class="counterhand-card__heading">
-				<h2 class="counterhand-card__title" id="counterhand-dashboard-activity"><?php esc_html_e( 'Calls today', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+				<h2 class="counterhand-card__title" id="counterhand-overview-activity"><?php esc_html_e( 'Calls today', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 			</span>
 		</div>
 		<div class="counterhand-card__body">
 			<?php if ( null === $activity ) : ?>
 				<p class="counterhand-stat counterhand-stat--off"><?php esc_html_e( 'Not recorded', 'counterhand-mcp-for-woocommerce' ); ?></p>
-				<p class="counterhand-dashboard__note"><?php esc_html_e( 'Activity is not recorded, so nothing here can say what apps have done.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+				<p class="counterhand-overview__note"><?php esc_html_e( 'Activity is not recorded, so nothing here can say what apps have done.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 			<?php else : ?>
 				<p class="counterhand-stat"><?php echo esc_html( number_format_i18n( $activity->calls ) ); ?></p>
-				<p class="counterhand-dashboard__note">
+				<p class="counterhand-overview__note">
 					<?php
 					printf(
 						/* translators: %s: number of tool calls that failed. */
@@ -152,7 +152,7 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 					?>
 				</p>
 				<?php if ( [] !== $activity->recent_failures ) : ?>
-					<ul class="counterhand-dashboard__list">
+					<ul class="counterhand-overview__list">
 						<?php foreach ( $activity->recent_failures as $counterhand_failure ) : ?>
 							<li>
 								<code><?php echo esc_html( $counterhand_failure->tool_name ); ?></code>
@@ -167,21 +167,29 @@ $counterhand_done = count( array_filter( $setup, static fn ( $step ): bool => $s
 			<?php endif; ?>
 		</div>
 		<?php if ( null !== $activity ) : ?>
-			<div class="counterhand-card__foot"><a href="<?php echo esc_url( AdminScreen::Activity->url() ); ?>"><?php esc_html_e( 'Open Activity', 'counterhand-mcp-for-woocommerce' ); ?></a></div>
+			<div class="counterhand-card__foot"><a href="<?php echo esc_url( AdminScreen::Activity->url() ); ?>">
+			<?php
+				printf(
+					/* translators: %s: the name of the plugin's Activity screen. */
+					esc_html__( 'Open %s', 'counterhand-mcp-for-woocommerce' ),
+					esc_html( AdminScreen::Activity->menu_title() )
+				);
+			?>
+				</a></div>
 		<?php elseif ( $can_save ) : ?>
 			<div class="counterhand-card__foot"><a href="<?php echo esc_url( AdminScreen::Access->url() ); ?>"><?php esc_html_e( 'Turn on recording', 'counterhand-mcp-for-woocommerce' ); ?></a></div>
 		<?php endif; ?>
 	</section>
 
 	<?php if ( [] !== $integrations ) : ?>
-		<section class="counterhand-card" aria-labelledby="counterhand-dashboard-integrations">
+		<section class="counterhand-card" aria-labelledby="counterhand-overview-integrations">
 			<div class="counterhand-card__head">
 				<span class="counterhand-card__heading">
-					<h2 class="counterhand-card__title" id="counterhand-dashboard-integrations"><?php esc_html_e( 'Other plugins', 'counterhand-mcp-for-woocommerce' ); ?></h2>
+					<h2 class="counterhand-card__title" id="counterhand-overview-integrations"><?php esc_html_e( 'Other plugins', 'counterhand-mcp-for-woocommerce' ); ?></h2>
 				</span>
 			</div>
 			<div class="counterhand-card__body">
-				<ul class="counterhand-dashboard__list">
+				<ul class="counterhand-overview__list">
 					<?php foreach ( $integrations as $counterhand_group ) : ?>
 						<li>
 							<span><?php echo esc_html( $counterhand_group->label() ); ?></span>

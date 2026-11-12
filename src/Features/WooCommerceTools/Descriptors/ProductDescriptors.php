@@ -132,7 +132,7 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				null,
 				null,
 				MetaOwner::Post,
-				meta_write_params: GermanizedDescriptors::KEEP_AGE_CHECK
+				meta_write_parameters: GermanizedDescriptors::KEEP_AGE_CHECK
 			),
 		];
 	}

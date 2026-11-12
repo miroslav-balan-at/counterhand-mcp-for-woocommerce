@@ -5,12 +5,12 @@ declare( strict_types=1 );
 namespace Counterhand\Features\WeeklyReport;
 
 use Counterhand\Features\Settings\AdminScreen;
-use Counterhand\Features\Settings\DashboardCardInterface;
+use Counterhand\Features\Settings\OverviewCardInterface;
 use Counterhand\Shared\FeatureInterface;
 
 defined( 'ABSPATH' ) || exit;
 
-final readonly class WeeklyReportFeature implements FeatureInterface, DashboardCardInterface {
+final readonly class WeeklyReportFeature implements FeatureInterface, OverviewCardInterface {
 
 	public const SUBSCRIBE_ACTION = 'counterhand_weekly_report_subscription';
 	public const SEND_ACTION      = 'counterhand_weekly_report_send';
@@ -66,7 +66,11 @@ final readonly class WeeklyReportFeature implements FeatureInterface, DashboardC
 		$this->finish(
 			$this->report->send_to( get_current_user_id() )
 				? __( 'Last week’s report is on its way to your email address.', 'counterhand-mcp-for-woocommerce' )
-				: __( 'The report could not be sent. Check that Reports can be read in Access, and the WooCommerce logs.', 'counterhand-mcp-for-woocommerce' )
+				: sprintf(
+					/* translators: %s: the name of the plugin's Access screen. */
+					__( 'The report could not be sent. Check that Reports can be read in %s, and the WooCommerce logs.', 'counterhand-mcp-for-woocommerce' ),
+					AdminScreen::Access->menu_title()
+				)
 		);
 	}
 

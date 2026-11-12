@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Playground\Rewrites;
 
+use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\McpServer\ToolDispatcherInterface;
 use Counterhand\Features\Playground\ChatSettings;
 use Counterhand\Features\Playground\Provider\ProviderConfig;
@@ -48,11 +49,19 @@ final readonly class RewriteJobs {
 		}
 
 		if ( null === $this->providers->get( $this->settings->provider_id() ) || ! $this->settings->is_configured() ) {
-			return __( 'No AI model is chosen yet. Choose one on the Chat screen first.', 'counterhand-mcp-for-woocommerce' );
+			return sprintf(
+				/* translators: %s: the name of the plugin's Chat screen. */
+				__( 'No AI model is chosen yet. Choose one on %s first.', 'counterhand-mcp-for-woocommerce' ),
+				AdminScreen::Chat->menu_title()
+			);
 		}
 
 		if ( ! $this->writes_products( $user_id ) ) {
-			return __( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access first.', 'counterhand-mcp-for-woocommerce' );
+			return sprintf(
+				/* translators: %s: the name of the plugin's Access screen. */
+				__( 'Products cannot be changed by AI on this store. Switch on Can change for Products in %s first.', 'counterhand-mcp-for-woocommerce' ),
+				AdminScreen::Access->menu_title()
+			);
 		}
 
 		return null;
@@ -168,7 +177,7 @@ final readonly class RewriteJobs {
 
 		$provider = $this->providers->get( $this->settings->provider_id() );
 		if ( null === $provider ) {
-			$this->queue->fail( $item->id, __( 'No model is connected any more.', 'counterhand-mcp-for-woocommerce' ) );
+			$this->queue->fail( $item->id, __( 'No AI model is chosen any more.', 'counterhand-mcp-for-woocommerce' ) );
 
 			return;
 		}
@@ -222,7 +231,14 @@ final readonly class RewriteJobs {
 	public function apply( int $user_id, array $item_ids ): void {
 		// Checked before claiming: a claimed text that cannot be written would fail for good.
 		if ( ! $this->writes_products( $user_id ) ) {
-			throw new RewriteRefused( __( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again.', 'counterhand-mcp-for-woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown with esc_html by the screen.
+			throw new RewriteRefused(
+				sprintf(
+					/* translators: %s: the name of the plugin's Access screen. */
+					__( 'Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again.', 'counterhand-mcp-for-woocommerce' ),
+					AdminScreen::Access->menu_title()
+				)
+			);
 		}
 
 		$agent = RewriteAgent::for_user( $user_id );
@@ -382,7 +398,35 @@ final readonly class RewriteJobs {
 			}
 		}
 
+		if ( [] !== $claimed ) {
+			// WordPress runs shutdown after a fatal error or a timeout too, so nothing is left Applying for good.
+			add_action( 'shutdown', fn () => $this->release( $to, array_map( static fn ( RewriteItem $item ): int => $item->id, $claimed ) ) );
+		}
+
 		return $claimed;
+	}
+
+	/**
+	 * Items a request claimed and did not finish: the write may or may not have landed,
+	 * so the person is told to look rather than offered the same action again.
+	 *
+	 * @param list<int> $item_ids
+	 */
+	public function release( RewriteStatus $running, array $item_ids ): void {
+		foreach ( $item_ids as $item_id ) {
+			$item = $this->queue->find( $item_id );
+
+			if ( null === $item || $running !== $item->status ) {
+				continue;
+			}
+
+			$this->queue->fail(
+				$item_id,
+				RewriteStatus::Undoing === $running
+					? __( 'Undoing stopped before it finished. Check the product’s text.', 'counterhand-mcp-for-woocommerce' )
+					: __( 'Applying stopped before it finished. Check the product: its text may already be the new one.', 'counterhand-mcp-for-woocommerce' )
+			);
+		}
 	}
 
 	private static function product_exists( int $product_id ): bool {

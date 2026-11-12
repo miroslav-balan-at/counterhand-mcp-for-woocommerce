@@ -92,6 +92,36 @@ final class RewriteJobsTest extends TestCase {
 		self::assertSame( RewriteStatus::Applied, $this->queue->items[1]->status );
 	}
 
+	public function test_an_apply_cut_short_by_a_crash_is_failed_with_a_hint_at_shutdown(): void {
+		$this->queue->items[1] = self::item( 1, RewriteStatus::Applying, original: 'Old', proposal: 'New' );
+
+		$this->jobs()->release( RewriteStatus::Applying, [ 1 ] );
+
+		self::assertSame( RewriteStatus::Failed, $this->queue->items[1]->status );
+		self::assertStringContainsString( 'Check the product', $this->queue->items[1]->message );
+	}
+
+	public function test_shutdown_leaves_a_finished_apply_alone(): void {
+		$shutdown = [];
+		Functions\when( 'add_action' )->alias(
+			static function ( string $hook, callable $callback ) use ( &$shutdown ): void {
+				if ( 'shutdown' === $hook ) {
+					$shutdown[] = $callback;
+				}
+			}
+		);
+		$this->queue->items[1] = self::item( 1, RewriteStatus::Proposed, original: 'Old', proposal: 'New' );
+		$this->tools->state    = [ 'description' => 'Old' ];
+
+		$this->jobs()->apply( self::OWNER, [ 1 ] );
+		foreach ( $shutdown as $callback ) {
+			$callback();
+		}
+
+		self::assertCount( 1, $shutdown );
+		self::assertSame( RewriteStatus::Applied, $this->queue->items[1]->status );
+	}
+
 	public function test_apply_refuses_when_the_text_changed_after_the_model_read_it(): void {
 		$this->queue->items[1] = self::item( 1, RewriteStatus::Proposed, original: 'Old', proposal: '<p>New</p>' );
 		$this->tools->state    = [ 'description' => 'Edited by hand since' ];

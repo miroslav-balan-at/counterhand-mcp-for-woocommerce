@@ -108,7 +108,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 
 	/**
 	 * Shared page chrome: one slim row (the prompt tile, the title, what the screen is
-	 * for, whether AI access is on), the nav across the plugin's screens, then the
+	 * for, whether AI access is on), the navigation across the plugin's screens, then the
 	 * screen's own body. Kept to one row so the work starts high on the page.
 	 */
 	private function render( AdminScreen $screen ): void {
@@ -125,7 +125,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 					</div>
 					<span class="counterhand-pill%s">%s</span>
 				</div>
-				<nav class="counterhand-nav" aria-label="%s">%s</nav>
+				<nav class="counterhand-navigation" aria-label="%s">%s</nav>
 			</header>',
 			$screen->is_full_bleed() ? ' counterhand-wrap--chat' : '',
 			esc_html( $screen->page_title() ),
@@ -133,7 +133,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 			$this->settings->is_enabled() ? ' counterhand-pill--on' : '',
 			$this->settings->is_enabled() ? esc_html__( 'AI access on', 'counterhand-mcp-for-woocommerce' ) : esc_html__( 'AI access off', 'counterhand-mcp-for-woocommerce' ),
 			esc_attr__( 'Counterhand', 'counterhand-mcp-for-woocommerce' ),
-			$this->nav( $screen ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts in nav().
+			$this->navigation( $screen ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts in navigation().
 		);
 
 		// wp-admin moves every notice to this marker, or else in beside the title.
@@ -161,7 +161,7 @@ final readonly class SettingsFeature implements FeatureInterface {
 		exit;
 	}
 
-	private function nav( AdminScreen $current ): string {
+	private function navigation( AdminScreen $current ): string {
 		return implode(
 			'',
 			array_map(

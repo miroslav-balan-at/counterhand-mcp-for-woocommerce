@@ -13,6 +13,7 @@
 
 declare( strict_types=1 );
 
+use Counterhand\Features\Settings\ConnectTab;
 use Counterhand\Features\Settings\AdminScreen;
 
 defined( 'ABSPATH' ) || exit;
@@ -156,7 +157,7 @@ $counterhand_offers_nothing = ! $counterhand_scopes->has_grantable();
 	printf(
 		/* translators: %s: where connected apps are listed in the menu, e.g. "Counterhand MCP › Connect apps › Connected apps". */
 		esc_html__( 'You can take this app\'s access away any time under %s.', 'counterhand-mcp-for-woocommerce' ),
-		esc_html( __( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ) . ' › ' . AdminScreen::Connect->menu_title() . ' › ' . __( 'Connected apps', 'counterhand-mcp-for-woocommerce' ) )
+		esc_html( __( 'Counterhand MCP', 'counterhand-mcp-for-woocommerce' ) . ' › ' . AdminScreen::Connect->menu_title() . ' › ' . ConnectTab::Connections->label() )
 	);
 	?>
 </footer>

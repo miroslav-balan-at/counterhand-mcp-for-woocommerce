@@ -19,7 +19,7 @@ const mails = (): Mail[] => JSON.parse( wp( 'option', 'get', 'counterhand_e2e_ma
 
 const forget = ( login: string ) => evaluate( `delete_user_meta( get_user_by( 'login', '${ login }' )->ID, 'counterhand_weekly_report' );` );
 
-const card = ( page: Page ) => page.locator( 'section[aria-labelledby="counterhand-dashboard-weekly-report"]' );
+const card = ( page: Page ) => page.locator( 'section[aria-labelledby="counterhand-overview-weekly-report"]' );
 
 /* The weekly email as it would be sent: the figures WooCommerce states, for the people who asked. */
 test.describe( 'Weekly report', () => {

@@ -43,7 +43,7 @@ use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
 use Counterhand\Features\Settings\ConnectScreen;
-use Counterhand\Features\Settings\DashboardScreen;
+use Counterhand\Features\Settings\OverviewScreen;
 use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Settings\SettingSanitizer;
 use Counterhand\Features\Settings\SettingsFeature;
@@ -244,7 +244,7 @@ final class Plugin {
 			$weekly_report,
 			new SettingsFeature(
 				[
-					AdminScreen::Overview->value => new DashboardScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
+					AdminScreen::Overview->value => new OverviewScreen( $settings, $connection_matcher, new WpdbActivityReport(), $text_model, [ $weekly_report ] ),
 					AdminScreen::Chat->value     => $playground,
 					AdminScreen::Rewrites->value => $rewrites,
 					AdminScreen::Connect->value  => new ConnectScreen( $tokens->admin(), $connection_matcher ),

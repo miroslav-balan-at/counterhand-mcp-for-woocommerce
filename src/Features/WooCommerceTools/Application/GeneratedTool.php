@@ -53,6 +53,8 @@ final readonly class GeneratedTool implements ToolInterface, ReversibleToolInter
 	/** Differ from one read to the next with nobody having touched the record: WooCommerce picks related products at random. */
 	private const CHANGES_BY_ITSELF = [ '_links', 'related_ids' ];
 
+	private const LINE_LISTS = [ 'line_items', 'shipping_lines', 'fee_lines', 'coupon_lines' ];
+
 	public function __construct(
 		// phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound -- "resource" is what wc/v3 calls the thing a controller exposes; renaming it here would leave the code speaking a different language from the API it wraps.
 		private ResourceDescriptor $resource,
@@ -320,7 +322,7 @@ final readonly class GeneratedTool implements ToolInterface, ReversibleToolInter
 		}
 
 		// Open tools accept meta_data, which would otherwise go past what the meta tools refuse.
-		foreach ( is_array( $arguments['meta_data'] ?? null ) ? $arguments['meta_data'] : [] as $entry ) {
+		foreach ( self::meta_entries( $arguments ) as $entry ) {
 			$verdict = $this->meta_policy->may_write( (string) ( is_array( $entry ) ? ( $entry['key'] ?? '' ) : '' ), is_array( $entry ) ? ( $entry['value'] ?? null ) : null, $this->resource->meta ?? MetaOwner::Post );
 
 			if ( ! $verdict->allowed ) {
@@ -328,6 +330,27 @@ final readonly class GeneratedTool implements ToolInterface, ReversibleToolInter
 				throw new ToolCallException( $verdict->reason );
 			}
 		}
+	}
+
+	/**
+	 * The order's own meta_data and each line's: an item's _wc_cog_item_total_cost or
+	 * _reduced_stock is WooCommerce's bookkeeping as much as a post's private fields are.
+	 *
+	 * @param  array<string, mixed> $arguments
+	 * @return list<mixed>
+	 */
+	private static function meta_entries( array $arguments ): array {
+		$entries = is_array( $arguments['meta_data'] ?? null ) ? array_values( $arguments['meta_data'] ) : [];
+
+		foreach ( self::LINE_LISTS as $list ) {
+			foreach ( is_array( $arguments[ $list ] ?? null ) ? $arguments[ $list ] : [] as $line ) {
+				if ( is_array( $line ) && is_array( $line['meta_data'] ?? null ) ) {
+					$entries = [ ...$entries, ...array_values( $line['meta_data'] ) ];
+				}
+			}
+		}
+
+		return $entries;
 	}
 
 	/**

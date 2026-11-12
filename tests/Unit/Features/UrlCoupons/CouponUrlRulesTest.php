@@ -22,19 +22,34 @@ final class CouponUrlRulesTest extends TestCase {
 		$wpdb = new class() {
 			public string $posts = 'wp_posts';
 
+			public string $terms = 'wp_terms';
+
+			public string $term_taxonomy = 'wp_term_taxonomy';
+
 			public function esc_like( string $text ): string {
 				return $text;
 			}
 
-			public function prepare( string $query, string $like ): string {
-				return $like;
+			public function prepare( string $query, string $like, string ...$types ): string {
+				return (string) json_encode( [ str_contains( $query, 'wp_terms' ), $like ] );
 			}
 
-			public function get_var( string $like ): ?string {
-				return str_starts_with( 'sale-items', rtrim( $like, '%' ) ) ? '1' : null;
+			public function get_var( string $prepared ): ?string {
+				[ $is_term, $like ] = json_decode( $prepared, true );
+				$slugs              = $is_term ? [ 'news' ] : [ 'sale-items', 'gourmet' ];
+
+				foreach ( $slugs as $slug ) {
+					if ( str_ends_with( $like, '%' ) ? str_starts_with( $slug, rtrim( $like, '%' ) ) : $slug === $like ) {
+						return '1';
+					}
+				}
+
+				return null;
 			}
 		};
 
+		Functions\when( 'get_post_types' )->justReturn( [ 'post' => 'post', 'page' => 'page', 'product' => 'product' ] );
+		Functions\when( 'get_taxonomies' )->justReturn( [ 'category' => 'category', 'product_cat' => 'product_cat' ] );
 		Functions\when( 'get_option' )->justReturn(
 			[
 				'product/([^/]+)/?$'          => 'x',
@@ -54,6 +69,9 @@ final class CouponUrlRulesTest extends TestCase {
 	public static function links(): array {
 		return [
 			'distinctive'               => [ 'autumn-offer', '', [], true ],
+			'a category archive at the root' => [ 'new', '', [], false ],
+			'a section only by its first letters' => [ 'go/summer', '', [], true ],
+			'a slug\'s own section'      => [ 'gourmet/summer', '', [], false ],
 			'a whole section'           => [ 'product', '', [], false ],
 			'the start of a section'    => [ 'prod', '', [], false ],
 			'another section'           => [ 'product-category', '', [], false ],

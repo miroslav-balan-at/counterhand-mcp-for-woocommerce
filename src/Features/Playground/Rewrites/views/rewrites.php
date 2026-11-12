@@ -36,8 +36,9 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 				<span class="counterhand-card__desc">
 					<?php
 					printf(
-						/* translators: %d: maximum number of products in one job. */
-						esc_html__( 'The model connected on the Chat screen writes a new text for up to %d products in the category. Nothing changes on your store until you approve a text below.', 'counterhand-mcp-for-woocommerce' ),
+						/* translators: 1: the name of the plugin's Chat screen, 2: maximum number of products in one job. */
+						esc_html__( 'The AI model chosen on %1$s writes a new text for up to %2$d products in the category. Nothing changes on your store until you approve a text below.', 'counterhand-mcp-for-woocommerce' ),
+						esc_html( AdminScreen::Chat->menu_title() ),
 						(int) $limit
 					);
 					?>
@@ -49,7 +50,15 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 				<p class="counterhand-chip counterhand-chip--warn"><?php echo esc_html( $blocked ); ?></p>
 			<?php else : ?>
 				<?php if ( ! $keeps_undo ) : ?>
-					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Undo history is off, so applied texts cannot be undone here. To keep that option, switch on Can read and Can change for Undo history in Access.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p class="counterhand-chip counterhand-chip--warn">
+					<?php
+					printf(
+						/* translators: %s: the name of the plugin's Access screen. */
+						esc_html__( 'Undo history is off, so applied texts cannot be undone here. To keep that option, switch on Can read and Can change for Undo history in %s.', 'counterhand-mcp-for-woocommerce' ),
+						esc_html( AdminScreen::Access->menu_title() )
+					);
+					?>
+					</p>
 				<?php endif; ?>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="counterhand-rewrites__form">
 					<input type="hidden" name="action" value="<?php echo esc_attr( RewritesFeature::START_ACTION ); ?>">
@@ -163,7 +172,15 @@ $counterhand_output  = array_sum( array_map( static fn ( $item ): int => $item->
 					<button type="submit" class="button" name="counterhand_rewrite_decision" value="undo"><?php esc_html_e( 'Undo ticked texts', 'counterhand-mcp-for-woocommerce' ); ?></button>
 				</p>
 				<?php if ( ! $can_apply ) : ?>
-					<p class="counterhand-chip counterhand-chip--warn"><?php esc_html_e( 'Products cannot be changed by AI on this store. Switch on Can change for Products in Access, then apply again.', 'counterhand-mcp-for-woocommerce' ); ?></p>
+					<p class="counterhand-chip counterhand-chip--warn">
+					<?php
+					printf(
+						/* translators: %s: the name of the plugin's Access screen. */
+						esc_html__( 'Products cannot be changed by AI on this store. Switch on Can change for Products in %s, then apply again.', 'counterhand-mcp-for-woocommerce' ),
+						esc_html( AdminScreen::Access->menu_title() )
+					);
+					?>
+					</p>
 				<?php endif; ?>
 				<p class="counterhand-muted"><?php esc_html_e( 'Apply writes only ticked texts that are ready to review, discard drops them, and undo puts back ticked texts already applied. Read each one first: the model can get facts wrong.', 'counterhand-mcp-for-woocommerce' ); ?></p>
 			</form>

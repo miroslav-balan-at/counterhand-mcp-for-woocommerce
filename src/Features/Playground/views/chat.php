@@ -46,7 +46,13 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 
 	<?php if ( $is_ready && [] === $tools ) : ?>
 		<div class="notice notice-warning inline"><p>
-			<?php esc_html_e( 'No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in Access.', 'counterhand-mcp-for-woocommerce' ); ?>
+			<?php
+			printf(
+				/* translators: %s: the name of the plugin's Access screen. */
+				esc_html__( 'No area is switched on, so the assistant cannot read or change anything. Switch on at least one area in %s.', 'counterhand-mcp-for-woocommerce' ),
+				esc_html( AdminScreen::Access->menu_title() )
+			);
+			?>
 		</p></div>
 	<?php endif; ?>
 
@@ -160,6 +166,12 @@ $counterhand_active = $chat_providers[ $chat_settings->provider_id() ] ?? null;
 	<?php require __DIR__ . '/partial-store-memory.php'; ?>
 
 	<p class="description counterhand-chat__note">
-		<?php esc_html_e( 'The assistant uses the same tools an AI app would, limited to the areas switched on in Access. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ); ?>
+		<?php
+		printf(
+			/* translators: %s: the name of the plugin's Access screen. */
+			esc_html__( 'The assistant uses the same tools an AI app would, limited to the areas switched on in %s. Store data the assistant reads, which can include customers\' names, addresses and orders, is sent to the model provider you chose. Check whether you need a data processing agreement with them.', 'counterhand-mcp-for-woocommerce' ),
+			esc_html( AdminScreen::Access->menu_title() )
+		);
+		?>
 	</p>
 </div>

@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  * table holds just the groups that are always logged, so a count would read as
  * a quiet store rather than an unwatched one.
  */
-final readonly class DashboardScreen implements ScreenBodyInterface {
+final readonly class OverviewScreen implements ScreenBodyInterface {
 
 	private const FAILURES_LISTED = 5;
 
@@ -28,7 +28,7 @@ final readonly class DashboardScreen implements ScreenBodyInterface {
 		private ConnectionMatcher $matcher,
 		private ActivityReportInterface $activity,
 		private TextModelInterface $model,
-		/** @var list<DashboardCardInterface> */
+		/** @var list<OverviewCardInterface> */
 		private array $cards = [],
 	) {}
 
@@ -47,7 +47,7 @@ final readonly class DashboardScreen implements ScreenBodyInterface {
 			? $this->activity->since( new \DateTimeImmutable( 'today', wp_timezone() ), self::FAILURES_LISTED )
 			: null;
 
-		require __DIR__ . '/views/dashboard.php';
+		require __DIR__ . '/views/overview.php';
 	}
 
 	/**
@@ -81,7 +81,7 @@ final readonly class DashboardScreen implements ScreenBodyInterface {
 			),
 			new SetupStep(
 				__( 'Choose an AI model', 'counterhand-mcp-for-woocommerce' ),
-				__( 'The chat, Rewrites and the weekly summary need one.', 'counterhand-mcp-for-woocommerce' ),
+				__( 'The chat, Rewrites and the weekly report need one.', 'counterhand-mcp-for-woocommerce' ),
 				$this->model->is_connected(),
 				__( 'Choose a model', 'counterhand-mcp-for-woocommerce' ),
 				AdminScreen::Chat->url()

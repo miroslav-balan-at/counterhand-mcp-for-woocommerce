@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Counterhand\Features\Tokens\Admin;
 
+use Counterhand\Features\Settings\ConnectTab;
 use Counterhand\Features\Tokens\Domain\ApiToken;
 use Counterhand\Features\Tokens\Domain\ScopeSummary;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
@@ -48,7 +49,11 @@ final class ConnectionsListTable extends \WP_List_Table {
 	}
 
 	public function no_items(): void {
-		esc_html_e( 'No apps connected yet. Add one under Add an app.', 'counterhand-mcp-for-woocommerce' );
+		printf(
+			/* translators: %s: the name of the Add an app view. */
+			esc_html__( 'No apps connected yet. Add one under %s.', 'counterhand-mcp-for-woocommerce' ),
+			esc_html( ConnectTab::Apps->label() )
+		);
 	}
 
 	/** @param ApiToken $item */

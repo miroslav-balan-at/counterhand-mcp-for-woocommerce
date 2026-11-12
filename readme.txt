@@ -240,6 +240,7 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 6. Access: every store area is its own switch, with Can read and Can change separate.
 7. Activity: every call apps and the chat made, with personal data masked before it is stored.
 8. Connect apps: one address for Claude, ChatGPT, Cursor and VS Code.
+9. Other plugins: WPML, Germanized, ACF, Contact Form 7, Yoast SEO, Rank Math, WPForms and more, each off until you switch it on.
 
 == Changelog ==
 

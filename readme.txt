@@ -240,9 +240,9 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Screenshots ==
 
-1. You decide what each AI app may do: Claude, ChatGPT or Cursor connect through a consent screen in your browser.
-2. Changes wait for you: the chat shows a price change before and after, and runs it only when you approve.
-3. Ask your store in plain words, right in wp-admin, on the AI model you choose.
+1. You decide what each AI app may do: untick anything on the consent screen, then approve.
+2. Ask your store in plain words, right in wp-admin, on the AI model you choose.
+3. Changes wait for you: the chat shows a price change before and after, and runs it only when you approve.
 4. Rewrites: the AI model drafts new product texts for a category, and you approve each one.
 5. The weekly report: last week's sales by email every Monday, with a short summary written by AI on top.
 6. Access: every store area is its own switch, with Can read and Can change separate.

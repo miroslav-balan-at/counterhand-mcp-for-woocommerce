@@ -6,6 +6,7 @@ namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\LegalDetailsPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
@@ -129,7 +130,8 @@ final readonly class VariationDescriptors implements DescriptorProvider {
 				ToolName::from( 'create_product_variation' ),
 				Operation::CreateItem,
 				new FieldProfile( self::WRITABLE_FIELDS, self::ITEM_FIELDS ),
-				'attributes must name a combination the parent product actually offers, and each combination can exist only once.'
+				'attributes must name a combination the parent product actually offers, and each combination can exist only once.',
+				policy: new LegalDetailsPolicy()
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_product_variation' ),
@@ -138,7 +140,8 @@ final readonly class VariationDescriptors implements DescriptorProvider {
 				'This is where a variable product\'s price and stock are changed — setting them on the parent has no effect.',
 				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK,
 				// Sale dates, tax and Germanized's deposit, photovoltaic and differential taxation all change what customers pay.
-				confirm_when_sent: [ 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class', 'food', 'photovoltaic_system', 'differential_taxation' ]
+				confirm_when_sent: [ 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class', 'food', 'photovoltaic_system', 'differential_taxation' ],
+				policy: new LegalDetailsPolicy()
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product_variation' ),

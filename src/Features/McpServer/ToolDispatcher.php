@@ -516,6 +516,7 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		$arguments = $this->apply_schema_defaults( $schema, $arguments );
 		$arguments = $this->parse_encoded_structures( $schema, $arguments );
 		$arguments = $this->without_undeclared( $schema, $arguments );
+		$arguments = $this->parse_encoded_unpublished( $tool, $schema, $arguments );
 
 		$wrong_shape = self::wrong_shape( $schema, $arguments, 'arguments' );
 		if ( null !== $wrong_shape ) {
@@ -628,6 +629,31 @@ final readonly class ToolDispatcher implements ToolDispatcherInterface {
 		}
 
 		return $arguments;
+	}
+
+	/**
+	 * An open write also takes fields its published schema leaves out, and those arrive
+	 * as JSON text the same way. Decoded here, before any policy reads them, so meta_data
+	 * sent as text meets the meta key rules exactly like meta_data sent as a list.
+	 *
+	 * @param  array<string, mixed> $schema
+	 * @param  array<string, mixed> $arguments
+	 * @return array<string, mixed>
+	 */
+	private function parse_encoded_unpublished( ToolInterface $tool, array $schema, array $arguments ): array {
+		if ( ! $tool instanceof OpenArgumentsToolInterface ) {
+			return $arguments;
+		}
+
+		$published   = is_array( $schema['properties'] ?? null ) ? $schema['properties'] : [];
+		$unpublished = array_filter( array_diff_key( $arguments, $published ), 'is_string' );
+
+		// Building the full schema derives every field the route declares, so only when needed.
+		if ( [] === $unpublished ) {
+			return $arguments;
+		}
+
+		return [ ...$arguments, ...$this->parse_encoded_structures( $tool->accepted_arguments_schema(), $unpublished ) ];
 	}
 
 	private function apply_schema_defaults( array $schema, array $arguments ): array {

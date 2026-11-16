@@ -468,6 +468,20 @@ final class GeneratedToolTest extends TestCase {
 		$this->assertArrayHasKey( 'coupon', $this->tool( Operation::DeleteItem )->execute( [ 'id' => 9 ] ) );
 	}
 
+	/** The pipeline reads this to decode a field the tool does not publish but WooCommerce takes. */
+	public function test_an_open_write_accepts_every_field_its_route_declares(): void {
+		$tool = $this->tool( Operation::CreateItem, new FieldProfile( [ 'code' ], [] ) );
+
+		$this->assertArrayNotHasKey( 'amount', $tool->input_schema()['properties'] );
+		$this->assertSame( [ 'type' => 'string' ], $tool->accepted_arguments_schema()['properties']['amount'] );
+	}
+
+	public function test_a_closed_write_accepts_only_what_it_publishes(): void {
+		$tool = $this->tool( Operation::CreateItem, new FieldProfile( [ 'code' ], [], allow_additional: false ) );
+
+		$this->assertSame( $tool->input_schema(), $tool->accepted_arguments_schema() );
+	}
+
 	public function test_the_input_schema_is_read_off_the_live_route(): void {
 		$schema = $this->tool( Operation::GetItems )->input_schema();
 

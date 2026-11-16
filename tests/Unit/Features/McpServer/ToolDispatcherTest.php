@@ -11,6 +11,7 @@ use Counterhand\Features\Settings\PluginSettings;
 use Counterhand\Features\Tokens\Domain\ApiScope;
 use Counterhand\Shared\Tool\ToolGroup;
 use Counterhand\Tests\Doubles\AgentFactory;
+use Counterhand\Tests\Doubles\OpenArgumentsStubTool;
 use Counterhand\Tests\Doubles\StubTool;
 use Counterhand\Tests\Unit\TestCase;
 use Brain\Monkey\Functions;
@@ -161,6 +162,119 @@ final class ToolDispatcherTest extends TestCase {
 
 		$this->assertSame( '{"a":1}', $tool->received['tracking_number'] );
 		$this->assertSame( [ 'string', 'integer', 'number', 'boolean', 'array', 'object', 'null' ], $offered );
+	}
+
+	/** @param array<string, mixed> $published */
+	private function dispatch_open( array $published, array $arguments ): OpenArgumentsStubTool {
+		Functions\when( 'get_option' )->justReturn( [ 'products_read' => true ] );
+		Functions\when( 'did_action' )->justReturn( 1 );
+		Functions\when( 'rest_sanitize_value_from_schema' )->returnArg( 1 );
+		Functions\when( 'rest_validate_value_from_schema' )->justReturn( true );
+
+		$tool = new OpenArgumentsStubTool(
+			new StubTool( 'a_tool', ApiScope::ProductsRead, ToolGroup::Products, $published ),
+			[
+				'type'       => 'object',
+				'properties' => [
+					'name'          => [ 'type' => 'string' ],
+					'tags'          => [ 'type' => 'array' ],
+					'dimensions'    => [ 'type' => 'object' ],
+					'meta_data'     => [ 'type' => 'array' ],
+					'purchase_note' => [ 'type' => 'string' ],
+				],
+			]
+		);
+
+		$registry = new ToolRegistry( new PluginSettings() );
+		$registry->add( $tool );
+
+		( new ToolDispatcher( $registry ) )->dispatch( 'a_tool', $arguments, AgentFactory::with_scopes( [ 'products:read' ] ) );
+
+		return $tool;
+	}
+
+	/**
+	 * The fields describe_woocommerce_fields reveals are sent back on an open write, and a
+	 * client encodes them as text just like published ones. Left as text, WooCommerce
+	 * refused tags, dimensions and Germanized's unit price on hygienemitsystem.at.
+	 */
+	public function test_an_unpublished_field_sent_as_json_text_is_parsed_from_the_accepted_schema(): void {
+		$tool = $this->dispatch_open(
+			[
+				'type'       => 'object',
+				'properties' => [ 'name' => [ 'type' => 'string' ] ],
+			],
+			[
+				'name'       => 'Wandhalter',
+				'tags'       => '[{"id":6500},{"id":6498}]',
+				'dimensions' => '{"length":"11.7","width":"11","height":"21.5"}',
+			]
+		);
+
+		$this->assertSame( [ [ 'id' => 6500 ], [ 'id' => 6498 ] ], $tool->inner->received['tags'] );
+		$this->assertSame(
+			[
+				'length' => '11.7',
+				'width'  => '11',
+				'height' => '21.5',
+			],
+			$tool->inner->received['dimensions']
+		);
+	}
+
+	/** Decoded before the tool's own checks, so meta key rules see the entries rather than a string. */
+	public function test_meta_data_sent_as_json_text_reaches_the_tool_as_a_list(): void {
+		$tool = $this->dispatch_open(
+			[ 'type' => 'object' ],
+			[ 'meta_data' => '[{"key":"_yoast_wpseo_title","value":"x"}]' ]
+		);
+
+		$this->assertSame(
+			[
+				[
+					'key'   => '_yoast_wpseo_title',
+					'value' => 'x',
+				],
+			],
+			$tool->inner->received['meta_data']
+		);
+	}
+
+	public function test_an_unpublished_text_field_that_looks_like_json_is_left_alone(): void {
+		$tool = $this->dispatch_open( [ 'type' => 'object' ], [ 'purchase_note' => '[1,2]' ] );
+
+		$this->assertSame( '[1,2]', $tool->inner->received['purchase_note'] );
+	}
+
+	public function test_a_closed_schema_still_drops_what_it_does_not_publish(): void {
+		$tool = $this->dispatch_open(
+			[
+				'type'                 => 'object',
+				'properties'           => [ 'name' => [ 'type' => 'string' ] ],
+				'additionalProperties' => false,
+			],
+			[ 'tags' => '[{"id":1}]' ]
+		);
+
+		$this->assertArrayNotHasKey( 'tags', $tool->inner->received );
+		$this->assertSame( 0, $tool->accepted_schema_reads );
+	}
+
+	/** The full schema derives every field the route declares, so a call with nothing to decode skips it. */
+	public function test_the_accepted_schema_is_not_built_when_nothing_unpublished_is_text(): void {
+		$tool = $this->dispatch_open(
+			[
+				'type'       => 'object',
+				'properties' => [ 'name' => [ 'type' => 'string' ] ],
+			],
+			[
+				'name' => 'Wandhalter',
+				'tags' => [ [ 'id' => 1 ] ],
+			]
+		);
+
+		$this->assertSame( [ [ 'id' => 1 ] ], $tool->inner->received['tags'] );
+		$this->assertSame( 0, $tool->accepted_schema_reads );
 	}
 
 	public function test_a_real_default_is_still_applied(): void {

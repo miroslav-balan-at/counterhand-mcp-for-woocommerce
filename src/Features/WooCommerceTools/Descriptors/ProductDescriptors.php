@@ -6,6 +6,7 @@ namespace Counterhand\Features\WooCommerceTools\Descriptors;
 
 use Counterhand\Features\WooCommerceTools\Domain\DescriptorProvider;
 use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
+use Counterhand\Features\WooCommerceTools\Domain\LegalDetailsPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
@@ -166,7 +167,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				// WooCommerce defaults a new product to publish. Nothing an
 				// agent creates should go on sale without a human seeing it
 				// first, and the agent can still say publish outright.
-				[ 'status' => 'draft' ]
+				[ 'status' => 'draft' ],
+				policy: new LegalDetailsPolicy()
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_product' ),
@@ -175,7 +177,8 @@ final readonly class ProductDescriptors implements DescriptorProvider {
 				'Only the fields you pass are changed. Use status "publish" to take a draft live. categories replaces the stored list rather than adding to it.',
 				forced_params: GermanizedDescriptors::KEEP_AGE_CHECK,
 				// Sale dates, tax and Germanized's deposit, photovoltaic and differential taxation all change what customers pay.
-				confirm_when_sent: [ 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class', 'food', 'photovoltaic_system', 'differential_taxation' ]
+				confirm_when_sent: [ 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class', 'food', 'photovoltaic_system', 'differential_taxation' ],
+				policy: new LegalDetailsPolicy()
 			),
 			new OperationDescriptor(
 				ToolName::from( 'delete_product' ),

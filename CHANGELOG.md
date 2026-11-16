@@ -2,6 +2,11 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## 2.1.2
+
+* Fixed: a field a write accepts but does not publish (the ones `describe_woocommerce_fields` reveals, such as a product's `tags`, `dimensions`, `brands`, `meta_data` or Germanized's `unit_price`) was refused by WooCommerce when the client sent it as JSON text, as Claude Code does for an argument the tool's schema does not declare. The pipeline now decodes it from the route's full schema, as it already did for published fields, and only where that schema says list or object. It happens before any check, so `meta_data` sent as text meets the meta key rules too.
+* Fixed: `create_product`, `update_product` and their variation tools accept Germanized's `unit`, `delivery_time`, `manufacturer` and price labels as unpublished fields, and Germanized answers success to a term it cannot find, clearing it or creating one named after the id. They now hold those fields to the check `update_product_legal_details` already made: `{"id": n}` with an id from its list tool, or null to clear.
+
 ## 2.1.1
 
 * Added: Overview invites each person, once an app is connected, to review the plugin on wordpress.org, where ratings decide search rank. "Write a review" opens the review form in a new tab, and either button retires the card for that person (user meta, removed on uninstall). Nothing is offered in return.

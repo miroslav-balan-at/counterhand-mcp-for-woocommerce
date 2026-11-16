@@ -8,6 +8,7 @@ use Counterhand\Features\WooCommerceTools\Descriptors\GermanizedDescriptors;
 use Counterhand\Features\WooCommerceTools\Descriptors\ProductDescriptors;
 use Counterhand\Features\WooCommerceTools\Descriptors\StaticDescriptorCatalog;
 use Counterhand\Features\WooCommerceTools\Descriptors\VariationDescriptors;
+use Counterhand\Features\WooCommerceTools\Domain\LegalDetailsPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRequestGuards;
@@ -66,6 +67,22 @@ final class GermanizedDescriptorsTest extends TestCase {
 		}
 
 		$this->assertSame( $keep[ RestRequestGuards::KEEP_UNSENT ], $this->operations()['update_product_legal_details']->forced_params[ RestRequestGuards::KEEP_UNSENT ] );
+	}
+
+	/**
+	 * create_product and update_product accept Germanized's term fields too, as fields they
+	 * do not publish. Germanized answers success to a term it cannot find, whoever sends it.
+	 */
+	public function test_every_tool_creating_or_updating_through_the_product_routes_checks_legal_terms(): void {
+		foreach ( [ new ProductDescriptors(), new VariationDescriptors() ] as $provider ) {
+			foreach ( $provider->resources() as $resource ) {
+				foreach ( $resource->operations as $operation ) {
+					if ( in_array( $operation->operation, [ Operation::CreateItem, Operation::UpdateItem ], true ) ) {
+						$this->assertInstanceOf( LegalDetailsPolicy::class, $operation->policy, $operation->name->value );
+					}
+				}
+			}
+		}
 	}
 
 	public function test_a_deposit_type_keeps_its_packaging(): void {

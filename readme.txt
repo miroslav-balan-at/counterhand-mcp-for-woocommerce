@@ -5,7 +5,7 @@ Tags: woocommerce, mcp, mcp-server, claude, chatgpt
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -252,20 +252,21 @@ Yes. Each site of a network has its own connections, its own switch and its own 
 
 == Changelog ==
 
+= 2.1.2 =
+* Fixed: a product field an app found through describe_woocommerce_fields, such as tags, dimensions or Germanized's unit price, was refused when the app sent it as text, as Claude Code does.
+* Fixed: creating or updating a product or variation with a Germanized unit, delivery time or manufacturer that does not exist is refused, instead of Germanized clearing it or inventing one while reporting success.
+
 = 2.1.1 =
 * New: once an app is connected, Overview asks once whether you would review the plugin on wordpress.org. Either button hides it for good.
 * Fixed: Activity masked dates, such as a report's date range, as if they were phone numbers.
 * Fixed: apps and AI models got the store's name with HTML entities in it, in the store overview, the store profile and their instructions.
 
-= 2.1.0 =
-* New: the chat can run on Grok (xAI), Mistral, DeepSeek and OpenRouter, each a choice of its own with its address filled in and a link to get a key.
-
 Older releases are listed in CHANGELOG.md in the plugin's GitHub repository.
 
 == Upgrade Notice ==
 
+= 2.1.2 =
+Product fields sent as text by Claude Code are accepted, and Germanized terms that do not exist are refused instead of cleared.
+
 = 2.1.1 =
 Activity keeps report dates readable, and apps get the store name without HTML entities.
-
-= 2.1.0 =
-The chat can run on Grok, Mistral, DeepSeek and OpenRouter.

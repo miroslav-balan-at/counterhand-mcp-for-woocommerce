@@ -7,10 +7,12 @@ namespace Counterhand\Features\WooCommerceTools\Application;
 use Counterhand\Features\McpServer\ChangeKind;
 use Counterhand\Features\McpServer\ChangePlan;
 use Counterhand\Features\McpServer\ConditionalConfirmationInterface;
+use Counterhand\Features\McpServer\OpenArgumentsToolInterface;
 use Counterhand\Features\McpServer\OutputSchemaToolInterface;
 use Counterhand\Features\McpServer\ReversibleToolInterface;
 use Counterhand\Features\Tokens\Domain\ScopeGroupInterface;
 use Counterhand\Features\Tokens\Domain\ScopeInterface;
+use Counterhand\Features\WooCommerceTools\Domain\FieldProfile;
 use Counterhand\Features\WooCommerceTools\Domain\MetaKeyPolicy;
 use Counterhand\Features\WooCommerceTools\Domain\MetaOwner;
 use Counterhand\Features\WooCommerceTools\Domain\Operation;
@@ -39,7 +41,7 @@ defined( 'ABSPATH' ) || exit;
  * answer an agent actually reads — the argument names, their types, enums,
  * defaults and descriptions — is asked of the running WooCommerce.
  */
-final readonly class GeneratedTool implements ToolInterface, ReversibleToolInterface, OutputSchemaToolInterface, ConditionalConfirmationInterface {
+final readonly class GeneratedTool implements ToolInterface, ReversibleToolInterface, OutputSchemaToolInterface, ConditionalConfirmationInterface, OpenArgumentsToolInterface {
 
 	/**
 	 * Never read for a preview or kept in a history, even though the routes accept them.
@@ -100,6 +102,22 @@ final readonly class GeneratedTool implements ToolInterface, ReversibleToolInter
 					)
 				)
 			)
+		);
+	}
+
+	/**
+	 * What describe_woocommerce_fields shows for this tool. A closed write publishes all it
+	 * takes, so only an open one answers with more than input_schema().
+	 */
+	public function accepted_arguments_schema(): array {
+		if ( ! $this->operation->accepts_additional() ) {
+			return $this->input_schema();
+		}
+
+		$route = $this->route();
+
+		return $this->operation->with_declared_arguments(
+			$this->schemas->schema( $this->name() . ':accepted', $route, $this->method(), FieldProfile::everything(), $route->parameters() )
 		);
 	}
 

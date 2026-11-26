@@ -11,9 +11,10 @@ import { adminStatePath, patchOption, patchSettings, wp } from '../support/store
  */
 const EXPECTED = {
 	'yoast-seo': [
-		'get_post_seo_data', 'get_readability_scores', 'get_seo_scores', 'set_llms_txt_status', 'set_open_graph_status',
-		'set_schema_aggregation_endpoint_status', 'set_schema_framework_status', 'set_x_card_status', 'set_xml_sitemap_status',
-		'update_post_seo_data', 'update_site_representation',
+		'get_archive_and_special_page_seo_settings', 'get_post_seo_data', 'get_readability_scores', 'get_seo_scores', 'get_term_seo_data',
+		'set_llms_txt_status', 'set_open_graph_status', 'set_schema_aggregation_endpoint_status', 'set_schema_framework_status',
+		'set_x_card_status', 'set_xml_sitemap_status', 'update_archive_and_special_page_seo_settings', 'update_author_schema',
+		'update_post_seo_data', 'update_site_representation', 'update_term_seo_data',
 	],
 	wpforms: [ 'get_form', 'get_form_stats', 'list_forms' ],
 	'rank-math': [
@@ -122,6 +123,30 @@ test.describe( 'Plugins as they are once set up', () => {
 			expect( refused.result?.isError, canonical ).toBe( true );
 		}
 		expect( wp( 'post', 'meta', 'get', product, '_yoast_wpseo_canonical' ) ).not.toContain( 'elsewhere' );
+	} );
+
+	test( 'Yoast\'s term and archive writes are held to the same rules as its post writes', async () => {
+		const category = wp( 'term', 'create', 'product_cat', 'Inventory category', '--porcelain' ).trim();
+		const titles = wp( 'option', 'get', 'wpseo_titles', '--format=json' );
+
+		try {
+			for ( const seo_title of [ '%%cf__probe_secret%%', '%%c%aaf__probe_secret%%', '%%CT_product_visibility%%' ] ) {
+				const term = await call( 'yoast_seo_update_term_seo_data', { term_id: Number( category ), seo_title, confirm: true } );
+				expect( term.result?.isError, `term: ${ seo_title }` ).toBe( true );
+				const archive = await call( 'yoast_seo_update_archive_and_special_page_seo_settings', { target: 'search_page', seo_title, confirm: true } );
+				expect( archive.result?.isError, `archive: ${ seo_title }` ).toBe( true );
+			}
+			expect( wp( 'option', 'get', 'wpseo_taxonomy_meta', '--format=json' ).toLowerCase() ).not.toMatch( /cf_|ct_/ );
+			expect( wp( 'option', 'get', 'wpseo_titles', '--format=json' ).toLowerCase() ).not.toMatch( /%%\s*c[ft]_/ );
+
+			const elsewhere = await call( 'yoast_seo_update_term_seo_data', { term_id: Number( category ), canonical: 'https://elsewhere.example/mugs', confirm: true } );
+			expect( elsewhere.result?.isError, 'a term canonical elsewhere' ).toBe( true );
+			const here = await call( 'yoast_seo_update_term_seo_data', { term_id: Number( category ), canonical: '/shop/mugs', seo_title: '%%term_title%% %%sep%% %%sitename%%', confirm: true } );
+			expect( here.result?.isError, JSON.stringify( here ) ).toBe( false );
+		} finally {
+			wp( 'option', 'update', 'wpseo_titles', titles, '--format=json' );
+			wp( 'term', 'delete', 'product_cat', category );
+		}
 	} );
 
 	test( 'a Rank Math template cannot read protected meta, on any of its writes', async () => {

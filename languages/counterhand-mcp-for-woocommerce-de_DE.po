@@ -45,8 +45,8 @@ msgid "Counterhand MCP for WooCommerce requires WooCommerce to be installed and 
 msgstr "Counterhand MCP für WooCommerce benötigt ein installiertes und aktives WooCommerce."
 
 #: src/Features/Abilities/KnownPluginCopy.php:41
-msgid "SEO data on any post, page or product its owner can edit, including drafts, and on recent versions site-wide search settings. The plugin's own role rules still apply."
-msgstr "SEO-Daten aller Beiträge, Seiten und Produkte, die ihr Inhaber bearbeiten darf, auch Entwürfe, und in neueren Versionen die Sucheinstellungen der gesamten Website. Die Rollenregeln des Plugins gelten weiterhin."
+msgid "SEO data on any post, page, product or category its owner can edit, including drafts, and on recent versions site-wide search settings and the author details published about users. The plugin's own role rules still apply."
+msgstr "SEO-Daten aller Beiträge, Seiten, Produkte und Kategorien, die ihr Inhaber bearbeiten darf, auch Entwürfe, und in neueren Versionen die Sucheinstellungen der gesamten Website und die über Benutzer veröffentlichten Autorenangaben. Die Rollenregeln des Plugins gelten weiterhin."
 
 #: src/Features/Abilities/KnownPluginCopy.php:42
 msgid "SEO data on any post, page or product its owner can edit, including drafts, and Rank Math's site-wide settings. The plugin's own role rules still apply."
@@ -61,8 +61,8 @@ msgid "Your backup jobs and recent backups, and starting or cancelling a backup.
 msgstr "Deine Backup-Aufträge und letzten Backups, dazu ein Backup starten oder abbrechen. BackWPup kennzeichnet nichts davon als nur lesend, daher braucht jedes davon die Erlaubnis zum Ändern und fragt vorher nach. Backup-Protokolle werden nicht angeboten: Sie nennen den Datenbankserver, Ordnerpfade und den Speicherort der Backups."
 
 #: src/Features/Abilities/KnownPluginCopy.php:51
-msgid "See titles, permalinks, status and SEO fields of any post, page or product the approving user can edit, including drafts."
-msgstr "Titel, Permalinks, Status und SEO-Felder aller Beiträge, Seiten und Produkte sehen, die der genehmigende Benutzer bearbeiten darf, auch Entwürfe."
+msgid "See titles, permalinks, status and SEO fields of any post, page, product or category the approving user can edit, including drafts, and the SEO settings of archives and special pages."
+msgstr "Titel, Permalinks, Status und SEO-Felder aller Beiträge, Seiten, Produkte und Kategorien sehen, die der genehmigende Benutzer bearbeiten darf, auch Entwürfe, und die SEO-Einstellungen von Archiven und Sonderseiten."
 
 #: src/Features/Abilities/KnownPluginCopy.php:52
 msgid "See SEO data, redirections and 404 logs, and the same details of any post, page or product the approving user can edit, including drafts."
@@ -77,8 +77,8 @@ msgid "Nothing on its own: BackWPup marks none of its abilities as read-only, so
 msgstr "Für sich allein nichts: BackWPup kennzeichnet keine seiner Funktionen als nur lesend, daher braucht schon das Auflisten von Backups die Erlaubnis zum Ändern."
 
 #: src/Features/Abilities/KnownPluginCopy.php:61
-msgid "Change SEO titles, noindex and canonical URLs, and on recent versions switch off sitemaps, schema and social tags or rewrite who the site says it is. A noindex removes a page from search results. Every change needs explicit confirmation."
-msgstr "SEO-Titel, Noindex und kanonische URLs ändern und in neueren Versionen Sitemaps, Schema und Social-Tags abschalten oder ändern, wie sich die Website selbst darstellt. Ein Noindex entfernt eine Seite aus den Suchergebnissen. Jede Änderung muss ausdrücklich bestätigt werden."
+msgid "Change SEO titles, noindex and canonical URLs of posts, categories and archives, and on recent versions switch off sitemaps, schema and social tags, rewrite who the site says it is, or publish a user's pronouns and social profiles in their author schema. A noindex removes a page from search results. Every change needs explicit confirmation."
+msgstr "SEO-Titel, Noindex und kanonische URLs von Beiträgen, Kategorien und Archiven ändern und in neueren Versionen Sitemaps, Schema und Social-Tags abschalten, ändern, wie sich die Website selbst darstellt, oder Pronomen und Social-Media-Profile eines Benutzers in seinem Autoren-Schema veröffentlichen. Ein Noindex entfernt eine Seite aus den Suchergebnissen. Jede Änderung muss ausdrücklich bestätigt werden."
 
 #: src/Features/Abilities/KnownPluginCopy.php:62
 msgid "Change site-wide SEO settings, including noindex for the whole site and which modules are on, and apply automatic fixes to core settings. Every change needs explicit confirmation."

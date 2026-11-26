@@ -2,6 +2,10 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## Unreleased
+
+* Changed: Yoast SEO 28.9 adds SEO data for categories and archives and the author schema of users. The consent text for Yoast now names them, including that a write can publish a user's pronouns and social profiles. The checks already made on its post writes (no snippet variables that read custom fields or terms, no canonical on another site) hold for the new writes too, and a test proves it.
+
 ## 2.1.3
 
 * Added: `update_order` corrects an order that is still waiting for payment: its products, shipping, fees, coupons, addresses or payment method, and WooCommerce recalculates the totals. Before, a forgotten shipping line meant a second order. It asks the person first, like every write that changes what a customer is charged, and refuses an order that no longer needs payment (WooCommerce's `needs_payment()`), because a paid order would then disagree with what the gateway captured. Lines are matched by their id, so the description tells the model to read the order first and how to remove a line. It keeps no undo history, like the other order writes.

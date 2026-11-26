@@ -38,7 +38,7 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 
 	public function description(): string {
 		return match ( $this->slug ) {
-			'yoast-seo' => __( 'SEO data on any post, page or product its owner can edit, including drafts, and on recent versions site-wide search settings. The plugin\'s own role rules still apply.', 'counterhand-mcp-for-woocommerce' ),
+			'yoast-seo' => __( 'SEO data on any post, page, product or category its owner can edit, including drafts, and on recent versions site-wide search settings and the author details published about users. The plugin\'s own role rules still apply.', 'counterhand-mcp-for-woocommerce' ),
 			'rank-math' => __( 'SEO data on any post, page or product its owner can edit, including drafts, and Rank Math\'s site-wide settings. The plugin\'s own role rules still apply.', 'counterhand-mcp-for-woocommerce' ),
 			'wpforms'   => __( 'Your forms. With WPForms Pro this includes submissions, which are personal data. Form editing also needs WPForms\' own write access, under WPForms » Tools » AI MCP.', 'counterhand-mcp-for-woocommerce' ),
 			'backwpup'  => __( 'Your backup jobs and recent backups, and starting or cancelling a backup. BackWPup marks none of these as read-only, so each needs changing allowed and asks first. Backup logs are not offered: they name the database server, folder paths and where backups are stored.', 'counterhand-mcp-for-woocommerce' ),
@@ -48,7 +48,7 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 
 	public function read_description(): string {
 		return match ( $this->slug ) {
-			'yoast-seo' => __( 'See titles, permalinks, status and SEO fields of any post, page or product the approving user can edit, including drafts.', 'counterhand-mcp-for-woocommerce' ),
+			'yoast-seo' => __( 'See titles, permalinks, status and SEO fields of any post, page, product or category the approving user can edit, including drafts, and the SEO settings of archives and special pages.', 'counterhand-mcp-for-woocommerce' ),
 			'rank-math' => __( 'See SEO data, redirections and 404 logs, and the same details of any post, page or product the approving user can edit, including drafts.', 'counterhand-mcp-for-woocommerce' ),
 			'wpforms'   => __( 'See your forms. With WPForms Pro, also see submissions, including names, email addresses and everything people wrote.', 'counterhand-mcp-for-woocommerce' ),
 			'backwpup'  => __( 'Nothing on its own: BackWPup marks none of its abilities as read-only, so even listing backups needs changing allowed.', 'counterhand-mcp-for-woocommerce' ),
@@ -58,7 +58,7 @@ final readonly class KnownPluginCopy implements IntegrationCopyInterface {
 
 	public function write_description(): string {
 		return match ( $this->slug ) {
-			'yoast-seo' => __( 'Change SEO titles, noindex and canonical URLs, and on recent versions switch off sitemaps, schema and social tags or rewrite who the site says it is. A noindex removes a page from search results. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
+			'yoast-seo' => __( 'Change SEO titles, noindex and canonical URLs of posts, categories and archives, and on recent versions switch off sitemaps, schema and social tags, rewrite who the site says it is, or publish a user\'s pronouns and social profiles in their author schema. A noindex removes a page from search results. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
 			'rank-math' => __( 'Change site-wide SEO settings, including noindex for the whole site and which modules are on, and apply automatic fixes to core settings. Every change needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
 			'backwpup'  => __( 'List backup jobs and recent backups, start a backup now or cancel a running one. A full backup can load the server for several minutes. Every call needs explicit confirmation.', 'counterhand-mcp-for-woocommerce' ),
 			default     => $this->generic()->write_description(),

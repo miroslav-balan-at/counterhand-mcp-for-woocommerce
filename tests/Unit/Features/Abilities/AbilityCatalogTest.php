@@ -79,6 +79,28 @@ final class AbilityCatalogTest extends TestCase {
 		$this->assertSame( [], ( new AbilityCatalog() )->abilities() );
 	}
 
+	/** An MCP adapter hooks its own abilities on rest_api_init, so the REST API starts before they are read. */
+	public function test_the_rest_api_starts_before_abilities_are_read(): void {
+		$order = [];
+		Functions\when( 'did_action' )->alias( static fn ( string $hook ): int => 'rest_api_init' === $hook ? 0 : 1 );
+		Functions\expect( 'rest_get_server' )->once()->andReturnUsing(
+			static function () use ( &$order ): object {
+				$order[] = 'rest_get_server';
+				return new \stdClass();
+			}
+		);
+		Functions\when( 'wp_get_abilities' )->alias(
+			static function () use ( &$order ): array {
+				$order[] = 'wp_get_abilities';
+				return [];
+			}
+		);
+
+		( new AbilityCatalog() )->abilities();
+
+		$this->assertSame( [ 'rest_get_server', 'wp_get_abilities' ], $order );
+	}
+
 	public function test_one_group_per_plugin_in_name_order(): void {
 		$catalog = $this->catalog( [ $this->exposed( 'yoast-seo/get' ), $this->exposed( 'wpforms/list' ), $this->exposed( 'yoast-seo/score' ) ] );
 

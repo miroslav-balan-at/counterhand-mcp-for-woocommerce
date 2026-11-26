@@ -112,6 +112,35 @@ final class TokenAuthenticatorTest extends TestCase {
 		( new TokenAuthenticator( $repository, $this->rate_limiter() ) )->authenticate( $this->bearer, null );
 	}
 
+	/** Requests sent with the access token a rotation just retired are still arriving. */
+	public function test_the_access_token_a_rotation_just_retired_still_works_inside_the_grace_window(): void {
+		$agent = $this->authenticator( $this->rotated_away( new \DateTimeImmutable( '-10 seconds' ) ) )->authenticate( $this->bearer, null );
+
+		self::assertSame( 846, $agent->token->owner_user_id );
+	}
+
+	public function test_the_access_token_a_rotation_retired_stops_working_after_the_grace_window(): void {
+		$this->expectException( AuthenticationFailedException::class );
+
+		$this->authenticator( $this->rotated_away( new \DateTimeImmutable( '-2 minutes' ) ) )->authenticate( $this->bearer, null );
+	}
+
+	public function test_the_first_call_after_the_grace_window_drops_what_the_rotation_kept(): void {
+		$stored     = $this->rotated_away( new \DateTimeImmutable( '-2 minutes' ) );
+		$current    = new StoredToken( $stored->token, $this->secret->hash(), $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $stored->rotated_at, $stored->previous_secret_hash );
+		$repository = $this->repository( $current );
+		$repository->expects( self::once() )->method( 'forget_rotation' )->with( 1 );
+
+		( new TokenAuthenticator( $repository, $this->rate_limiter() ) )->authenticate( $this->bearer, null );
+	}
+
+	public function test_inside_the_grace_window_the_rotation_is_kept(): void {
+		$repository = $this->repository( $this->rotated_away( new \DateTimeImmutable( '-10 seconds' ) ) );
+		$repository->expects( self::never() )->method( 'forget_rotation' );
+
+		( new TokenAuthenticator( $repository, $this->rate_limiter() ) )->authenticate( $this->bearer, null );
+	}
+
 	public function test_demoted_owner_fail_closes_token(): void {
 		Functions\when( 'user_can' )->justReturn( false );
 
@@ -160,6 +189,20 @@ final class TokenAuthenticatorTest extends TestCase {
 				audience: $audience,
 				refresh_expires_at: $refresh_expires_at,
 			),
+			$this->secret->hash()
+		);
+	}
+
+	/** The row after a rotation: this test's secret is the retired one, a new one is current. */
+	private function rotated_away( \DateTimeImmutable $rotated_at ): StoredToken {
+		$stored = $this->stored_token( expires_at: new \DateTimeImmutable( '+1 hour' ) );
+
+		return new StoredToken(
+			$stored->token,
+			TokenSecret::generate()->hash(),
+			TokenSecret::generate()->hash(),
+			TokenSecret::generate()->hash(),
+			$rotated_at,
 			$this->secret->hash()
 		);
 	}

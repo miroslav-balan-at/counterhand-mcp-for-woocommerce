@@ -11,6 +11,7 @@ use Counterhand\Features\WooCommerceTools\Domain\Operation;
 use Counterhand\Features\WooCommerceTools\Domain\OperationDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ResourceDescriptor;
 use Counterhand\Features\WooCommerceTools\Domain\ToolName;
+use Counterhand\Features\WooCommerceTools\Domain\UnpaidOrderPolicy;
 use Counterhand\Features\WooCommerceTools\Infrastructure\RestRoute;
 use Counterhand\Shared\Tool\ToolGroup;
 
@@ -140,6 +141,21 @@ final readonly class OrderDescriptors implements DescriptorProvider {
 				'',
 				'Create an order the customer has not paid for yet, and return payment_url — the link that lets them pay it. Always pending: the status is forced, because an unpaid order is the only kind this tool is for, and because the statuses that would email the customer are not it. WooCommerce prices the order itself, so send line_items as product_id and quantity and let it fill in the rest; a shipping_lines entry needs method_id, method_title and total, and is not calculated for you — read the store\'s own rates first if you do not know it. WooCommerce sends no email of its own for a new pending order, though a store\'s other plugins may. Confirm the products, quantities, shipping cost and address with the user before calling this, then give them back the total the response reports rather than one you worked out.',
 				[ 'status' => 'pending' ],
+			),
+			new OperationDescriptor(
+				ToolName::from( 'update_order' ),
+				Operation::UpdateItem,
+				new FieldProfile(
+					[ 'customer_note', 'billing', 'shipping', 'line_items', 'shipping_lines', 'fee_lines', 'coupon_lines', 'payment_method', 'payment_method_title' ],
+					self::ITEM_FIELDS,
+					false
+				),
+				'',
+				'Change an order that is still waiting for payment: its products, shipping, fees, coupons, addresses or payment method. A paid order is refused. Each line you send is matched by its id: with the id of an existing line it changes that line, without an id it is added as a new one. To remove a line, send its id with quantity 0 (products) or with method_id, name or code null (shipping, fees, coupons). Read the order with get_order first for the line ids, or you will add a second shipping line instead of changing the first. WooCommerce recalculates the totals; shipping is not calculated for you, so read the store\'s rates first. Status is not changed here (update_order_status). Confirm the change with the user, then give them the total the response reports.',
+				requires_confirmation: true,
+				policy: new UnpaidOrderPolicy(),
+				// Line ids change when a line is removed and added again, and the totals and stock follow the lines.
+				undoable: false
 			),
 			new OperationDescriptor(
 				ToolName::from( 'update_order_status' ),

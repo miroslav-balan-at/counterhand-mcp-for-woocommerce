@@ -10,6 +10,7 @@ use Counterhand\Features\Tokens\Domain\IssuedTokens;
 use Counterhand\Features\Tokens\Domain\PlainRefreshToken;
 use Counterhand\Features\Tokens\Domain\StoredToken;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
+use Counterhand\Features\Tokens\Domain\TokenSecret;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -29,15 +30,6 @@ final readonly class TokenEndpoint {
 
 	/** Absolute, not sliding: after this the administrator approves again. */
 	private const CONNECTION_LIFETIME_DAYS = 30;
-
-	/**
-	 * How long the just-retired refresh token still answers.
-	 *
-	 * Clients refresh proactively and reactively at the same time, so two
-	 * requests in flight legitimately carry the same token; without this the
-	 * loser of that race would have the connection revoked under it.
-	 */
-	private const ROTATION_GRACE_SECONDS = 60;
 
 	public function __construct(
 		private TokenRepositoryInterface $repository,
@@ -136,16 +128,17 @@ final readonly class TokenEndpoint {
 		$presented_hash = $secret->hash();
 
 		// The token we just retired. Inside the grace window this is the other
-		// half of a client's own race and must not cost it the connection;
-		// outside it, a replay is what it looks like (OAuth 2.1 §4.3.1).
+		// half of a client's own race: it gets the pair the winner got, because
+		// an error here makes the client drop the connection. Outside it, a
+		// replay is what it looks like (OAuth 2.1 §4.3.1).
 		if ( null !== $stored->previous_refresh_secret_hash && hash_equals( $stored->previous_refresh_secret_hash, $presented_hash ) ) {
-			if ( ! $stored->is_within_rotation_grace( $now, self::ROTATION_GRACE_SECONDS ) ) {
+			if ( ! $stored->is_within_rotation_grace( $now, StoredToken::ROTATION_GRACE_SECONDS ) ) {
 				$this->repository->revoke( $stored->token->id );
 
 				return $this->error( 'invalid_grant', 'Refresh token was reused; the connection has been revoked.' );
 			}
 
-			return $this->error( 'invalid_grant', 'This refresh token has just been replaced; use the newest one.' );
+			return $this->replay( $stored, $secret, $now );
 		}
 
 		if ( ! hash_equals( $stored->refresh_secret_hash, $presented_hash ) ) {
@@ -159,15 +152,33 @@ final readonly class TokenEndpoint {
 			}
 		}
 
-		$issued = $this->repository->rotate( $stored->token, $presented_hash, $now->modify( '+' . self::REFRESHABLE_ACCESS_TOKEN_LIFETIME_SECONDS . ' seconds' ) );
+		$issued = $this->repository->rotate( $stored->token, $secret, $now->modify( '+' . self::REFRESHABLE_ACCESS_TOKEN_LIFETIME_SECONDS . ' seconds' ) );
 
-		// Another request rotated between the read and the write — its response
-		// carries the live pair, so this one is a no-op rather than a failure.
+		// Another request rotated between the read and the write: this one gets
+		// the pair that request got.
+		if ( null === $issued ) {
+			$rotated = $this->repository->find_active_by_token_id( $token_id );
+
+			return null === $rotated ? $this->error( 'invalid_grant', 'Refresh token is invalid.' ) : $this->replay( $rotated, $secret, $now );
+		}
+
+		return $this->tokens( $issued, $this->scope_keys( $stored ), $now );
+	}
+
+	/** The answer the rotation that retired $retired_refresh gave, when it is the latest one. */
+	private function replay( StoredToken $stored, TokenSecret $retired_refresh, \DateTimeImmutable $now ): \WP_REST_Response {
+		$issued = $stored->rotation?->open( $stored->token->token_id, $retired_refresh );
+
 		if ( null === $issued ) {
 			return $this->error( 'invalid_grant', 'This refresh token has just been replaced; use the newest one.' );
 		}
 
-		return $this->tokens( $issued, array_map( static fn ( $scope ): string => $scope->key(), $stored->token->scopes->all() ), $now );
+		return $this->tokens( $issued, $this->scope_keys( $stored ), $now );
+	}
+
+	/** @return list<string> */
+	private function scope_keys( StoredToken $stored ): array {
+		return array_map( static fn ( $scope ): string => $scope->key(), $stored->token->scopes->all() );
 	}
 
 	private function access_expiry( AuthorizationGrant $grant, \DateTimeImmutable $now ): \DateTimeImmutable {

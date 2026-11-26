@@ -82,6 +82,22 @@ final class AbilityCatalog {
 	}
 
 	/**
+	 * Reading abilities runs wp_abilities_api_init, once per request. A plugin
+	 * hosting the official MCP adapter sets the adapter up on rest_api_init and
+	 * only then hooks its own abilities onto wp_abilities_api_init. Read first,
+	 * as /mcp does on parse_request, and the adapter's abilities never exist:
+	 * its default server logged "ability 'mcp-adapter/discover-abilities' does
+	 * not exist" for each of its three tools on the request's next REST call
+	 * (seen with adapter 0.6.1, bundled with Elementor). Starting the REST API
+	 * first lets every plugin register what a REST client would see.
+	 */
+	private function start_rest_api_first(): void {
+		if ( ! did_action( 'rest_api_init' ) && function_exists( 'rest_get_server' ) ) {
+			rest_get_server();
+		}
+	}
+
+	/**
 	 * Registration runs every plugin's callback, and one that throws must cost only
 	 * the abilities, not the screen or the endpoint asking.
 	 *
@@ -89,6 +105,8 @@ final class AbilityCatalog {
 	 */
 	private function discovered(): array {
 		try {
+			$this->start_rest_api_first();
+
 			return function_exists( 'wp_get_abilities' ) ? array_values( array_filter( wp_get_abilities(), [ self::class, 'is_exposed' ] ) ) : [];
 		} catch ( \Throwable $throwable ) {
 			if ( function_exists( 'wc_get_logger' ) ) {

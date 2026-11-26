@@ -107,6 +107,10 @@ class WC_Order {
 		return '';
 	}
 
+	public function needs_payment(): bool {
+		return false;
+	}
+
 	/** @return list<WC_Order_Refund> */
 	public function get_refunds(): array {
 		return [];

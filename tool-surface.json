@@ -13,15 +13,15 @@
             "tools": 14
         },
         {
-            "slug": "products",
-            "label": "Products",
-            "description": "Names, prices, stock, categories and images.",
-            "tools": 11
-        },
-        {
             "slug": "orders",
             "label": "Orders",
             "description": "Orders, totals, line items and customer addresses.",
+            "tools": 12
+        },
+        {
+            "slug": "products",
+            "label": "Products",
+            "description": "Names, prices, stock, categories and images.",
             "tools": 11
         },
         {
@@ -105,6 +105,6 @@
     ],
     "totals": {
         "groups": 17,
-        "tools": 132
+        "tools": 133
     }
 }

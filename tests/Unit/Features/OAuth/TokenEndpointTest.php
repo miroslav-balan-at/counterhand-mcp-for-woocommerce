@@ -45,6 +45,7 @@ final class TokenEndpointTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'get_user_by' )->justReturn( (object) [ 'ID' => 7 ] );
 		Functions\when( 'user_can' )->justReturn( true );
 
@@ -78,19 +79,46 @@ final class TokenEndpointTest extends TestCase {
 	}
 
 	/**
-	 * Clients refresh proactively and on a 401 at the same moment, so the same
-	 * token legitimately arrives twice. The loser of that race must not cost
-	 * the store its connection.
+	 * Clients refresh proactively and on a 401 at the same moment, and several
+	 * processes of one client share a credential, so the same token
+	 * legitimately arrives twice. An error makes the client drop the
+	 * connection ("Needs authentication"), so the loser gets the winner's pair.
 	 */
-	public function test_a_second_refresh_in_the_same_moment_does_not_revoke_the_connection(): void {
+	public function test_a_second_refresh_in_the_same_moment_gets_the_same_pair(): void {
 		$first = $this->exchange( refreshable: true );
 
 		$winner = $this->refresh( $first['refresh_token'] );
 		$loser  = $this->refresh( $first['refresh_token'] );
 
-		self::assertSame( 400, $loser->get_status() );
-		self::assertSame( 'invalid_grant', $loser->get_data()['error'] );
+		self::assertSame( 200, $loser->get_status() );
+		self::assertSame( $winner->get_data()['access_token'], $loser->get_data()['access_token'] );
+		self::assertSame( $winner->get_data()['refresh_token'], $loser->get_data()['refresh_token'] );
 		self::assertSame( 200, $this->refresh( $winner->get_data()['refresh_token'] )->get_status(), 'the connection still works' );
+	}
+
+	public function test_a_request_that_loses_the_race_between_its_read_and_its_write_gets_the_winners_pair(): void {
+		$first  = $this->exchange( refreshable: true );
+		$winner = null;
+
+		$this->repository->before_rotate = function () use ( $first, &$winner ): void {
+			$winner = $this->refresh( $first['refresh_token'] );
+		};
+
+		$loser = $this->refresh( $first['refresh_token'] );
+
+		self::assertSame( 200, $loser->get_status() );
+		self::assertSame( $winner?->get_data()['refresh_token'], $loser->get_data()['refresh_token'] );
+	}
+
+	public function test_a_refresh_token_two_rotations_old_buys_nothing_and_keeps_the_connection(): void {
+		$first  = $this->exchange( refreshable: true );
+		$second = $this->refresh( $first['refresh_token'] );
+		$third  = $this->refresh( $second->get_data()['refresh_token'] );
+
+		$stale = $this->refresh( $first['refresh_token'] );
+
+		self::assertSame( 'invalid_grant', $stale->get_data()['error'] );
+		self::assertSame( 200, $this->refresh( $third->get_data()['refresh_token'] )->get_status() );
 	}
 
 	public function test_a_refresh_token_replayed_long_after_it_was_retired_revokes_the_connection(): void {

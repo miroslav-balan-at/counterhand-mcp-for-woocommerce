@@ -9,6 +9,7 @@ use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\IssuedTokens;
 use Counterhand\Features\Tokens\Domain\PlainRefreshToken;
 use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\SealedRotation;
 use Counterhand\Features\Tokens\Domain\StoredToken;
 use Counterhand\Features\Tokens\Domain\TokenId;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
@@ -56,32 +57,52 @@ final class InMemoryTokenRepository implements TokenRepositoryInterface {
 		return new IssuedTokens( PlainToken::compose( $token_id, $secret ), $expires_at ?? new \DateTimeImmutable(), null !== $refresh ? PlainRefreshToken::compose( $token_id, $refresh ) : null );
 	}
 
-	public function rotate( ApiToken $token, string $expected_refresh_hash, \DateTimeImmutable $access_expires_at ): ?IssuedTokens {
+	/** Set by a test to play a request that rotated between this one's read and write. */
+	public ?\Closure $before_rotate = null;
+
+	public function rotate( ApiToken $token, TokenSecret $retired_refresh, \DateTimeImmutable $access_expires_at ): ?IssuedTokens {
+		if ( null !== $this->before_rotate ) {
+			$interleaved         = $this->before_rotate;
+			$this->before_rotate = null;
+			$interleaved();
+		}
+
 		$stored = $this->rows[ $token->id ];
 
-		if ( $stored->refresh_secret_hash !== $expected_refresh_hash ) {
+		if ( $stored->refresh_secret_hash !== $retired_refresh->hash() ) {
 			return null;
 		}
 
-		$secret  = TokenSecret::generate();
-		$refresh = TokenSecret::generate();
+		$issued = new IssuedTokens(
+			PlainToken::compose( $token->token_id, TokenSecret::generate() ),
+			$access_expires_at,
+			PlainRefreshToken::compose( $token->token_id, TokenSecret::generate() )
+		);
 
 		$this->rows[ $token->id ] = new StoredToken(
 			$this->with( $stored->token, [ 'expires_at' => $access_expires_at ] ),
-			$secret->hash(),
-			$refresh->hash(),
+			$issued->access->secret->hash(),
+			$issued->refresh?->secret->hash(),
 			$stored->refresh_secret_hash,
-			$this->now
+			$this->now,
+			$stored->secret_hash,
+			SealedRotation::seal( $issued, $retired_refresh )
 		);
 
-		return new IssuedTokens( PlainToken::compose( $token->token_id, $secret ), $access_expires_at, PlainRefreshToken::compose( $token->token_id, $refresh ) );
+		return $issued;
 	}
 
 	/** Lets a test place a rotation in the past, to step outside the grace window. */
 	public function rotated_at( int $id, \DateTimeImmutable $when ): void {
 		$stored = $this->rows[ $id ];
 
-		$this->rows[ $id ] = new StoredToken( $stored->token, $stored->secret_hash, $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $when );
+		$this->rows[ $id ] = new StoredToken( $stored->token, $stored->secret_hash, $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $when, $stored->previous_secret_hash, $stored->rotation );
+	}
+
+	public function forget_rotation( int $id ): void {
+		$stored = $this->rows[ $id ];
+
+		$this->rows[ $id ] = new StoredToken( $stored->token, $stored->secret_hash, $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $stored->rotated_at );
 	}
 
 	public function find_active_by_token_id( TokenId $token_id ): ?StoredToken {
@@ -113,7 +134,7 @@ final class InMemoryTokenRepository implements TokenRepositoryInterface {
 	private function set_status( int $id, TokenStatus $status ): void {
 		$stored = $this->rows[ $id ];
 
-		$this->rows[ $id ] = new StoredToken( $this->with( $stored->token, [ 'status' => $status ] ), $stored->secret_hash, $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $stored->rotated_at );
+		$this->rows[ $id ] = new StoredToken( $this->with( $stored->token, [ 'status' => $status ] ), $stored->secret_hash, $stored->refresh_secret_hash, $stored->previous_refresh_secret_hash, $stored->rotated_at, $stored->previous_secret_hash, $stored->rotation );
 	}
 
 	/** @param array<string, mixed> $changes */

@@ -25,11 +25,20 @@ interface TokenRepositoryInterface {
 	): IssuedTokens;
 
 	/**
-	 * Replaces both secrets; the outgoing refresh hash is kept one step so a
-	 * replay of it can be recognised as such. Null when the row no longer holds
-	 * $expected_refresh_hash — another request rotated it first.
+	 * Replaces both secrets; the outgoing hashes are kept one step so a replay
+	 * of the refresh token can be recognised as such, and the new pair is kept
+	 * sealed with $retired_refresh for a duplicate of this request
+	 * (StoredToken::ROTATION_GRACE_SECONDS). Null when the row no longer holds
+	 * the hash of $retired_refresh — another request rotated it first.
 	 */
-	public function rotate( ApiToken $token, string $expected_refresh_hash, \DateTimeImmutable $access_expires_at ): ?IssuedTokens;
+	public function rotate( ApiToken $token, TokenSecret $retired_refresh, \DateTimeImmutable $access_expires_at ): ?IssuedTokens;
+
+	/**
+	 * Drops what a rotation kept for its grace window (the sealed pair and the
+	 * retired access hash), so a database copy and an old refresh token
+	 * together cannot open the current pair later.
+	 */
+	public function forget_rotation( int $id ): void;
 
 	public function find_active_by_token_id( TokenId $token_id ): ?StoredToken;
 

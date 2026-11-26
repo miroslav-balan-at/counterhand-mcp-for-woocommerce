@@ -69,7 +69,7 @@ final readonly class TokenAuthenticator {
 			throw new AuthenticationFailedException();
 		}
 
-		if ( ! hash_equals( $stored->secret_hash, $secret->hash() ) ) {
+		if ( ! $stored->accepts_access_secret( $secret->hash(), $now ) ) {
 			throw new AuthenticationFailedException();
 		}
 
@@ -90,6 +90,10 @@ final readonly class TokenAuthenticator {
 		$this->rate_limiter->hit( $stored->token->token_id->value );
 
 		$this->touch_last_used_throttled( $stored->token->id, $stored->token->last_used_at, $now );
+
+		if ( $stored->holds_expired_rotation( $now ) ) {
+			$this->repository->forget_rotation( $stored->token->id );
+		}
 
 		// Bind the request to the owner so WooCommerce's own REST permission
 		// checks evaluate against a real capable user.

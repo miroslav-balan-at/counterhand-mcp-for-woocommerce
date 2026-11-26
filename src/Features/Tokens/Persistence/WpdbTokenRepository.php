@@ -9,6 +9,7 @@ use Counterhand\Features\Tokens\Domain\GrantedScopeSet;
 use Counterhand\Features\Tokens\Domain\IssuedTokens;
 use Counterhand\Features\Tokens\Domain\PlainRefreshToken;
 use Counterhand\Features\Tokens\Domain\PlainToken;
+use Counterhand\Features\Tokens\Domain\SealedRotation;
 use Counterhand\Features\Tokens\Domain\StoredToken;
 use Counterhand\Features\Tokens\Domain\TokenId;
 use Counterhand\Features\Tokens\Domain\TokenRepositoryInterface;
@@ -63,37 +64,48 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 		);
 	}
 
-	public function rotate( ApiToken $token, string $expected_refresh_hash, \DateTimeImmutable $access_expires_at ): ?IssuedTokens {
+	public function rotate( ApiToken $token, TokenSecret $retired_refresh, \DateTimeImmutable $access_expires_at ): ?IssuedTokens {
 		global $wpdb;
 
-		$secret     = TokenSecret::generate();
-		$refresh    = TokenSecret::generate();
 		$table_name = Schema::table_name();
+		$issued     = new IssuedTokens(
+			PlainToken::compose( $token->token_id, TokenSecret::generate() ),
+			$access_expires_at,
+			PlainRefreshToken::compose( $token->token_id, TokenSecret::generate() )
+		);
 
-		// One statement, so the outgoing hash moves to previous_* in the same
-		// write that replaces it — a replayed old token can then be recognised.
+		// One statement, so the outgoing hashes move to previous_* in the same
+		// write that replaces them — a replayed old token can then be recognised.
 		// Conditioned on the hash just verified, so of two requests racing with
 		// the same refresh token exactly one rotates and the loser knows it lost.
 		$rotated = $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
 			$wpdb->prepare(
-				"UPDATE {$table_name} SET previous_refresh_secret_hash = refresh_secret_hash, refresh_secret_hash = %s, secret_hash = %s, expires_at = %s, rotated_at = %s WHERE id = %d AND refresh_secret_hash = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
-				$refresh->hash(),
-				$secret->hash(),
+				"UPDATE {$table_name} SET previous_refresh_secret_hash = refresh_secret_hash, refresh_secret_hash = %s, previous_secret_hash = secret_hash, secret_hash = %s, rotation_replay = %s, expires_at = %s, rotated_at = %s WHERE id = %d AND refresh_secret_hash = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is plugin-owned.
+				$issued->refresh?->secret->hash(),
+				$issued->access->secret->hash(),
+				SealedRotation::seal( $issued, $retired_refresh )->sealed,
 				$access_expires_at->format( 'Y-m-d H:i:s' ),
 				current_time( 'mysql', true ),
 				$token->id,
-				$expected_refresh_hash
+				$retired_refresh->hash()
 			)
 		);
 
-		if ( 1 !== $rotated ) {
-			return null;
-		}
+		return 1 === $rotated ? $issued : null;
+	}
 
-		return new IssuedTokens(
-			PlainToken::compose( $token->token_id, $secret ),
-			$access_expires_at,
-			PlainRefreshToken::compose( $token->token_id, $refresh )
+	public function forget_rotation( int $id ): void {
+		global $wpdb;
+
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- plugin-owned table, no core API covers it.
+			Schema::table_name(),
+			[
+				'rotation_replay'      => null,
+				'previous_secret_hash' => null,
+			],
+			[ 'id' => $id ],
+			[ '%s', '%s' ],
+			[ '%d' ]
 		);
 	}
 
@@ -120,7 +132,9 @@ final class WpdbTokenRepository implements TokenRepositoryInterface {
 			(string) $row['secret_hash'],
 			isset( $row['refresh_secret_hash'] ) && $row['refresh_secret_hash'] ? (string) $row['refresh_secret_hash'] : null,
 			isset( $row['previous_refresh_secret_hash'] ) && $row['previous_refresh_secret_hash'] ? (string) $row['previous_refresh_secret_hash'] : null,
-			isset( $row['rotated_at'] ) && $row['rotated_at'] ? new \DateTimeImmutable( (string) $row['rotated_at'], new \DateTimeZone( 'UTC' ) ) : null
+			isset( $row['rotated_at'] ) && $row['rotated_at'] ? new \DateTimeImmutable( (string) $row['rotated_at'], new \DateTimeZone( 'UTC' ) ) : null,
+			isset( $row['previous_secret_hash'] ) && $row['previous_secret_hash'] ? (string) $row['previous_secret_hash'] : null,
+			isset( $row['rotation_replay'] ) && $row['rotation_replay'] ? SealedRotation::from_string( (string) $row['rotation_replay'] ) : null
 		);
 	}
 

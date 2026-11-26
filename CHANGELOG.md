@@ -2,6 +2,11 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## Unreleased
+
+* Fixed: an app with several processes sharing one connection, such as Claude Code with several sessions open, kept losing it ("Needs authentication"). They refresh the same token at the same moment, and the one that lost the race got `invalid_grant`. Inside the 60-second grace window it now gets the pair the winning request got, as Okta's and Auth0's grace periods do. That pair is kept sealed with a key derived from the retired refresh token, so only its holder can open it, and the store holds no secret in the clear; the first call after the window deletes it. A token replayed after the window still revokes the connection.
+* Fixed: a rotation cut off the access token at once, so requests other processes had already sent with it failed with 401 and started the next refresh. The retired access token now answers for the same 60 seconds.
+
 ## 2.1.2
 
 * Fixed: a field a write accepts but does not publish (the ones `describe_woocommerce_fields` reveals, such as a product's `tags`, `dimensions`, `brands`, `meta_data` or Germanized's `unit_price`) was refused by WooCommerce when the client sent it as JSON text, as Claude Code does for an argument the tool's schema does not declare. The pipeline now decodes it from the route's full schema, as it already did for published fields, and only where that schema says list or object. It happens before any check, so `meta_data` sent as text meets the meta key rules too.

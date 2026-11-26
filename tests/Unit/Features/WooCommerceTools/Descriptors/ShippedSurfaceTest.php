@@ -92,7 +92,8 @@ final class ShippedSurfaceTest extends TestCase {
 		'list_orders'                          => [ 'orders', 'orders:read' ],
 		'get_order'                            => [ 'orders', 'orders:read' ],
 		'create_order'                         => [ 'orders', 'orders:write' ],
-		'update_order_status'                  => [ 'orders', 'orders:write' ],
+		'update_order'                         => [ 'orders', 'orders:write' ],
+		'update_order_status'                => [ 'orders', 'orders:write' ],
 		'get_order_meta'                       => [ 'orders', 'orders:read' ],
 		'set_order_meta'                       => [ 'orders', 'orders:write' ],
 		'delete_order_meta'                    => [ 'orders', 'orders:write' ],
@@ -345,8 +346,8 @@ final class ShippedSurfaceTest extends TestCase {
 	 * number too, rather than discovering later that a descriptor quietly
 	 * stopped being registered.
 	 */
-	public function test_the_surface_is_two_hundred_and_eight_tools(): void {
-		$this->assertCount( 208, $this->surface() );
+	public function test_the_surface_is_two_hundred_and_nine_tools(): void {
+		$this->assertCount( 209, $this->surface() );
 	}
 
 	/** The skill ships separately, so nothing else would notice a tool it names going away. */

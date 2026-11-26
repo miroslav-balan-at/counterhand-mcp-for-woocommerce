@@ -2,6 +2,10 @@
 
 The two most recent releases are also in `readme.txt`; everything older lives here.
 
+## Unreleased
+
+* Added: `update_order` corrects an order that is still waiting for payment: its products, shipping, fees, coupons, addresses or payment method, and WooCommerce recalculates the totals. Before, a forgotten shipping line meant a second order. It asks the person first, like every write that changes what a customer is charged, and refuses an order that no longer needs payment (WooCommerce's `needs_payment()`), because a paid order would then disagree with what the gateway captured. Lines are matched by their id, so the description tells the model to read the order first and how to remove a line. It keeps no undo history, like the other order writes.
+
 ## 2.1.2
 
 * Fixed: a field a write accepts but does not publish (the ones `describe_woocommerce_fields` reveals, such as a product's `tags`, `dimensions`, `brands`, `meta_data` or Germanized's `unit_price`) was refused by WooCommerce when the client sent it as JSON text, as Claude Code does for an argument the tool's schema does not declare. The pipeline now decodes it from the route's full schema, as it already did for published fields, and only where that schema says list or object. It happens before any check, so `meta_data` sent as text meets the meta key rules too.

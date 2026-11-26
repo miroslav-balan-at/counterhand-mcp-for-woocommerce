@@ -5,6 +5,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 ## Unreleased
 
 * Changed: Yoast SEO 28.9 adds SEO data for categories and archives and the author schema of users. The consent text for Yoast now names them, including that a write can publish a user's pronouns and social profiles. The checks already made on its post writes (no snippet variables that read custom fields or terms, no canonical on another site) hold for the new writes too, and a test proves it.
+* Fixed: on a new store, switching AI access on could leave `/mcp` and `/mcp-authorize` at 404. A store starts with access off, so the first flush of the rewrite rules after activation (WooCommerce makes one on its first request) dropped them, and switching access on did not bring them back. Switching it on or off now rebuilds the rules once on the next request, after every plugin has added its own, as WooCommerce queues its own flush.
 
 ## 2.1.3
 

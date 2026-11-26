@@ -39,6 +39,7 @@ use Counterhand\Features\Playground\Rewrites\RewritesFeature;
 use Counterhand\Features\Playground\Rewrites\WpdbRewriteQueue;
 use Counterhand\Features\Playground\Provider\ProviderRegistry;
 use Counterhand\Features\Privacy\PrivacyFeature;
+use Counterhand\Features\Settings\RewriteRefresh;
 use Counterhand\Features\Settings\AdminScreen;
 use Counterhand\Features\Settings\ConnectionMatcher;
 use Counterhand\Features\Settings\ConnectReadiness;
@@ -259,6 +260,7 @@ final class Plugin {
 				new SettingSanitizer(),
 				$settings
 			),
+			new RewriteRefresh(),
 			new McpServerFeature( $settings, $authenticator, $mcp_server ),
 			new OAuthFeature( $settings, $repository, $this->tool_registry ),
 			new WooCommerceToolsFeature( $this->tool_registry, $tool_factory, $descriptors, $schema_provider, new ServedIntegrationGroups( $descriptors, $route_catalog ) ),

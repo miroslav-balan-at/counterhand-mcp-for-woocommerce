@@ -5,6 +5,7 @@ The two most recent releases are also in `readme.txt`; everything older lives he
 ## Unreleased
 
 * Fixed: an app with several processes sharing one connection, such as Claude Code with several sessions open, kept losing it ("Needs authentication"). They refresh the same token at the same moment, and the one that lost the race got `invalid_grant`. Inside the 60-second grace window it now gets the pair the winning request got, as Okta's and Auth0's grace periods do. That pair is kept sealed with a key derived from the retired refresh token, so only its holder can open it, and the store holds no secret in the clear; the first call after the window deletes it. A token replayed after the window still revokes the connection.
+* Fixed: on a store where another plugin hosts the official MCP adapter (Elementor bundles one), every MCP request that read the abilities before the REST API had started left the adapter logging "ability 'mcp-adapter/discover-abilities' does not exist" for its three own tools. The REST API now starts first, so each plugin registers its abilities as a REST client would see them.
 * Fixed: a rotation cut off the access token at once, so requests other processes had already sent with it failed with 401 and started the next refresh. The retired access token now answers for the same 60 seconds.
 
 ## 2.1.2
